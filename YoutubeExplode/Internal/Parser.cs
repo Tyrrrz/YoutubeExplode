@@ -260,11 +260,10 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<ICipherOperation> CipherOperationsFromJs(string rawJs)
         {
+            // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
+
             if (rawJs.IsBlank())
                 throw new ArgumentNullException(nameof(rawJs));
-
-            // Inspiration and sources:
-            // https://github.com/flagbug/YoutubeExtractor/blob/master/YoutubeExtractor/YoutubeExtractor/Decipherer.cs
 
             // Get the name of the function that handles deciphering
             string funcName = Regex.Match(rawJs, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;

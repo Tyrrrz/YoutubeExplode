@@ -204,6 +204,8 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
         {
+            // Original code credit: https://github.com/dr-BEat
+
             if (playlistId.IsBlank())
                 throw new ArgumentNullException(nameof(playlistId));
             if (!ValidateVideoId(playlistId))
