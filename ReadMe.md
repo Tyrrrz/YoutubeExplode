@@ -13,12 +13,12 @@ You can also find the last stable version in [releases](https://github.com/Tyrrr
 
 **Features:**
 
-- Gets video meta and video streams meta
-- Supports stream meta data from multiple sources: non-adaptive, adaptive embedded, adaptive dash
-- Meta data properties are exposed via enums and other strong types
+- Gets meta data for videos, video streams and playlists
+- Parses stream meta data from multiple sources: non-adaptive, adaptive embedded, adaptive dash
+- Properties are exposed via enums and other strong types
 - Deciphers signatures for video streams
 - Gets file sizes for video streams
-- Downloads video to stream
+- Downloads videos
 - Exposes static methods to extract video ID from URL and to validate video ID
 - Asynchronous API
 - Caches consistent resources to increase performance
