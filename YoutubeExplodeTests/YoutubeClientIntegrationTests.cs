@@ -320,7 +320,22 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetMediaStreamAsync_UnsignedUnrestricted_Test()
+        public async Task GetMediaStreamAsync_Normal_Test()
+        {
+            var videoInfo = await _client.GetVideoInfoAsync("_QdPW8JrYzQ");
+
+            foreach (var streamInfo in videoInfo.Streams)
+            {
+                using (var stream = await _client.GetMediaStreamAsync(streamInfo))
+                {
+                    var buffer = new byte[100];
+                    await stream.ReadAsync(buffer, 0, buffer.Length);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task GetMediaStreamAsync_NonAdaptive_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
 
@@ -335,7 +350,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetMediaStreamAsync_SignedUnrestricted_Test()
+        public async Task GetMediaStreamAsync_Signed_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("9bZkp7q19f0");
 

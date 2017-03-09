@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,6 +23,9 @@ namespace YoutubeExplode
         /// </summary>
         public YoutubeClient(IRequestService requestService)
         {
+            if (requestService == null)
+                throw new ArgumentNullException(nameof(requestService));
+
             _requestService = requestService;
         }
 
@@ -246,7 +248,7 @@ namespace YoutubeExplode
         /// <summary>
         /// Gets media stream by its meta data
         /// </summary>
-        public async Task<Stream> GetMediaStreamAsync(MediaStreamInfo streamInfo)
+        public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo streamInfo)
         {
             if (streamInfo == null)
                 throw new ArgumentNullException(nameof(streamInfo));
@@ -258,9 +260,12 @@ namespace YoutubeExplode
             // Get
             var stream = await _requestService.GetStreamAsync(streamInfo.Url).ConfigureAwait(false);
             if (stream == null)
-                throw new Exception("Could not get stream");
+                throw new Exception("Could not get media stream");
 
-            return stream;
+            // Pack
+            var result = new MediaStream(stream, streamInfo);
+
+            return result;
         }
 
         /// <summary>

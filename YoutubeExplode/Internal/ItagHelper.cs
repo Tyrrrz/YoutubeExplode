@@ -103,7 +103,7 @@ namespace YoutubeExplode.Internal
             return null;
         }
 
-        public static string GetExtension(int itag)
+        public static string GetFileExtension(int itag)
         {
             var type = GetContainerType(itag);
 

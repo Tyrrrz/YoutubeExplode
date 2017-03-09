@@ -35,6 +35,9 @@ namespace YoutubeExplode.Services
         /// </summary>
         public DefaultRequestService(HttpClient client)
         {
+            if (client == null)
+                throw new ArgumentNullException(nameof(client));
+
             _httpClient = client;
         }
 

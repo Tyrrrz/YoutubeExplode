@@ -51,6 +51,7 @@
     <Compile Include="Internal\CipherOperations\SliceCipherOperation.cs" />
     <Compile Include="Internal\CipherOperations\SwapCipherOperation.cs" />
     <Compile Include="Internal\VideoContext.cs" />
+    <Compile Include="Models\MediaStream.cs" />
     <Compile Include="Models\PlaylistInfo.cs" />
     <Compile Include="Models\ClosedCaption.cs" />
     <Compile Include="Models\ClosedCaptionTrack.cs" />

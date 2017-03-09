@@ -73,7 +73,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// File extension of this stream based on type
         /// </summary>
-        public string FileExtension => ItagHelper.GetExtension(Itag);
+        public string FileExtension => ItagHelper.GetFileExtension(Itag);
 
         /// <summary>
         /// File size (in bytes) of this stream
@@ -100,7 +100,7 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{Itag}";
+            return $"Itag: {Itag}";
         }
     }
 }

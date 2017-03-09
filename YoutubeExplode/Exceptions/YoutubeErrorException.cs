@@ -24,6 +24,9 @@ namespace YoutubeExplode.Exceptions
 
         internal YoutubeErrorException(int errorCode, string errorMessage)
         {
+            if (errorMessage == null)
+                throw new ArgumentNullException(nameof(errorMessage));
+
             ErrorCode = errorCode;
             ErrorMessage = errorMessage;
             Message = $"Youtube returned error {ErrorCode}:{Environment.NewLine}{ErrorMessage}";
