@@ -26,5 +26,11 @@ namespace YoutubeExplode.Models
         {
             return Captions.FirstOrDefault(c => offset.IsInRange(c.Offset, c.Offset + c.Duration));
         }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"Captions: {Captions.Length}";
+        }
     }
 }

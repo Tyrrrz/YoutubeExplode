@@ -25,5 +25,11 @@ namespace YoutubeExplode.Models
         internal ClosedCaption()
         {
         }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"[{Offset}][{Duration}] {Text}";
+        }
     }
 }
