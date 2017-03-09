@@ -104,7 +104,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Whether this video has closed captions
         /// </summary>
-        public bool HasClosedCaptions => Captions != null && Captions.Length > 0;
+        public bool HasClosedCaptions => CaptionTracks != null && CaptionTracks.Length > 0;
 
         /// <summary>
         /// Video streams meta data
@@ -114,7 +114,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Closed captions meta data
         /// </summary>
-        public VideoCaptionTrackInfo[] Captions { get; internal set; }
+        public VideoCaptionTrackInfo[] CaptionTracks { get; internal set; }
 
         /// <summary>
         /// Dash manifest meta data

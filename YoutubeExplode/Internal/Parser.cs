@@ -11,6 +11,105 @@ namespace YoutubeExplode.Internal
 {
     internal static class Parser
     {
+        public static string FunctionCallFromLineJs(string rawJs)
+        {
+            if (rawJs.IsBlank())
+                throw new ArgumentNullException(nameof(rawJs));
+
+            return Regex.Match(rawJs, @"\w+\.(\w+)\(").Groups[1].Value;
+        }
+
+        public static IEnumerable<ICipherOperation> CipherOperationsFromJs(string rawJs)
+        {
+            // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
+
+            if (rawJs.IsBlank())
+                throw new ArgumentNullException(nameof(rawJs));
+
+            // Get the name of the function that handles deciphering
+            string funcName = Regex.Match(rawJs, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
+            if (funcName.IsBlank())
+                throw new Exception("Could not find the entry function for signature deciphering");
+
+            // Get the body of the function
+            string funcBody = Regex.Match(rawJs, @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{.*?\}", RegexOptions.Singleline).Value;
+            if (funcBody.IsBlank())
+                throw new Exception("Could not get the signature decipherer function body");
+            var funcLines = funcBody.Split(";").Skip(1).SkipLast(1).ToArray();
+
+            // Identify cipher functions
+            string reverseFuncName = null;
+            string sliceFuncName = null;
+            string charSwapFuncName = null;
+
+            // Analyze the function body to determine the names of cipher functions
+            foreach (string line in funcLines)
+            {
+                // Break when all functions are found
+                if (reverseFuncName.IsNotBlank() && sliceFuncName.IsNotBlank() && charSwapFuncName.IsNotBlank())
+                    break;
+
+                // Get the function called on this line
+                string calledFunctionName = FunctionCallFromLineJs(line);
+
+                // Compose regexes to identify what function we're dealing with
+                // -- reverse (0 params)
+                var reverseFuncRegex = new Regex($@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\)");
+                // -- slice (1 param)
+                var sliceFuncRegex = new Regex($@"{Regex.Escape(calledFunctionName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\.");
+                // -- swap (1 param)
+                var swapFuncRegex = new Regex($@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b");
+
+                // Determine the function type and assign the name
+                if (reverseFuncRegex.Match(rawJs).Success)
+                    reverseFuncName = calledFunctionName;
+                else if (sliceFuncRegex.Match(rawJs).Success)
+                    sliceFuncName = calledFunctionName;
+                else if (swapFuncRegex.Match(rawJs).Success)
+                    charSwapFuncName = calledFunctionName;
+            }
+
+            // Analyze the function body again to determine the operation set and order
+            foreach (string line in funcLines)
+            {
+                // Get the function called on this line
+                string calledFunctionName = FunctionCallFromLineJs(line);
+
+                // Swap operation
+                if (calledFunctionName == charSwapFuncName)
+                {
+                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
+                    yield return new SwapCipherOperation(index);
+                }
+                // Slice operation
+                else if (calledFunctionName == sliceFuncName)
+                {
+                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
+                    yield return new SliceCipherOperation(index);
+                }
+                // Reverse operation
+                else if (calledFunctionName == reverseFuncName)
+                {
+                    yield return new ReverseCipherOperation();
+                }
+            }
+        }
+
+        public static PlayerSource PlayerSourceFromJs(string rawJs)
+        {
+            if (rawJs.IsBlank())
+                throw new ArgumentNullException(nameof(rawJs));
+
+            // Get cipher operations
+            var operations = CipherOperationsFromJs(rawJs).ToArray();
+
+            // Populate
+            var result = new PlayerSource();
+            result.CipherOperations = operations;
+
+            return result;
+        }
+
         public static VideoContext VideoContextFromHtml(string rawHtml)
         {
             if (rawHtml.IsBlank())
@@ -100,17 +199,14 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static IEnumerable<VideoStreamInfo> VideoStreamInfosFromMpd(string rawMpd)
+        public static IEnumerable<VideoStreamInfo> VideoStreamInfosFromXml(string rawXml)
         {
-            if (rawMpd.IsBlank())
-                throw new ArgumentNullException(nameof(rawMpd));
+            if (rawXml.IsBlank())
+                throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawMpd);
+            var root = XElement.Parse(rawXml);
             var ns = root.Name.Namespace;
             var xStreamInfos = root.Descendants(ns + "Representation");
-
-            if (xStreamInfos == null)
-                throw new Exception("Cannot find streams in input MPD");
 
             foreach (var xStreamInfo in xStreamInfos)
             {
@@ -207,31 +303,36 @@ namespace YoutubeExplode.Internal
             var length = TimeSpan.FromSeconds(dic.GetOrDefault("length_seconds").ParseDoubleOrDefault());
             long viewCount = dic.GetOrDefault("view_count").ParseLongOrDefault();
             double averageRating = dic.GetOrDefault("avg_rating").ParseDoubleOrDefault();
-            var keywords = dic.GetOrDefault("keywords").Split(",");
-            var watermarks = dic.GetOrDefault("watermark").Split(",");
+            var keywords = dic.GetOrDefault("keywords")?.Split(",") ?? new string[0];
+            var watermarks = dic.GetOrDefault("watermark")?.Split(",") ?? new string[0];
             bool isListed = dic.GetOrDefault("is_listed").ParseIntOrDefault(1) == 1;
             bool isRatingAllowed = dic.GetOrDefault("allow_ratings").ParseIntOrDefault(1) == 1;
             bool isMuted = dic.GetOrDefault("muted").ParseIntOrDefault() == 1;
             bool isEmbeddingAllowed = dic.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
 
-            // Get the embedded stream meta data
-            var streams = new List<VideoStreamInfo>();
-            string streamsRaw = dic.GetOrDefault("adaptive_fmts");
-            if (streamsRaw.IsNotBlank())
-                streams.AddRange(VideoStreamInfosFromUrlEncoded(streamsRaw));
-            streamsRaw = dic.GetOrDefault("url_encoded_fmt_stream_map");
-            if (streamsRaw.IsNotBlank())
-                streams.AddRange(VideoStreamInfosFromUrlEncoded(streamsRaw));
+            // Get adaptive streams
+            string adaptiveStreamsRaw = dic.GetOrDefault("adaptive_fmts");
+            var adaptiveStreams = adaptiveStreamsRaw.IsNotBlank()
+                ? VideoStreamInfosFromUrlEncoded(adaptiveStreamsRaw).ToArray()
+                : new VideoStreamInfo[0];
 
-            // Get the caption track meta data
-            var captions = new List<VideoCaptionTrackInfo>();
-            string captionsRaw = dic.GetOrDefault("caption_tracks");
-            if (captionsRaw.IsNotBlank())
-                captions.AddRange(VideoCaptionTrackInfosFromUrlEncoded(captionsRaw));
+            // Get mixed streams
+            string mixedStreamsRaw = dic.GetOrDefault("url_encoded_fmt_stream_map");
+            var mixedStreams = mixedStreamsRaw.IsNotBlank()
+                ? VideoStreamInfosFromUrlEncoded(mixedStreamsRaw).ToArray()
+                : new VideoStreamInfo[0];
+
+            // Get the caption tracks
+            string captionTracksRaw = dic.GetOrDefault("caption_tracks");
+            var captionTracks = captionTracksRaw.IsNotBlank()
+                ? VideoCaptionTrackInfosFromUrlEncoded(captionTracksRaw).ToArray()
+                : new VideoCaptionTrackInfo[0];
 
             // Dash manifest
             string dashMpdUrl = dic.GetOrDefault("dashmpd");
-            var dashManifest = dashMpdUrl.IsNotBlank() ? VideoDashManifestInfoFromUrl(dashMpdUrl) : null;
+            var dashManifest = dashMpdUrl.IsNotBlank()
+                ? VideoDashManifestInfoFromUrl(dashMpdUrl)
+                : null;
 
             // Populate
             var result = new VideoInfo();
@@ -247,8 +348,8 @@ namespace YoutubeExplode.Internal
             result.IsRatingAllowed = isRatingAllowed;
             result.IsMuted = isMuted;
             result.IsEmbeddingAllowed = isEmbeddingAllowed;
-            result.Streams = streams.ToArray();
-            result.Captions = captions.ToArray();
+            result.Streams = adaptiveStreams.With(mixedStreams).ToArray();
+            result.CaptionTracks = captionTracks;
             result.DashManifest = dashManifest;
 
             return result;
@@ -274,101 +375,43 @@ namespace YoutubeExplode.Internal
             return result;
         }
 
-        public static string FunctionCallFromLineJs(string rawJs)
+        public static IEnumerable<VideoCaption> VideoCaptionsFromXml(string rawXml)
         {
-            if (rawJs.IsBlank())
-                throw new ArgumentNullException(nameof(rawJs));
+            if (rawXml.IsBlank())
+                throw new ArgumentNullException(nameof(rawXml));
 
-            return Regex.Match(rawJs, @"\w+\.(\w+)\(").Groups[1].Value;
-        }
+            var root = XElement.Parse(rawXml);
+            var ns = root.Name.Namespace;
+            var xTexts = root.Descendants(ns + "text");
 
-        public static IEnumerable<ICipherOperation> CipherOperationsFromJs(string rawJs)
-        {
-            // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
-
-            if (rawJs.IsBlank())
-                throw new ArgumentNullException(nameof(rawJs));
-
-            // Get the name of the function that handles deciphering
-            string funcName = Regex.Match(rawJs, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
-            if (funcName.IsBlank())
-                throw new Exception("Could not find the entry function for signature deciphering");
-
-            // Get the body of the function
-            string funcBody = Regex.Match(rawJs, @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{.*?\}", RegexOptions.Singleline).Value;
-            if (funcBody.IsBlank())
-                throw new Exception("Could not get the signature decipherer function body");
-            var funcLines = funcBody.Split(";").Skip(1).SkipLast(1).ToArray();
-
-            // Identify cipher functions
-            string reverseFuncName = null;
-            string sliceFuncName = null;
-            string charSwapFuncName = null;
-
-            // Analyze the function body to determine the names of cipher functions
-            foreach (string line in funcLines)
+            foreach (var xText in xTexts)
             {
-                // Break when all functions are found
-                if (reverseFuncName.IsNotBlank() && sliceFuncName.IsNotBlank() && charSwapFuncName.IsNotBlank())
-                    break;
+                // Get values
+                string text = xText.Value;
+                var offset = TimeSpan.FromSeconds((xText.Attribute("start")?.Value).ParseDoubleOrDefault());
+                var duration = TimeSpan.FromSeconds((xText.Attribute("dur")?.Value).ParseDoubleOrDefault());
 
-                // Get the function called on this line
-                string calledFunctionName = FunctionCallFromLineJs(line);
+                // Populate
+                var result = new VideoCaption();
+                result.Text = text;
+                result.Offset = offset;
+                result.Duration = duration;
 
-                // Compose regexes to identify what function we're dealing with
-                // -- reverse (0 params)
-                var reverseFuncRegex = new Regex($@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\)");
-                // -- slice (1 param)
-                var sliceFuncRegex = new Regex($@"{Regex.Escape(calledFunctionName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\.");
-                // -- swap (1 param)
-                var swapFuncRegex = new Regex($@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b");
-
-                // Determine the function type and assign the name
-                if (reverseFuncRegex.Match(rawJs).Success)
-                    reverseFuncName = calledFunctionName;
-                else if (sliceFuncRegex.Match(rawJs).Success)
-                    sliceFuncName = calledFunctionName;
-                else if (swapFuncRegex.Match(rawJs).Success)
-                    charSwapFuncName = calledFunctionName;
-            }
-
-            // Analyze the function body again to determine the operation set and order
-            foreach (string line in funcLines)
-            {
-                // Get the function called on this line
-                string calledFunctionName = FunctionCallFromLineJs(line);
-
-                // Swap operation
-                if (calledFunctionName == charSwapFuncName)
-                {
-                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
-                    yield return new SwapCipherOperation(index);
-                }
-                // Slice operation
-                else if (calledFunctionName == sliceFuncName)
-                {
-                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
-                    yield return new SliceCipherOperation(index);
-                }
-                // Reverse operation
-                else if (calledFunctionName == reverseFuncName)
-                {
-                    yield return new ReverseCipherOperation();
-                }
+                yield return result;
             }
         }
 
-        public static PlayerSource PlayerSourceFromJs(string rawJs)
+        public static VideoCaptionTrack VideoCaptionTrackFromXml(string rawXml)
         {
-            if (rawJs.IsBlank())
-                throw new ArgumentNullException(nameof(rawJs));
+            if (rawXml.IsBlank())
+                throw new ArgumentNullException(nameof(rawXml));
 
-            // Get cipher operations
-            var operations = CipherOperationsFromJs(rawJs).ToArray();
+            // Get values
+            var captions = VideoCaptionsFromXml(rawXml).ToArray();
 
             // Populate
-            var result = new PlayerSource();
-            result.CipherOperations = operations;
+            var result = new VideoCaptionTrack();
+            result.Captions = captions;
 
             return result;
         }

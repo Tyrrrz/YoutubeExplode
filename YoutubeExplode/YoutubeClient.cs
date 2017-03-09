@@ -177,7 +177,7 @@ namespace YoutubeExplode
                     throw new Exception("Could not get dash manifest");
 
                 // Parse
-                var dashStreams = Parser.VideoStreamInfosFromMpd(response);
+                var dashStreams = Parser.VideoStreamInfosFromXml(response);
                 result.Streams = result.Streams.With(dashStreams).ToArray();
             }
 
@@ -248,23 +248,44 @@ namespace YoutubeExplode
         }
         
         /// <summary>
-        /// Gets the content of the given video stream
+        /// Gets video stream by meta data
         /// </summary>
         public async Task<Stream> GetVideoStreamAsync(VideoStreamInfo streamInfo)
         {
             if (streamInfo == null)
                 throw new ArgumentNullException(nameof(streamInfo));
             if (streamInfo.Url.IsBlank())
-                throw new Exception("Given stream does not have a URL");
+                throw new Exception("Given stream info does not have a URL");
             if (streamInfo.NeedsDeciphering)
                 throw new Exception("Given stream's signature needs to be deciphered first");
 
-            // Get stream
+            // Get
             var stream = await _requestService.GetStreamAsync(streamInfo.Url).ConfigureAwait(false);
             if (stream == null)
                 throw new Exception("Could not get response stream");
 
             return stream;
+        }
+
+        /// <summary>
+        /// Gets caption track by meta data
+        /// </summary>
+        public async Task<VideoCaptionTrack> GetVideoCaptionTrackAsync(VideoCaptionTrackInfo captionTrackInfo)
+        {
+            if (captionTrackInfo == null)
+                throw new ArgumentNullException(nameof(captionTrackInfo));
+            if (captionTrackInfo.Url.IsBlank())
+                throw new Exception("Given caption track info does not have a URL");
+
+            // Get
+            string response = await _requestService.GetStringAsync(captionTrackInfo.Url).ConfigureAwait(false);
+            if (response.IsBlank())
+                throw new Exception("Could not get caption track data");
+
+            // Parse
+            var result = Parser.VideoCaptionTrackFromXml(response);
+
+            return result;
         }
 
         /// <inheritdoc />

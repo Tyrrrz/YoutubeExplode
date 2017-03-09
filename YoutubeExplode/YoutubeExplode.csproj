@@ -52,6 +52,8 @@
     <Compile Include="Internal\CipherOperations\SwapCipherOperation.cs" />
     <Compile Include="Internal\VideoContext.cs" />
     <Compile Include="Models\PlaylistInfo.cs" />
+    <Compile Include="Models\VideoCaption.cs" />
+    <Compile Include="Models\VideoCaptionTrack.cs" />
     <Compile Include="Models\VideoCaptionTrackInfo.cs" />
     <Compile Include="Models\VideoDashManifestInfo.cs" />
     <Compile Include="Models\VideoInfo.cs" />
