@@ -111,22 +111,6 @@ namespace YoutubeExplode.Tests
                 Assert.IsTrue(success);
                 Assert.AreEqual(id, parsed);
             }
-
-            string[] invalidUrls =
-            {
-                null,
-                "",
-                "https://www.youtube.com",
-                "https://www.youtube.com/watch?v=@pm!!Hv#Lmg",
-                "https://www.youtube.com/qweasd?v=Nsib94LHi9I"
-            };
-
-            foreach (string url in invalidUrls)
-            {
-                string parsed;
-                bool success = YoutubeClient.TryParseVideoId(url, out parsed);
-                Assert.IsFalse(success);
-            }
         }
 
         [TestMethod]
