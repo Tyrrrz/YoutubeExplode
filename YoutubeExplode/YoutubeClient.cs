@@ -302,7 +302,8 @@ namespace YoutubeExplode
             if (videoId.IsBlank())
                 return false;
 
-            // Seems to also have constant length of 11 (enforce?)
+            if (videoId.Length != 11)
+                return false;
 
             return !Regex.IsMatch(videoId, @"[^0-9a-zA-Z_\-]");
         }
@@ -368,10 +369,8 @@ namespace YoutubeExplode
             if (playlistId.IsBlank())
                 return false;
 
-            // Seems to also have constant length of 24 for system play lists (liked, favorites)
-            // ... length of 34 for normal playlists
-            // ... length of 2 for watch later playlist
-            // (enforce?)
+            if (!playlistId.Length.IsEither(2, 24, 34))
+                return false;
 
             return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");
         }
