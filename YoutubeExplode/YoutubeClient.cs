@@ -280,6 +280,7 @@ namespace YoutubeExplode
 
             // Parse
             var result = Parser.ClosedCaptionTrackFromXml(response);
+            result.Info = closedCaptionTrackInfo;
 
             return result;
         }

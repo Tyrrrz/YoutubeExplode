@@ -10,6 +10,11 @@ namespace YoutubeExplode.Models
     public class ClosedCaptionTrack
     {
         /// <summary>
+        /// Meta data of this caption track
+        /// </summary>
+        public ClosedCaptionTrackInfo Info { get; internal set; }
+
+        /// <summary>
         /// Closed captions inside this track
         /// </summary>
         public ClosedCaption[] Captions { get; internal set; }
