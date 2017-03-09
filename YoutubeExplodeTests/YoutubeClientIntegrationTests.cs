@@ -224,7 +224,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task DownloadVideoAsync_UnsignedUnrestricted_Test()
+        public async Task GetVideoStreamAsync_UnsignedUnrestricted_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
 
@@ -239,7 +239,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task DownloadVideoAsync_SignedUnrestricted_Test()
+        public async Task GetVideoStreamAsync_SignedUnrestricted_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("9bZkp7q19f0");
 
@@ -254,7 +254,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task DownloadVideoAsync_SignedRestricted_Test()
+        public async Task GetVideoStreamAsync_SignedRestricted_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("SkRSXFQerZs");
 
