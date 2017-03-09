@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YoutubeExplode.Models;
 
@@ -50,7 +52,10 @@ namespace YoutubeExplode.Tests
         [TestMethod]
         public async Task GetVideoInfoAsync_UnsignedUnrestricted_Test()
         {
+            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
+            sw.Stop();
+            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -98,7 +103,10 @@ namespace YoutubeExplode.Tests
         [TestMethod]
         public async Task GetVideoInfoAsync_SignedUnrestricted_Test()
         {
+            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("TZRvO0S-TLU");
+            sw.Stop();
+            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -148,7 +156,10 @@ namespace YoutubeExplode.Tests
         [TestMethod]
         public async Task GetVideoInfoAsync_SignedRestricted_Test()
         {
+            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("SkRSXFQerZs");
+            sw.Stop();
+            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
