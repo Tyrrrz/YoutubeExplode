@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YoutubeExplode.Models;
 
 namespace YoutubeExplode.Tests
 {
@@ -82,6 +83,10 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
+                Assert.AreNotEqual(VideoStreamQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(VideoStreamType.Unknown, streamInfo.Type);
+                Assert.IsNotNull(streamInfo.QualityLabel);
+                Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
             }
 
@@ -126,6 +131,10 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
+                Assert.AreNotEqual(VideoStreamQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(VideoStreamType.Unknown, streamInfo.Type);
+                Assert.IsNotNull(streamInfo.QualityLabel);
+                Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
             }
 
@@ -172,6 +181,10 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
+                Assert.AreNotEqual(VideoStreamQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(VideoStreamType.Unknown, streamInfo.Type);
+                Assert.IsNotNull(streamInfo.QualityLabel);
+                Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
             }
 

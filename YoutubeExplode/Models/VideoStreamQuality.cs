@@ -11,6 +11,11 @@
         Unknown,
 
         /// <summary>
+        /// No video
+        /// </summary>
+        NoVideo,
+
+        /// <summary>
         /// 144p low-quality video stream
         /// </summary>
         Low144,

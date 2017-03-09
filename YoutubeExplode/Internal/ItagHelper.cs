@@ -52,6 +52,9 @@ namespace YoutubeExplode.Internal
 
         public static VideoStreamQuality GetQuality(int itag)
         {
+            if (itag.IsEither(140, 141, 171, 249, 250, 251))
+                return VideoStreamQuality.NoVideo;
+
             if (itag.IsEither(17, 91, 160, 219, 278, 330))
                 return VideoStreamQuality.Low144;
 
@@ -86,6 +89,7 @@ namespace YoutubeExplode.Internal
         {
             var quality = GetQuality(itag);
 
+            if (quality == VideoStreamQuality.NoVideo) return "No Video";
             if (quality == VideoStreamQuality.Low144) return "144p";
             if (quality == VideoStreamQuality.Low240) return "240p";
             if (quality == VideoStreamQuality.Medium360) return "360p";
