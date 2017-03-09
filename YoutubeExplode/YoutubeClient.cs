@@ -208,7 +208,7 @@ namespace YoutubeExplode
 
             if (playlistId.IsBlank())
                 throw new ArgumentNullException(nameof(playlistId));
-            if (!ValidateVideoId(playlistId))
+            if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException("Is not a valid Youtube playlist ID", nameof(playlistId));
 
             // Set up urls
