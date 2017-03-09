@@ -94,7 +94,7 @@ namespace YoutubeExplode.DemoConsole
             string fileName = $"{videoInfo.Title}.{selectedStream.FileExtension}".Without(Path.GetInvalidFileNameChars());
 
             // Download video
-            using (var input = client.DownloadVideoAsync(selectedStream).Result)
+            using (var input = client.GetVideoStreamAsync(selectedStream).Result)
             using (var output = File.Create(fileName))
                 input.CopyTo(output);
 

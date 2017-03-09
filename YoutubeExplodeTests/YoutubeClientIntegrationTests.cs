@@ -230,7 +230,7 @@ namespace YoutubeExplode.Tests
 
             foreach (var streamInfo in videoInfo.Streams)
             {
-                using (var stream = await _client.DownloadVideoAsync(streamInfo))
+                using (var stream = await _client.GetVideoStreamAsync(streamInfo))
                 {
                     var buffer = new byte[100];
                     await stream.ReadAsync(buffer, 0, buffer.Length);
@@ -245,7 +245,7 @@ namespace YoutubeExplode.Tests
 
             foreach (var streamInfo in videoInfo.Streams)
             {
-                using (var stream = await _client.DownloadVideoAsync(streamInfo))
+                using (var stream = await _client.GetVideoStreamAsync(streamInfo))
                 {
                     var buffer = new byte[100];
                     await stream.ReadAsync(buffer, 0, buffer.Length);
@@ -260,7 +260,7 @@ namespace YoutubeExplode.Tests
 
             foreach (var streamInfo in videoInfo.Streams)
             {
-                using (var stream = await _client.DownloadVideoAsync(streamInfo))
+                using (var stream = await _client.GetVideoStreamAsync(streamInfo))
                 {
                     var buffer = new byte[100];
                     await stream.ReadAsync(buffer, 0, buffer.Length);

@@ -250,7 +250,7 @@ namespace YoutubeExplode
         /// <summary>
         /// Gets the content of the given video stream
         /// </summary>
-        public async Task<Stream> DownloadVideoAsync(VideoStreamInfo streamInfo)
+        public async Task<Stream> GetVideoStreamAsync(VideoStreamInfo streamInfo)
         {
             if (streamInfo == null)
                 throw new ArgumentNullException(nameof(streamInfo));
