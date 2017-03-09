@@ -51,8 +51,72 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_UnsignedUnrestricted_Test()
+        public async Task GetVideoInfoAsync_Normal_Test()
         {
+            // Most common video type
+
+            var sw = Stopwatch.StartNew();
+            var videoInfo = await _client.GetVideoInfoAsync("_QdPW8JrYzQ");
+            sw.Stop();
+            Console.WriteLine($"Duration: {sw.Elapsed}");
+
+            Assert.IsNotNull(videoInfo);
+
+            // Basic meta data
+            Assert.AreEqual("_QdPW8JrYzQ", videoInfo.Id);
+            Assert.AreEqual("This is what happens when you reply to spam email | James Veitch", videoInfo.Title);
+            Assert.AreEqual("TED", videoInfo.Author);
+            Assert.IsTrue(588 <= videoInfo.Length.TotalSeconds);
+            Assert.IsTrue(10000000 <= videoInfo.ViewCount);
+            Assert.IsTrue(4.5 <= videoInfo.AverageRating);
+
+            // Keywords
+            Assert.IsNotNull(videoInfo.Keywords);
+            Assert.AreEqual(6, videoInfo.Keywords.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+
+            // Watermarks
+            Assert.IsNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+
+            // Flags
+            Assert.IsTrue(videoInfo.HasClosedCaptions);
+            Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
+            Assert.IsTrue(videoInfo.IsListed);
+            Assert.IsTrue(videoInfo.IsRatingAllowed);
+            Assert.IsFalse(videoInfo.IsMuted);
+
+            // Streams
+            Assert.IsNotNull(videoInfo.Streams);
+            Assert.IsTrue(20 <= videoInfo.Streams.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            foreach (var streamInfo in videoInfo.Streams)
+            {
+                Assert.IsNotNull(streamInfo.Url);
+                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
+                Assert.IsNotNull(streamInfo.QualityLabel);
+                Assert.IsNotNull(streamInfo.FileExtension);
+                Assert.IsTrue(0 < streamInfo.FileSize);
+            }
+
+            // Captions
+            Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(42, videoInfo.ClosedCaptionTracks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
+            {
+                Assert.IsNotNull(captionTrack.Url);
+                Assert.IsNotNull(captionTrack.Language);
+            }
+        }
+
+        [TestMethod]
+        public async Task GetVideoInfoAsync_NonAdaptive_Test()
+        {
+            // Video that doesn't have embedded adaptive streams but has dash manifest
+
             var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
             sw.Stop();
@@ -71,10 +135,12 @@ namespace YoutubeExplode.Tests
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
             Assert.AreEqual(0, videoInfo.Keywords.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
             Assert.AreEqual(2, videoInfo.Watermarks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
 
             // Flags
             Assert.IsFalse(videoInfo.HasClosedCaptions);
@@ -86,6 +152,7 @@ namespace YoutubeExplode.Tests
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
             Assert.IsTrue(9 <= videoInfo.Streams.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -99,11 +166,19 @@ namespace YoutubeExplode.Tests
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
             Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
+            {
+                Assert.IsNotNull(captionTrack.Url);
+                Assert.IsNotNull(captionTrack.Language);
+            }
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_SignedUnrestricted_Test()
+        public async Task GetVideoInfoAsync_Signed_Test()
         {
+            // Video that uses signature cipher
+
             var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("TZRvO0S-TLU");
             sw.Stop();
@@ -122,10 +197,12 @@ namespace YoutubeExplode.Tests
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
             Assert.AreEqual(30, videoInfo.Keywords.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
             Assert.AreEqual(2, videoInfo.Watermarks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
 
             // Flags
             Assert.IsTrue(videoInfo.HasClosedCaptions);
@@ -137,6 +214,7 @@ namespace YoutubeExplode.Tests
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
             Assert.IsTrue(22 <= videoInfo.Streams.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -150,13 +228,19 @@ namespace YoutubeExplode.Tests
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
             Assert.AreEqual(1, videoInfo.ClosedCaptionTracks.Length);
-            Assert.AreEqual("en", videoInfo.ClosedCaptionTracks[0].Language);
-            Assert.IsFalse(videoInfo.ClosedCaptionTracks[0].IsAutoGenerated);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
+            {
+                Assert.IsNotNull(captionTrack.Url);
+                Assert.IsNotNull(captionTrack.Language);
+            }
         }
 
         [TestMethod]
         public async Task GetVideoInfoAsync_SignedRestricted_Test()
         {
+            // Video that uses signature cipher and is also age-restricted
+
             var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("SkRSXFQerZs");
             sw.Stop();
@@ -175,10 +259,12 @@ namespace YoutubeExplode.Tests
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
             Assert.AreEqual(28, videoInfo.Keywords.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
             Assert.AreEqual(2, videoInfo.Watermarks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
 
             // Flags
             Assert.IsFalse(videoInfo.HasClosedCaptions);
@@ -190,6 +276,7 @@ namespace YoutubeExplode.Tests
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
             Assert.IsTrue(22 <= videoInfo.Streams.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -203,12 +290,20 @@ namespace YoutubeExplode.Tests
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
             Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
+            {
+                Assert.IsNotNull(captionTrack.Url);
+                Assert.IsNotNull(captionTrack.Language);
+            }
         }
 
         [TestMethod]
         public async Task GetPlaylistInfoAsync_Test()
         {
             var playlistInfo = await _client.GetPlaylistInfoAsync("PLOU2XLYxmsII8UKqP84oaAxpwyryxbM-o");
+
+            Assert.IsNotNull(playlistInfo);
 
             var expectedVideoIds = new[]
             {

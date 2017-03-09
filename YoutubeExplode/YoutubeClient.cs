@@ -120,7 +120,7 @@ namespace YoutubeExplode
                 throw new ArgumentException("Is not a valid Youtube video ID", nameof(videoId));
 
             // Get the video info
-            string url = $"https://www.youtube.com/get_video_info?video_id={videoId}";
+            string url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
             if (response.IsBlank())
                 throw new Exception("Could not get video info");
@@ -152,7 +152,7 @@ namespace YoutubeExplode
             var videoContext = Parser.VideoContextFromHtml(response);
 
             // Get video info
-            url = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}";
+            url = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}&el=info&ps=default";
             response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
             if (response.IsBlank())
                 throw new Exception("Could not get video info");
