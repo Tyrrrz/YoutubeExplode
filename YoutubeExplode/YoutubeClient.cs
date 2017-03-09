@@ -166,9 +166,7 @@ namespace YoutubeExplode
 
             // Decipher
             if (result.NeedsDeciphering)
-            {
                 await DecipherAsync(result, videoContext.PlayerVersion).ConfigureAwait(false);
-            }
 
             // Get additional streams from dash if available
             if (result.DashManifest != null)

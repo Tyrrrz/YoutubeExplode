@@ -26,7 +26,7 @@ namespace YoutubeExplode.Internal
             if (sts.IsBlank())
                 throw new Exception("Could not parse sts");
 
-            // Populate data
+            // Populate
             var result = new VideoContext();
             result.PlayerVersion = version;
             result.Sts = sts;
@@ -166,67 +166,91 @@ namespace YoutubeExplode.Internal
             }
         }
 
+        public static VideoDashManifestInfo VideoDashManifestInfoFromUrl(string rawUrl)
+        {
+            if (rawUrl.IsBlank())
+                throw new ArgumentNullException(nameof(rawUrl));
+
+            // Get values
+            string url = rawUrl;
+            string sig = Regex.Match(url, @"/s/(.*?)(?:/|$)").Groups[1].Value;
+            bool needsDeciphering = sig.IsNotBlank();
+
+            // Populate
+            var result = new VideoDashManifestInfo();
+            result.Url = url;
+            result.Signature = sig;
+            result.NeedsDeciphering = needsDeciphering;
+
+            return result;
+        }
+
         public static VideoInfo VideoInfoFromUrlEncoded(string rawUrlEncoded)
         {
             if (rawUrlEncoded.IsBlank())
                 throw new ArgumentNullException(nameof(rawUrlEncoded));
 
-            // Get data
-            var videoInfoEncoded = DictionaryFromUrlEncoded(rawUrlEncoded);
+            // Get dictionary
+            var dic = DictionaryFromUrlEncoded(rawUrlEncoded);
 
             // Check the status
-            string status = videoInfoEncoded.GetOrDefault("status");
-            string reason = videoInfoEncoded.GetOrDefault("reason");
-            int errorCode = videoInfoEncoded.GetOrDefault("errorcode").ParseIntOrDefault();
+            string status = dic.GetOrDefault("status");
+            string reason = dic.GetOrDefault("reason");
+            int errorCode = dic.GetOrDefault("errorcode").ParseIntOrDefault();
             if (status.EqualsInvariant("fail"))
                 throw new YoutubeErrorException(errorCode, reason);
 
-            // Prepare result
-            var result = new VideoInfo();
-
-            // Populate data
-            result.Id = videoInfoEncoded.GetOrDefault("video_id");
-            result.Title = videoInfoEncoded.GetOrDefault("title");
-            result.Author = videoInfoEncoded.GetOrDefault("author");
-            result.Watermarks = videoInfoEncoded.GetOrDefault("watermark").Split(",");
-            result.Length = TimeSpan.FromSeconds(videoInfoEncoded.GetOrDefault("length_seconds").ParseDoubleOrDefault());
-            result.IsListed = videoInfoEncoded.GetOrDefault("is_listed").ParseIntOrDefault(1) == 1;
-            result.IsRatingAllowed = videoInfoEncoded.GetOrDefault("allow_ratings").ParseIntOrDefault(1) == 1;
-            result.IsMuted = videoInfoEncoded.GetOrDefault("muted").ParseIntOrDefault() == 1;
-            result.IsEmbeddingAllowed = videoInfoEncoded.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
-            result.ViewCount = videoInfoEncoded.GetOrDefault("view_count").ParseLongOrDefault();
-            result.AverageRating = videoInfoEncoded.GetOrDefault("avg_rating").ParseDoubleOrDefault();
-            result.Keywords = videoInfoEncoded.GetOrDefault("keywords").Split(",");
-
-            // Dash manifest
-            string dashMpdUrl = videoInfoEncoded.GetOrDefault("dashmpd");
-            if (dashMpdUrl.IsNotBlank())
-            {
-                var dashManifest = new VideoDashManifestInfo();
-                dashManifest.Url = dashMpdUrl;
-                dashManifest.Signature = Regex.Match(dashMpdUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
-                dashManifest.NeedsDeciphering = dashManifest.Signature.IsNotBlank();
-                result.DashManifest = dashManifest;
-            }
+            // Get values
+            string id = dic.GetOrDefault("video_id");
+            string title = dic.GetOrDefault("title");
+            string author = dic.GetOrDefault("author");
+            var length = TimeSpan.FromSeconds(dic.GetOrDefault("length_seconds").ParseDoubleOrDefault());
+            long viewCount = dic.GetOrDefault("view_count").ParseLongOrDefault();
+            double averageRating = dic.GetOrDefault("avg_rating").ParseDoubleOrDefault();
+            var keywords = dic.GetOrDefault("keywords").Split(",");
+            var watermarks = dic.GetOrDefault("watermark").Split(",");
+            bool isListed = dic.GetOrDefault("is_listed").ParseIntOrDefault(1) == 1;
+            bool isRatingAllowed = dic.GetOrDefault("allow_ratings").ParseIntOrDefault(1) == 1;
+            bool isMuted = dic.GetOrDefault("muted").ParseIntOrDefault() == 1;
+            bool isEmbeddingAllowed = dic.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
 
             // Get the embedded stream meta data
             var streams = new List<VideoStreamInfo>();
-            string streamsRaw = videoInfoEncoded.GetOrDefault("adaptive_fmts");
+            string streamsRaw = dic.GetOrDefault("adaptive_fmts");
             if (streamsRaw.IsNotBlank())
                 streams.AddRange(VideoStreamInfosFromUrlEncoded(streamsRaw));
-            streamsRaw = videoInfoEncoded.GetOrDefault("url_encoded_fmt_stream_map");
+            streamsRaw = dic.GetOrDefault("url_encoded_fmt_stream_map");
             if (streamsRaw.IsNotBlank())
                 streams.AddRange(VideoStreamInfosFromUrlEncoded(streamsRaw));
-            result.Streams = streams.ToArray();
 
             // Get the caption track meta data
             var captions = new List<VideoCaptionTrackInfo>();
-            string captionsRaw = videoInfoEncoded.GetOrDefault("caption_tracks");
+            string captionsRaw = dic.GetOrDefault("caption_tracks");
             if (captionsRaw.IsNotBlank())
                 captions.AddRange(VideoCaptionTrackInfosFromUrlEncoded(captionsRaw));
-            result.CaptionTracks = captions.ToArray();
 
-            // Return
+            // Dash manifest
+            string dashMpdUrl = dic.GetOrDefault("dashmpd");
+            var dashManifest = dashMpdUrl.IsNotBlank() ? VideoDashManifestInfoFromUrl(dashMpdUrl) : null;
+
+            // Populate
+            var result = new VideoInfo();
+            result.Id = id;
+            result.Title = title;
+            result.Author = author;
+            result.Length = length;
+            result.ViewCount = viewCount;
+            result.AverageRating = averageRating;
+            result.Keywords = keywords;
+            result.Watermarks = watermarks;
+            result.IsListed = isListed;
+            result.IsRatingAllowed = isRatingAllowed;
+            result.IsMuted = isMuted;
+            result.IsEmbeddingAllowed = isEmbeddingAllowed;
+            result.Streams = streams.ToArray();
+            result.Captions = captions.ToArray();
+            result.DashManifest = dashManifest;
+
             return result;
         }
 
