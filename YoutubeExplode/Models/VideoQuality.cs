@@ -1,9 +1,9 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Defines possible stream quality values
+    /// Defines possible video quality values
     /// </summary>
-    public enum VideoStreamQuality
+    public enum VideoQuality
     {
         /// <summary>
         /// Video quality could not be identified
@@ -11,7 +11,7 @@
         Unknown,
 
         /// <summary>
-        /// No video
+        /// No video at all
         /// </summary>
         NoVideo,
 

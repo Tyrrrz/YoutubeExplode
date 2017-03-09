@@ -3,10 +3,10 @@
     /// <summary>
     /// Dash manifest meta data
     /// </summary>
-    public class VideoDashManifestInfo
+    public class DashManifestInfo
     {
         /// <summary>
-        /// URL for the dash manifest
+        /// URL for this dash manifest
         /// </summary>
         public string Url { get; internal set; }
 
@@ -20,7 +20,7 @@
         /// </summary>
         internal bool NeedsDeciphering { get; set; }
 
-        internal VideoDashManifestInfo()
+        internal DashManifestInfo()
         {
         }
     }

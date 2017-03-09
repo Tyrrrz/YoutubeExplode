@@ -3,42 +3,42 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Defines possible video stream container types
+    /// Defines possible container types
     /// </summary>
-    public enum VideoStreamType
+    public enum ContainerType
     {
         /// <summary>
-        /// Video type could not be identified
+        /// Container type could not be identified
         /// </summary>
         Unknown,
 
         /// <summary>
-        /// MPEG-4 Part 14 (.mp4) video stream
+        /// MPEG-4 Part 14 (.mp4)
         /// </summary>
         MP4,
 
         /// <summary>
-        /// MPEG-4 Part 14 audio-only (.m4a) video stream
+        /// MPEG-4 Part 14 audio-only (.m4a)
         /// </summary>
         M4A,
 
         /// <summary>
-        /// WebM (.webm) video stream
+        /// WebM (.webm)
         /// </summary>
         WebM,
 
         /// <summary>
-        /// 3rd Generation Partnership Project (.3gpp) video stream
+        /// 3rd Generation Partnership Project (.3gpp)
         /// </summary>
         TGPP,
 
         /// <summary>
-        /// Flash (.flv) video stream
+        /// Flash (.flv)
         /// </summary>
         FLV,
 
         /// <summary>
-        /// Transport stream (.ts) video stream
+        /// Transport stream (.ts)
         /// </summary>
         TS
     }

@@ -3,82 +3,87 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Video stream meta data
+    /// Media stream meta data
     /// </summary>
-    public class VideoStreamInfo
+    public class MediaStreamInfo
     {
         /// <summary>
-        /// URL for the video stream
+        /// URL for this video stream
         /// </summary>
         public string Url { get; internal set; }
 
         /// <summary>
-        /// Adaptive mode
+        /// Adaptive mode of this stream
         /// </summary>
-        public VideoStreamAdaptiveMode AdaptiveMode => ItagHelper.GetAdaptiveMode(Itag);
+        public AdaptiveMode AdaptiveMode => ItagHelper.GetAdaptiveMode(Itag);
 
         /// <summary>
         /// Whether this stream contains audio
         /// </summary>
-        public bool HasAudio => AdaptiveMode.IsEither(VideoStreamAdaptiveMode.None, VideoStreamAdaptiveMode.Audio);
+        public bool HasAudio => AdaptiveMode.IsEither(AdaptiveMode.None, AdaptiveMode.Audio);
 
         /// <summary>
         /// Whether this stream contains video
         /// </summary>
-        public bool HasVideo => AdaptiveMode.IsEither(VideoStreamAdaptiveMode.None, VideoStreamAdaptiveMode.Video);
+        public bool HasVideo => AdaptiveMode.IsEither(AdaptiveMode.None, AdaptiveMode.Video);
 
         /// <summary>
-        /// Container type
+        /// Container type of this stream
         /// </summary>
-        public VideoStreamType Type => ItagHelper.GetType(Itag);
+        public ContainerType Type => ItagHelper.GetContainerType(Itag);
 
         /// <summary>
-        /// Video quality
+        /// Quality of video in this stream
         /// </summary>
-        public VideoStreamQuality Quality => ItagHelper.GetQuality(Itag);
+        public VideoQuality Quality => ItagHelper.GetVideoQuality(Itag);
 
         /// <summary>
-        /// Whether this video is a 3D video
+        /// Whether the contained video is 3D video
         /// </summary>
-        public bool Is3D => ItagHelper.GetIs3D(Itag);
+        public bool IsVideo3D => ItagHelper.GetIsVideo3D(Itag);
 
         /// <summary>
-        /// Whether this video is a live stream
+        /// Whether the stream represents an ongoing feed
         /// </summary>
         public bool IsLiveStream => ItagHelper.GetIsLiveStream(Itag);
 
         /// <summary>
-        /// Video resolution.
+        /// Resolution of the contained video.
         /// Some streams may not have this property set.
         /// </summary>
-        public VideoStreamResolution Resolution { get; internal set; }
+        public Resolution Resolution { get; internal set; }
 
         /// <summary>
-        /// Video bitrate (bits per second).
+        /// Bitrate (bits per second) of this stream.
         /// Some streams may not have this property set.
         /// </summary>
         public long Bitrate { get; internal set; }
 
         /// <summary>
-        /// Frame update frequency of this video.
+        /// Frame rate of the contained video.
         /// Some streams may not have this property set.
         /// </summary>
         public double Fps { get; internal set; }
 
         /// <summary>
-        /// Quality label as seen on Youtube
+        /// Quality label of this stream as seen on Youtube
         /// </summary>
-        public string QualityLabel => ItagHelper.GetQualityLabel(Itag);
+        public string QualityLabel => ItagHelper.GetVideoQualityLabel(Itag);
 
         /// <summary>
-        /// File extension of the video file, based on its type
+        /// File extension of this stream based on type
         /// </summary>
         public string FileExtension => ItagHelper.GetExtension(Itag);
 
         /// <summary>
-        /// File size (in bytes) of the video
+        /// File size (in bytes) of this stream
         /// </summary>
         public long FileSize { get; internal set; }
+
+        /// <summary>
+        /// Internal type id of this stream
+        /// </summary>
+        internal int Itag { get; set; }
 
         /// <summary>
         /// Authorization signature
@@ -90,21 +95,12 @@ namespace YoutubeExplode.Models
         /// </summary>
         internal bool NeedsDeciphering { get; set; }
 
-        /// <summary>
-        /// Internal type id
-        /// </summary>
-        internal int Itag { get; set; }
-
-        internal VideoStreamInfo() { }
+        internal MediaStreamInfo() { }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            string contentStr = "";
-            if (HasVideo) contentStr += "V";
-            if (HasAudio) contentStr += "A";
-
-            return $"{contentStr} | {Type} | {Quality}";
+            return $"{Itag}";
         }
     }
 }

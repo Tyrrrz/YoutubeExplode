@@ -350,13 +350,13 @@
                                             <ContentPresenter.Style>
                                                 <Style TargetType="{x:Type ContentPresenter}">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:VideoStreamAdaptiveMode.None}">
+                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:AdaptiveMode.None}">
                                                             <Setter Property="ContentTemplate" Value="{StaticResource NonAdaptivePresenter}" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:VideoStreamAdaptiveMode.Video}">
+                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:AdaptiveMode.Video}">
                                                             <Setter Property="ContentTemplate" Value="{StaticResource AdaptiveVideoPresenter}" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:VideoStreamAdaptiveMode.Audio}">
+                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:AdaptiveMode.Audio}">
                                                             <Setter Property="ContentTemplate" Value="{StaticResource AdaptiveAudioPresenter}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>

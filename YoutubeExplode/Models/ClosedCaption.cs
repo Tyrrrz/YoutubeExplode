@@ -3,12 +3,12 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Video caption
+    /// Closed caption
     /// </summary>
-    public class VideoCaption
+    public class ClosedCaption
     {
         /// <summary>
-        /// Actual text
+        /// Text shown by this caption
         /// </summary>
         public string Text { get; internal set; }
 
@@ -18,11 +18,11 @@ namespace YoutubeExplode.Models
         public TimeSpan Offset { get; internal set; }
 
         /// <summary>
-        /// Duration of the caption
+        /// Duration of time the caption is shown
         /// </summary>
         public TimeSpan Duration { get; internal set; }
 
-        internal VideoCaption()
+        internal ClosedCaption()
         {
         }
     }

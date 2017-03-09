@@ -1,14 +1,14 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Width and Height of a video stream
+    /// Width and height
     /// </summary>
-    public struct VideoStreamResolution
+    public struct Resolution
     {
         /// <summary>
         /// Empty resolution
         /// </summary>
-        public static VideoStreamResolution Empty { get; } = new VideoStreamResolution();
+        public static Resolution Empty { get; } = new Resolution();
 
         /// <summary>
         /// Width
@@ -20,7 +20,7 @@
         /// </summary>
         public int Height { get; }
 
-        internal VideoStreamResolution(int width, int height)
+        internal Resolution(int width, int height)
         {
             Width = width;
             Height = height;

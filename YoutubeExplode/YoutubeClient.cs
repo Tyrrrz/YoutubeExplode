@@ -92,17 +92,13 @@ namespace YoutubeExplode
             }
         }
 
-        private async Task<long> GetFileSizeAsync(VideoStreamInfo streamInfo)
+        private async Task<long> GetContentLengthAsync(string url)
         {
-            if (streamInfo == null)
-                throw new ArgumentNullException(nameof(streamInfo));
-            if (streamInfo.Url.IsBlank())
-                throw new Exception("Given stream does not have a URL");
-            if (streamInfo.NeedsDeciphering)
-                throw new Exception("Given stream's signature needs to be deciphered first");
+            if (url.IsBlank())
+                throw new ArgumentNullException(nameof(url));
 
             // Get the headers
-            var headers = await _requestService.GetHeadersAsync(streamInfo.Url).ConfigureAwait(false);
+            var headers = await _requestService.GetHeadersAsync(url).ConfigureAwait(false);
             if (headers == null)
                 throw new Exception("Could not get headers");
 
@@ -110,7 +106,7 @@ namespace YoutubeExplode
             if (!headers.ContainsKey("Content-Length"))
                 throw new Exception("Content-Length header not found");
 
-            return streamInfo.FileSize = headers["Content-Length"].ParseLong();
+            return headers["Content-Length"].ParseLong();
         }
 
         /// <summary>
@@ -177,7 +173,7 @@ namespace YoutubeExplode
                     throw new Exception("Could not get dash manifest");
 
                 // Parse
-                var dashStreams = Parser.VideoStreamInfosFromXml(response);
+                var dashStreams = Parser.MediaStreamInfosFromXml(response);
                 result.Streams = result.Streams.With(dashStreams).ToArray();
             }
 
@@ -190,9 +186,9 @@ namespace YoutubeExplode
                 .ThenByDescending(s => s.Type) // then by type
                 .ToArray();
 
-            // Get file size of streams
+            // Get file size of streams that don't have it yet
             foreach (var streamInfo in result.Streams.Where(s => s.FileSize == 0))
-                await GetFileSizeAsync(streamInfo).ConfigureAwait(false);
+                streamInfo.FileSize = await GetContentLengthAsync(streamInfo.Url).ConfigureAwait(false);
 
             return result;
         }
@@ -248,9 +244,9 @@ namespace YoutubeExplode
         }
         
         /// <summary>
-        /// Gets video stream by meta data
+        /// Gets media stream by its meta data
         /// </summary>
-        public async Task<Stream> GetVideoStreamAsync(VideoStreamInfo streamInfo)
+        public async Task<Stream> GetMediaStreamAsync(MediaStreamInfo streamInfo)
         {
             if (streamInfo == null)
                 throw new ArgumentNullException(nameof(streamInfo));
@@ -262,28 +258,28 @@ namespace YoutubeExplode
             // Get
             var stream = await _requestService.GetStreamAsync(streamInfo.Url).ConfigureAwait(false);
             if (stream == null)
-                throw new Exception("Could not get response stream");
+                throw new Exception("Could not get stream");
 
             return stream;
         }
 
         /// <summary>
-        /// Gets caption track by meta data
+        /// Gets closed caption track by its meta data
         /// </summary>
-        public async Task<VideoCaptionTrack> GetVideoCaptionTrackAsync(VideoCaptionTrackInfo captionTrackInfo)
+        public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {
-            if (captionTrackInfo == null)
-                throw new ArgumentNullException(nameof(captionTrackInfo));
-            if (captionTrackInfo.Url.IsBlank())
+            if (closedCaptionTrackInfo == null)
+                throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
+            if (closedCaptionTrackInfo.Url.IsBlank())
                 throw new Exception("Given caption track info does not have a URL");
 
             // Get
-            string response = await _requestService.GetStringAsync(captionTrackInfo.Url).ConfigureAwait(false);
+            string response = await _requestService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
             if (response.IsBlank())
                 throw new Exception("Could not get caption track data");
 
             // Parse
-            var result = Parser.VideoCaptionTrackFromXml(response);
+            var result = Parser.ClosedCaptionTrackFromXml(response);
 
             return result;
         }
@@ -298,7 +294,7 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         /// <summary>
-        /// Verifies that the given string is syntactically a valid youtube video ID
+        /// Verifies that the given string is syntactically a valid Youtube video ID
         /// </summary>
         public static bool ValidateVideoId(string videoId)
         {
@@ -348,7 +344,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Parses video ID from a youtube video URL
+        /// Parses video ID from a Youtube video URL
         /// </summary>
         public static string ParseVideoId(string videoUrl)
         {
@@ -364,7 +360,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Verifies that the given string is syntactically a valid youtube playlist ID
+        /// Verifies that the given string is syntactically a valid Youtube playlist ID
         /// </summary>
         public static bool ValidatePlaylistId(string playlistId)
         {
@@ -380,7 +376,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Tries to parse playlist ID from a youtube playlist URL
+        /// Tries to parse playlist ID from a Youtube playlist URL
         /// </summary>
         public static bool TryParsePlaylistId(string playlistUrl, out string playlistId)
         {
@@ -409,7 +405,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Parses playlist ID from a youtube playlist URL
+        /// Parses playlist ID from a Youtube playlist URL
         /// </summary>
         public static string ParsePlaylistId(string playlistUrl)
         {

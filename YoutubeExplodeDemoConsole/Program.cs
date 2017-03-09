@@ -66,15 +66,15 @@ namespace YoutubeExplode.DemoConsole
                 string normFileSize = NormalizeFileSize(streamInfo.FileSize);
 
                 // Video+audio streams (non-adaptive)
-                if (streamInfo.AdaptiveMode == VideoStreamAdaptiveMode.None)
+                if (streamInfo.AdaptiveMode == AdaptiveMode.None)
                 {
                     Console.WriteLine($"\t[{i}] Mixed | {streamInfo.Type} | {streamInfo.QualityLabel} | {normFileSize}");
                 }
                 // Video only streams
-                else if (streamInfo.AdaptiveMode == VideoStreamAdaptiveMode.Video)
+                else if (streamInfo.AdaptiveMode == AdaptiveMode.Video)
                     Console.WriteLine($"\t[{i}] Video | {streamInfo.Type} | {streamInfo.QualityLabel} | {streamInfo.Fps} FPS | {normFileSize}");
                 // Audio only streams
-                else if (streamInfo.AdaptiveMode == VideoStreamAdaptiveMode.Audio)
+                else if (streamInfo.AdaptiveMode == AdaptiveMode.Audio)
                     Console.WriteLine($"\t[{i}] Audio | {streamInfo.Type} | {normFileSize}");
                 // This should not happen
                 else
@@ -94,7 +94,7 @@ namespace YoutubeExplode.DemoConsole
             string fileName = $"{videoInfo.Title}.{selectedStream.FileExtension}".Without(Path.GetInvalidFileNameChars());
 
             // Download video
-            using (var input = client.GetVideoStreamAsync(selectedStream).Result)
+            using (var input = client.GetMediaStreamAsync(selectedStream).Result)
             using (var output = File.Create(fileName))
                 input.CopyTo(output);
 

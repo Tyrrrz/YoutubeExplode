@@ -5,24 +5,24 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Video caption track
+    /// Closed caption track
     /// </summary>
-    public class VideoCaptionTrack
+    public class ClosedCaptionTrack
     {
         /// <summary>
-        /// Captions inside this track
+        /// Closed captions inside this track
         /// </summary>
-        public VideoCaption[] Captions { get; internal set; }
+        public ClosedCaption[] Captions { get; internal set; }
 
-        internal VideoCaptionTrack()
+        internal ClosedCaptionTrack()
         {
         }
 
         /// <summary>
         /// Gets caption for given time offset
         /// </summary>
-        /// <returns>Found caption or null if there's no caption for given offset</returns>
-        public VideoCaption GetCaptionFor(TimeSpan offset)
+        /// <returns>Found caption or null if there's no caption shown at given offset</returns>
+        public ClosedCaption GetByOffset(TimeSpan offset)
         {
             return Captions.FirstOrDefault(c => offset.IsInRange(c.Offset, c.Offset + c.Duration));
         }

@@ -1,9 +1,9 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Defines possible video adaptive modes
+    /// Defines possible media adaptive modes
     /// </summary>
-    public enum VideoStreamAdaptiveMode
+    public enum AdaptiveMode
     {
         /// <summary>
         /// Non-adaptive (mixed video and audio)

@@ -4,80 +4,80 @@ using System.Linq;
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Youtube video meta data
+    /// YVideo meta data
     /// </summary>
     public class VideoInfo
     {
         /// <summary>
-        /// Video ID
+        /// ID of this video
         /// </summary>
         public string Id { get; internal set; }
 
         /// <summary>
-        /// Video title
+        /// Title of this video
         /// </summary>
         public string Title { get; internal set; }
 
         /// <summary>
-        /// Video author's name
+        /// This video's author's name
         /// </summary>
         public string Author { get; internal set; }
 
         /// <summary>
-        /// Length of the video
+        /// Length of this video
         /// </summary>
         public TimeSpan Length { get; internal set; }
 
         /// <summary>
-        /// View count
+        /// View count of this video
         /// </summary>
         public long ViewCount { get; internal set; }
 
         /// <summary>
-        /// Average user rating.
+        /// Average user rating of this video.
         /// Ranges from 0 stars to 5 stars.
         /// </summary>
         public double AverageRating { get; internal set; }
 
         /// <summary>
-        /// Normalized average user rating.
+        /// Normalized average user rating of this video.
         /// Ranges from 0 to 1.
         /// Also represents the "thumbs up" ratio in the new rating system.
         /// </summary>
         public double NormalizedAverageRating => AverageRating/5;
 
         /// <summary>
-        /// Keywords used for searching
+        /// This video's search keywords
         /// </summary>
         public string[] Keywords { get; set; }
 
         /// <summary>
-        /// URL for the thumbnail image
+        /// URL for the thumbnail image for this video
         /// </summary>
         public string ImageThumbnail => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
 
         /// <summary>
-        /// URL for the default resolution image (not always available)
+        /// URL for the default resolution image (not always available) for this video
         /// </summary>
         public string ImageStandardRes => $"https://img.youtube.com/vi/{Id}/sddefault.jpg";
 
         /// <summary>
-        /// URL for the highest resolution image (not always available)
+        /// URL for the highest resolution image (not always available) for this video
         /// </summary>
         public string ImageMaxRes => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
 
         /// <summary>
-        /// URL for the high resolution image
+        /// URL for the high resolution image for this video
         /// </summary>
         public string ImageHighRes => $"https://img.youtube.com/vi/{Id}/hqdefault.jpg";
 
         /// <summary>
-        /// URL for the medium resolution image
+        /// URL for the medium resolution image for this video
         /// </summary>
         public string ImageMediumRes => $"https://img.youtube.com/vi/{Id}/mqdefault.jpg";
 
         /// <summary>
-        /// Collection of watermark URLs
+        /// Collection of watermark URLs for this video
         /// </summary>
         public string[] Watermarks { get; internal set; }
 
@@ -97,29 +97,29 @@ namespace YoutubeExplode.Models
         public bool IsMuted { get; internal set; }
 
         /// <summary>
-        /// Whether it is allowed to embed this video outside of Youtube
+        /// Whether it is allowed to embed this video on 3rd party sites
         /// </summary>
         public bool IsEmbeddingAllowed { get; internal set; }
 
         /// <summary>
         /// Whether this video has closed captions
         /// </summary>
-        public bool HasClosedCaptions => CaptionTracks != null && CaptionTracks.Length > 0;
+        public bool HasClosedCaptions => ClosedCaptionTracks != null && ClosedCaptionTracks.Length > 0;
 
         /// <summary>
-        /// Video streams meta data
+        /// This video's media streams meta datas
         /// </summary>
-        public VideoStreamInfo[] Streams { get; internal set; }
+        public MediaStreamInfo[] Streams { get; internal set; }
 
         /// <summary>
-        /// Closed captions meta data
+        /// This video's closed caption meta datas
         /// </summary>
-        public VideoCaptionTrackInfo[] CaptionTracks { get; internal set; }
+        public ClosedCaptionTrackInfo[] ClosedCaptionTracks { get; internal set; }
 
         /// <summary>
-        /// Dash manifest meta data
+        /// Dash manifest meta data for this video
         /// </summary>
-        internal VideoDashManifestInfo DashManifest { get; set; }
+        internal DashManifestInfo DashManifest { get; set; }
 
         /// <summary>
         /// Whether this video uses an encrypted signature for its streams that needs to be deciphered before the streams can be accessed
