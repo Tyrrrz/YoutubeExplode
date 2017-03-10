@@ -299,6 +299,68 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
+        public async Task GetVideoInfoAsync_CannotEmbed_Test()
+        {
+            // Video that cannot be embedded outside of Youtube
+
+            var sw = Stopwatch.StartNew();
+            var videoInfo = await _client.GetVideoInfoAsync("_kmeFXjjGfk");
+            sw.Stop();
+            Console.WriteLine($"Duration: {sw.Elapsed}");
+
+            Assert.IsNotNull(videoInfo);
+
+            // Basic meta data
+            Assert.AreEqual("_kmeFXjjGfk", videoInfo.Id);
+            Assert.AreEqual("Cam'ron- Killa Kam (dirty)", videoInfo.Title);
+            Assert.AreEqual("Ralph Arellano", videoInfo.Author);
+            Assert.IsTrue(359 <= videoInfo.Length.TotalSeconds);
+            Assert.IsTrue(4.5 <= videoInfo.AverageRating);
+            Assert.IsTrue(3600000 <= videoInfo.ViewCount);
+
+            // Keywords
+            Assert.IsNotNull(videoInfo.Keywords);
+            Assert.AreEqual(5, videoInfo.Keywords.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+
+            // Watermarks
+            Assert.IsNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+
+            // Flags
+            Assert.IsFalse(videoInfo.HasClosedCaptions);
+            Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
+            Assert.IsTrue(videoInfo.IsListed);
+            Assert.IsTrue(videoInfo.IsRatingAllowed);
+            Assert.IsFalse(videoInfo.IsMuted);
+
+            // Streams
+            Assert.IsNotNull(videoInfo.Streams);
+            Assert.IsTrue(17 <= videoInfo.Streams.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            foreach (var streamInfo in videoInfo.Streams)
+            {
+                Assert.IsNotNull(streamInfo.Url);
+                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
+                Assert.IsNotNull(streamInfo.QualityLabel);
+                Assert.IsNotNull(streamInfo.FileExtension);
+                Assert.IsTrue(0 < streamInfo.FileSize);
+            }
+
+            // Captions
+            Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Length);
+            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
+            {
+                Assert.IsNotNull(captionTrack.Url);
+                Assert.IsNotNull(captionTrack.Language);
+            }
+        }
+
+        [TestMethod]
         public async Task GetPlaylistInfoAsync_Test()
         {
             var playlistInfo = await _client.GetPlaylistInfoAsync("PLOU2XLYxmsII8UKqP84oaAxpwyryxbM-o");
@@ -368,6 +430,21 @@ namespace YoutubeExplode.Tests
         public async Task GetMediaStreamAsync_SignedRestricted_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("SkRSXFQerZs");
+
+            foreach (var streamInfo in videoInfo.Streams)
+            {
+                using (var stream = await _client.GetMediaStreamAsync(streamInfo))
+                {
+                    var buffer = new byte[100];
+                    await stream.ReadAsync(buffer, 0, buffer.Length);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task GetMediaStreamAsync_CannotEmbed_Test()
+        {
+            var videoInfo = await _client.GetVideoInfoAsync("_kmeFXjjGfk");
 
             foreach (var streamInfo in videoInfo.Streams)
             {
