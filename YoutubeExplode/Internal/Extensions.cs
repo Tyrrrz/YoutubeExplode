@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace YoutubeExplode.Internal
 {
@@ -259,6 +260,36 @@ namespace YoutubeExplode.Internal
             var result = GetOrDefault(dic, key);
             if (result == null) return defaultValue;
             return ConvertOrDefault(result, defaultValue);
+        }
+
+        public static IEnumerable<XElement> ElementsInvariant(this XElement parent, string invariantName)
+        {
+            return parent.Elements().Where(e => e.Name.LocalName.EqualsInvariant(invariantName));
+        }
+
+        public static XElement ElementInvariant(this XElement parent, string invariantName)
+        {
+            return parent.Elements().FirstOrDefault(e => e.Name.LocalName.EqualsInvariant(invariantName));
+        }
+
+        public static IEnumerable<XElement> DescendantsInvariant(this XElement parent, string invariantName)
+        {
+            return parent.Descendants().Where(d => d.Name.LocalName.EqualsInvariant(invariantName));
+        }
+
+        public static XElement DescendantInvariant(this XElement parent, string invariantName)
+        {
+            return parent.Descendants().FirstOrDefault(d => d.Name.LocalName.EqualsInvariant(invariantName));
+        }
+
+        public static IEnumerable<XAttribute> AttributesInvariant(this XElement parent, string invariantName)
+        {
+            return parent.Attributes().Where(a => a.Name.LocalName.EqualsInvariant(invariantName));
+        }
+
+        public static XAttribute AttributeInvariant(this XElement parent, string invariantName)
+        {
+            return parent.Attributes().FirstOrDefault(a => a.Name.LocalName.EqualsInvariant(invariantName));
         }
     }
 }
