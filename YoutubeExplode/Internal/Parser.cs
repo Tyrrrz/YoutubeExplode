@@ -178,11 +178,14 @@ namespace YoutubeExplode.Internal
                 string sig = dic.GetOrDefault("s");
                 bool needsDeciphering = sig.IsNotBlank();
                 int itag = dic.GetOrDefault("itag").ParseIntOrDefault();
-                int width = (dic.GetOrDefault("size")?.SubstringUntil("x")).ParseIntOrDefault();
-                int height = (dic.GetOrDefault("size")?.SubstringAfter("x")).ParseIntOrDefault();
                 long bitrate = dic.GetOrDefault("bitrate").ParseLongOrDefault();
                 double fps = dic.GetOrDefault("fps").ParseDoubleOrDefault();
                 long size = dic.GetOrDefault("clen").ParseLongOrDefault();
+
+                // Get resolution
+                int width = (dic.GetOrDefault("size")?.SubstringUntil("x")).ParseIntOrDefault();
+                int height = (dic.GetOrDefault("size")?.SubstringAfter("x")).ParseIntOrDefault();
+                var resolution = new Resolution(width, height);
 
                 // Populate
                 var result = new MediaStreamInfo();
@@ -190,7 +193,7 @@ namespace YoutubeExplode.Internal
                 result.Signature = sig;
                 result.NeedsDeciphering = needsDeciphering;
                 result.Itag = itag;
-                result.Resolution = new Resolution(width, height);
+                result.Resolution = resolution;
                 result.Bitrate = bitrate;
                 result.Fps = fps;
                 result.FileSize = size;
@@ -220,11 +223,14 @@ namespace YoutubeExplode.Internal
                 // Get values
                 string url = xBaseUrl?.Value;
                 int itag = (xStreamInfo.AttributeInvariant("id")?.Value).ParseIntOrDefault();
-                int width = (xStreamInfo.AttributeInvariant("width")?.Value).ParseIntOrDefault();
-                int height = (xStreamInfo.AttributeInvariant("height")?.Value).ParseIntOrDefault();
                 long bitrate = (xStreamInfo.AttributeInvariant("bandwidth")?.Value).ParseLongOrDefault();
                 double fps = (xStreamInfo.AttributeInvariant("frameRate")?.Value).ParseDoubleOrDefault();
                 long size = (xBaseUrl?.AttributeInvariant("contentLength")?.Value).ParseLongOrDefault();
+
+                // Get resolution
+                int width = (xStreamInfo.AttributeInvariant("width")?.Value).ParseIntOrDefault();
+                int height = (xStreamInfo.AttributeInvariant("height")?.Value).ParseIntOrDefault();
+                var resolution = new Resolution(width, height);
 
                 // Populate
                 var result = new MediaStreamInfo();
@@ -232,7 +238,7 @@ namespace YoutubeExplode.Internal
                 result.Signature = null;
                 result.NeedsDeciphering = false;
                 result.Itag = itag;
-                result.Resolution = new Resolution(width, height);
+                result.Resolution = resolution;
                 result.Bitrate = bitrate;
                 result.Fps = fps;
                 result.FileSize = size;

@@ -127,5 +127,39 @@ namespace YoutubeExplode.Internal
 
             return null;
         }
+
+        public static Resolution GetDefaultResolution(int itag)
+        {
+            var quality = GetVideoQuality(itag);
+
+            if (quality == VideoQuality.Low144)
+                return new Resolution(256, 144);
+
+            if (quality == VideoQuality.Low240)
+                return new Resolution(426, 240);
+
+            if (quality == VideoQuality.Medium360)
+                return new Resolution(640, 360);
+
+            if (quality == VideoQuality.Medium480)
+                return new Resolution(854, 480);
+
+            if (quality == VideoQuality.High720)
+                return new Resolution(1280, 720);
+
+            if (quality == VideoQuality.High1080)
+                return new Resolution(1920, 1080);
+
+            if (quality == VideoQuality.High1440)
+                return new Resolution(2560, 1440);
+
+            if (quality == VideoQuality.High2160)
+                return new Resolution(3840, 2160);
+
+            if (quality == VideoQuality.High3072)
+                return new Resolution(4096, 3072);
+
+            return Resolution.Empty;
+        }
     }
 }
