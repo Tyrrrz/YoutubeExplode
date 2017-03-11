@@ -1,7 +1,7 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Playlist meta data
+    /// Playlist metadata
     /// </summary>
     public class PlaylistInfo
     {

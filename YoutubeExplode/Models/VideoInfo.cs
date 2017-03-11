@@ -4,7 +4,7 @@ using System.Linq;
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// YVideo meta data
+    /// Video metadata
     /// </summary>
     public class VideoInfo
     {
@@ -107,17 +107,17 @@ namespace YoutubeExplode.Models
         public bool HasClosedCaptions => ClosedCaptionTracks != null && ClosedCaptionTracks.Length > 0;
 
         /// <summary>
-        /// This video's media streams meta datas
+        /// Metadata for this video's media streams
         /// </summary>
         public MediaStreamInfo[] Streams { get; internal set; }
 
         /// <summary>
-        /// This video's closed caption meta datas
+        /// Metadata for this video's closed caption tracks
         /// </summary>
         public ClosedCaptionTrackInfo[] ClosedCaptionTracks { get; internal set; }
 
         /// <summary>
-        /// Dash manifest meta data for this video
+        /// Dash manifest metadata for this video
         /// </summary>
         internal DashManifestInfo DashManifest { get; set; }
 

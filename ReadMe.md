@@ -2,7 +2,7 @@ YoutubeExplode
 ===================
 
 
-Zero-dependency .NET library that parses public meta data on Youtube videos
+Zero-dependency .NET library that parses public metadata on Youtube videos
 
 
 **Download:**
@@ -19,7 +19,7 @@ You can also find the last stable version in [releases](https://github.com/Tyrrr
 - Extracts video IDs from playlists
 - Allows to check if the video exists
 - Lets user download media streams and caption tracks
-- Meta data is exposed using enums and other strong types
+- Metadata is exposed using enums and other strong types
 - Static methods to validate IDs and to parse them from URLs
 - Asynchronous API
 - Optimized for best performance

@@ -57,7 +57,7 @@ namespace YoutubeExplode.DemoConsole
             // Get the video info
             var videoInfo = client.GetVideoInfoAsync(id).Result;
 
-            // Output some meta data
+            // Output some metadata
             Console.WriteLine($"{videoInfo.Title} | {videoInfo.ViewCount:N0} views | {videoInfo.AverageRating:0.##}* rating");
             Console.WriteLine("Streams:");
             for (int i = 0; i < videoInfo.Streams.Length; i++)
@@ -90,7 +90,7 @@ namespace YoutubeExplode.DemoConsole
             Console.WriteLine("Loading . . .");
             Console.WriteLine();
 
-            // Compose file name, based on meta data
+            // Compose file name, based on metadata
             string fileName = $"{videoInfo.Title}.{selectedStream.FileExtension}".Without(Path.GetInvalidFileNameChars());
 
             // Download video

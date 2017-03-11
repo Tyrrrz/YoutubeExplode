@@ -1,7 +1,7 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Closed captions meta data
+    /// Closed caption track metadata
     /// </summary>
     public class ClosedCaptionTrackInfo
     {

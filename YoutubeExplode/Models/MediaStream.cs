@@ -11,7 +11,7 @@ namespace YoutubeExplode.Models
         private readonly Stream _innerStream;
 
         /// <summary>
-        /// Meta data associated with this media stream
+        /// Metadata associated with this media stream
         /// </summary>
         public MediaStreamInfo Info { get; }
 

@@ -135,7 +135,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets video meta data by ID
+        /// Gets video metadata by id
         /// </summary>
         public async Task<VideoInfo> GetVideoInfoAsync(string videoId)
         {
@@ -196,7 +196,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets playlist meta data by id
+        /// Gets playlist metadata by id
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
         {
@@ -246,7 +246,7 @@ namespace YoutubeExplode
         }
         
         /// <summary>
-        /// Gets media stream by its meta data
+        /// Gets media stream by its metadata
         /// </summary>
         public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo streamInfo)
         {
@@ -269,7 +269,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets closed caption track by its meta data
+        /// Gets closed caption track by its metadata
         /// </summary>
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {

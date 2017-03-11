@@ -1,7 +1,7 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Dash manifest meta data
+    /// Dash manifest metadata
     /// </summary>
     public class DashManifestInfo
     {

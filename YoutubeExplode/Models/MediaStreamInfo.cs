@@ -3,7 +3,7 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Media stream meta data
+    /// Media stream metadata
     /// </summary>
     public class MediaStreamInfo
     {

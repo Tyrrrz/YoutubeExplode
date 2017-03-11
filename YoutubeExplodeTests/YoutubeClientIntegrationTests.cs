@@ -62,7 +62,7 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(videoInfo);
 
-            // Basic meta data
+            // Basic metadata
             Assert.AreEqual("_QdPW8JrYzQ", videoInfo.Id);
             Assert.AreEqual("This is what happens when you reply to spam email | James Veitch", videoInfo.Title);
             Assert.AreEqual("TED", videoInfo.Author);
@@ -124,7 +124,7 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(videoInfo);
 
-            // Basic meta data
+            // Basic metadata
             Assert.AreEqual("LsNPjFXIPT8", videoInfo.Id);
             Assert.AreEqual("kyoumei no true force iyasine", videoInfo.Title);
             Assert.AreEqual("Tyrrrz", videoInfo.Author);
@@ -186,7 +186,7 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(videoInfo);
 
-            // Basic meta data
+            // Basic metadata
             Assert.AreEqual("TZRvO0S-TLU", videoInfo.Id);
             Assert.AreEqual("BABYMETAL - THE ONE (OFFICIAL)", videoInfo.Title);
             Assert.AreEqual("BABYMETALofficial", videoInfo.Author);
@@ -248,7 +248,7 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(videoInfo);
 
-            // Basic meta data
+            // Basic metadata
             Assert.AreEqual("SkRSXFQerZs", videoInfo.Id);
             Assert.AreEqual("HELLOVENUS 헬로비너스 - 위글위글(WiggleWiggle) M/V", videoInfo.Title);
             Assert.AreEqual("fantagio 판타지오", videoInfo.Author);
@@ -310,7 +310,7 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(videoInfo);
 
-            // Basic meta data
+            // Basic metadata
             Assert.AreEqual("_kmeFXjjGfk", videoInfo.Id);
             Assert.AreEqual("Cam'ron- Killa Kam (dirty)", videoInfo.Title);
             Assert.AreEqual("Ralph Arellano", videoInfo.Author);
