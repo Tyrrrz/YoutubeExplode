@@ -290,10 +290,22 @@ namespace YoutubeExplode
             return result;
         }
 
-        /// <inheritdoc />
-        public virtual void Dispose()
+        /// <summary>
+        /// Dispose method
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
         {
-            (_requestService as IDisposable)?.Dispose();
+            if (disposing)
+            {
+                (_requestService as IDisposable)?.Dispose();
+            }
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 
