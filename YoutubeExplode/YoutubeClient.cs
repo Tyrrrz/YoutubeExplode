@@ -176,7 +176,7 @@ namespace YoutubeExplode
 
                 // Parse
                 var dashStreams = Parser.MediaStreamInfosFromXml(response);
-                result.Streams = result.Streams.With(dashStreams).ToArray();
+                result.Streams = result.Streams.Concat(dashStreams).ToArray();
             }
 
             // Finalize the stream list

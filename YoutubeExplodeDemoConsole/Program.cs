@@ -91,7 +91,7 @@ namespace YoutubeExplode.DemoConsole
             Console.WriteLine();
 
             // Compose file name, based on metadata
-            string fileName = $"{videoInfo.Title}.{selectedStream.FileExtension}".Without(Path.GetInvalidFileNameChars());
+            string fileName = $"{videoInfo.Title}.{selectedStream.FileExtension}".Except(Path.GetInvalidFileNameChars());
 
             // Download video
             using (var input = client.GetMediaStreamAsync(selectedStream).Result)

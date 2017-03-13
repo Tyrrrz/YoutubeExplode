@@ -114,7 +114,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             {
                 AddExtension = true,
                 DefaultExt = ext,
-                FileName = $"{title}.{ext}".Without(Path.GetInvalidFileNameChars()),
+                FileName = $"{title}.{ext}".Except(Path.GetInvalidFileNameChars()),
                 Filter = $"{ext.ToUpperInvariant()} Video Files|*.{ext}|All files|*.*"
             };
             if (sfd.ShowDialog() == false) return;

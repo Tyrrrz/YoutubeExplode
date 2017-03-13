@@ -155,7 +155,7 @@ namespace YoutubeExplode.Internal
                 string key = keyValuePairRawDecoded.Substring(0, equalsPos);
                 string value = equalsPos < keyValuePairRawDecoded.Length
                     ? keyValuePairRawDecoded.Substring(equalsPos + 1)
-                    : "";
+                    : string.Empty;
 
                 // Add to dictionary
                 dic[key] = value;
@@ -207,29 +207,29 @@ namespace YoutubeExplode.Internal
             if (rawXml.IsBlank())
                 throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawXml);
-            var xStreamInfos = root.DescendantsInvariant("Representation");
+            var root = XElement.Parse(rawXml).StripNamespaces();
+            var xStreamInfos = root.Descendants("Representation");
 
             foreach (var xStreamInfo in xStreamInfos)
             {
                 // Skip partial streams // TODO: add support for partial streams
-                string initUrl = xStreamInfo.DescendantInvariant("Initialization")?.AttributeInvariant("sourceURL")?.Value;
+                string initUrl = xStreamInfo.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value;
                 if (initUrl.IsNotBlank() && initUrl.ContainsInvariant("sq/"))
                     continue;
 
                 // Get base URL node
-                var xBaseUrl = xStreamInfo.ElementInvariant("BaseURL");
+                var xBaseUrl = xStreamInfo.Element("BaseURL");
 
                 // Get values
                 string url = xBaseUrl?.Value;
-                int itag = (xStreamInfo.AttributeInvariant("id")?.Value).ParseIntOrDefault();
-                long bitrate = (xStreamInfo.AttributeInvariant("bandwidth")?.Value).ParseLongOrDefault();
-                double fps = (xStreamInfo.AttributeInvariant("frameRate")?.Value).ParseDoubleOrDefault();
-                long size = (xBaseUrl?.AttributeInvariant("contentLength")?.Value).ParseLongOrDefault();
+                int itag = (xStreamInfo.Attribute("id")?.Value).ParseIntOrDefault();
+                long bitrate = (xStreamInfo.Attribute("bandwidth")?.Value).ParseLongOrDefault();
+                double fps = (xStreamInfo.Attribute("frameRate")?.Value).ParseDoubleOrDefault();
+                long size = (xBaseUrl?.Attribute("contentLength")?.Value).ParseLongOrDefault();
 
                 // Get resolution
-                int width = (xStreamInfo.AttributeInvariant("width")?.Value).ParseIntOrDefault();
-                int height = (xStreamInfo.AttributeInvariant("height")?.Value).ParseIntOrDefault();
+                int width = (xStreamInfo.Attribute("width")?.Value).ParseIntOrDefault();
+                int height = (xStreamInfo.Attribute("height")?.Value).ParseIntOrDefault();
                 var resolution = new Resolution(width, height);
 
                 // Populate
@@ -357,7 +357,7 @@ namespace YoutubeExplode.Internal
             result.IsRatingAllowed = isRatingAllowed;
             result.IsMuted = isMuted;
             result.IsEmbeddingAllowed = isEmbeddingAllowed;
-            result.Streams = adaptiveStreams.With(mixedStreams).ToArray();
+            result.Streams = adaptiveStreams.Concat(mixedStreams).ToArray();
             result.ClosedCaptionTracks = captionTracks;
             result.DashManifest = dashManifest;
 
@@ -389,15 +389,15 @@ namespace YoutubeExplode.Internal
             if (rawXml.IsBlank())
                 throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawXml);
-            var xTexts = root.DescendantsInvariant("text");
+            var root = XElement.Parse(rawXml).StripNamespaces();
+            var xTexts = root.Descendants("text");
 
             foreach (var xText in xTexts)
             {
                 // Get values
                 string text = xText.Value;
-                var offset = TimeSpan.FromSeconds((xText.AttributeInvariant("start")?.Value).ParseDoubleOrDefault());
-                var duration = TimeSpan.FromSeconds((xText.AttributeInvariant("dur")?.Value).ParseDoubleOrDefault());
+                var offset = TimeSpan.FromSeconds((xText.Attribute("start")?.Value).ParseDoubleOrDefault());
+                var duration = TimeSpan.FromSeconds((xText.Attribute("dur")?.Value).ParseDoubleOrDefault());
 
                 // Populate
                 var result = new ClosedCaption();

@@ -35,8 +35,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Tyrrrz.Extensions, Version=1.0.6267.35225, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Tyrrrz.Extensions.1.0.5\lib\net45\Tyrrrz.Extensions.dll</HintPath>
+    <Reference Include="Tyrrrz.Extensions, Version=1.2.6281.29790, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tyrrrz.Extensions.1.2\lib\netstandard1.0\Tyrrrz.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
