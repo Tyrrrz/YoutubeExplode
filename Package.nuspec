@@ -5,11 +5,11 @@
     <version>2.3</version>
     <authors>Tyrrrz</authors>
     <owners>Tyrrrz</owners>
-    <licenseUrl>https://github.com/Tyrrrz/YoutubeExplode/blob/master/License.txt</licenseUrl>
+    <licenseUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/License.txt</licenseUrl>
     <projectUrl>https://github.com/Tyrrrz/YoutubeExplode</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Youtube parser</description>
-    <copyright>Copyright (C) Alexey Golub 2016-2017</copyright>
+    <copyright>Copyright (C) Alexey 'Tyrrrz' Golub 2016-2017</copyright>
     <tags>youtube parse download video</tags>
   </metadata>
 
