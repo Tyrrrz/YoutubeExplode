@@ -13,7 +13,7 @@ namespace YoutubeExplode.Internal
     {
         public static string FunctionCallFromLineJs(string rawJs)
         {
-            if (rawJs.IsBlank())
+            if (rawJs == null)
                 throw new ArgumentNullException(nameof(rawJs));
 
             return Regex.Match(rawJs, @"\w+\.(\w+)\(").Groups[1].Value;
@@ -23,7 +23,7 @@ namespace YoutubeExplode.Internal
         {
             // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
 
-            if (rawJs.IsBlank())
+            if (rawJs == null)
                 throw new ArgumentNullException(nameof(rawJs));
 
             // Get the name of the function that handles deciphering
@@ -97,7 +97,7 @@ namespace YoutubeExplode.Internal
 
         public static PlayerSource PlayerSourceFromJs(string rawJs)
         {
-            if (rawJs.IsBlank())
+            if (rawJs == null)
                 throw new ArgumentNullException(nameof(rawJs));
 
             // Get cipher operations
@@ -112,7 +112,7 @@ namespace YoutubeExplode.Internal
 
         public static VideoContext VideoContextFromHtml(string rawHtml)
         {
-            if (rawHtml.IsBlank())
+            if (rawHtml == null)
                 throw new ArgumentNullException(nameof(rawHtml));
 
             // Get player version
@@ -135,7 +135,7 @@ namespace YoutubeExplode.Internal
 
         public static Dictionary<string, string> DictionaryFromUrlEncoded(string rawUrlEncoded)
         {
-            if (rawUrlEncoded.IsBlank())
+            if (rawUrlEncoded == null)
                 throw new ArgumentNullException(nameof(rawUrlEncoded));
 
             var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -143,8 +143,6 @@ namespace YoutubeExplode.Internal
             foreach (string keyValuePairRaw in keyValuePairsRaw)
             {
                 string keyValuePairRawDecoded = keyValuePairRaw.UrlDecode();
-                if (keyValuePairRawDecoded.IsBlank())
-                    continue;
 
                 // Look for the equals sign
                 int equalsPos = keyValuePairRawDecoded.IndexOf('=');
@@ -166,7 +164,7 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<MediaStreamInfo> MediaStreamInfosFromUrlEncoded(string rawUrlEncoded)
         {
-            if (rawUrlEncoded.IsBlank())
+            if (rawUrlEncoded == null)
                 throw new ArgumentNullException(nameof(rawUrlEncoded));
 
             foreach (string streamRaw in rawUrlEncoded.Split(","))
@@ -204,7 +202,7 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<MediaStreamInfo> MediaStreamInfosFromXml(string rawXml)
         {
-            if (rawXml.IsBlank())
+            if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
             var root = XElement.Parse(rawXml).StripNamespaces();
@@ -249,7 +247,7 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<ClosedCaptionTrackInfo> ClosedCaptionTrackInfosFromUrlEncoded(string rawUrlEncoded)
         {
-            if (rawUrlEncoded.IsBlank())
+            if (rawUrlEncoded == null)
                 throw new ArgumentNullException(nameof(rawUrlEncoded));
 
             foreach (string captionRaw in rawUrlEncoded.Split(","))
@@ -273,7 +271,7 @@ namespace YoutubeExplode.Internal
 
         public static DashManifestInfo DashManifestInfoFromUrl(string rawUrl)
         {
-            if (rawUrl.IsBlank())
+            if (rawUrl == null)
                 throw new ArgumentNullException(nameof(rawUrl));
 
             // Get values
@@ -292,7 +290,7 @@ namespace YoutubeExplode.Internal
 
         public static VideoInfo VideoInfoFromUrlEncoded(string rawUrlEncoded)
         {
-            if (rawUrlEncoded.IsBlank())
+            if (rawUrlEncoded == null)
                 throw new ArgumentNullException(nameof(rawUrlEncoded));
 
             // Get dictionary
@@ -366,7 +364,7 @@ namespace YoutubeExplode.Internal
 
         public static PlaylistInfo PlaylistInfoFromJson(string rawJson)
         {
-            if (rawJson.IsBlank())
+            if (rawJson == null)
                 throw new ArgumentNullException(nameof(rawJson));
 
             // Get video ids
@@ -386,7 +384,7 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<ClosedCaption> ClosedCaptionsFromXml(string rawXml)
         {
-            if (rawXml.IsBlank())
+            if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
             var root = XElement.Parse(rawXml).StripNamespaces();
@@ -411,7 +409,7 @@ namespace YoutubeExplode.Internal
 
         public static ClosedCaptionTrack ClosedCaptionTrackFromXml(string rawXml)
         {
-            if (rawXml.IsBlank())
+            if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
             // Get values

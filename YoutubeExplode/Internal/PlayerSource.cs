@@ -11,8 +11,8 @@ namespace YoutubeExplode.Internal
 
         public string Decipher(string input)
         {
-            if (input.IsBlank())
-                throw new ArgumentNullException(input);
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             foreach (var operation in CipherOperations)
                 input = operation.Decipher(input);

@@ -44,7 +44,7 @@ namespace YoutubeExplode.Services
         /// <inheritdoc />
         public virtual async Task<string> GetStringAsync(string url)
         {
-            if (url.IsBlank())
+            if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
             try
@@ -60,7 +60,7 @@ namespace YoutubeExplode.Services
         /// <inheritdoc />
         public virtual async Task<IDictionary<string, string>> GetHeadersAsync(string url)
         {
-            if (url.IsBlank())
+            if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
             try
@@ -79,7 +79,7 @@ namespace YoutubeExplode.Services
         /// <inheritdoc />
         public virtual async Task<Stream> GetStreamAsync(string url)
         {
-            if (url.IsBlank())
+            if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
             try

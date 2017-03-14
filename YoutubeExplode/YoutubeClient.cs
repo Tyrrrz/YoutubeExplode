@@ -39,7 +39,7 @@ namespace YoutubeExplode
 
         private async Task<PlayerSource> GetPlayerSourceAsync(string version)
         {
-            if (version.IsBlank())
+            if (version == null)
                 throw new ArgumentNullException(nameof(version));
 
             // Try get cached player source
@@ -51,7 +51,7 @@ namespace YoutubeExplode
                 // Get the javascript source
                 string url = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
                 string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-                if (response.IsBlank())
+                if (response == null)
                     throw new Exception("Could not get the video player source code");
 
                 // Decompile
@@ -96,7 +96,7 @@ namespace YoutubeExplode
 
         private async Task<long> GetContentLengthAsync(string url)
         {
-            if (url.IsBlank())
+            if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
             // Get the headers
@@ -116,7 +116,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<bool> CheckVideoExistsAsync(string videoId)
         {
-            if (videoId.IsBlank())
+            if (videoId == null)
                 throw new ArgumentNullException(nameof(videoId));
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Is not a valid Youtube video ID", nameof(videoId));
@@ -124,7 +124,7 @@ namespace YoutubeExplode
             // Get the video info
             string url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-            if (response.IsBlank())
+            if (response == null)
                 throw new Exception("Could not get video info");
 
             // Parse
@@ -139,7 +139,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<VideoInfo> GetVideoInfoAsync(string videoId)
         {
-            if (videoId.IsBlank())
+            if (videoId == null)
                 throw new ArgumentNullException(nameof(videoId));
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Is not a valid Youtube video ID", nameof(videoId));
@@ -147,7 +147,7 @@ namespace YoutubeExplode
             // Get video context
             string url = $"https://www.youtube.com/embed/{videoId}";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-            if (response.IsBlank())
+            if (response == null)
                 throw new Exception("Could not get video context");
 
             // Parse video context
@@ -156,7 +156,7 @@ namespace YoutubeExplode
             // Get video info
             url = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}&el=info&ps=default";
             response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-            if (response.IsBlank())
+            if (response == null)
                 throw new Exception("Could not get video info");
 
             // Parse video info
@@ -171,7 +171,7 @@ namespace YoutubeExplode
             {
                 // Get
                 response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
-                if (response.IsBlank())
+                if (response == null)
                     throw new Exception("Could not get dash manifest");
 
                 // Parse
@@ -202,7 +202,7 @@ namespace YoutubeExplode
         {
             // Original code credit: https://github.com/dr-BEat
 
-            if (playlistId.IsBlank())
+            if (playlistId == null)
                 throw new ArgumentNullException(nameof(playlistId));
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException("Is not a valid Youtube playlist ID", nameof(playlistId));
@@ -219,7 +219,7 @@ namespace YoutubeExplode
             {
                 // Get playlist info
                 string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-                if (response.IsBlank())
+                if (response == null)
                     throw new Exception("Could not get playlist info");
 
                 // Add to buffer
@@ -252,7 +252,7 @@ namespace YoutubeExplode
         {
             if (streamInfo == null)
                 throw new ArgumentNullException(nameof(streamInfo));
-            if (streamInfo.Url.IsBlank())
+            if (streamInfo.Url == null)
                 throw new Exception("Given stream info does not have a URL");
             if (streamInfo.NeedsDeciphering)
                 throw new Exception("Given stream's signature needs to be deciphered first");
@@ -275,12 +275,12 @@ namespace YoutubeExplode
         {
             if (closedCaptionTrackInfo == null)
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
-            if (closedCaptionTrackInfo.Url.IsBlank())
+            if (closedCaptionTrackInfo.Url == null)
                 throw new Exception("Given caption track info does not have a URL");
 
             // Get
             string response = await _requestService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
-            if (response.IsBlank())
+            if (response == null)
                 throw new Exception("Could not get caption track data");
 
             // Parse
@@ -367,7 +367,7 @@ namespace YoutubeExplode
         /// </summary>
         public static string ParseVideoId(string videoUrl)
         {
-            if (videoUrl.IsBlank())
+            if (videoUrl == null)
                 throw new ArgumentNullException(nameof(videoUrl));
 
             string result;
@@ -426,7 +426,7 @@ namespace YoutubeExplode
         /// </summary>
         public static string ParsePlaylistId(string playlistUrl)
         {
-            if (playlistUrl.IsBlank())
+            if (playlistUrl == null)
                 throw new ArgumentNullException(nameof(playlistUrl));
 
             string result;
