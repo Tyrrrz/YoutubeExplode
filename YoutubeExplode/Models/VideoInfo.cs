@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace YoutubeExplode.Models
@@ -49,7 +50,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// This video's search keywords
         /// </summary>
-        public string[] Keywords { get; set; }
+        public IReadOnlyList<string> Keywords { get; internal set; }
 
         /// <summary>
         /// URL for the thumbnail image for this video
@@ -79,7 +80,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Collection of watermark URLs for this video
         /// </summary>
-        public string[] Watermarks { get; internal set; }
+        public IReadOnlyList<string> Watermarks { get; internal set; }
 
         /// <summary>
         /// Whether this video is listed publicly
@@ -104,17 +105,17 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Whether this video has closed captions
         /// </summary>
-        public bool HasClosedCaptions => ClosedCaptionTracks != null && ClosedCaptionTracks.Length > 0;
+        public bool HasClosedCaptions => ClosedCaptionTracks != null && ClosedCaptionTracks.Any();
 
         /// <summary>
         /// Metadata for this video's media streams
         /// </summary>
-        public MediaStreamInfo[] Streams { get; internal set; }
+        public IReadOnlyList<MediaStreamInfo> Streams { get; internal set; }
 
         /// <summary>
         /// Metadata for this video's closed caption tracks
         /// </summary>
-        public ClosedCaptionTrackInfo[] ClosedCaptionTracks { get; internal set; }
+        public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTracks { get; internal set; }
 
         /// <summary>
         /// Dash manifest metadata for this video

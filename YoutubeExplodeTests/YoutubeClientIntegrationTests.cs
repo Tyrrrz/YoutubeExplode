@@ -72,13 +72,11 @@ namespace YoutubeExplode.Tests
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
-            Assert.AreEqual(6, videoInfo.Keywords.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+            Assert.AreEqual(6, videoInfo.Keywords.Count);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
-            Assert.AreEqual(2, videoInfo.Watermarks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
             Assert.IsTrue(videoInfo.HasClosedCaptions);
@@ -89,8 +87,7 @@ namespace YoutubeExplode.Tests
 
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(20 <= videoInfo.Streams.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            Assert.IsTrue(20 <= videoInfo.Streams.Count);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -103,8 +100,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(42, videoInfo.ClosedCaptionTracks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(42, videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
@@ -134,13 +130,11 @@ namespace YoutubeExplode.Tests
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
-            Assert.AreEqual(0, videoInfo.Keywords.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+            Assert.AreEqual(0, videoInfo.Keywords.Count);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
-            Assert.AreEqual(2, videoInfo.Watermarks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
             Assert.IsFalse(videoInfo.HasClosedCaptions);
@@ -151,8 +145,7 @@ namespace YoutubeExplode.Tests
 
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(9 <= videoInfo.Streams.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            Assert.IsTrue(9 <= videoInfo.Streams.Count);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -165,8 +158,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
@@ -196,13 +188,11 @@ namespace YoutubeExplode.Tests
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
-            Assert.AreEqual(30, videoInfo.Keywords.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+            Assert.AreEqual(30, videoInfo.Keywords.Count);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
-            Assert.AreEqual(2, videoInfo.Watermarks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
             Assert.IsTrue(videoInfo.HasClosedCaptions);
@@ -213,8 +203,7 @@ namespace YoutubeExplode.Tests
 
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(22 <= videoInfo.Streams.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            Assert.IsTrue(22 <= videoInfo.Streams.Count);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -227,8 +216,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(1, videoInfo.ClosedCaptionTracks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(1, videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
@@ -258,13 +246,11 @@ namespace YoutubeExplode.Tests
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
-            Assert.AreEqual(28, videoInfo.Keywords.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+            Assert.AreEqual(28, videoInfo.Keywords.Count);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
-            Assert.AreEqual(2, videoInfo.Watermarks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
             Assert.IsFalse(videoInfo.HasClosedCaptions);
@@ -275,8 +261,7 @@ namespace YoutubeExplode.Tests
 
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(22 <= videoInfo.Streams.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            Assert.IsTrue(22 <= videoInfo.Streams.Count);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -289,8 +274,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
@@ -320,13 +304,11 @@ namespace YoutubeExplode.Tests
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
-            Assert.AreEqual(5, videoInfo.Keywords.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Keywords);
+            Assert.AreEqual(5, videoInfo.Keywords.Count);
 
             // Watermarks
             Assert.IsNotNull(videoInfo.Watermarks);
-            Assert.AreEqual(2, videoInfo.Watermarks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Watermarks);
+            Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
             Assert.IsFalse(videoInfo.HasClosedCaptions);
@@ -337,8 +319,7 @@ namespace YoutubeExplode.Tests
 
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(17 <= videoInfo.Streams.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.Streams);
+            Assert.IsTrue(17 <= videoInfo.Streams.Count);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -351,8 +332,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Length);
-            CollectionAssert.AllItemsAreNotNull(videoInfo.ClosedCaptionTracks);
+            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
@@ -378,7 +358,7 @@ namespace YoutubeExplode.Tests
                 "8NbP07OEGsQ", "fqOpaCS117Q"
             };
 
-            CollectionAssert.AreEqual(expectedVideoIds, playlistInfo.VideoIds);
+            CollectionAssert.AreEqual(expectedVideoIds, playlistInfo.VideoIds.ToArray());
         }
 
         [TestMethod]

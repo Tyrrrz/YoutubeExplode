@@ -60,7 +60,7 @@ namespace YoutubeExplode.DemoConsole
             // Output some metadata
             Console.WriteLine($"{videoInfo.Title} | {videoInfo.ViewCount:N0} views | {videoInfo.AverageRating:0.##}* rating");
             Console.WriteLine("Streams:");
-            for (int i = 0; i < videoInfo.Streams.Length; i++)
+            for (int i = 0; i < videoInfo.Streams.Count; i++)
             {
                 var streamInfo = videoInfo.Streams[i];
                 string normFileSize = NormalizeFileSize(streamInfo.FileSize);

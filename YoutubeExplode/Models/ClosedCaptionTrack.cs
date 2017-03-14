@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Internal;
 
@@ -17,7 +18,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Closed captions inside this track
         /// </summary>
-        public ClosedCaption[] Captions { get; internal set; }
+        public IReadOnlyList<ClosedCaption> Captions { get; internal set; }
 
         internal ClosedCaptionTrack()
         {
@@ -35,7 +36,7 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Captions: {Captions.Length}";
+            return $"Captions: {Captions.Count}";
         }
     }
 }

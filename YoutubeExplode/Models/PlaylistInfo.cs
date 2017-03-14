@@ -1,4 +1,6 @@
-﻿namespace YoutubeExplode.Models
+﻿using System.Collections.Generic;
+
+namespace YoutubeExplode.Models
 {
     /// <summary>
     /// Playlist metadata
@@ -8,7 +10,7 @@
         /// <summary>
         /// IDs of the videos in this playlist
         /// </summary>
-        public string[] VideoIds { get; internal set; }
+        public IReadOnlyList<string> VideoIds { get; internal set; }
 
         internal PlaylistInfo()
         {
@@ -17,7 +19,7 @@
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Videos: {VideoIds.Length}";
+            return $"Videos: {VideoIds.Count}";
         }
     }
 }

@@ -46,34 +46,25 @@ namespace YoutubeExplode.Models
         }
 
         /// <inheritdoc />
-        public override void Flush()
+        ~MediaStream()
         {
-            _innerStream.Flush();
+            Dispose(false);
         }
 
         /// <inheritdoc />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            return _innerStream.Read(buffer, offset, count);
-        }
+        public override void Flush() => _innerStream.Flush();
 
         /// <inheritdoc />
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            return _innerStream.Seek(offset, origin);
-        }
+        public override int Read(byte[] buffer, int offset, int count) => _innerStream.Read(buffer, offset, count);
 
         /// <inheritdoc />
-        public override void SetLength(long value)
-        {
-            _innerStream.SetLength(value);
-        }
+        public override long Seek(long offset, SeekOrigin origin) => _innerStream.Seek(offset, origin);
 
         /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            _innerStream.Write(buffer, offset, count);
-        }
+        public override void SetLength(long value) => _innerStream.SetLength(value);
+
+        /// <inheritdoc />
+        public override void Write(byte[] buffer, int offset, int count) => _innerStream.Write(buffer, offset, count);
 
         /// <inheritdoc />
         protected override void Dispose(bool disposing)
