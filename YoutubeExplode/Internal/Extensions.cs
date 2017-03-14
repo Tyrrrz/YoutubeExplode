@@ -14,18 +14,6 @@ namespace YoutubeExplode.Internal
 
         public delegate bool TryParseDelegate<T>(string str, out T result);
 
-        public static T ConvertOrDefault<T>(this object obj, T defaultValue = default(T))
-        {
-            try
-            {
-                return (T) Convert.ChangeType(obj, typeof(T));
-            }
-            catch
-            {
-                return defaultValue;
-            }
-        }
-
         public static bool IsEither<T>(this T value, params T[] potentialValues)
         {
             foreach (var o in potentialValues)
@@ -119,14 +107,8 @@ namespace YoutubeExplode.Internal
         public static int ParseInt(this string str)
             => Parse(str, int.Parse);
 
-        public static uint ParseUint(this string str)
-            => Parse(str, uint.Parse);
-
         public static long ParseLong(this string str)
             => Parse(str, long.Parse);
-
-        public static ulong ParseUlong(this string str)
-            => Parse(str, ulong.Parse);
 
         public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
             => ParseOrDefault(str, double.TryParse, defaultValue);
@@ -134,14 +116,8 @@ namespace YoutubeExplode.Internal
         public static int ParseIntOrDefault(this string str, int defaultValue = default(int))
             => ParseOrDefault(str, int.TryParse, defaultValue);
 
-        public static uint ParseUintOrDefault(this string str, uint defaultValue = default(uint))
-            => ParseOrDefault(str, uint.TryParse, defaultValue);
-
         public static long ParseLongOrDefault(this string str, long defaultValue = default(long))
             => ParseOrDefault(str, long.TryParse, defaultValue);
-
-        public static ulong ParseUlongOrDefault(this string str, ulong defaultValue = default(ulong))
-            => ParseOrDefault(str, ulong.TryParse, defaultValue);
 
         public static string Reverse(this string str)
         {
@@ -309,17 +285,6 @@ namespace YoutubeExplode.Internal
             if (dic.TryGetValue(key, out result))
                 return result;
             return defaultValue;
-        }
-
-        public static TConverted GetOrDefault<TKey, TValue, TConverted>(this IDictionary<TKey, TValue> dic,
-            TKey key, TConverted defaultValue = default(TConverted))
-        {
-            if (dic == null)
-                throw new ArgumentNullException(nameof(dic));
-
-            var result = GetOrDefault(dic, key);
-            if (result == null) return defaultValue;
-            return ConvertOrDefault(result, defaultValue);
         }
 
         public static XElement StripNamespaces(this XElement element)
