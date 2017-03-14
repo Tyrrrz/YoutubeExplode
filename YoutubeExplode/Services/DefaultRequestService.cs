@@ -16,6 +16,17 @@ namespace YoutubeExplode.Services
         private readonly HttpClient _httpClient;
 
         /// <summary>
+        /// Creates an instance of <see cref="DefaultRequestService"/> with a custom <see cref="HttpClient"/>
+        /// </summary>
+        public DefaultRequestService(HttpClient client)
+        {
+            if (client == null)
+                throw new ArgumentNullException(nameof(client));
+
+            _httpClient = client;
+        }
+
+        /// <summary>
         /// Creates an instance of <see cref="DefaultRequestService"/>
         /// </summary>
         public DefaultRequestService()
@@ -30,15 +41,10 @@ namespace YoutubeExplode.Services
             _httpClient.DefaultRequestHeaders.Add("Connection", "Close");
         }
 
-        /// <summary>
-        /// Creates an instance of <see cref="DefaultRequestService"/> with a custom <see cref="HttpClient"/>
-        /// </summary>
-        public DefaultRequestService(HttpClient client)
+        /// <inheritdoc />
+        ~DefaultRequestService()
         {
-            if (client == null)
-                throw new ArgumentNullException(nameof(client));
-
-            _httpClient = client;
+            Dispose(false);
         }
 
         /// <inheritdoc />

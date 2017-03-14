@@ -37,6 +37,12 @@ namespace YoutubeExplode
         {
         }
 
+        /// <inheritdoc />
+        ~YoutubeClient()
+        {
+            Dispose(false);
+        }
+
         private async Task<PlayerSource> GetPlayerSourceAsync(string version)
         {
             if (version == null)
