@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -55,10 +54,7 @@ namespace YoutubeExplode.Tests
         {
             // Most common video type
 
-            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("_QdPW8JrYzQ");
-            sw.Stop();
-            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -113,10 +109,7 @@ namespace YoutubeExplode.Tests
         {
             // Video that doesn't have embedded adaptive streams but has dash manifest
 
-            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
-            sw.Stop();
-            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -171,10 +164,7 @@ namespace YoutubeExplode.Tests
         {
             // Video that uses signature cipher
 
-            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("TZRvO0S-TLU");
-            sw.Stop();
-            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -229,10 +219,7 @@ namespace YoutubeExplode.Tests
         {
             // Video that uses signature cipher and is also age-restricted
 
-            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("SkRSXFQerZs");
-            sw.Stop();
-            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -287,10 +274,7 @@ namespace YoutubeExplode.Tests
         {
             // Video that cannot be embedded outside of Youtube
 
-            var sw = Stopwatch.StartNew();
             var videoInfo = await _client.GetVideoInfoAsync("_kmeFXjjGfk");
-            sw.Stop();
-            Console.WriteLine($"Duration: {sw.Elapsed}");
 
             Assert.IsNotNull(videoInfo);
 
@@ -341,7 +325,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_Test()
+        public async Task GetPlaylistInfoAsync_Normal_Test()
         {
             var playlistInfo = await _client.GetPlaylistInfoAsync("PLOU2XLYxmsII8UKqP84oaAxpwyryxbM-o");
 
@@ -359,6 +343,15 @@ namespace YoutubeExplode.Tests
             };
 
             CollectionAssert.AreEqual(expectedVideoIds, playlistInfo.VideoIds.ToArray());
+        }
+
+        [TestMethod]
+        public async Task GetPlaylistInfoAsync_Mix_Test()
+        {
+            var playlistInfo = await _client.GetPlaylistInfoAsync("RDSkRSXFQerZs");
+
+            Assert.IsNotNull(playlistInfo);
+            Assert.AreNotEqual(0, playlistInfo.VideoIds.Count);
         }
 
         [TestMethod]

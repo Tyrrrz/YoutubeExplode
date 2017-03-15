@@ -54,11 +54,11 @@ namespace YoutubeExplode
             // If not available - decompile a new one
             if (playerSource == null)
             {
-                // Get the javascript source
+                // Get
                 string url = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
                 string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
 
-                // Decompile
+                // Parse
                 playerSource = Parser.PlayerSourceFromJs(response);
                 playerSource.Version = version;
 
@@ -123,7 +123,7 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Is not a valid Youtube video ID", nameof(videoId));
 
-            // Get the video info
+            // Get
             string url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
 
@@ -201,42 +201,16 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException("Is not a valid Youtube playlist ID", nameof(playlistId));
 
-            // Set up urls
-            string baseUrl = $"https://m.youtube.com/playlist?list={playlistId}&ajax=1&tsp=1&app=m";
-            string url = baseUrl;
-
-            // Set up content buffer to aggregate responses
-            var buffer = new StringBuilder();
-
-            // Loop to get all responses
-            while (url.IsNotBlank())
-            {
-                // Get playlist info
-                string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-
-                // Add to buffer
-                buffer.AppendLine(response);
-
-                // Find continuation token
-                string ctoken = Regex.Match(response, @"""continuation""\s*:\s*""(.*?)""").Groups[1].Value;
-                if (ctoken.IsNotBlank())
-                {
-                    // If found - compose new url
-                    url = baseUrl + "&action_continuation=1&ctoken=" + ctoken;
-                }
-                else
-                {
-                    // Otherwise - reset url
-                    url = null;
-                }
-            }
+            // Get
+            string url = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
+            string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse
-            var result = Parser.PlaylistInfoFromJson(buffer.ToString());
+            var result = Parser.PlaylistInfoFromXml(response);
 
             return result;
         }
-        
+
         /// <summary>
         /// Gets media stream by its metadata
         /// </summary>
@@ -374,7 +348,7 @@ namespace YoutubeExplode
             if (playlistId.IsBlank())
                 return false;
 
-            if (!playlistId.Length.IsEither(2, 24, 34))
+            if (!playlistId.Length.IsEither(2, 13, 18, 24, 34))
                 return false;
 
             return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");

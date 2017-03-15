@@ -362,22 +362,18 @@ namespace YoutubeExplode.Internal
             return result;
         }
 
-        public static PlaylistInfo PlaylistInfoFromJson(string rawJson)
+        public static PlaylistInfo PlaylistInfoFromXml(string rawXml)
         {
-            if (rawJson == null)
-                throw new ArgumentNullException(nameof(rawJson));
+            if (rawXml == null)
+                throw new ArgumentNullException(nameof(rawXml));
 
             // Get video ids
-            var videoIdMatches = Regex.Matches(rawJson, @"""video_id""\s*:\s*""(.*?)""").Cast<Match>();
-            var videoIds = videoIdMatches
-                .Select(m => m.Groups[1].Value)
-                .Where(m => m.IsNotBlank())
-                .Distinct()
-                .ToArray();
+            var root = XElement.Parse(rawXml).StripNamespaces();
+            var ids = root.Descendants("encrypted_id").Select(e => e.Value);
 
             // Populate
             var result = new PlaylistInfo();
-            result.VideoIds = videoIds;
+            result.VideoIds = ids.ToArray();
 
             return result;
         }
