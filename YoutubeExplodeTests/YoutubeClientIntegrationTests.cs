@@ -331,7 +331,15 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(playlistInfo);
 
-            var expectedVideoIds = new[]
+            // Metadata
+            Assert.AreEqual("PLOU2XLYxmsII8UKqP84oaAxpwyryxbM-o", playlistInfo.Id);
+            Assert.AreEqual("GCP NEXT 2016", playlistInfo.Title);
+            Assert.AreEqual("", playlistInfo.Description);
+            Assert.IsTrue(15000 <= playlistInfo.ViewCount);
+
+            // Video ids
+            Assert.IsNotNull(playlistInfo.VideoIds);
+            CollectionAssert.AreEqual(new[]
             {
                 "zDAYZU4A3w0", "HgWHeT_OwHc", "axhdIa_co2o", "ZRvWqF2JmUg", "M_G_1SWVHgw",
                 "LxwQeQCUplg", "WaKZ5pCKP6Y", "g_iig8sxsYc", "_xNFt7FsWaA", "H4vMcD7zKM0",
@@ -340,9 +348,7 @@ namespace YoutubeExplode.Tests
                 "AUW4ZEhhk_w", "qamtiWa-Cy4", "RK8K9nuRQPQ", "xT6tQAIywFQ", "6xV6aelL6fQ",
                 "Ja2hxBAwG_0", "mJ5lNaLX5Bg", "8Lo3KZ1rZWw", "6Nv18xmJirs", "LTVFg6YOjWo",
                 "8NbP07OEGsQ", "fqOpaCS117Q"
-            };
-
-            CollectionAssert.AreEqual(expectedVideoIds, playlistInfo.VideoIds.ToArray());
+            }, playlistInfo.VideoIds.ToArray());
         }
 
         [TestMethod]
@@ -351,6 +357,15 @@ namespace YoutubeExplode.Tests
             var playlistInfo = await _client.GetPlaylistInfoAsync("RDSkRSXFQerZs");
 
             Assert.IsNotNull(playlistInfo);
+
+            // Metadata
+            Assert.AreEqual("RDSkRSXFQerZs", playlistInfo.Id);
+            // Assert.AreEqual("Мікс – HELLOVENUS 헬로비너스 - 위글위글(WiggleWiggle) M/V", playlistInfo.Title); // culture specific
+            Assert.AreEqual("", playlistInfo.Description);
+            Assert.IsTrue(61000 <= playlistInfo.ViewCount);
+
+            // Video ids (not predictable because it's a mix)
+            Assert.IsNotNull(playlistInfo.VideoIds);
             Assert.AreNotEqual(0, playlistInfo.VideoIds.Count);
         }
 

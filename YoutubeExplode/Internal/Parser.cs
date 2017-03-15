@@ -171,7 +171,7 @@ namespace YoutubeExplode.Internal
             {
                 var dic = DictionaryFromUrlEncoded(streamRaw);
 
-                // Get values
+                // Get metadata
                 string url = dic.GetOrDefault("url");
                 string sig = dic.GetOrDefault("s");
                 bool needsDeciphering = sig.IsNotBlank();
@@ -218,7 +218,7 @@ namespace YoutubeExplode.Internal
                 // Get base URL node
                 var xBaseUrl = xStreamInfo.Element("BaseURL");
 
-                // Get values
+                // Get metadata
                 string url = xBaseUrl?.Value;
                 int itag = (xStreamInfo.Attribute("id")?.Value).ParseIntOrDefault();
                 long bitrate = (xStreamInfo.Attribute("bandwidth")?.Value).ParseLongOrDefault();
@@ -254,7 +254,7 @@ namespace YoutubeExplode.Internal
             {
                 var dic = DictionaryFromUrlEncoded(captionRaw);
 
-                // Get values
+                // Get metadata
                 string url = dic.GetOrDefault("u");
                 string lang = dic.GetOrDefault("lc");
                 bool isAuto = dic.GetOrDefault("v")?.ContainsInvariant("a.") ?? false;
@@ -274,7 +274,7 @@ namespace YoutubeExplode.Internal
             if (rawUrl == null)
                 throw new ArgumentNullException(nameof(rawUrl));
 
-            // Get values
+            // Get metadata
             string url = rawUrl;
             string sig = Regex.Match(url, @"/s/(.*?)(?:/|$)").Groups[1].Value;
             bool needsDeciphering = sig.IsNotBlank();
@@ -303,7 +303,7 @@ namespace YoutubeExplode.Internal
             if (status.EqualsInvariant("fail"))
                 throw new YoutubeErrorException(errorCode, reason);
 
-            // Get values
+            // Get metadata
             string id = dic.GetOrDefault("video_id");
             string title = dic.GetOrDefault("title");
             string author = dic.GetOrDefault("author");
@@ -367,12 +367,21 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            // Get video ids
             var root = XElement.Parse(rawXml).StripNamespaces();
+
+            // Get playlist metadata
+            string title = root.Element("title")?.Value;
+            string description = root.Element("description")?.Value;
+            long viewCount = (root.Element("views")?.Value).ParseLongOrDefault();
+
+            // Get video ids
             var ids = root.Descendants("encrypted_id").Select(e => e.Value);
 
             // Populate
             var result = new PlaylistInfo();
+            result.Title = title;
+            result.Description = description;
+            result.ViewCount = viewCount;
             result.VideoIds = ids.ToArray();
 
             return result;
@@ -388,7 +397,7 @@ namespace YoutubeExplode.Internal
 
             foreach (var xText in xTexts)
             {
-                // Get values
+                // Get metadata
                 string text = xText.Value;
                 var offset = TimeSpan.FromSeconds((xText.Attribute("start")?.Value).ParseDoubleOrDefault());
                 var duration = TimeSpan.FromSeconds((xText.Attribute("dur")?.Value).ParseDoubleOrDefault());
@@ -408,7 +417,7 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            // Get values
+            // Get metadata
             var captions = ClosedCaptionsFromXml(rawXml).ToArray();
 
             // Populate

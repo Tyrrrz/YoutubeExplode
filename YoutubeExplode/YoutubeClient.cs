@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
@@ -207,6 +206,7 @@ namespace YoutubeExplode
 
             // Parse
             var result = Parser.PlaylistInfoFromXml(response);
+            result.Id = playlistId;
 
             return result;
         }

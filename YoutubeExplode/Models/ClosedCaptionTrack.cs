@@ -36,7 +36,7 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Captions: {Captions.Count}";
+            return $"{Captions.Count} captions";
         }
     }
 }
