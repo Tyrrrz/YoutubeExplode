@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Tyrrrz.Extensions;
-using YoutubeExplode.Models;
 
 namespace YoutubeExplode.DemoConsole
 {
@@ -47,58 +47,38 @@ namespace YoutubeExplode.DemoConsole
             var client = new YoutubeClient();
 
             // Get the video ID
-            Console.WriteLine("Enter Youtube video ID or URL:");
+            Console.Write("Enter Youtube video ID or URL: ");
             string id = Console.ReadLine();
             id = NormalizeId(id);
 
-            Console.WriteLine("Loading . . .");
-            Console.WriteLine();
-
             // Get the video info
+            Console.WriteLine("Loading...");
             var videoInfo = client.GetVideoInfoAsync(id).Result;
+            Console.WriteLine('-'.Repeat(15));
 
-            // Output some metadata
-            Console.WriteLine($"{videoInfo.Title} | {videoInfo.ViewCount:N0} views | {videoInfo.AverageRating:0.##}* rating");
-            Console.WriteLine("Streams:");
-            for (int i = 0; i < videoInfo.Streams.Count; i++)
-            {
-                var streamInfo = videoInfo.Streams[i];
-                string normFileSize = NormalizeFileSize(streamInfo.FileSize);
-
-                // Video+audio streams (non-adaptive)
-                if (streamInfo.AdaptiveMode == AdaptiveMode.None)
-                {
-                    Console.WriteLine($"\t[{i}] Mixed | {streamInfo.Type} | {streamInfo.QualityLabel} | {normFileSize}");
-                }
-                // Video only streams
-                else if (streamInfo.AdaptiveMode == AdaptiveMode.Video)
-                    Console.WriteLine($"\t[{i}] Video | {streamInfo.Type} | {streamInfo.QualityLabel} | {streamInfo.Fps} FPS | {normFileSize}");
-                // Audio only streams
-                else if (streamInfo.AdaptiveMode == AdaptiveMode.Audio)
-                    Console.WriteLine($"\t[{i}] Audio | {streamInfo.Type} | {normFileSize}");
-                // This should not happen
-                else
-                    throw new IndexOutOfRangeException();
-            }
-
-            // Get the stream index to download
-            Console.WriteLine();
-            Console.WriteLine("Enter corresponding number to download:");
-            int streamIndex = Console.ReadLine().ParseInt();
-            var selectedStream = videoInfo.Streams[streamIndex];
-
-            Console.WriteLine("Loading . . .");
-            Console.WriteLine();
+            // Print metadata
+            Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author}");
+            
+            // Get the most preferable stream
+            Console.WriteLine("Looking for the best stream that has both video and audio tracks...");
+            var streamInfo = videoInfo.Streams.Where(s => s.HasVideo && s.HasAudio)
+                .OrderBy(s => s.Quality)
+                .ThenBy(s => s.Bitrate)
+                .Last();
+            string normalizedFileSize = NormalizeFileSize(streamInfo.FileSize);
+            Console.WriteLine($"Type: {streamInfo.Type} | Quality: {streamInfo.QualityLabel} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata
-            string fileName = $"{videoInfo.Title}.{selectedStream.FileExtension}".Except(Path.GetInvalidFileNameChars());
+            string fileName = $"{videoInfo.Title}.{streamInfo.FileExtension}".Except(Path.GetInvalidFileNameChars());
 
             // Download video
-            using (var input = client.GetMediaStreamAsync(selectedStream).Result)
+            Console.WriteLine($"Downloading to [{fileName}]...");
+            Console.WriteLine('-'.Repeat(15));
+            using (var input = client.GetMediaStreamAsync(streamInfo).Result)
             using (var output = File.Create(fileName))
                 input.CopyTo(output);
 
-            Console.WriteLine("Done!");
+            Console.WriteLine("Download complete!");
             Console.ReadKey();
             client.Dispose();
         }

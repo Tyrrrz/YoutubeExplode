@@ -123,8 +123,8 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             // Try download
             IsBusy = true;
             Progress = 0;
-            using (var output = File.Create(filePath))
             using (var input = await _client.GetMediaStreamAsync(mediaStreamInfo))
+            using (var output = File.Create(filePath))
             {
                 // Read the response and copy it to output stream
                 var buffer = new byte[1024];
