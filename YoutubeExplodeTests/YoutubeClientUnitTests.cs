@@ -140,6 +140,7 @@ namespace YoutubeExplode.Tests
             {
                 "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
                 "WL",
+                "RDE2NZB6E5-do",
                 "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
             };
 
@@ -169,12 +170,14 @@ namespace YoutubeExplode.Tests
             {
                 "https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
                 "https://www.youtube.com/playlist?list=WL",
+                "https://youtu.be/E2NZB6E5-do/?list=RDE2NZB6E5-do",
                 "https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
             };
             string[] ids =
             {
                 "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
                 "WL",
+                "RDE2NZB6E5-do",
                 "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
             };
 
@@ -194,12 +197,14 @@ namespace YoutubeExplode.Tests
             {
                 "https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
                 "https://www.youtube.com/playlist?list=WL",
+                "https://youtu.be/E2NZB6E5-do/?list=RDE2NZB6E5-do",
                 "https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
             };
             string[] ids =
             {
                 "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
                 "WL",
+                "RDE2NZB6E5-do",
                 "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
             };
 

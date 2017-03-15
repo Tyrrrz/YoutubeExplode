@@ -298,7 +298,8 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/watch?v=yIVRs6YSbOM
-            string regularMatch = Regex.Match(videoUrl, @"youtube\..+?/watch\?.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
+            string regularMatch =
+                Regex.Match(videoUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateVideoId(regularMatch))
             {
                 videoId = regularMatch;
@@ -306,7 +307,8 @@ namespace YoutubeExplode
             }
 
             // https://youtu.be/yIVRs6YSbOM
-            string shortMatch = Regex.Match(videoUrl, @"youtu.be/(.*?)(?:&|/|$)").Groups[1].Value;
+            string shortMatch =
+                Regex.Match(videoUrl, @"youtu.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (shortMatch.IsNotBlank() && ValidateVideoId(shortMatch))
             {
                 videoId = shortMatch;
@@ -314,7 +316,8 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/embed/yIVRs6YSbOM
-            string embedMatch = Regex.Match(videoUrl, @"youtube\..+?/embed/(.*?)(?:&|/|$)").Groups[1].Value;
+            string embedMatch =
+                Regex.Match(videoUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (embedMatch.IsNotBlank() && ValidateVideoId(embedMatch))
             {
                 videoId = embedMatch;
@@ -337,7 +340,7 @@ namespace YoutubeExplode
             if (success)
                 return result;
 
-            throw new FormatException("Could not parse video ID from given string");
+            throw new FormatException($"Could not parse video ID from given string [{videoUrl}]");
         }
 
         /// <summary>
@@ -365,7 +368,8 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
-            var regularMatch = Regex.Match(playlistUrl, @"youtube\..+?/playlist\?.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            string regularMatch =
+                Regex.Match(playlistUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidatePlaylistId(regularMatch))
             {
                 playlistId = regularMatch;
@@ -373,10 +377,29 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            var compositeMatch = Regex.Match(playlistUrl, @"youtube\..+?/watch\?.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            string compositeMatch =
+                Regex.Match(playlistUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (compositeMatch.IsNotBlank() && ValidatePlaylistId(compositeMatch))
             {
                 playlistId = compositeMatch;
+                return true;
+            }
+
+            // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
+            string shortCompositeMatch =
+                Regex.Match(playlistUrl, @"youtu.be/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            if (shortCompositeMatch.IsNotBlank() && ValidatePlaylistId(shortCompositeMatch))
+            {
+                playlistId = shortCompositeMatch;
+                return true;
+            }
+
+            // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
+            string embedCompositeMatch =
+                Regex.Match(playlistUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            if (embedCompositeMatch.IsNotBlank() && ValidatePlaylistId(embedCompositeMatch))
+            {
+                playlistId = embedCompositeMatch;
                 return true;
             }
 
@@ -396,7 +419,7 @@ namespace YoutubeExplode
             if (success)
                 return result;
 
-            throw new FormatException("Could not parse playlist ID from given string");
+            throw new FormatException($"Could not parse playlist ID from given string [{playlistUrl}]");
         }
     }
 }
