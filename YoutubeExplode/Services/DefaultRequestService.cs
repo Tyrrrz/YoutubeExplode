@@ -53,14 +53,7 @@ namespace YoutubeExplode.Services
             if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
-            try
-            {
-                return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-            }
-            catch
-            {
-                return null;
-            }
+            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -69,16 +62,12 @@ namespace YoutubeExplode.Services
             if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
-            try
+            const HttpCompletionOption compl = HttpCompletionOption.ResponseHeadersRead;
+            using (var request = new HttpRequestMessage(HttpMethod.Head, url))
+            using (var response = await _httpClient.SendAsync(request, compl).ConfigureAwait(false))
             {
-                const HttpCompletionOption compl = HttpCompletionOption.ResponseHeadersRead;
-                using (var request = new HttpRequestMessage(HttpMethod.Head, url))
-                using (var response = await _httpClient.SendAsync(request, compl).ConfigureAwait(false))
-                    return NormalizeResponseHeaders(response);
-            }
-            catch
-            {
-                return null;
+                response.EnsureSuccessStatusCode();
+                return NormalizeResponseHeaders(response);
             }
         }
 
@@ -88,14 +77,7 @@ namespace YoutubeExplode.Services
             if (url == null)
                 throw new ArgumentNullException(nameof(url));
 
-            try
-            {
-                return await _httpClient.GetStreamAsync(url).ConfigureAwait(false);
-            }
-            catch
-            {
-                return null;
-            }
+            return await _httpClient.GetStreamAsync(url).ConfigureAwait(false);
         }
 
         /// <summary>

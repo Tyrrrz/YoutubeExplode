@@ -57,8 +57,6 @@ namespace YoutubeExplode
                 // Get the javascript source
                 string url = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
                 string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-                if (response == null)
-                    throw new Exception("Could not get the video player source code");
 
                 // Decompile
                 playerSource = Parser.PlayerSourceFromJs(response);
@@ -107,8 +105,6 @@ namespace YoutubeExplode
 
             // Get the headers
             var headers = await _requestService.GetHeadersAsync(url).ConfigureAwait(false);
-            if (headers == null)
-                throw new Exception("Could not get headers");
 
             // Get file size header
             if (!headers.ContainsKey("Content-Length"))
@@ -130,8 +126,6 @@ namespace YoutubeExplode
             // Get the video info
             string url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-            if (response == null)
-                throw new Exception("Could not get video info");
 
             // Parse
             var dic = Parser.DictionaryFromUrlEncoded(response);
@@ -153,8 +147,6 @@ namespace YoutubeExplode
             // Get video context
             string url = $"https://www.youtube.com/embed/{videoId}";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-            if (response == null)
-                throw new Exception("Could not get video context");
 
             // Parse video context
             var videoContext = Parser.VideoContextFromHtml(response);
@@ -162,8 +154,6 @@ namespace YoutubeExplode
             // Get video info
             url = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}&el=info&ps=default";
             response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-            if (response == null)
-                throw new Exception("Could not get video info");
 
             // Parse video info
             var result = Parser.VideoInfoFromUrlEncoded(response);
@@ -177,8 +167,6 @@ namespace YoutubeExplode
             {
                 // Get
                 response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
-                if (response == null)
-                    throw new Exception("Could not get dash manifest");
 
                 // Parse
                 var dashStreams = Parser.MediaStreamInfosFromXml(response);
@@ -225,8 +213,6 @@ namespace YoutubeExplode
             {
                 // Get playlist info
                 string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
-                if (response == null)
-                    throw new Exception("Could not get playlist info");
 
                 // Add to buffer
                 buffer.AppendLine(response);
@@ -265,8 +251,6 @@ namespace YoutubeExplode
 
             // Get
             var stream = await _requestService.GetStreamAsync(streamInfo.Url).ConfigureAwait(false);
-            if (stream == null)
-                throw new Exception("Could not get media stream");
 
             // Pack
             var result = new MediaStream(stream, streamInfo);
@@ -286,8 +270,6 @@ namespace YoutubeExplode
 
             // Get
             string response = await _requestService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
-            if (response == null)
-                throw new Exception("Could not get caption track data");
 
             // Parse
             var result = Parser.ClosedCaptionTrackFromXml(response);
