@@ -61,9 +61,9 @@ namespace YoutubeExplode.DemoConsole
             
             // Get the most preferable stream
             Console.WriteLine("Looking for the best stream that has both video and audio tracks...");
-            var streamInfo = videoInfo.Streams.Where(s => s.HasVideo && s.HasAudio)
+            var streamInfo = videoInfo.Streams
+                .Where(s => s.HasVideo && s.HasAudio)
                 .OrderBy(s => s.Quality)
-                .ThenBy(s => s.Bitrate)
                 .Last();
             string normalizedFileSize = NormalizeFileSize(streamInfo.FileSize);
             Console.WriteLine($"Type: {streamInfo.Type} | Quality: {streamInfo.QualityLabel} | Size: {normalizedFileSize}");
