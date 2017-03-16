@@ -121,25 +121,25 @@ namespace YoutubeExplode.Tests
         {
             // Video that uses signature cipher
 
-            var videoInfo = await _client.GetVideoInfoAsync("TZRvO0S-TLU");
+            var videoInfo = await _client.GetVideoInfoAsync("9bZkp7q19f0");
 
             Assert.IsNotNull(videoInfo);
 
             // Basic metadata
-            Assert.AreEqual("TZRvO0S-TLU", videoInfo.Id);
-            Assert.AreEqual("BABYMETAL - THE ONE (OFFICIAL)", videoInfo.Title);
-            Assert.IsTrue(428 <= videoInfo.Length.TotalSeconds);
-            Assert.AreEqual(343880901, videoInfo.Description.GetStaticHashCode());
-            Assert.IsTrue(6000000 <= videoInfo.ViewCount);
-            Assert.IsTrue(65000 <= videoInfo.LikeCount);
-            Assert.IsTrue(1500 <= videoInfo.DislikeCount);
+            Assert.AreEqual("9bZkp7q19f0", videoInfo.Id);
+            Assert.AreEqual("PSY - GANGNAM STYLE(강남스타일) M/V", videoInfo.Title);
+            Assert.IsTrue(252 <= videoInfo.Length.TotalSeconds);
+            Assert.AreEqual(2103509192, videoInfo.Description.GetStaticHashCode());
+            Assert.IsTrue(2750000000 <= videoInfo.ViewCount);
+            Assert.IsTrue(12000000 <= videoInfo.LikeCount);
+            Assert.IsTrue(1700000 <= videoInfo.DislikeCount);
 
             // Author
             Assert.IsNotNull(videoInfo.Author);
-            Assert.AreEqual("UC33_tIj4m1_XaqfFcomShvw", videoInfo.Author.Id);
-            Assert.AreEqual("BABYMETALofficial", videoInfo.Author.Name);
-            Assert.AreEqual("BABYMETALofficial", videoInfo.Author.DisplayName);
-            Assert.AreEqual("BABYMETALofficial", videoInfo.Author.ChannelTitle);
+            Assert.AreEqual("UCrDkAvwZum-UTjHmzDI2iIw", videoInfo.Author.Id);
+            Assert.AreEqual("officialpsy", videoInfo.Author.Name);
+            Assert.AreEqual("officialpsy", videoInfo.Author.DisplayName);
+            Assert.AreEqual("officialpsy", videoInfo.Author.ChannelTitle);
             Assert.IsFalse(videoInfo.Author.IsPaid);
 
             // Keywords
@@ -147,10 +147,8 @@ namespace YoutubeExplode.Tests
             CollectionAssert.AreEqual(
                 new[]
                 {
-                    "BABYMETAL", "重音部", "ベビーメタル", "ベイビーメタル", "SU-METAL", "MOAMETAL", "YUIMETAL", "ゆい", "もあ", "すぅ",
-                    "BABYMETAL OFFICIAL", "metal", "kawaii", "harajuku", "dance", "ダンス", "カワイイ", "原宿", "メタル",
-                    "heavy metal", "BABYMETAL LIVE", "BABYMETAL ライブ", "BABYMETAL TOUR", "BABYMETAL WORLD", "THE ONE",
-                    "METAL RESISTANCE", "ザ ワン", "メタルレジスタンス", "ライブビデオ", "LIVE VIDEO"
+                    "PSY", "싸이", "강남스타일", "뮤직비디오", "Music Video", "Gangnam Style", "KOREAN SINGER", "KPOP",
+                    "KOERAN WAVE", "PSY 6甲", "6th Studio Album", "싸이6집", "육갑", "YG Family", "YG Entertainment"
                 }, videoInfo.Keywords.ToArray());
 
             // Watermarks
@@ -158,7 +156,7 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
-            Assert.IsTrue(videoInfo.HasClosedCaptions);
+            Assert.IsFalse(videoInfo.HasClosedCaptions);
             Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
             Assert.IsTrue(videoInfo.IsListed);
             Assert.IsTrue(videoInfo.IsRatingAllowed);
@@ -166,7 +164,7 @@ namespace YoutubeExplode.Tests
 
             // Streams
             Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(22 <= videoInfo.Streams.Count);
+            Assert.IsTrue(28 <= videoInfo.Streams.Count);
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
@@ -179,7 +177,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(1, videoInfo.ClosedCaptionTracks.Count);
+            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);

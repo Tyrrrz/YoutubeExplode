@@ -7,7 +7,7 @@ namespace YoutubeExplode.Internal
         public static AdaptiveMode GetAdaptiveMode(int itag)
         {
             if (itag.IsEither(160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 278, 242, 243, 244, 247, 248, 271,
-                313, 272, 302, 303, 308, 315, 330, 331, 332, 333, 334, 335, 336, 337))
+                313, 272, 302, 303, 308, 315, 330, 331, 332, 333, 334, 335, 336, 337, 212, 213, 214, 215, 216, 217))
                 return AdaptiveMode.Video;
 
             if (itag.IsEither(140, 141, 171, 249, 250, 251))
@@ -28,7 +28,8 @@ namespace YoutubeExplode.Internal
 
         public static ContainerType GetContainerType(int itag)
         {
-            if (itag.IsEither(18, 22, 82, 83, 84, 85, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138))
+            if (itag.IsEither(18, 22, 82, 83, 84, 85, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 212, 213,
+                214, 215, 216, 217))
                 return ContainerType.MP4;
 
             if (itag.IsEither(140, 141))
@@ -64,13 +65,13 @@ namespace YoutubeExplode.Internal
             if (itag.IsEither(18, 34, 43, 82, 93, 100, 134, 167, 243, 332))
                 return VideoQuality.Medium360;
 
-            if (itag.IsEither(35, 44, 83, 101, 94, 135, 168, 218, 244, 245, 246))
+            if (itag.IsEither(35, 44, 83, 101, 94, 135, 168, 218, 244, 245, 246, 212, 213))
                 return VideoQuality.Medium480;
 
-            if (itag.IsEither(22, 45, 84, 102, 95, 136, 169, 244, 247, 298, 302, 334))
+            if (itag.IsEither(22, 45, 84, 102, 95, 136, 169, 244, 247, 298, 302, 334, 214, 215))
                 return VideoQuality.High720;
 
-            if (itag.IsEither(37, 46, 85, 96, 137, 299, 170, 248, 303, 335))
+            if (itag.IsEither(37, 46, 85, 96, 137, 299, 170, 248, 303, 335, 216, 217))
                 return VideoQuality.High1080;
 
             if (itag.IsEither(264, 271, 308, 336))
