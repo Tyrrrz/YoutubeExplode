@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tyrrrz.Extensions;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode.Tests
@@ -327,27 +328,27 @@ namespace YoutubeExplode.Tests
         [TestMethod]
         public async Task GetPlaylistInfoAsync_Normal_Test()
         {
-            var playlistInfo = await _client.GetPlaylistInfoAsync("PLOU2XLYxmsII8UKqP84oaAxpwyryxbM-o");
+            var playlistInfo = await _client.GetPlaylistInfoAsync("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e");
 
             Assert.IsNotNull(playlistInfo);
 
             // Metadata
-            Assert.AreEqual("PLOU2XLYxmsII8UKqP84oaAxpwyryxbM-o", playlistInfo.Id);
-            Assert.AreEqual("GCP NEXT 2016", playlistInfo.Title);
-            Assert.AreEqual("", playlistInfo.Description);
-            Assert.IsTrue(15000 <= playlistInfo.ViewCount);
+            Assert.AreEqual("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e", playlistInfo.Id);
+            Assert.AreEqual("Analytics Academy - Digital Analytics Fundamentals", playlistInfo.Title);
+            Assert.AreEqual("Google Analytics", playlistInfo.Author);
+            Assert.AreEqual(
+                "These videos are part of the Digital Analytics Fundamentals course on Analytics Academy. View the full course at http://analyticsacademy.withgoogle.com.",
+                playlistInfo.Description);
+            Assert.IsTrue(339000 <= playlistInfo.ViewCount);
 
             // Video ids
             Assert.IsNotNull(playlistInfo.VideoIds);
             CollectionAssert.AreEqual(new[]
             {
-                "zDAYZU4A3w0", "HgWHeT_OwHc", "axhdIa_co2o", "ZRvWqF2JmUg", "M_G_1SWVHgw",
-                "LxwQeQCUplg", "WaKZ5pCKP6Y", "g_iig8sxsYc", "_xNFt7FsWaA", "H4vMcD7zKM0",
-                "jgsKOc4skmY", "twC2viX7u6s", "MPhQ9VT6Rq4", "mBs8MQG-pp0", "HGdKHqMTAko",
-                "WVc8iZyhezw", "h1Q5X-Uv0dw", "9nWyWwY2Onc", "jsznS0QxtYI", "LaGpoOgGip0",
-                "AUW4ZEhhk_w", "qamtiWa-Cy4", "RK8K9nuRQPQ", "xT6tQAIywFQ", "6xV6aelL6fQ",
-                "Ja2hxBAwG_0", "mJ5lNaLX5Bg", "8Lo3KZ1rZWw", "6Nv18xmJirs", "LTVFg6YOjWo",
-                "8NbP07OEGsQ", "fqOpaCS117Q"
+                "uPZSSdkGQhM", "JbXNS3NjIfM", "fi0w57kr_jY", "xLJt5A-NeQI", "EpDA3XaELqs", "eyltEFyZ678", "TW3gx4t4944",
+                "w9H_P2wAwSE", "OyixJ7A9phg", "dzwRzUEc_tA", "vEpq3nYeZBc", "4gYioQkIqKk", "xyh8iG5mRIs", "ORrYEEH_KPc",
+                "ii0T5JUO2BY", "hgycbw6Beuc", "Dz-zgq6OqTI", "I1b4GT-GuEs", "dN3gkBBffhs", "8Kg-8ZjgLAQ", "E9zfpKsw6f8",
+                "eBCw9sC5D40"
             }, playlistInfo.VideoIds.ToArray());
         }
 
@@ -360,8 +361,9 @@ namespace YoutubeExplode.Tests
 
             // Metadata
             Assert.AreEqual("RDSkRSXFQerZs", playlistInfo.Id);
-            // Assert.AreEqual("Мікс – HELLOVENUS 헬로비너스 - 위글위글(WiggleWiggle) M/V", playlistInfo.Title); // culture specific
-            Assert.AreEqual("", playlistInfo.Description);
+            // -- don't check title because it's culture specific
+            Assert.IsTrue(playlistInfo.Author.IsBlank()); // mixes have no author
+            Assert.IsTrue(playlistInfo.Description.IsBlank()); // and no description
             Assert.IsTrue(61000 <= playlistInfo.ViewCount);
 
             // Video ids (not predictable because it's a mix)

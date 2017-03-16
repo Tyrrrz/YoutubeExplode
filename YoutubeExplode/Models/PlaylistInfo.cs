@@ -18,6 +18,11 @@ namespace YoutubeExplode.Models
         public string Title { get; internal set; }
 
         /// <summary>
+        /// This playlist's author's name
+        /// </summary>
+        public string Author { get; internal set; }
+
+        /// <summary>
         /// Description of this playlist
         /// </summary>
         public string Description { get; internal set; }

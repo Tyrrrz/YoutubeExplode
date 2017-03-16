@@ -371,6 +371,7 @@ namespace YoutubeExplode.Internal
 
             // Get playlist metadata
             string title = root.Element("title")?.Value;
+            string author = root.Element("author")?.Value;
             string description = root.Element("description")?.Value;
             long viewCount = (root.Element("views")?.Value).ParseLongOrDefault();
 
@@ -380,6 +381,7 @@ namespace YoutubeExplode.Internal
             // Populate
             var result = new PlaylistInfo();
             result.Title = title;
+            result.Author = author;
             result.Description = description;
             result.ViewCount = viewCount;
             result.VideoIds = ids.ToArray();
