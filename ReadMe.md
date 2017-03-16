@@ -13,19 +13,19 @@ You can also find the last stable version in [releases](https://github.com/Tyrrr
 
 **Features:**
 
-- Retrieves video info, media stream info, closed caption track info
-- Handles signed and restricted videos
-- Works with media streams of all types: mixed, adaptive, dash
-- Extracts video IDs from playlists
-- Allows to check if the video exists
-- Lets user download media streams and caption tracks
-- Metadata is exposed using enums and other strong types
+- Retrieves information on videos, playlists, media streams and closed caption tracks
+- Handles normal, legacy, signed, restricted, non-embeddable and unlisted videos
+- Works with media streams of all types: mixed, embedded adaptive, dash adaptive
+- Downloads videos by exposing the media content as a stream
+- Downloads and parses closed caption tracks
+- Strong types and enums for everything
 - Static methods to validate IDs and to parse them from URLs
-- Asynchronous API
+- No need for an API key and no usage quotas
+- Async/await all the way
 - Optimized for best performance
 - Service injection via constructor
 - Comprehensive XML documentation
-- Supports most platforms via .NET Standard 1.1 ([reference](https://github.com/dotnet/standard/blob/master/docs/versions.md))
+- Targets [.NET Standard 1.1](https://github.com/dotnet/standard/blob/master/docs/versions.md)
 
 **Usage example:**
 
