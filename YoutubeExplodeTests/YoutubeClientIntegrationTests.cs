@@ -62,10 +62,19 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("_QdPW8JrYzQ", videoInfo.Id);
             Assert.AreEqual("This is what happens when you reply to spam email | James Veitch", videoInfo.Title);
-            Assert.AreEqual("TED", videoInfo.Author);
             Assert.IsTrue(588 <= videoInfo.Length.TotalSeconds);
+            Assert.AreEqual(1659729120, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(10000000 <= videoInfo.ViewCount);
-            Assert.IsTrue(4.5 <= videoInfo.AverageRating);
+            Assert.IsTrue(263000 <= videoInfo.LikeCount);
+            Assert.IsTrue(6000 <= videoInfo.DislikeCount);
+
+            // Author
+            Assert.IsNotNull(videoInfo.Author);
+            Assert.AreEqual("UCAuUUnT6oDeKwE6v1NGQxug", videoInfo.Author.Id);
+            Assert.AreEqual("TEDtalksDirector", videoInfo.Author.Name);
+            Assert.AreEqual("TED", videoInfo.Author.DisplayName);
+            Assert.AreEqual("TED", videoInfo.Author.ChannelTitle);
+            Assert.IsFalse(videoInfo.Author.IsPaid);
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -108,61 +117,6 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_NonAdaptive_Test()
-        {
-            // Video that doesn't have embedded adaptive streams but has dash manifest
-
-            var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
-
-            Assert.IsNotNull(videoInfo);
-
-            // Basic metadata
-            Assert.AreEqual("LsNPjFXIPT8", videoInfo.Id);
-            Assert.AreEqual("kyoumei no true force iyasine", videoInfo.Title);
-            Assert.AreEqual("Tyrrrz", videoInfo.Author);
-            Assert.IsTrue(103 <= videoInfo.Length.TotalSeconds);
-            Assert.IsTrue(1 <= videoInfo.ViewCount);
-            Assert.IsTrue(0 <= videoInfo.AverageRating);
-
-            // Keywords
-            Assert.IsNotNull(videoInfo.Keywords);
-            Assert.AreEqual(0, videoInfo.Keywords.Count);
-
-            // Watermarks
-            Assert.IsNotNull(videoInfo.Watermarks);
-            Assert.AreEqual(2, videoInfo.Watermarks.Count);
-
-            // Flags
-            Assert.IsFalse(videoInfo.HasClosedCaptions);
-            Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
-            Assert.IsTrue(videoInfo.IsListed);
-            Assert.IsTrue(videoInfo.IsRatingAllowed);
-            Assert.IsFalse(videoInfo.IsMuted);
-
-            // Streams
-            Assert.IsNotNull(videoInfo.Streams);
-            Assert.IsTrue(9 <= videoInfo.Streams.Count);
-            foreach (var streamInfo in videoInfo.Streams)
-            {
-                Assert.IsNotNull(streamInfo.Url);
-                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
-                Assert.IsNotNull(streamInfo.QualityLabel);
-                Assert.IsNotNull(streamInfo.FileExtension);
-                Assert.IsTrue(0 < streamInfo.FileSize);
-            }
-
-            // Captions
-            Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(0, videoInfo.ClosedCaptionTracks.Count);
-            foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
-            {
-                Assert.IsNotNull(captionTrack.Url);
-                Assert.IsNotNull(captionTrack.Language);
-            }
-        }
-
-        [TestMethod]
         public async Task GetVideoInfoAsync_Signed_Test()
         {
             // Video that uses signature cipher
@@ -174,10 +128,19 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("TZRvO0S-TLU", videoInfo.Id);
             Assert.AreEqual("BABYMETAL - THE ONE (OFFICIAL)", videoInfo.Title);
-            Assert.AreEqual("BABYMETALofficial", videoInfo.Author);
             Assert.IsTrue(428 <= videoInfo.Length.TotalSeconds);
-            Assert.IsTrue(4 <= videoInfo.AverageRating);
+            Assert.AreEqual(343880901, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(6000000 <= videoInfo.ViewCount);
+            Assert.IsTrue(65000 <= videoInfo.LikeCount);
+            Assert.IsTrue(1500 <= videoInfo.DislikeCount);
+
+            // Author
+            Assert.IsNotNull(videoInfo.Author);
+            Assert.AreEqual("UC33_tIj4m1_XaqfFcomShvw", videoInfo.Author.Id);
+            Assert.AreEqual("BABYMETALofficial", videoInfo.Author.Name);
+            Assert.AreEqual("BABYMETALofficial", videoInfo.Author.DisplayName);
+            Assert.AreEqual("BABYMETALofficial", videoInfo.Author.ChannelTitle);
+            Assert.IsFalse(videoInfo.Author.IsPaid);
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -236,10 +199,19 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("SkRSXFQerZs", videoInfo.Id);
             Assert.AreEqual("HELLOVENUS 헬로비너스 - 위글위글(WiggleWiggle) M/V", videoInfo.Title);
-            Assert.AreEqual("fantagio 판타지오", videoInfo.Author);
             Assert.IsTrue(203 <= videoInfo.Length.TotalSeconds);
-            Assert.IsTrue(4 <= videoInfo.AverageRating);
+            Assert.AreEqual(1475277231, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(1200000 <= videoInfo.ViewCount);
+            Assert.IsTrue(20000 <= videoInfo.LikeCount);
+            Assert.IsTrue(2000 <= videoInfo.DislikeCount);
+
+            // Author
+            Assert.IsNotNull(videoInfo.Author);
+            Assert.AreEqual("UC3Ea2-Ut3navgOlTfoq790g", videoInfo.Author.Id);
+            Assert.AreEqual("fantagiomusic", videoInfo.Author.Name);
+            Assert.AreEqual("fantagio 판타지오", videoInfo.Author.DisplayName);
+            Assert.AreEqual("fantagio 판타지오", videoInfo.Author.ChannelTitle);
+            Assert.IsFalse(videoInfo.Author.IsPaid);
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -297,10 +269,19 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("_kmeFXjjGfk", videoInfo.Id);
             Assert.AreEqual("Cam'ron- Killa Kam (dirty)", videoInfo.Title);
-            Assert.AreEqual("Ralph Arellano", videoInfo.Author);
             Assert.IsTrue(359 <= videoInfo.Length.TotalSeconds);
-            Assert.IsTrue(4.5 <= videoInfo.AverageRating);
+            Assert.AreEqual(1462671500, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(3600000 <= videoInfo.ViewCount);
+            Assert.IsTrue(19000 <= videoInfo.LikeCount);
+            Assert.IsTrue(1000 <= videoInfo.DislikeCount);
+
+            // Author
+            Assert.IsNotNull(videoInfo.Author);
+            Assert.AreEqual("UCWvETAIKRu920YrnHMq0CAw", videoInfo.Author.Id);
+            Assert.AreEqual("locoNsane", videoInfo.Author.Name);
+            Assert.AreEqual("Ralph Arellano", videoInfo.Author.DisplayName);
+            Assert.AreEqual("Ralph Arellano", videoInfo.Author.ChannelTitle);
+            Assert.IsFalse(videoInfo.Author.IsPaid);
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -416,21 +397,6 @@ namespace YoutubeExplode.Tests
         public async Task GetMediaStreamAsync_Normal_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("_QdPW8JrYzQ");
-
-            foreach (var streamInfo in videoInfo.Streams)
-            {
-                using (var stream = await _client.GetMediaStreamAsync(streamInfo))
-                {
-                    var buffer = new byte[100];
-                    await stream.ReadAsync(buffer, 0, buffer.Length);
-                }
-            }
-        }
-
-        [TestMethod]
-        public async Task GetMediaStreamAsync_NonAdaptive_Test()
-        {
-            var videoInfo = await _client.GetVideoInfoAsync("LsNPjFXIPT8");
 
             foreach (var streamInfo in videoInfo.Streams)
             {

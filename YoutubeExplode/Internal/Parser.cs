@@ -306,10 +306,8 @@ namespace YoutubeExplode.Internal
             // Get metadata
             string id = dic.GetOrDefault("video_id");
             string title = dic.GetOrDefault("title");
-            string author = dic.GetOrDefault("author");
             var length = TimeSpan.FromSeconds(dic.GetOrDefault("length_seconds").ParseDoubleOrDefault());
             long viewCount = dic.GetOrDefault("view_count").ParseLongOrDefault();
-            double averageRating = dic.GetOrDefault("avg_rating").ParseDoubleOrDefault();
             var keywords = dic.GetOrDefault("keywords")?.Split(",") ?? new string[0];
             var watermarks = dic.GetOrDefault("watermark")?.Split(",") ?? new string[0];
             bool isListed = dic.GetOrDefault("is_listed").ParseIntOrDefault(1) == 1;
@@ -345,10 +343,8 @@ namespace YoutubeExplode.Internal
             var result = new VideoInfo();
             result.Id = id;
             result.Title = title;
-            result.Author = author;
             result.Length = length;
             result.ViewCount = viewCount;
-            result.AverageRating = averageRating;
             result.Keywords = keywords;
             result.Watermarks = watermarks;
             result.IsListed = isListed;
@@ -358,6 +354,61 @@ namespace YoutubeExplode.Internal
             result.Streams = adaptiveStreams.Concat(mixedStreams).ToArray();
             result.ClosedCaptionTracks = captionTracks;
             result.DashManifest = dashManifest;
+
+            return result;
+        }
+
+        public static UserInfo UserInfoFromXml(string rawXml)
+        {
+            if (rawXml == null)
+                throw new ArgumentNullException(nameof(rawXml));
+
+            var root = XElement.Parse(rawXml).StripNamespaces();
+
+            // Get metadata
+            string id = root.Element("channel_external_id")?.Value;
+            string name = root.Element("username")?.Value;
+            string displayName = root.Element("public_name")?.Value;
+            string channelTitle = root.Element("channel_title")?.Value;
+            bool isPaid = (root.Element("channel_paid")?.Value).ParseIntOrDefault() == 1;
+
+            // Populate
+            var result = new UserInfo();
+            result.Id = id;
+            result.Name = name;
+            result.DisplayName = displayName;
+            result.ChannelTitle = channelTitle;
+            result.IsPaid = isPaid;
+
+            return result;
+        }
+
+        public static ExtendedVideoInfo ExtendedVideoInfoFromXml(string rawXml)
+        {
+            if (rawXml == null)
+                throw new ArgumentNullException(nameof(rawXml));
+
+            var root = XElement.Parse(rawXml).StripNamespaces();
+
+            // Get nodes
+            var xHtmlContent = root.Element("html_content");
+            var xVideoInfo = xHtmlContent?.Element("video_info");
+            var xUserInfo = xHtmlContent?.Element("user_info");
+
+            // Get metadata
+            string description = xVideoInfo?.Element("description")?.Value;
+            long likeCount = (xVideoInfo?.Element("likes_count_unformatted")?.Value).ParseLongOrDefault();
+            long dislikeCount = (xVideoInfo?.Element("dislikes_count_unformatted")?.Value).ParseLongOrDefault();
+
+            // Get user info
+            var userInfo = xUserInfo != null ? UserInfoFromXml(xUserInfo.ToString()) : null;
+
+            // Populate
+            var result = new ExtendedVideoInfo();
+            result.Author = userInfo;
+            result.Description = description;
+            result.LikeCount = likeCount;
+            result.DisikeCount = dislikeCount;
 
             return result;
         }

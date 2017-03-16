@@ -20,9 +20,9 @@ namespace YoutubeExplode.Models
         public string Title { get; internal set; }
 
         /// <summary>
-        /// This video's author's name
+        /// Video author metadata
         /// </summary>
-        public string Author { get; internal set; }
+        public UserInfo Author { get; internal set; }
 
         /// <summary>
         /// Length of this video
@@ -30,22 +30,29 @@ namespace YoutubeExplode.Models
         public TimeSpan Length { get; internal set; }
 
         /// <summary>
+        /// Video description
+        /// </summary>
+        public string Description { get; internal set; }
+
+        /// <summary>
         /// View count of this video
         /// </summary>
         public long ViewCount { get; internal set; }
 
         /// <summary>
-        /// Average user rating of this video.
-        /// Ranges from 0 stars to 5 stars.
+        /// Like count for this video
         /// </summary>
-        public double AverageRating { get; internal set; }
+        public long LikeCount { get; internal set; }
 
         /// <summary>
-        /// Normalized average user rating of this video.
-        /// Ranges from 0 to 1.
-        /// Also represents the "thumbs up" ratio in the new rating system.
+        /// Dislike count for this video
         /// </summary>
-        public double NormalizedAverageRating => AverageRating/5;
+        public long DislikeCount { get; internal set; }
+
+        /// <summary>
+        /// Average user rating for this video (0* to 5*)
+        /// </summary>
+        public double AverageRating => 5.0*LikeCount/(LikeCount + DislikeCount);
 
         /// <summary>
         /// This video's search keywords
@@ -55,27 +62,27 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// URL for the thumbnail image for this video
         /// </summary>
-        public string ImageThumbnail => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
+        public string ImageThumbnailUrl => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
 
         /// <summary>
         /// URL for the default resolution image (not always available) for this video
         /// </summary>
-        public string ImageStandardRes => $"https://img.youtube.com/vi/{Id}/sddefault.jpg";
+        public string ImageStandardResUrl => $"https://img.youtube.com/vi/{Id}/sddefault.jpg";
 
         /// <summary>
         /// URL for the highest resolution image (not always available) for this video
         /// </summary>
-        public string ImageMaxRes => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
+        public string ImageMaxResUrl => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
 
         /// <summary>
         /// URL for the high resolution image for this video
         /// </summary>
-        public string ImageHighRes => $"https://img.youtube.com/vi/{Id}/hqdefault.jpg";
+        public string ImageHighResUrl => $"https://img.youtube.com/vi/{Id}/hqdefault.jpg";
 
         /// <summary>
         /// URL for the medium resolution image for this video
         /// </summary>
-        public string ImageMediumRes => $"https://img.youtube.com/vi/{Id}/mqdefault.jpg";
+        public string ImageMediumResUrl => $"https://img.youtube.com/vi/{Id}/mqdefault.jpg";
 
         /// <summary>
         /// Collection of watermark URLs for this video

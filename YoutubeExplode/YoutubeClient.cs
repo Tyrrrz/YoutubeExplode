@@ -157,6 +157,17 @@ namespace YoutubeExplode
             // Parse video info
             var result = Parser.VideoInfoFromUrlEncoded(response);
 
+            // Get extended video info
+            url = $"https://www.youtube.com/get_video_metadata?video_id={videoId}";
+            response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+
+            // Parse extended video info and copy metadata
+            var extendedVideoInfo = Parser.ExtendedVideoInfoFromXml(response);
+            result.Author = extendedVideoInfo.Author;
+            result.Description = extendedVideoInfo.Description;
+            result.LikeCount = extendedVideoInfo.LikeCount;
+            result.DislikeCount = extendedVideoInfo.DisikeCount;
+
             // Decipher
             if (result.NeedsDeciphering)
                 await DecipherAsync(result, videoContext.PlayerVersion).ConfigureAwait(false);

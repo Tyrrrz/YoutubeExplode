@@ -1,9 +1,14 @@
-﻿namespace YoutubeExplode.Tests
+﻿using System;
+
+namespace YoutubeExplode.Tests
 {
     public static class Extensions
     {
         public static int GetStaticHashCode(this string str)
         {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+
             unchecked
             {
                 int hash1 = (5381 << 16) + 5381;

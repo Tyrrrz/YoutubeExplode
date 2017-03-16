@@ -130,7 +130,7 @@
                                Margin="5,0,5,0"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Top"
-                               Source="{Binding VideoInfo.ImageHighRes, FallbackValue={StaticResource FallbackVideoImage}, TargetNullValue={StaticResource FallbackVideoImage}}" />
+                               Source="{Binding VideoInfo.ImageHighResUrl, FallbackValue={StaticResource FallbackVideoImage}, TargetNullValue={StaticResource FallbackVideoImage}}" />
 
                         <!--  Details  -->
                         <Grid Grid.Column="1" Margin="5,0,5,0">
