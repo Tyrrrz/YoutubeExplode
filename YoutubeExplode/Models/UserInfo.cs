@@ -6,32 +6,32 @@
     public class UserInfo
     {
         /// <summary>
-        /// Id of the user
+        /// Id of this user
         /// </summary>
         public string Id { get; internal set; }
 
         /// <summary>
-        /// URL of the channel
+        /// URL of this user's channel
         /// </summary>
         public string ChannelUrl => $"https://www.youtube.com/channel/{Id}";
 
         /// <summary>
-        /// User's actual name
+        /// This user's actual name
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// User's public name
+        /// This user's public name
         /// </summary>
         public string DisplayName { get; internal set; }
 
         /// <summary>
-        /// Title of the user's channel
+        /// Title of this user's channel
         /// </summary>
         public string ChannelTitle { get; internal set; }
 
         /// <summary>
-        /// Whether the user's channel is paid
+        /// Whether this user's channel is paid
         /// </summary>
         public bool IsPaid { get; internal set; }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace YoutubeExplode.Models
 {
@@ -11,6 +12,32 @@ namespace YoutubeExplode.Models
         /// Id of this playlist
         /// </summary>
         public string Id { get; internal set; }
+
+        /// <summary>
+        /// Type of this playlist
+        /// </summary>
+        public PlaylistType Type
+        {
+            get
+            {
+                if (Id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
+                    return PlaylistType.UserMade;
+
+                if (Id.StartsWith("RD", StringComparison.OrdinalIgnoreCase))
+                    return PlaylistType.Mix;
+
+                if (Id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
+                    return PlaylistType.Liked;
+
+                if (Id.StartsWith("FL", StringComparison.OrdinalIgnoreCase))
+                    return PlaylistType.Favorites;
+
+                if (Id.StartsWith("WL", StringComparison.OrdinalIgnoreCase))
+                    return PlaylistType.WatchLater;
+
+                return PlaylistType.Unknown;
+            }
+        }
 
         /// <summary>
         /// Title of this playlist

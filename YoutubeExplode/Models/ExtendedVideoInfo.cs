@@ -6,12 +6,12 @@
     public class ExtendedVideoInfo
     {
         /// <summary>
-        /// Video author metadata
+        /// Author metadata of this video
         /// </summary>
         public UserInfo Author { get; internal set; }
 
         /// <summary>
-        /// Video description
+        /// Description of this video
         /// </summary>
         public string Description { get; internal set; }
 

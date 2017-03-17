@@ -328,6 +328,7 @@ namespace YoutubeExplode.Tests
 
             // Metadata
             Assert.AreEqual("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e", playlistInfo.Id);
+            Assert.AreEqual(PlaylistType.UserMade, playlistInfo.Type);
             Assert.AreEqual("Analytics Academy - Digital Analytics Fundamentals", playlistInfo.Title);
             Assert.AreEqual("Google Analytics", playlistInfo.Author);
             Assert.AreEqual(-1627795933, playlistInfo.Description.GetStaticHashCode());
@@ -355,6 +356,7 @@ namespace YoutubeExplode.Tests
 
             // Metadata
             Assert.AreEqual("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk", playlistInfo.Id);
+            Assert.AreEqual(PlaylistType.UserMade, playlistInfo.Type);
             Assert.AreEqual("I Just Love This Music Rock, Pop, Soul Playlist 1", playlistInfo.Title);
             Assert.AreEqual("Tomas Nilsson", playlistInfo.Author);
             Assert.AreEqual(-1351967013, playlistInfo.Description.GetStaticHashCode());
@@ -376,6 +378,7 @@ namespace YoutubeExplode.Tests
 
             // Metadata
             Assert.AreEqual("RDSkRSXFQerZs", playlistInfo.Id);
+            Assert.AreEqual(PlaylistType.Mix, playlistInfo.Type);
             // -- don't check title because it's culture specific
             Assert.IsTrue(playlistInfo.Author.IsBlank()); // mixes have no author
             Assert.IsTrue(playlistInfo.Description.IsBlank()); // and no description

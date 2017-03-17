@@ -211,6 +211,8 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException("Is not a valid Youtube playlist ID", nameof(playlistId));
 
+            // Can also use `action_get_user_uploads_by_user=1` for user uploads...
+
             // Get
             string url = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
             string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
@@ -220,26 +222,22 @@ namespace YoutubeExplode
             result.Id = playlistId;
 
             // Keep requesting again with offset to make sure we get everything
-            bool more = result.VideoIds.Count > 0;
+            bool hasMore = result.VideoIds.Count > 0;
             int offset = result.VideoIds.Count;
-            while (more)
+            while (hasMore)
             {
                 // Get
-                url = $"https://www.youtube.com/list_ajax?list={playlistId}&style=xml&action_get_list=1&index={offset}";
-                response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+                string nextUrl = url + $"&index={offset}";
+                response = await _requestService.GetStringAsync(nextUrl).ConfigureAwait(false);
 
-                // Parse and append ids
+                // Parse
                 var extension = Parser.PlaylistInfoFromXml(response);
                 int delta = result.VideoIds.Count;
                 result.VideoIds = result.VideoIds.Concat(extension.VideoIds).Distinct().ToArray();
                 delta = result.VideoIds.Count - delta;
 
-                // If there was not a single new video - break
-                if (delta == 0)
-                    break;
-
                 // Go for the next batch
-                more = extension.VideoIds.Count > 0;
+                hasMore = delta > 0;
                 offset += extension.VideoIds.Count;
             }
 

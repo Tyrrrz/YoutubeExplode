@@ -20,7 +20,7 @@ namespace YoutubeExplode.Models
         public string Title { get; internal set; }
 
         /// <summary>
-        /// Video author metadata
+        /// Author metadata of this video
         /// </summary>
         public UserInfo Author { get; internal set; }
 
@@ -30,7 +30,7 @@ namespace YoutubeExplode.Models
         public TimeSpan Length { get; internal set; }
 
         /// <summary>
-        /// Video description
+        /// Description of this video
         /// </summary>
         public string Description { get; internal set; }
 
