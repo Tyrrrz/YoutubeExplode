@@ -87,7 +87,6 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
-            Assert.IsTrue(videoInfo.HasClosedCaptions);
             Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
             Assert.IsTrue(videoInfo.IsListed);
             Assert.IsTrue(videoInfo.IsRatingAllowed);
@@ -156,7 +155,6 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
-            Assert.IsFalse(videoInfo.HasClosedCaptions);
             Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
             Assert.IsTrue(videoInfo.IsListed);
             Assert.IsTrue(videoInfo.IsRatingAllowed);
@@ -226,7 +224,6 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
-            Assert.IsFalse(videoInfo.HasClosedCaptions);
             Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
             Assert.IsTrue(videoInfo.IsListed);
             Assert.IsTrue(videoInfo.IsRatingAllowed);
@@ -292,7 +289,6 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual(2, videoInfo.Watermarks.Count);
 
             // Flags
-            Assert.IsFalse(videoInfo.HasClosedCaptions);
             Assert.IsTrue(videoInfo.IsEmbeddingAllowed);
             Assert.IsTrue(videoInfo.IsListed);
             Assert.IsTrue(videoInfo.IsRatingAllowed);
@@ -352,7 +348,6 @@ namespace YoutubeExplode.Tests
         public async Task GetPlaylistInfoAsync_Large_Test()
         {
             // Playlist created by a user with a lot of videos in it
-            // TODO: this always fails, because current method of obtianing playlist info is limited to 200 vids
 
             var playlistInfo = await _client.GetPlaylistInfoAsync("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk");
 
