@@ -62,7 +62,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// URL for the thumbnail image for this video
         /// </summary>
-        public string ImageThumbnailUrl => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
+        public string ImageThumbnailUrl => $"https://img.youtube.com/vi/{Id}/default.jpg";
 
         /// <summary>
         /// URL for the default resolution image (not always available) for this video
