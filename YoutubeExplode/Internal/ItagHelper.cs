@@ -86,24 +86,6 @@ namespace YoutubeExplode.Internal
             return VideoQuality.Unknown;
         }
 
-        public static string GetVideoQualityLabel(int itag)
-        {
-            var quality = GetVideoQuality(itag);
-
-            if (quality == VideoQuality.NoVideo) return "No Video";
-            if (quality == VideoQuality.Low144) return "144p";
-            if (quality == VideoQuality.Low240) return "240p";
-            if (quality == VideoQuality.Medium360) return "360p";
-            if (quality == VideoQuality.Medium480) return "480p";
-            if (quality == VideoQuality.High720) return "720p";
-            if (quality == VideoQuality.High1080) return "1080p";
-            if (quality == VideoQuality.High1440) return "1440p";
-            if (quality == VideoQuality.High2160) return "2160p";
-            if (quality == VideoQuality.High3072) return "3072p";
-
-            return null;
-        }
-
         public static string GetFileExtension(int itag)
         {
             var type = GetContainerType(itag);

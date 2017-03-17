@@ -5,11 +5,9 @@
         xmlns:ignore="http://www.galasoft.ch/ignore"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:models="clr-namespace:YoutubeExplode.Models;assembly=YoutubeExplode"
         Title="YoutubeExplode Demo"
-        Width="710"
-        Height="670"
-        MinWidth="710"
+        Width="700"
+        Height="650"
         Background="{DynamicResource MaterialDesignPaper}"
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
         FocusManager.FocusedElement="{Binding ElementName=VideoIdTextBox}"
@@ -24,10 +22,6 @@
         UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d ignore">
-    <Window.Resources>
-        <BitmapImage x:Key="FallbackVideoImage" UriSource="https://www.youtube.com/yt/brand/media/image/YouTube-icon-full_color.png" />
-    </Window.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -81,7 +75,6 @@
 
         <!--  Video info  -->
         <ScrollViewer Grid.Row="1"
-                      Padding="10,0,10,0"
                       Panel.ZIndex="0"
                       HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
@@ -104,309 +97,212 @@
                 </Style>
             </ScrollViewer.Style>
 
-            <materialDesign:Card>
-                <StackPanel Orientation="Vertical">
-                    <!--  Title  -->
-                    <materialDesign:ColorZone Margin="0,0,0,5"
-                                              Padding="10"
-                                              Mode="PrimaryMid">
-                        <TextBlock HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontSize="16"
-                                   Text="{Binding VideoInfo.Title}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap" />
-                    </materialDesign:ColorZone>
-
-                    <!--  Image and details  -->
-                    <Grid Height="135">
+            <StackPanel Orientation="Vertical">
+                <!--  Basic metadata and image  -->
+                <materialDesign:Card Margin="5,5,5,5">
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="120" />
                         </Grid.ColumnDefinitions>
 
-                        <!--  Image  -->
-                        <Image Grid.Column="0"
-                               Margin="5,0,5,0"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Top"
-                               Source="{Binding VideoInfo.ImageHighResUrl, FallbackValue={StaticResource FallbackVideoImage}, TargetNullValue={StaticResource FallbackVideoImage}}" />
-
-                        <!--  Details  -->
-                        <Grid Grid.Column="1" Margin="5,0,5,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <!--  Author, Length, Views, Rating  -->
-                            <TextBlock Grid.Row="0"
+                        <StackPanel Grid.Column="0" Orientation="Vertical">
+                            <!--  Title  -->
+                            <TextBlock Margin="5"
+                                       FontSize="18"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       Text="{Binding VideoInfo.Title}"
                                        TextTrimming="CharacterEllipsis"
-                                       TextWrapping="Wrap">
-                                <Run Text="Author:" />
-                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoInfo.Author, Mode=OneWay}" />
-                                <Run />
+                                       TextWrapping="NoWrap" />
 
-                                <Run Text="Length:" />
-                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoInfo.Length, Mode=OneWay}" />
-                                <Run />
+                            <!--  Author, length, views, likes, dislikes  -->
+                            <StackPanel Margin="5" Orientation="Horizontal">
+                                <!--  Author  -->
+                                <materialDesign:PackIcon VerticalAlignment="Center" Kind="Account" />
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding VideoInfo.Author, Mode=OneWay}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="Wrap" />
 
-                                <Run Text="Views:" />
-                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
-                                <Run />
+                                <!--  Length  -->
+                                <materialDesign:PackIcon Margin="5,0,0,0"
+                                                         VerticalAlignment="Center"
+                                                         Kind="Clock" />
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding VideoInfo.Length, Mode=OneWay}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="Wrap" />
 
-                                <Run Text="Rating:" />
-                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoInfo.AverageRating, StringFormat=\{0:0.##\}, Mode=OneWay}" />
-                            </TextBlock>
+                                <!--  Views  -->
+                                <materialDesign:PackIcon Margin="5,0,0,0"
+                                                         VerticalAlignment="Center"
+                                                         Kind="Eye" />
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="Wrap" />
 
-                            <!--  Separator  -->
-                            <Rectangle Grid.Row="1"
-                                       Height="1"
-                                       Margin="20,5,20,5"
-                                       HorizontalAlignment="Stretch"
-                                       Fill="{DynamicResource MiscBrush}"
-                                       Opacity="0.5"
-                                       Stroke="{DynamicResource MiscBrush}" />
+                                <!--  Likes  -->
+                                <materialDesign:PackIcon Margin="5,0,0,0"
+                                                         VerticalAlignment="Center"
+                                                         Kind="ThumbUp" />
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}, Mode=OneWay}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="Wrap" />
+
+                                <!--  Dislikes  -->
+                                <materialDesign:PackIcon Margin="5,0,0,0"
+                                                         VerticalAlignment="Center"
+                                                         Kind="ThumbDown" />
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}, Mode=OneWay}"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
 
                             <!--  Flags  -->
-                            <WrapPanel Grid.Row="2" Orientation="Horizontal">
-                                <TextBlock Text="Flags:" />
-                                <CheckBox Margin="5,0,0,0"
-                                          VerticalAlignment="Center"
-                                          Content="Listed"
-                                          Foreground="{DynamicResource PrimaryTextBrush}"
+                            <StackPanel Margin="5" Orientation="Horizontal">
+                                <!--  Is listed  -->
+                                <CheckBox VerticalAlignment="Center"
+                                          Content="Publicly listed"
+                                          Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsListed, Mode=OneWay}"
                                           IsHitTestVisible="False" />
+
+                                <!--  Is rating allowed  -->
                                 <CheckBox Margin="5,0,0,0"
                                           VerticalAlignment="Center"
-                                          Content="Muted"
-                                          Foreground="{DynamicResource PrimaryTextBrush}"
-                                          IsChecked="{Binding VideoInfo.IsMuted, Mode=OneWay}"
-                                          IsHitTestVisible="False" />
-                                <CheckBox Margin="5,0,0,0"
-                                          VerticalAlignment="Center"
-                                          Content="Can rate"
-                                          Foreground="{DynamicResource PrimaryTextBrush}"
+                                          Content="Rating allowed"
+                                          Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsRatingAllowed, Mode=OneWay}"
                                           IsHitTestVisible="False" />
+
+                                <!--  Is audio muted  -->
                                 <CheckBox Margin="5,0,0,0"
                                           VerticalAlignment="Center"
-                                          Content="Can embed"
-                                          Foreground="{DynamicResource PrimaryTextBrush}"
+                                          Content="Audio muted"
+                                          Foreground="{DynamicResource SecondaryTextBrush}"
+                                          IsChecked="{Binding VideoInfo.IsMuted, Mode=OneWay}"
+                                          IsHitTestVisible="False" />
+
+                                <!--  Is embeddable  -->
+                                <CheckBox Margin="5,0,0,0"
+                                          VerticalAlignment="Center"
+                                          Content="Embedding allowed"
+                                          Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsEmbeddingAllowed, Mode=OneWay}"
                                           IsHitTestVisible="False" />
-                                <CheckBox Margin="5,0,0,0"
-                                          VerticalAlignment="Center"
-                                          Content="Has subtitles"
-                                          Foreground="{DynamicResource PrimaryTextBrush}"
-                                          IsChecked="{Binding VideoInfo.HasClosedCaptions, Mode=OneWay}"
-                                          IsHitTestVisible="False" />
-                            </WrapPanel>
+                            </StackPanel>
+                        </StackPanel>
 
-                            <!--  Separator  -->
-                            <Rectangle Grid.Row="3"
-                                       Height="1"
-                                       Margin="20,5,20,5"
-                                       HorizontalAlignment="Stretch"
-                                       Fill="{DynamicResource MiscBrush}"
-                                       Opacity="0.5"
-                                       Stroke="{DynamicResource MiscBrush}" />
-
-                            <!--  Keywords  -->
-                            <TextBlock Grid.Row="4"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="Wrap">
-                                <Run Text="Keywords:" />
-                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoInfo.Keywords, Converter={StaticResource ArrayToStringConverter}, Mode=OneWay}" />
-                            </TextBlock>
-                        </Grid>
+                        <!--  Image  -->
+                        <Image Grid.Column="1"
+                               Margin="5"
+                               VerticalAlignment="Center"
+                               Source="{Binding VideoInfo.ImageHighResUrl}" />
                     </Grid>
+                </materialDesign:Card>
 
-                    <!--  Separator  -->
-                    <Rectangle Height="1"
-                               Margin="20,7,20,5"
-                               HorizontalAlignment="Stretch"
-                               Fill="{DynamicResource MiscBrush}"
-                               Opacity="0.5"
-                               Stroke="{DynamicResource MiscBrush}" />
+                <!--  Description  -->
+                <materialDesign:Card Margin="5,0,5,5">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Description">
+                        <TextBlock Margin="5"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Text="{Binding VideoInfo.Description}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap" />
+                    </Expander>
+                </materialDesign:Card>
 
-                    <!--  Streams  -->
-                    <ItemsControl AlternationCount="2" ItemsSource="{Binding VideoInfo.Streams}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border x:Name="Root" Margin="0,2,0,2">
-                                    <Grid Margin="5,0,5,0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                <!--  Keywords  -->
+                <materialDesign:Card Margin="5,0,5,5">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Keywords">
+                        <TextBlock Margin="5"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Text="{Binding VideoInfo.Keywords, Converter={StaticResource ArrayToStringConverter}}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="Wrap" />
+                    </Expander>
+                </materialDesign:Card>
 
-                                        <!--  Stream info  -->
-                                        <ContentPresenter Grid.Column="0"
-                                                          VerticalAlignment="Center"
-                                                          Content="{Binding}"
-                                                          Grid.IsSharedSizeScope="True">
-                                            <ContentPresenter.Resources>
-                                                <!--  Non-adaptive  -->
-                                                <DataTemplate x:Key="NonAdaptivePresenter">
-                                                    <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                        <materialDesign:PackIcon Width="20"
-                                                                                 Height="20"
-                                                                                 VerticalAlignment="Center"
-                                                                                 Kind="Video"
-                                                                                 ToolTip="Stream contains video" />
-                                                        <materialDesign:PackIcon Width="20"
-                                                                                 Height="20"
-                                                                                 VerticalAlignment="Center"
-                                                                                 Kind="VolumeHigh"
-                                                                                 ToolTip="Stream contains audio" />
-                                                        <TextBlock Margin="2,0,0,0"
-                                                                   VerticalAlignment="Center"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   TextWrapping="NoWrap">
-                                                            <Run Text="Type:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Type, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Quality:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Size:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}, Mode=OneWay}" />
-                                                        </TextBlock>
-                                                    </StackPanel>
-                                                </DataTemplate>
-
-                                                <!--  Video only  -->
-                                                <DataTemplate x:Key="AdaptiveVideoPresenter">
-                                                    <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                        <materialDesign:PackIcon Width="20"
-                                                                                 Height="20"
-                                                                                 VerticalAlignment="Center"
-                                                                                 Kind="Video"
-                                                                                 ToolTip="Stream contains video" />
-                                                        <materialDesign:PackIcon Width="20"
-                                                                                 Height="20"
-                                                                                 VerticalAlignment="Center"
-                                                                                 Kind="VolumeOff"
-                                                                                 Opacity="0.3"
-                                                                                 ToolTip="Stream doesn't contain audio" />
-                                                        <TextBlock Margin="2,0,0,0"
-                                                                   VerticalAlignment="Center"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   TextWrapping="NoWrap">
-                                                            <Run Text="Type:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Type, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Quality:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="FPS:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Fps, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Bitrate:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Bitrate, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}it/s, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Size:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}, Mode=OneWay}" />
-                                                        </TextBlock>
-                                                    </StackPanel>
-                                                </DataTemplate>
-
-                                                <!--  Audio only  -->
-                                                <DataTemplate x:Key="AdaptiveAudioPresenter">
-                                                    <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-                                                        <materialDesign:PackIcon Width="20"
-                                                                                 Height="20"
-                                                                                 VerticalAlignment="Center"
-                                                                                 Kind="VideoOff"
-                                                                                 Opacity="0.3"
-                                                                                 ToolTip="Stream doesn't contain video" />
-                                                        <materialDesign:PackIcon Width="20"
-                                                                                 Height="20"
-                                                                                 VerticalAlignment="Center"
-                                                                                 Kind="VolumeHigh"
-                                                                                 ToolTip="Stream contains audio" />
-                                                        <TextBlock Margin="2,0,0,0"
-                                                                   VerticalAlignment="Center"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   TextWrapping="NoWrap">
-                                                            <Run Text="Type:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Type, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Bitrate:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Bitrate, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}it/s, Mode=OneWay}" />
-                                                            <Run />
-                                                            <Run Text="Size:" />
-                                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}, Mode=OneWay}" />
-                                                        </TextBlock>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ContentPresenter.Resources>
-
-                                            <ContentPresenter.Style>
-                                                <Style TargetType="{x:Type ContentPresenter}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:AdaptiveMode.None}">
-                                                            <Setter Property="ContentTemplate" Value="{StaticResource NonAdaptivePresenter}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:AdaptiveMode.Video}">
-                                                            <Setter Property="ContentTemplate" Value="{StaticResource AdaptiveVideoPresenter}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding AdaptiveMode}" Value="{x:Static models:AdaptiveMode.Audio}">
-                                                            <Setter Property="ContentTemplate" Value="{StaticResource AdaptiveAudioPresenter}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ContentPresenter.Style>
-                                        </ContentPresenter>
-
-                                        <!--  Open in browser button  -->
-                                        <Button Grid.Column="1"
-                                                Width="22"
-                                                Height="22"
-                                                Margin="2,0,0,0"
-                                                Padding="0"
+                <!--  Media streams  -->
+                <materialDesign:Card Margin="5,0,5,5">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Media streams">
+                        <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.Streams}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!--  Download button  -->
+                                        <Button Padding="4"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding MainViewModel.OpenVideoCommand, Source={StaticResource Locator}}"
+                                                Command="{Binding MainViewModel.DownloadMediaStreamCommand, Source={StaticResource Locator}}"
                                                 CommandParameter="{Binding}"
-                                                Style="{StaticResource MaterialDesignFlatButton}"
-                                                ToolTip="Open video in browser">
-                                            <materialDesign:PackIcon Width="20"
-                                                                     Height="20"
-                                                                     Kind="YoutubePlay" />
-                                        </Button>
-
-                                        <!--  Download  -->
-                                        <Button Grid.Column="2"
-                                                Width="22"
-                                                Height="22"
-                                                Padding="0"
-                                                VerticalAlignment="Center"
-                                                Command="{Binding MainViewModel.DownloadVideoCommand, Source={StaticResource Locator}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource MaterialDesignFlatButton}"
-                                                ToolTip="Download video">
-                                            <materialDesign:PackIcon Width="20"
-                                                                     Height="20"
+                                                Style="{StaticResource MaterialDesignFlatButton}">
+                                            <materialDesign:PackIcon Width="24"
+                                                                     Height="24"
                                                                      Kind="Download" />
                                         </Button>
-                                    </Grid>
-                                </Border>
 
-                                <DataTemplate.Triggers>
-                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                                        <Setter TargetName="Root" Property="Background" Value="{DynamicResource MaterialDesignPaper}" />
-                                    </Trigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </materialDesign:Card>
+                                        <!--  Stream info  -->
+                                        <TextBlock Margin="5,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="NoWrap">
+                                            <Run Text="Quality:" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Container:" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileExtension, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Size:" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </materialDesign:Card>
+
+                <!--  Closed captions  -->
+                <materialDesign:Card Margin="5,0,5,5">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Closed captions">
+                        <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.ClosedCaptionTracks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!--  Download button  -->
+                                        <Button Padding="4"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding MainViewModel.DownloadClosedCaptionTrackCommand, Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignFlatButton}">
+                                            <materialDesign:PackIcon Width="24"
+                                                                     Height="24"
+                                                                     Kind="Download" />
+                                        </Button>
+
+                                        <!--  Closed caption track info  -->
+                                        <TextBlock Margin="5,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="NoWrap">
+                                            <Run Text="Language:" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Culture.EnglishName, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </materialDesign:Card>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </Window>

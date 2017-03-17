@@ -40,7 +40,7 @@ namespace YoutubeExplode.DemoConsole
         public static void Main(string[] args)
         {
             Console.Title = "YoutubeExplode Demo";
-            Console.WindowWidth = 85;
+            Console.WindowWidth = 86;
             Console.WindowHeight = 38;
 
             // Client
@@ -66,7 +66,7 @@ namespace YoutubeExplode.DemoConsole
                 .OrderBy(s => s.Quality)
                 .Last();
             string normalizedFileSize = NormalizeFileSize(streamInfo.FileSize);
-            Console.WriteLine($"Type: {streamInfo.Type} | Quality: {streamInfo.QualityLabel} | Size: {normalizedFileSize}");
+            Console.WriteLine($"Quality: {streamInfo.QualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata
             string fileName = $"{videoInfo.Title}.{streamInfo.FileExtension}".Except(Path.GetInvalidFileNameChars());

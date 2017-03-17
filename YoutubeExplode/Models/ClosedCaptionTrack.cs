@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Internal;
@@ -8,7 +9,7 @@ namespace YoutubeExplode.Models
     /// <summary>
     /// Closed caption track
     /// </summary>
-    public class ClosedCaptionTrack
+    public class ClosedCaptionTrack : IEnumerable<ClosedCaption>
     {
         /// <summary>
         /// Metadata associated with this caption track
@@ -31,6 +32,18 @@ namespace YoutubeExplode.Models
         public ClosedCaption GetByOffset(TimeSpan offset)
         {
             return Captions.FirstOrDefault(c => offset.IsInRange(c.Offset, c.Offset + c.Duration));
+        }
+
+        /// <inheritdoc />
+        public IEnumerator<ClosedCaption> GetEnumerator()
+        {
+            return Captions.GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Captions.GetEnumerator();
         }
 
         /// <inheritdoc />

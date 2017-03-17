@@ -178,7 +178,7 @@ namespace YoutubeExplode
                 // Get
                 response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
 
-                // Parse
+                // Parse and concat with new streams
                 var dashStreams = Parser.MediaStreamInfosFromXml(response);
                 result.Streams = result.Streams.Concat(dashStreams).ToArray();
             }
@@ -189,7 +189,7 @@ namespace YoutubeExplode
                 .OrderByDescending(s => s.Quality) // sort by quality
                 .ThenByDescending(s => s.Bitrate) // then by bitrate
                 .ThenByDescending(s => s.FileSize) // then by filesize
-                .ThenByDescending(s => s.Type) // then by type
+                .ThenByDescending(s => s.Container) // then by type
                 .ToArray();
 
             // Get file size of streams that don't have it yet

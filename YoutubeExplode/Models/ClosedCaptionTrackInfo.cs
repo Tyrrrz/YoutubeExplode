@@ -1,4 +1,6 @@
-﻿namespace YoutubeExplode.Models
+﻿using System.Globalization;
+
+namespace YoutubeExplode.Models
 {
     /// <summary>
     /// Closed caption track metadata
@@ -14,6 +16,11 @@
         /// Language of this caption track
         /// </summary>
         public string Language { get; internal set; }
+
+        /// <summary>
+        /// Culture info generated from this track's language
+        /// </summary>
+        public CultureInfo Culture => new CultureInfo(Language);
 
         /// <summary>
         /// Whether this caption track was generated automatically

@@ -30,7 +30,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Container type of this stream
         /// </summary>
-        public ContainerType Type => ItagHelper.GetContainerType(Itag);
+        public ContainerType Container => ItagHelper.GetContainerType(Itag);
 
         /// <summary>
         /// Quality of video in this stream
@@ -68,7 +68,45 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Quality label of this stream as seen on Youtube
         /// </summary>
-        public string QualityLabel => ItagHelper.GetVideoQualityLabel(Itag);
+        public string QualityLabel
+        {
+            get
+            {
+                var quality = Quality;
+
+                if (quality == VideoQuality.NoVideo)
+                    return "No video";
+
+                if (quality == VideoQuality.Low144)
+                    return "144p";
+
+                if (quality == VideoQuality.Low240)
+                    return "240p";
+
+                if (quality == VideoQuality.Medium360)
+                    return "360p";
+
+                if (quality == VideoQuality.Medium480)
+                    return "480p";
+
+                if (quality == VideoQuality.High720)
+                    return Fps > 30 ? $"720p{Fps:N0}" : "720p";
+
+                if (quality == VideoQuality.High1080)
+                    return Fps > 30 ? $"1080p{Fps:N0}" : "1080p";
+
+                if (quality == VideoQuality.High1440)
+                    return Fps > 30 ? $"1440p{Fps:N0}" : "1440p";
+
+                if (quality == VideoQuality.High2160)
+                    return Fps > 30 ? $"2160p{Fps:N0}" : "2160p";
+
+                if (quality == VideoQuality.High3072)
+                    return Fps > 30 ? $"3072p{Fps:N0}" : "3072p";
+
+                return null;
+            }
+        }
 
         /// <summary>
         /// File extension of this stream based on type

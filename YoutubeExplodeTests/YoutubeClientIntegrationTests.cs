@@ -100,7 +100,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -169,7 +169,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -239,7 +239,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -305,7 +305,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Type);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);

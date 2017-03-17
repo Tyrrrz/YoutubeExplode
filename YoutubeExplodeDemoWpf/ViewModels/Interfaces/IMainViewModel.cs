@@ -13,7 +13,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels.Interfaces
         bool IsProgressIndeterminate { get; }
 
         RelayCommand GetVideoInfoCommand { get; }
-        RelayCommand<MediaStreamInfo> OpenVideoCommand { get; }
-        RelayCommand<MediaStreamInfo> DownloadVideoCommand { get; }
+        RelayCommand<MediaStreamInfo> DownloadMediaStreamCommand { get; }
+        RelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
     }
 }

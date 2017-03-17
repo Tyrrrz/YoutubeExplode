@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Text;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
@@ -26,7 +27,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             {
                 Set(ref _isBusy, value);
                 GetVideoInfoCommand.RaiseCanExecuteChanged();
-                DownloadVideoCommand.RaiseCanExecuteChanged();
+                DownloadMediaStreamCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -62,8 +63,8 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         // Commands
         public RelayCommand GetVideoInfoCommand { get; }
-        public RelayCommand<MediaStreamInfo> OpenVideoCommand { get; }
-        public RelayCommand<MediaStreamInfo> DownloadVideoCommand { get; }
+        public RelayCommand<MediaStreamInfo> DownloadMediaStreamCommand { get; }
+        public RelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
 
         public MainViewModel(YoutubeClient client)
         {
@@ -71,8 +72,8 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
             // Commands
             GetVideoInfoCommand = new RelayCommand(GetVideoInfoAsync, () => !IsBusy);
-            OpenVideoCommand = new RelayCommand<MediaStreamInfo>(vse => Process.Start(vse.Url));
-            DownloadVideoCommand = new RelayCommand<MediaStreamInfo>(DownloadVideoAsync, vse => !IsBusy);
+            DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStreamAsync, vse => !IsBusy);
+            DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(DownloadClosedCaptionTrackAsync, vse => !IsBusy);
         }
 
         private async void GetVideoInfoAsync()
@@ -99,28 +100,20 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             IsBusy = false;
         }
 
-        private async void DownloadVideoAsync(MediaStreamInfo mediaStreamInfo)
+        private async void DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
-            // Check params
-            if (mediaStreamInfo == null) return;
-            if (VideoInfo == null) return;
-
-            // Copy values
-            string title = VideoInfo.Title;
-            string ext = mediaStreamInfo.FileExtension;
-
             // Select destination
             var sfd = new SaveFileDialog
             {
                 AddExtension = true,
-                DefaultExt = ext,
-                FileName = $"{title}.{ext}".Except(Path.GetInvalidFileNameChars()),
-                Filter = $"{ext.ToUpperInvariant()} Video Files|*.{ext}|All files|*.*"
+                DefaultExt = mediaStreamInfo.FileExtension,
+                FileName = $"{VideoInfo.Title}.{mediaStreamInfo.FileExtension}".Except(Path.GetInvalidFileNameChars()),
+                Filter = $"{mediaStreamInfo.FileExtension.ToUpperInvariant()} Files|*.{mediaStreamInfo.FileExtension}|All files|*.*"
             };
             if (sfd.ShowDialog() == false) return;
             string filePath = sfd.FileName;
 
-            // Try download
+            // Download and save to file
             IsBusy = true;
             Progress = 0;
             using (var input = await _client.GetMediaStreamAsync(mediaStreamInfo))
@@ -140,6 +133,44 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
 
             Progress = 0;
+            IsBusy = false;
+        }
+
+        private async void DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
+        {
+            // Select destination
+            var sfd = new SaveFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = "srt",
+                FileName = $"{VideoInfo.Title} [{closedCaptionTrackInfo.Language}].srt".Except(Path.GetInvalidFileNameChars()),
+                Filter = "SRT Files|*.srt|All files|*.*"
+            };
+            if (sfd.ShowDialog() == false) return;
+            string filePath = sfd.FileName;
+
+            // Download
+            IsBusy = true;
+            IsProgressIndeterminate = true;
+            var closedCaptionTrack = await _client.GetClosedCaptionTrackAsync(closedCaptionTrackInfo);
+
+            // Convert to SRT
+            var sb = new StringBuilder();
+            int i = 1;
+            foreach (var closedCaption in closedCaptionTrack)
+            {
+                sb.AppendLine(i++.ToString());
+                sb.Append(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
+                sb.Append(" --> ");
+                sb.AppendLine((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
+                sb.AppendLine(closedCaption.Text);
+                sb.AppendLine();
+            }
+
+            // Save
+            File.WriteAllText(filePath, sb.ToString());
+
+            IsProgressIndeterminate = false;
             IsBusy = false;
         }
     }

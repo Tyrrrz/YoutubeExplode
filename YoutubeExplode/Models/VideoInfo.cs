@@ -110,11 +110,6 @@ namespace YoutubeExplode.Models
         public bool IsEmbeddingAllowed { get; internal set; }
 
         /// <summary>
-        /// Whether this video has closed captions
-        /// </summary>
-        public bool HasClosedCaptions => ClosedCaptionTracks != null && ClosedCaptionTracks.Any();
-
-        /// <summary>
         /// Metadata for this video's media streams
         /// </summary>
         public IReadOnlyList<MediaStreamInfo> Streams { get; internal set; }
