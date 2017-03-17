@@ -183,6 +183,10 @@ namespace YoutubeExplode
                 result.Streams = result.Streams.Concat(dashStreams).ToArray();
             }
 
+            // Get file size of streams that don't have it yet
+            foreach (var streamInfo in result.Streams.Where(s => s.FileSize == 0))
+                streamInfo.FileSize = await GetContentLengthAsync(streamInfo.Url).ConfigureAwait(false);
+
             // Finalize the stream list
             result.Streams = result.Streams
                 .Distinct(s => s.Itag) // only one stream per itag
@@ -191,10 +195,6 @@ namespace YoutubeExplode
                 .ThenByDescending(s => s.FileSize) // then by filesize
                 .ThenByDescending(s => s.Container) // then by type
                 .ToArray();
-
-            // Get file size of streams that don't have it yet
-            foreach (var streamInfo in result.Streams.Where(s => s.FileSize == 0))
-                streamInfo.FileSize = await GetContentLengthAsync(streamInfo.Url).ConfigureAwait(false);
 
             return result;
         }
@@ -230,7 +230,7 @@ namespace YoutubeExplode
                 string nextUrl = url + $"&index={offset}";
                 response = await _requestService.GetStringAsync(nextUrl).ConfigureAwait(false);
 
-                // Parse
+                // Parse and concat ids
                 var extension = Parser.PlaylistInfoFromXml(response);
                 int delta = result.VideoIds.Count;
                 result.VideoIds = result.VideoIds.Concat(extension.VideoIds).Distinct().ToArray();

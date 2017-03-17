@@ -11,27 +11,27 @@
         Unknown,
 
         /// <summary>
-        /// Playlist created by a user
+        /// Regular playlist created by a user
         /// </summary>
         UserMade,
 
         /// <summary>
-        /// Mix playlist generated for a video
+        /// Mix playlist generated to group similar videos
         /// </summary>
         Mix,
 
         /// <summary>
-        /// Liked videos system playlist
+        /// System playlist for videos liked by a user
         /// </summary>
         Liked,
 
         /// <summary>
-        /// Favorites system playlist
+        /// System playlist for videos favorited by a user
         /// </summary>
         Favorites,
 
         /// <summary>
-        /// Watch later system playlist
+        /// System playlist for videos user added to watch later
         /// </summary>
         WatchLater
     }
