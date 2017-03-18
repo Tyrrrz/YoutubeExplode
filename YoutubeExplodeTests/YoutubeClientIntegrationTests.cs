@@ -99,7 +99,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -107,7 +107,7 @@ namespace YoutubeExplode.Tests
 
             // Captions
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
-            Assert.AreEqual(42, videoInfo.ClosedCaptionTracks.Count);
+            Assert.IsTrue(42 <= videoInfo.ClosedCaptionTracks.Count);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
@@ -167,7 +167,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -236,7 +236,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -301,7 +301,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(streamInfo.Url);
                 Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.Container);
+                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);

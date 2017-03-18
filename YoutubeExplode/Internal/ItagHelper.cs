@@ -4,16 +4,16 @@ namespace YoutubeExplode.Internal
 {
     internal static class ItagHelper
     {
-        public static AdaptiveMode GetAdaptiveMode(int itag)
+        public static ContentType GetAdaptiveMode(int itag)
         {
             if (itag.IsEither(160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 278, 242, 243, 244, 247, 248, 271,
                 313, 272, 302, 303, 308, 315, 330, 331, 332, 333, 334, 335, 336, 337, 212, 213, 214, 215, 216, 217))
-                return AdaptiveMode.Video;
+                return ContentType.Video;
 
             if (itag.IsEither(140, 141, 171, 249, 250, 251))
-                return AdaptiveMode.Audio;
+                return ContentType.Audio;
 
-            return AdaptiveMode.None;
+            return ContentType.Mixed;
         }
 
         public static bool GetIsVideo3D(int itag)

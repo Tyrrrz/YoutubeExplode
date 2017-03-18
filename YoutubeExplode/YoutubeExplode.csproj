@@ -61,7 +61,7 @@
     <Compile Include="Models\ClosedCaptionTrackInfo.cs" />
     <Compile Include="Models\DashManifestInfo.cs" />
     <Compile Include="Models\VideoInfo.cs" />
-    <Compile Include="Models\AdaptiveMode.cs" />
+    <Compile Include="Models\ContentType.cs" />
     <Compile Include="Models\MediaStreamInfo.cs" />
     <Compile Include="Models\VideoQuality.cs" />
     <Compile Include="Models\Resolution.cs" />

@@ -193,7 +193,7 @@ namespace YoutubeExplode
                 .OrderByDescending(s => s.Quality) // sort by quality
                 .ThenByDescending(s => s.Bitrate) // then by bitrate
                 .ThenByDescending(s => s.FileSize) // then by filesize
-                .ThenByDescending(s => s.Container) // then by type
+                .ThenByDescending(s => s.ContainerType) // then by type
                 .ToArray();
 
             return result;

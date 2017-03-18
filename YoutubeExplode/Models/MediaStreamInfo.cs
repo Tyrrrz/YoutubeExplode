@@ -13,24 +13,24 @@ namespace YoutubeExplode.Models
         public string Url { get; internal set; }
 
         /// <summary>
-        /// Adaptive mode of this stream
+        /// Content type of this stream
         /// </summary>
-        public AdaptiveMode AdaptiveMode => ItagHelper.GetAdaptiveMode(Itag);
+        public ContentType ContentType => ItagHelper.GetAdaptiveMode(Itag);
 
         /// <summary>
         /// Whether this stream contains audio
         /// </summary>
-        public bool HasAudio => AdaptiveMode.IsEither(AdaptiveMode.None, AdaptiveMode.Audio);
+        public bool HasAudio => ContentType.IsEither(ContentType.Mixed, ContentType.Audio);
 
         /// <summary>
         /// Whether this stream contains video
         /// </summary>
-        public bool HasVideo => AdaptiveMode.IsEither(AdaptiveMode.None, AdaptiveMode.Video);
+        public bool HasVideo => ContentType.IsEither(ContentType.Mixed, ContentType.Video);
 
         /// <summary>
         /// Container type of this stream
         /// </summary>
-        public ContainerType Container => ItagHelper.GetContainerType(Itag);
+        public ContainerType ContainerType => ItagHelper.GetContainerType(Itag);
 
         /// <summary>
         /// Quality of video in this stream

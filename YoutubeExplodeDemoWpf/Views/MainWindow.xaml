@@ -271,8 +271,11 @@
                                             <Run Text="Quality:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
                                             <Run />
+                                            <Run Text="Content:" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentType, Mode=OneWay}" />
+                                            <Run />
                                             <Run Text="Container:" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileExtension, Mode=OneWay}" />
+                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContainerType, Mode=OneWay}" />
                                             <Run />
                                             <Run Text="Size:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileSize, Converter={StaticResource FileSizeConverter}, StringFormat=\{0\}, Mode=OneWay}" />
