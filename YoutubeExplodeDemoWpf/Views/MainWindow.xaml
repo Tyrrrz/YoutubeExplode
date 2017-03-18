@@ -100,7 +100,7 @@
             <StackPanel Orientation="Vertical">
                 <!--  Basic metadata and image  -->
                 <materialDesign:Card Margin="5,5,5,5">
-                    <Grid>
+                    <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="120" />
@@ -118,66 +118,65 @@
                             <!--  Author, length, views, likes, dislikes  -->
                             <StackPanel Margin="5" Orientation="Horizontal">
                                 <!--  Author  -->
-                                <materialDesign:PackIcon VerticalAlignment="Center" Kind="Account" />
-                                <TextBlock Margin="5,0,0,0"
-                                           VerticalAlignment="Center"
+                                <materialDesign:PackIcon Width="18"
+                                                         Height="18"
+                                                         Kind="Account" />
+                                <TextBlock Margin="4,2,0,0"
                                            Text="{Binding VideoInfo.Author, Mode=OneWay}"
                                            TextTrimming="CharacterEllipsis"
-                                           TextWrapping="Wrap" />
+                                           TextWrapping="NoWrap" />
 
                                 <!--  Length  -->
-                                <materialDesign:PackIcon Margin="5,0,0,0"
-                                                         VerticalAlignment="Center"
+                                <materialDesign:PackIcon Width="18"
+                                                         Height="18"
+                                                         Margin="5,0,0,0"
                                                          Kind="Clock" />
-                                <TextBlock Margin="5,0,0,0"
-                                           VerticalAlignment="Center"
+                                <TextBlock Margin="4,2,0,0"
                                            Text="{Binding VideoInfo.Length, Mode=OneWay}"
                                            TextTrimming="CharacterEllipsis"
-                                           TextWrapping="Wrap" />
+                                           TextWrapping="NoWrap" />
 
                                 <!--  Views  -->
-                                <materialDesign:PackIcon Margin="5,0,0,0"
-                                                         VerticalAlignment="Center"
+                                <materialDesign:PackIcon Width="18"
+                                                         Height="18"
+                                                         Margin="5,0,0,0"
                                                          Kind="Eye" />
-                                <TextBlock Margin="5,0,0,0"
-                                           VerticalAlignment="Center"
+                                <TextBlock Margin="4,2,0,0"
                                            Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}"
                                            TextTrimming="CharacterEllipsis"
-                                           TextWrapping="Wrap" />
+                                           TextWrapping="NoWrap" />
 
                                 <!--  Likes  -->
-                                <materialDesign:PackIcon Margin="5,0,0,0"
-                                                         VerticalAlignment="Center"
+                                <materialDesign:PackIcon Width="18"
+                                                         Height="18"
+                                                         Margin="5,0,0,0"
                                                          Kind="ThumbUp" />
-                                <TextBlock Margin="5,0,0,0"
-                                           VerticalAlignment="Center"
+                                <TextBlock Margin="4,2,0,0"
                                            Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}, Mode=OneWay}"
                                            TextTrimming="CharacterEllipsis"
-                                           TextWrapping="Wrap" />
+                                           TextWrapping="NoWrap" />
 
                                 <!--  Dislikes  -->
-                                <materialDesign:PackIcon Margin="5,0,0,0"
-                                                         VerticalAlignment="Center"
+                                <materialDesign:PackIcon Width="18"
+                                                         Height="18"
+                                                         Margin="5,0,0,0"
                                                          Kind="ThumbDown" />
-                                <TextBlock Margin="5,0,0,0"
-                                           VerticalAlignment="Center"
+                                <TextBlock Margin="4,2,0,0"
                                            Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}, Mode=OneWay}"
                                            TextTrimming="CharacterEllipsis"
-                                           TextWrapping="Wrap" />
+                                           TextWrapping="NoWrap" />
                             </StackPanel>
 
                             <!--  Flags  -->
                             <StackPanel Margin="5" Orientation="Horizontal">
                                 <!--  Is listed  -->
-                                <CheckBox VerticalAlignment="Center"
-                                          Content="Publicly listed"
+                                <CheckBox Content="Publicly listed"
                                           Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsListed, Mode=OneWay}"
                                           IsHitTestVisible="False" />
 
                                 <!--  Is rating allowed  -->
                                 <CheckBox Margin="5,0,0,0"
-                                          VerticalAlignment="Center"
                                           Content="Rating allowed"
                                           Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsRatingAllowed, Mode=OneWay}"
@@ -185,7 +184,6 @@
 
                                 <!--  Is audio muted  -->
                                 <CheckBox Margin="5,0,0,0"
-                                          VerticalAlignment="Center"
                                           Content="Audio muted"
                                           Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsMuted, Mode=OneWay}"
@@ -193,7 +191,6 @@
 
                                 <!--  Is embeddable  -->
                                 <CheckBox Margin="5,0,0,0"
-                                          VerticalAlignment="Center"
                                           Content="Embedding allowed"
                                           Foreground="{DynamicResource SecondaryTextBrush}"
                                           IsChecked="{Binding VideoInfo.IsEmbeddingAllowed, Mode=OneWay}"
@@ -211,8 +208,13 @@
 
                 <!--  Description  -->
                 <materialDesign:Card Margin="5,0,5,5">
-                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Description">
-                        <TextBlock Margin="5"
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}">
+                        <Expander.Header>
+                            <TextBlock FontSize="14">
+                                <Run Text="Description" />
+                            </TextBlock>
+                        </Expander.Header>
+                        <TextBlock Margin="10"
                                    Foreground="{DynamicResource PrimaryTextBrush}"
                                    Text="{Binding VideoInfo.Description}"
                                    TextTrimming="CharacterEllipsis"
@@ -224,12 +226,12 @@
                 <materialDesign:Card Margin="5,0,5,5">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock>
+                            <TextBlock FontSize="14">
                                 <Run Text="Keywords" />
                                 <Run Text="(" /><Run Text="{Binding VideoInfo.Keywords.Count, Mode=OneWay}" /><Run Text=")" />
                             </TextBlock>
                         </Expander.Header>
-                        <TextBlock Margin="5"
+                        <TextBlock Margin="10"
                                    Foreground="{DynamicResource PrimaryTextBrush}"
                                    Text="{Binding VideoInfo.Keywords, Converter={StaticResource ArrayToStringConverter}}"
                                    TextTrimming="CharacterEllipsis"
@@ -241,7 +243,7 @@
                 <materialDesign:Card Margin="5,0,5,5">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock>
+                            <TextBlock FontSize="14">
                                 <Run Text="Media streams" />
                                 <Run Text="(" /><Run Text="{Binding VideoInfo.Streams.Count, Mode=OneWay}" /><Run Text=")" />
                             </TextBlock>
@@ -286,7 +288,7 @@
                 <materialDesign:Card Margin="5,0,5,5">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock>
+                            <TextBlock FontSize="14">
                                 <Run Text="Closed captions" />
                                 <Run Text="(" /><Run Text="{Binding VideoInfo.ClosedCaptionTracks.Count, Mode=OneWay}" /><Run Text=")" />
                             </TextBlock>
