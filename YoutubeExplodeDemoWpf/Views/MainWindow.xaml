@@ -88,7 +88,7 @@
                                     <Storyboard TargetProperty="Opacity">
                                         <DoubleAnimation From="0"
                                                          To="1"
-                                                         Duration="0:0:0.5" />
+                                                         Duration="0:0:0.7" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -222,7 +222,13 @@
 
                 <!--  Keywords  -->
                 <materialDesign:Card Margin="5,0,5,5">
-                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Keywords">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}">
+                        <Expander.Header>
+                            <TextBlock>
+                                <Run Text="Keywords" />
+                                <Run Text="(" /><Run Text="{Binding VideoInfo.Keywords.Count, Mode=OneWay}" /><Run Text=")" />
+                            </TextBlock>
+                        </Expander.Header>
                         <TextBlock Margin="5"
                                    Foreground="{DynamicResource PrimaryTextBrush}"
                                    Text="{Binding VideoInfo.Keywords, Converter={StaticResource ArrayToStringConverter}}"
@@ -233,7 +239,13 @@
 
                 <!--  Media streams  -->
                 <materialDesign:Card Margin="5,0,5,5">
-                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Media streams">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}">
+                        <Expander.Header>
+                            <TextBlock>
+                                <Run Text="Media streams" />
+                                <Run Text="(" /><Run Text="{Binding VideoInfo.Streams.Count, Mode=OneWay}" /><Run Text=")" />
+                            </TextBlock>
+                        </Expander.Header>
                         <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.Streams}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -272,7 +284,13 @@
 
                 <!--  Closed captions  -->
                 <materialDesign:Card Margin="5,0,5,5">
-                    <Expander Background="{DynamicResource MaterialDesignCardBackground}" Header="Closed captions">
+                    <Expander Background="{DynamicResource MaterialDesignCardBackground}">
+                        <Expander.Header>
+                            <TextBlock>
+                                <Run Text="Closed captions" />
+                                <Run Text="(" /><Run Text="{Binding VideoInfo.ClosedCaptionTracks.Count, Mode=OneWay}" /><Run Text=")" />
+                            </TextBlock>
+                        </Expander.Header>
                         <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.ClosedCaptionTracks}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
