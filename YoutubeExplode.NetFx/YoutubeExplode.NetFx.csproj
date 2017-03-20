@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6983B0A4-44B0-4FAF-81C7-94CC784570F0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>YoutubeExplode.DemoConsole</RootNamespace>
-    <AssemblyName>YoutubeExplodeDemoConsole</AssemblyName>
+    <RootNamespace>YoutubeExplode.NetFx</RootNamespace>
+    <AssemblyName>YoutubeExplode.NetFx</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,37 +20,26 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\YoutubeExplode.NetFx.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\YoutubeExplode.NetFx.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Tyrrrz.Extensions, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Tyrrrz.Extensions.1.2.1\lib\netstandard1.0\Tyrrrz.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\YoutubeExplode.NetFx\YoutubeExplode.NetFx.csproj">
-      <Project>{1b728d4d-4ea6-4b0e-82d5-6a12eb0ded7c}</Project>
-      <Name>YoutubeExplode.NetFx</Name>
-    </ProjectReference>
     <ProjectReference Include="..\YoutubeExplode\YoutubeExplode.csproj">
       <Project>{2019e360-0e05-4824-9ede-7723af45e10c}</Project>
       <Name>YoutubeExplode</Name>

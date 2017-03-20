@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using YoutubeExplode.DemoWpf.ViewModels;
-using YoutubeExplode.DemoWpf.ViewModels.Interfaces;
 
 namespace YoutubeExplode.DemoWpf
 {

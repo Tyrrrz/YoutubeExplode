@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using YoutubeExplode.Models;
 
-namespace YoutubeExplode.DemoWpf.ViewModels.Interfaces
+namespace YoutubeExplode.DemoWpf.ViewModels
 {
     public interface IMainViewModel
     {

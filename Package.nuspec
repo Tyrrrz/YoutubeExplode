@@ -16,5 +16,10 @@
   <files>
     <file src="YoutubeExplode\bin\Release\YoutubeExplode.dll" target="lib\netstandard1.1\YoutubeExplode.dll" />
     <file src="YoutubeExplode\bin\Release\YoutubeExplode.xml" target="lib\netstandard1.1\YoutubeExplode.xml" />
+    
+    <file src="YoutubeExplode\bin\Release\YoutubeExplode.dll" target="lib\net45\YoutubeExplode.dll" />
+    <file src="YoutubeExplode\bin\Release\YoutubeExplode.xml" target="lib\net45\YoutubeExplode.xml" />
+    <file src="YoutubeExplode.NetFx\bin\Release\YoutubeExplode.NetFx.dll" target="lib\net45\YoutubeExplode.NetFx.dll" />
+    <file src="YoutubeExplode.NetFx\bin\Release\YoutubeExplode.NetFx.xml" target="lib\net45\YoutubeExplode.NetFx.xml" />
   </files>
 </package>

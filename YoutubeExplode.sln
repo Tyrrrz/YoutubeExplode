@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplodeTests", "Yout
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode", "YoutubeExplode\YoutubeExplode.csproj", "{2019E360-0E05-4824-9EDE-7723AF45E10C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode.NetFx", "YoutubeExplode.NetFx\YoutubeExplode.NetFx.csproj", "{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{2019E360-0E05-4824-9EDE-7723AF45E10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2019E360-0E05-4824-9EDE-7723AF45E10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2019E360-0E05-4824-9EDE-7723AF45E10C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

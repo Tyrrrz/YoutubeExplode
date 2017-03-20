@@ -92,8 +92,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Locator.cs" />
-    <Compile Include="ViewModels\Converters\FileSizeConverter.cs" />
-    <Compile Include="ViewModels\Interfaces\IMainViewModel.cs" />
+    <Compile Include="Converters\FileSizeConverter.cs" />
+    <Compile Include="ViewModels\IMainViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -135,6 +135,10 @@
     <Resource Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\YoutubeExplode.NetFx\YoutubeExplode.NetFx.csproj">
+      <Project>{1b728d4d-4ea6-4b0e-82d5-6a12eb0ded7c}</Project>
+      <Name>YoutubeExplode.NetFx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YoutubeExplode\YoutubeExplode.csproj">
       <Project>{2019e360-0e05-4824-9ede-7723af45e10c}</Project>
       <Name>YoutubeExplode</Name>

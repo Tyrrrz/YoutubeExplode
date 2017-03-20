@@ -3,8 +3,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
 using Tyrrrz.Extensions;
-using YoutubeExplode.DemoWpf.ViewModels.Interfaces;
 using YoutubeExplode.Models;
+using YoutubeExplode.NetFx;
 
 namespace YoutubeExplode.DemoWpf.ViewModels
 {
@@ -150,24 +150,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             // Download
             IsBusy = true;
             IsProgressIndeterminate = true;
-            var closedCaptionTrack = await _client.GetClosedCaptionTrackAsync(closedCaptionTrackInfo);
-
-            // Save to file as SRT
-            using (var output = File.Create(filePath))
-            using (var sw = new StreamWriter(output))
-            {
-                int i = 1;
-                foreach (var closedCaption in closedCaptionTrack)
-                {
-                    await sw.WriteLineAsync(i++.ToString());
-                    await sw.WriteAsync(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
-                    await sw.WriteAsync(" --> ");
-                    await sw.WriteLineAsync((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
-                    await sw.WriteLineAsync(closedCaption.Text);
-                    await sw.WriteLineAsync();
-                }
-            }
-
+            await _client.DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath);
             IsProgressIndeterminate = false;
             IsBusy = false;
         }

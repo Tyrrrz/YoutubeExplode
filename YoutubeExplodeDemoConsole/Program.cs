@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Tyrrrz.Extensions;
+using YoutubeExplode.NetFx;
 
 namespace YoutubeExplode.DemoConsole
 {
@@ -54,7 +55,7 @@ namespace YoutubeExplode.DemoConsole
 
             // Get the video info
             Console.WriteLine("Loading...");
-            var videoInfo = client.GetVideoInfoAsync(id).Result;
+            var videoInfo = client.GetVideoInfoAsync(id).GetAwaiter().GetResult();
             Console.WriteLine('-'.Repeat(15));
 
             // Print metadata
@@ -75,9 +76,7 @@ namespace YoutubeExplode.DemoConsole
             // Download video
             Console.WriteLine($"Downloading to [{fileName}]...");
             Console.WriteLine('-'.Repeat(15));
-            using (var input = client.GetMediaStreamAsync(streamInfo).Result)
-            using (var output = File.Create(fileName))
-                input.CopyTo(output);
+            client.DownloadMediaStreamAsync(streamInfo, fileName).GetAwaiter().GetResult();
 
             Console.WriteLine("Download complete!");
             Console.ReadKey();
