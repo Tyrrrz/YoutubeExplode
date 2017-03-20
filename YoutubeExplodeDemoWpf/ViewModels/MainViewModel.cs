@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
@@ -143,7 +141,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             {
                 AddExtension = true,
                 DefaultExt = "srt",
-                FileName = $"{VideoInfo.Title} [{closedCaptionTrackInfo.Language}].srt".Except(Path.GetInvalidFileNameChars()),
+                FileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Culture.EnglishName}.srt".Except(Path.GetInvalidFileNameChars()),
                 Filter = "SRT Files|*.srt|All files|*.*"
             };
             if (sfd.ShowDialog() == false) return;
@@ -154,21 +152,21 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             IsProgressIndeterminate = true;
             var closedCaptionTrack = await _client.GetClosedCaptionTrackAsync(closedCaptionTrackInfo);
 
-            // Convert to SRT
-            var sb = new StringBuilder();
-            int i = 1;
-            foreach (var closedCaption in closedCaptionTrack)
+            // Save to file as SRT
+            using (var output = File.Create(filePath))
+            using (var sw = new StreamWriter(output))
             {
-                sb.AppendLine(i++.ToString());
-                sb.Append(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
-                sb.Append(" --> ");
-                sb.AppendLine((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
-                sb.AppendLine(closedCaption.Text);
-                sb.AppendLine();
+                int i = 1;
+                foreach (var closedCaption in closedCaptionTrack)
+                {
+                    await sw.WriteLineAsync(i++.ToString());
+                    await sw.WriteAsync(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
+                    await sw.WriteAsync(" --> ");
+                    await sw.WriteLineAsync((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
+                    await sw.WriteLineAsync(closedCaption.Text);
+                    await sw.WriteLineAsync();
+                }
             }
-
-            // Save
-            File.WriteAllText(filePath, sb.ToString());
 
             IsProgressIndeterminate = false;
             IsBusy = false;
