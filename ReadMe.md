@@ -7,9 +7,8 @@ Zero-dependency .NET library that parses public metadata on Youtube videos
 
 **Download:**
 
-The library is distributed as a [nuget package](https://www.nuget.org/packages/YoutubeExplode): `Install-Package YoutubeExplode`
-
-You can also find the last stable version in [releases](https://github.com/Tyrrrz/YoutubeExplode/releases)
+- Using nuget: `Install-Package YoutubeExplode` or [go to package page](https://www.nuget.org/packages/YoutubeExplode)
+- Manually: [go to release page](https://github.com/Tyrrrz/YoutubeExplode/releases)
 
 **Features:**
 
