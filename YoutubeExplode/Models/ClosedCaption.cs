@@ -29,7 +29,7 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"[{Offset} - {Offset + Duration}] {Text}";
+            return $"[{Offset:g} --> {Offset + Duration:g}] {Text}";
         }
     }
 }

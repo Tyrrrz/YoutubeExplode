@@ -116,7 +116,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             };
 
             // Select destination
-            if (sfd.ShowDialog() == false) return;
+            if (sfd.ShowDialog() != true) return;
             string filePath = sfd.FileName;
 
             // Download and save to file
@@ -146,7 +146,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 Filter = fileFilter
             };
             // Select destination
-            if (sfd.ShowDialog() == false) return;
+            if (sfd.ShowDialog() != true) return;
             string filePath = sfd.FileName;
 
             // Download

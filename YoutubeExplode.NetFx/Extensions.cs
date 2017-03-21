@@ -109,12 +109,19 @@ namespace YoutubeExplode
                 {
                     var closedCaption = closedCaptionTrack.Captions[i];
 
+                    // Line number
                     await sw.WriteLineAsync((i + 1).ToString());
+
+                    // Time start --> time end
                     await sw.WriteAsync(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
                     await sw.WriteAsync(" --> ");
-                    await
-                        sw.WriteLineAsync((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
+                    await sw.WriteAsync((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
+                    await sw.WriteLineAsync();
+
+                    // Actual text
                     await sw.WriteLineAsync(closedCaption.Text);
+
+                    // Separator
                     await sw.WriteLineAsync();
 
                     progress?.Report((i + 1.0)/closedCaptionTrack.Captions.Count);
