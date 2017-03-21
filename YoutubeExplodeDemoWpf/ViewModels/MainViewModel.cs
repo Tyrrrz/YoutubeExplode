@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
 using Tyrrrz.Extensions;
 using YoutubeExplode.Models;
-using YoutubeExplode.NetFx;
 
 namespace YoutubeExplode.DemoWpf.ViewModels
 {

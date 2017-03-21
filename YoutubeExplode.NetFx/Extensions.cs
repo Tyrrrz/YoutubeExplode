@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using YoutubeExplode.Models;
 
-namespace YoutubeExplode.NetFx
+namespace YoutubeExplode
 {
     /// <summary>
     /// .NET Framework compatible extensions for YoutubeExplode

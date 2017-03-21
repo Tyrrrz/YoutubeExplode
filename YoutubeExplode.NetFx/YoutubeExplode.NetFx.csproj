@@ -7,7 +7,7 @@
     <ProjectGuid>{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>YoutubeExplode.NetFx</RootNamespace>
+    <RootNamespace>YoutubeExplode</RootNamespace>
     <AssemblyName>YoutubeExplode.NetFx</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
