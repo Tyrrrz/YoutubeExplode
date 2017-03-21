@@ -162,15 +162,17 @@ namespace YoutubeExplode
             response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse extended video info and copy metadata
-            var extendedVideoInfo = Parser.ExtendedVideoInfoFromXml(response);
-            result.Author = extendedVideoInfo.Author;
-            result.Description = extendedVideoInfo.Description;
-            result.LikeCount = extendedVideoInfo.LikeCount;
-            result.DislikeCount = extendedVideoInfo.DisikeCount;
+            var resultExtension = Parser.VideoInfoFromXml(response);
+            result.Author = resultExtension.Author;
+            result.Description = resultExtension.Description;
+            result.LikeCount = resultExtension.LikeCount;
+            result.DislikeCount = resultExtension.DislikeCount;
 
             // Decipher
             if (result.NeedsDeciphering)
+            {
                 await DecipherAsync(result, videoContext.PlayerVersion).ConfigureAwait(false);
+            }
 
             // Get additional streams from dash if available
             if (result.DashManifest != null)
@@ -185,7 +187,9 @@ namespace YoutubeExplode
 
             // Get file size of streams that don't have it yet
             foreach (var streamInfo in result.Streams.Where(s => s.FileSize == 0))
+            {
                 streamInfo.FileSize = await GetContentLengthAsync(streamInfo.Url).ConfigureAwait(false);
+            }
 
             // Finalize the stream list
             result.Streams = result.Streams
@@ -222,6 +226,8 @@ namespace YoutubeExplode
             result.Id = playlistId;
 
             // Keep requesting again with offset to make sure we get everything
+            // HACK: forces at minimum 2 requests per playlist, would be nice if it could be optimized
+            // Can't evaluate `hasMore` to `result.VideoIds.Count == 200` because playlist can have deleted videos
             bool hasMore = result.VideoIds.Count > 0;
             int offset = result.VideoIds.Count;
             while (hasMore)
@@ -292,6 +298,7 @@ namespace YoutubeExplode
         {
             if (disposing)
             {
+                // HACK: disposing the request service, may be undesired
                 (_requestService as IDisposable)?.Dispose();
             }
         }

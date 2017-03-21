@@ -142,7 +142,7 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{Id} | {Title}";
+            return $"{Title}";
         }
     }
 }

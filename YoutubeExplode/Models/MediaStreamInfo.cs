@@ -138,7 +138,7 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"Itag: {Itag}";
+            return $"{QualityLabel} | {ContentType} | {ContainerType}";
         }
     }
 }

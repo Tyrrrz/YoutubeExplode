@@ -11,6 +11,9 @@ namespace YoutubeExplode.Internal
 {
     internal static class Parser
     {
+        // This contains all parsing logic in YoutubeExplode and is kinda messy
+        // ...mostly because Youtube's internal API is messy itself
+
         public static string FunctionCallFromLineJs(string rawJs)
         {
             if (rawJs == null)
@@ -315,6 +318,11 @@ namespace YoutubeExplode.Internal
             bool isMuted = dic.GetOrDefault("muted").ParseIntOrDefault() == 1;
             bool isEmbeddingAllowed = dic.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
 
+            // Get author
+            string authorName = dic.GetOrDefault("author");
+            var author = new UserInfo();
+            author.DisplayName = authorName;
+
             // Get adaptive streams
             string adaptiveStreamsRaw = dic.GetOrDefault("adaptive_fmts");
             var adaptiveStreams = adaptiveStreamsRaw.IsNotBlank()
@@ -343,6 +351,7 @@ namespace YoutubeExplode.Internal
             var result = new VideoInfo();
             result.Id = id;
             result.Title = title;
+            result.Author = author;
             result.Length = length;
             result.ViewCount = viewCount;
             result.Keywords = keywords;
@@ -358,32 +367,7 @@ namespace YoutubeExplode.Internal
             return result;
         }
 
-        public static UserInfo UserInfoFromXml(string rawXml)
-        {
-            if (rawXml == null)
-                throw new ArgumentNullException(nameof(rawXml));
-
-            var root = XElement.Parse(rawXml).StripNamespaces();
-
-            // Get metadata
-            string id = root.Element("channel_external_id")?.Value;
-            string name = root.Element("username")?.Value;
-            string displayName = root.Element("public_name")?.Value;
-            string channelTitle = root.Element("channel_title")?.Value;
-            bool isPaid = (root.Element("channel_paid")?.Value).ParseIntOrDefault() == 1;
-
-            // Populate
-            var result = new UserInfo();
-            result.Id = id;
-            result.Name = name;
-            result.DisplayName = displayName;
-            result.ChannelTitle = channelTitle;
-            result.IsPaid = isPaid;
-
-            return result;
-        }
-
-        public static ExtendedVideoInfo ExtendedVideoInfoFromXml(string rawXml)
+        public static VideoInfo VideoInfoFromXml(string rawXml)
         {
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
@@ -400,15 +384,25 @@ namespace YoutubeExplode.Internal
             long likeCount = (xVideoInfo?.Element("likes_count_unformatted")?.Value).ParseLongOrDefault();
             long dislikeCount = (xVideoInfo?.Element("dislikes_count_unformatted")?.Value).ParseLongOrDefault();
 
-            // Get user info
-            var userInfo = xUserInfo != null ? UserInfoFromXml(xUserInfo.ToString()) : null;
+            // Get author
+            string authorId = xUserInfo?.Element("channel_external_id")?.Value;
+            string authorName = xUserInfo?.Element("username")?.Value;
+            string authorDisplayName = xUserInfo?.Element("public_name")?.Value;
+            string authorChannelTitle = xUserInfo?.Element("channel_title")?.Value;
+            bool authorIsPaid = (xUserInfo?.Element("channel_paid")?.Value).ParseIntOrDefault() == 1;
+            var author = new UserInfo();
+            author.Id = authorId;
+            author.Name = authorName;
+            author.DisplayName = authorDisplayName;
+            author.ChannelTitle = authorChannelTitle;
+            author.IsPaid = authorIsPaid;
 
             // Populate
-            var result = new ExtendedVideoInfo();
-            result.Author = userInfo;
+            var result = new VideoInfo();
+            result.Author = author;
             result.Description = description;
             result.LikeCount = likeCount;
-            result.DisikeCount = dislikeCount;
+            result.DislikeCount = dislikeCount;
 
             return result;
         }
