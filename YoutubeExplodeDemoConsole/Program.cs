@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Tyrrrz.Extensions;
 using YoutubeExplode.NetFx;
 
@@ -38,7 +39,7 @@ namespace YoutubeExplode.DemoConsole
             return $"{size:0.#} {units[unit]}";
         }
 
-        public static void Main(string[] args)
+        private static async Task MainAsync()
         {
             // This demo downloads one media stream for the given video
             Console.Title = "YoutubeExplode Demo";
@@ -55,12 +56,12 @@ namespace YoutubeExplode.DemoConsole
 
             // Get the video info
             Console.WriteLine("Loading...");
-            var videoInfo = client.GetVideoInfoAsync(id).GetAwaiter().GetResult();
+            var videoInfo = await client.GetVideoInfoAsync(id);
             Console.WriteLine('-'.Repeat(15));
 
             // Print metadata
             Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author}");
-            
+
             // Get the most preferable stream
             Console.WriteLine("Looking for the best stream that has both video and audio tracks...");
             var streamInfo = videoInfo.Streams
@@ -76,11 +77,17 @@ namespace YoutubeExplode.DemoConsole
             // Download video
             Console.WriteLine($"Downloading to [{fileName}]...");
             Console.WriteLine('-'.Repeat(15));
-            client.DownloadMediaStreamAsync(streamInfo, fileName).GetAwaiter().GetResult();
+            await client.DownloadMediaStreamAsync(streamInfo, fileName);
 
             Console.WriteLine("Download complete!");
             Console.ReadKey();
             client.Dispose();
+        }
+
+        public static void Main(string[] args)
+        {
+            // Main method cannot be asynchronous so we run everything synchronously
+            MainAsync().GetAwaiter().GetResult();
         }
     }
 }
