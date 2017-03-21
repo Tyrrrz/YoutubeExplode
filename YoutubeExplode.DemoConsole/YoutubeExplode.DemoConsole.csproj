@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YoutubeExplode.DemoConsole</RootNamespace>
-    <AssemblyName>YoutubeExplodeDemoConsole</AssemblyName>
+    <AssemblyName>YoutubeExplode.DemoConsole</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
