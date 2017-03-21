@@ -134,7 +134,8 @@
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             </Style>
 
-            <converters:FileSizeConverter x:Key="FileSizeConverter" />
+            <converters:FileSizeToStringConverter x:Key="FileSizeToStringConverter" />
+            <converters:BoolToStringConverter x:Key="BoolToStringConverter" />
 
             <demoWpf:Locator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>

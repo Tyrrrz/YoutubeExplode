@@ -5,7 +5,7 @@ using System.Windows.Data;
 namespace YoutubeExplode.DemoWpf.Converters
 {
     [ValueConversion(typeof(long), typeof(string))]
-    public class FileSizeConverter : IValueConverter
+    public class FileSizeToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
