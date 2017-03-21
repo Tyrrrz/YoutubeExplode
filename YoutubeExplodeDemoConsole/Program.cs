@@ -27,7 +27,7 @@ namespace YoutubeExplode.DemoConsole
         {
             string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
             double size = fileSize;
-            var unit = 0;
+            int unit = 0;
 
             while (size >= 1024)
             {
@@ -40,11 +40,6 @@ namespace YoutubeExplode.DemoConsole
 
         private static async Task MainAsync()
         {
-            // This demo downloads one media stream for the given video
-            Console.Title = "YoutubeExplode Demo";
-            Console.WindowWidth = 86;
-            Console.WindowHeight = 38;
-
             // Client
             var client = new YoutubeClient();
 
@@ -71,7 +66,10 @@ namespace YoutubeExplode.DemoConsole
             Console.WriteLine($"Quality: {streamInfo.QualityLabel} | Container: {streamInfo.ContainerType} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata
-            string fileName = $"{videoInfo.Title}.{streamInfo.FileExtension}".Except(Path.GetInvalidFileNameChars());
+            string fileName = $"{videoInfo.Title}.{streamInfo.QualityLabel}.{streamInfo.FileExtension}";
+
+            // Remove illegal characters from file name
+            fileName = fileName.Except(Path.GetInvalidFileNameChars());
 
             // Download video
             Console.WriteLine($"Downloading to [{fileName}]...");
@@ -85,7 +83,14 @@ namespace YoutubeExplode.DemoConsole
 
         public static void Main(string[] args)
         {
-            // Main method cannot be asynchronous so we run everything synchronously
+            // This demo prompts for video ID, gets video info and downloads one media stream
+            // It's intended to be very simple and straight to the point
+            // For a more complicated example - check out the WPF demo
+            Console.Title = "YoutubeExplode Demo";
+            Console.WindowWidth = 86;
+            Console.WindowHeight = 38;
+
+            // Main method in consoles cannot be asynchronous so we run everything synchronously
             MainAsync().GetAwaiter().GetResult();
         }
     }

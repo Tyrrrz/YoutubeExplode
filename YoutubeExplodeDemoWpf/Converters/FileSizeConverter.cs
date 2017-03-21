@@ -11,7 +11,7 @@ namespace YoutubeExplode.DemoWpf.Converters
         {
             string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
             double size = (long) value;
-            var unit = 0;
+            int unit = 0;
 
             while (size >= 1024)
             {

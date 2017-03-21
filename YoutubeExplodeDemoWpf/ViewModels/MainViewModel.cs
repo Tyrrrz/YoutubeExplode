@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
@@ -70,7 +71,8 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             // Commands
             GetVideoInfoCommand = new RelayCommand(GetVideoInfoAsync, () => !IsBusy);
             DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStreamAsync, vse => !IsBusy);
-            DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(DownloadClosedCaptionTrackAsync, vse => !IsBusy);
+            DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(
+                DownloadClosedCaptionTrackAsync, vse => !IsBusy);
         }
 
         private async void GetVideoInfoAsync()
@@ -93,65 +95,69 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             // Perform the request
             VideoInfo = await _client.GetVideoInfoAsync(id);
 
-            IsProgressIndeterminate = false;
             IsBusy = false;
+            IsProgressIndeterminate = false;
         }
 
         private async void DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
-            // Select destination
+            // Create dialog
+            string defaultFileName = $"{VideoInfo.Title}.{mediaStreamInfo.QualityLabel}.{mediaStreamInfo.FileExtension}";
+            defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
+            string fileFilter =
+                $"{mediaStreamInfo.ContainerType} Files|" +
+                $"*.{mediaStreamInfo.FileExtension}|All files|*.*";
             var sfd = new SaveFileDialog
             {
                 AddExtension = true,
                 DefaultExt = mediaStreamInfo.FileExtension,
-                FileName = $"{VideoInfo.Title}.{mediaStreamInfo.FileExtension}".Except(Path.GetInvalidFileNameChars()),
-                Filter = $"{mediaStreamInfo.FileExtension.ToUpperInvariant()} Files|*.{mediaStreamInfo.FileExtension}|All files|*.*"
+                FileName = defaultFileName,
+                Filter = fileFilter
             };
+
+            // Select destination
             if (sfd.ShowDialog() == false) return;
             string filePath = sfd.FileName;
 
             // Download and save to file
             IsBusy = true;
             Progress = 0;
-            using (var input = await _client.GetMediaStreamAsync(mediaStreamInfo))
-            using (var output = File.Create(filePath))
-            {
-                // Read the response and copy it to output stream
-                var buffer = new byte[1024];
-                int bytesRead;
-                do
-                {
-                    bytesRead = await input.ReadAsync(buffer, 0, buffer.Length);
-                    await output.WriteAsync(buffer, 0, bytesRead);
 
-                    if (mediaStreamInfo.FileSize > 0)
-                        Progress += 1.0*bytesRead/mediaStreamInfo.FileSize;
-                } while (bytesRead > 0);
-            }
+            var progressHandler = new Progress<double>(p => Progress = p);
+            await _client.DownloadMediaStreamAsync(mediaStreamInfo, filePath, progressHandler);
 
-            Progress = 0;
             IsBusy = false;
+            Progress = 0;
         }
 
         private async void DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {
-            // Select destination
+            // Create dialog
+            string defaultFileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Culture.EnglishName}.srt";
+            defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
+            string fileFilter =
+                "SRT Files|*.srt|" +
+                "All files|*.*";
             var sfd = new SaveFileDialog
             {
                 AddExtension = true,
                 DefaultExt = "srt",
-                FileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Culture.EnglishName}.srt".Except(Path.GetInvalidFileNameChars()),
-                Filter = "SRT Files|*.srt|All files|*.*"
+                FileName = defaultFileName,
+                Filter = fileFilter
             };
+            // Select destination
             if (sfd.ShowDialog() == false) return;
             string filePath = sfd.FileName;
 
             // Download
             IsBusy = true;
-            IsProgressIndeterminate = true;
-            await _client.DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath);
-            IsProgressIndeterminate = false;
+            Progress = 0;
+
+            var progressHandler = new Progress<double>(p => Progress = p);
+            await _client.DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath, progressHandler);
+
             IsBusy = false;
+            Progress = 0;
         }
     }
 }
