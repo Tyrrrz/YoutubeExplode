@@ -38,7 +38,6 @@ namespace YoutubeExplode.Services
 
             _httpClient = new HttpClient(httpClientHandler);
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
-            _httpClient.DefaultRequestHeaders.Add("Connection", "Close");
         }
 
         /// <inheritdoc />
