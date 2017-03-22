@@ -307,5 +307,15 @@ namespace YoutubeExplode.Internal
 
             return result;
         }
+
+        public static XElement Descendant(this XElement element, XName name)
+        {
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            return element.Descendants(name).FirstOrDefault();
+        }
     }
 }

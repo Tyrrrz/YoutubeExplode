@@ -41,6 +41,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Exceptions\YoutubeErrorException.cs" />
     <Compile Include="Internal\Extensions.cs" />
     <Compile Include="Internal\CipherOperations\ICipherOperation.cs" />

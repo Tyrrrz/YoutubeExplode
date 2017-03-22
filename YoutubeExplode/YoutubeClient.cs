@@ -73,7 +73,7 @@ namespace YoutubeExplode
             if (videoInfo == null)
                 throw new ArgumentNullException(nameof(videoInfo));
             if (!videoInfo.NeedsDeciphering)
-                throw new Exception("Given video info does not need to be deciphered");
+                throw new ArgumentException("Does not need to be deciphered", nameof(videoInfo));
 
             // Get player source
             var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
@@ -107,7 +107,7 @@ namespace YoutubeExplode
 
             // Get file size header
             if (!headers.ContainsKey("Content-Length"))
-                throw new Exception("Content-Length header not found");
+                throw new KeyNotFoundException("Content-Length header not found");
 
             return headers["Content-Length"].ParseLong();
         }
@@ -120,7 +120,7 @@ namespace YoutubeExplode
             if (videoId == null)
                 throw new ArgumentNullException(nameof(videoId));
             if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Is not a valid Youtube video ID", nameof(videoId));
+                throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
             // Get
             string url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
@@ -128,20 +128,28 @@ namespace YoutubeExplode
 
             // Parse
             var dic = Parser.DictionaryFromUrlEncoded(response);
+
+            // Check status
             string status = dic.GetOrDefault("status");
-            int errorCode = dic.GetOrDefault("errorcode").ParseIntOrDefault();
-            return !(status.EqualsInvariant("fail") && errorCode.IsEither(100, 150));
+            if (status.EqualsInvariant("fail"))
+            {
+                // If there's an error, only 100 and 150 indicate non-existing video
+                int errorCode = dic.GetOrDefault("errorcode").ParseIntOrDefault();
+                return !errorCode.IsEither(100, 150);
+            }
+
+            return true;
         }
 
         /// <summary>
-        /// Gets video metadata by id
+        /// Gets video metadata by video ID
         /// </summary>
         public async Task<VideoInfo> GetVideoInfoAsync(string videoId)
         {
             if (videoId == null)
                 throw new ArgumentNullException(nameof(videoId));
             if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Is not a valid Youtube video ID", nameof(videoId));
+                throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
             // Get video context
             string url = $"https://www.youtube.com/embed/{videoId}";
@@ -204,7 +212,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets playlist metadata by id
+        /// Gets playlist metadata by playlist ID
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
         {
@@ -213,7 +221,7 @@ namespace YoutubeExplode
             if (playlistId == null)
                 throw new ArgumentNullException(nameof(playlistId));
             if (!ValidatePlaylistId(playlistId))
-                throw new ArgumentException("Is not a valid Youtube playlist ID", nameof(playlistId));
+                throw new ArgumentException("Invalid Youtube playlist ID", nameof(playlistId));
 
             // Can also use `action_get_user_uploads_by_user=1` for user uploads...
 
@@ -236,7 +244,7 @@ namespace YoutubeExplode
                 string nextUrl = url + $"&index={offset}";
                 response = await _requestService.GetStringAsync(nextUrl).ConfigureAwait(false);
 
-                // Parse and concat ids
+                // Parse and concat IDs
                 var extension = Parser.PlaylistInfoFromXml(response);
                 int delta = result.VideoIds.Count;
                 result.VideoIds = result.VideoIds.Concat(extension.VideoIds).Distinct().ToArray();
@@ -253,20 +261,20 @@ namespace YoutubeExplode
         /// <summary>
         /// Gets media stream by its metadata
         /// </summary>
-        public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo streamInfo)
+        public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
-            if (streamInfo == null)
-                throw new ArgumentNullException(nameof(streamInfo));
-            if (streamInfo.Url == null)
-                throw new Exception("Given stream info does not have a URL");
-            if (streamInfo.NeedsDeciphering)
-                throw new Exception("Given stream's signature needs to be deciphered first");
+            if (mediaStreamInfo == null)
+                throw new ArgumentNullException(nameof(mediaStreamInfo));
+            if (mediaStreamInfo.Url == null)
+                throw new ArgumentException("Does not have a URL", nameof(mediaStreamInfo));
+            if (mediaStreamInfo.NeedsDeciphering)
+                throw new ArgumentException("Needs to be deciphered first", nameof(mediaStreamInfo));
 
             // Get
-            var stream = await _requestService.GetStreamAsync(streamInfo.Url).ConfigureAwait(false);
+            var stream = await _requestService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
 
             // Pack
-            var result = new MediaStream(stream, streamInfo);
+            var result = new MediaStream(stream, mediaStreamInfo);
 
             return result;
         }
@@ -279,7 +287,7 @@ namespace YoutubeExplode
             if (closedCaptionTrackInfo == null)
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
             if (closedCaptionTrackInfo.Url == null)
-                throw new Exception("Given caption track info does not have a URL");
+                throw new ArgumentException("Does not have a URL", nameof(closedCaptionTrackInfo));
 
             // Get
             string response = await _requestService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);

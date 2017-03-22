@@ -9,8 +9,8 @@ namespace YoutubeExplode.Tests
 {
     // These integration tests validate that YoutubeClient correctly works with actual data.
     // This includes parsing, deciphering, downloading, etc.
-    // These tests are the primary means of detecting structural changes in youtube's front end.
-    // Due to the nature of youtube, some data can be very inconsistent and unpredictable.
+    // These tests are the primary means of detecting structural changes in Youtube's front end.
+    // Due to the nature of Youtube, some data can be very inconsistent and unpredictable.
     // Because of that, consider running tests a few times to make sure. ;)
 
     [TestClass]

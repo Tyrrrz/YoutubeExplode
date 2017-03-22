@@ -34,15 +34,15 @@ namespace YoutubeExplode.Models
             set { _innerStream.Position = value; }
         }
 
-        internal MediaStream(Stream innerStream, MediaStreamInfo streamInfo)
+        internal MediaStream(Stream innerStream, MediaStreamInfo mediaStreamInfo)
         {
             if (innerStream == null)
                 throw new ArgumentNullException(nameof(innerStream));
-            if (streamInfo == null)
-                throw new ArgumentNullException(nameof(streamInfo));
+            if (mediaStreamInfo == null)
+                throw new ArgumentNullException(nameof(mediaStreamInfo));
 
             _innerStream = innerStream;
-            Info = streamInfo;
+            Info = mediaStreamInfo;
         }
 
         /// <inheritdoc />

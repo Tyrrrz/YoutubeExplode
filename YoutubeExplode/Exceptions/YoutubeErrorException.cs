@@ -3,33 +3,19 @@
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when Youtube returns an error after a query
+    /// Thrown when Youtube's frontend returns an error
     /// </summary>
     public class YoutubeErrorException : Exception
     {
         /// <summary>
         /// Error code
         /// </summary>
-        public int ErrorCode { get; }
+        public int Code { get; }
 
-        /// <summary>
-        /// Original error message
-        /// </summary>
-        public string ErrorMessage { get; }
-
-        /// <summary>
-        /// Exception messaage
-        /// </summary>
-        public override string Message { get; }
-
-        internal YoutubeErrorException(int errorCode, string errorMessage)
+        internal YoutubeErrorException(int code, string message)
+            : base(message)
         {
-            if (errorMessage == null)
-                throw new ArgumentNullException(nameof(errorMessage));
-
-            ErrorCode = errorCode;
-            ErrorMessage = errorMessage;
-            Message = $"Youtube returned error {ErrorCode}:{Environment.NewLine}{ErrorMessage}";
+            Code = code;
         }
     }
 }
