@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows.Input;
-using System.Windows.Navigation;
+﻿using System.Windows.Input;
 using YoutubeExplode.DemoWpf.ViewModels;
 
 namespace YoutubeExplode.DemoWpf.Views
@@ -16,12 +14,6 @@ namespace YoutubeExplode.DemoWpf.Views
         {
             if (e.Key != Key.Enter) return;
             ((MainViewModel) DataContext).GetVideoInfoCommand.Execute(null);
-        }
-
-        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
-        {
-            Process.Start(e.Uri.ToString());
-            e.Handled = true;
         }
     }
 }
