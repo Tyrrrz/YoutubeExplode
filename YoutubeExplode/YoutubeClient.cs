@@ -106,10 +106,11 @@ namespace YoutubeExplode
             var headers = await _requestService.GetHeadersAsync(url).ConfigureAwait(false);
 
             // Get file size header
-            if (!headers.ContainsKey("Content-Length"))
+            string cl = headers.GetOrDefault("Content-Length");
+            if (cl == null)
                 throw new KeyNotFoundException("Content-Length header not found");
 
-            return headers["Content-Length"].ParseLong();
+            return cl.ParseLong();
         }
 
         /// <summary>

@@ -263,6 +263,9 @@ namespace YoutubeExplode.Internal
                 string lang = dic.GetOrDefault("lc");
                 bool isAuto = dic.GetOrDefault("v")?.ContainsInvariant("a.") ?? false;
 
+                // HACK: Google uses wrong code for Hebrew
+                if (lang == "iw") lang = "he";
+
                 // Populate
                 var result = new ClosedCaptionTrackInfo();
                 result.Url = url;
@@ -321,11 +324,6 @@ namespace YoutubeExplode.Internal
             bool isMuted = dic.GetOrDefault("muted").ParseIntOrDefault() == 1;
             bool isEmbeddingAllowed = dic.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
 
-            // Get author
-            string authorName = dic.GetOrDefault("author");
-            var author = new UserInfo();
-            author.DisplayName = authorName;
-
             // Get adaptive streams
             string adaptiveStreamsRaw = dic.GetOrDefault("adaptive_fmts");
             var adaptiveStreams = adaptiveStreamsRaw.IsNotBlank()
@@ -354,7 +352,6 @@ namespace YoutubeExplode.Internal
             var result = new VideoInfo();
             result.Id = id;
             result.Title = title;
-            result.Author = author;
             result.Length = length;
             result.ViewCount = viewCount;
             result.Keywords = keywords;
