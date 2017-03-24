@@ -111,7 +111,7 @@ namespace YoutubeExplode.Tests
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
-                Assert.IsNotNull(captionTrack.Language);
+                Assert.IsNotNull(captionTrack.Culture);
             }
         }
 
@@ -179,7 +179,7 @@ namespace YoutubeExplode.Tests
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
-                Assert.IsNotNull(captionTrack.Language);
+                Assert.IsNotNull(captionTrack.Culture);
             }
         }
 
@@ -248,7 +248,7 @@ namespace YoutubeExplode.Tests
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
-                Assert.IsNotNull(captionTrack.Language);
+                Assert.IsNotNull(captionTrack.Culture);
             }
         }
 
@@ -313,7 +313,7 @@ namespace YoutubeExplode.Tests
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
                 Assert.IsNotNull(captionTrack.Url);
-                Assert.IsNotNull(captionTrack.Language);
+                Assert.IsNotNull(captionTrack.Culture);
             }
         }
 
@@ -494,7 +494,7 @@ namespace YoutubeExplode.Tests
         public async Task GetClosedCaptionTrackAsync_Test()
         {
             var videoInfo = await _client.GetVideoInfoAsync("_QdPW8JrYzQ");
-            var trackInfo = videoInfo.ClosedCaptionTracks.FirstOrDefault(c => c.Language == "en");
+            var trackInfo = videoInfo.ClosedCaptionTracks.FirstOrDefault(c => c.Culture.Name == "en");
             var track = await _client.GetClosedCaptionTrackAsync(trackInfo);
             var caption = track.GetByOffset(TimeSpan.FromSeconds(40));
 

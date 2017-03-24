@@ -13,14 +13,9 @@ namespace YoutubeExplode.Models
         public string Url { get; internal set; }
 
         /// <summary>
-        /// Language of this caption track
+        /// This closed caption track's culture
         /// </summary>
-        public string Language { get; internal set; }
-
-        /// <summary>
-        /// Culture info generated from this track's language
-        /// </summary>
-        public CultureInfo Culture => new CultureInfo(Language);
+        public CultureInfo Culture { get; internal set; }
 
         /// <summary>
         /// Whether this caption track was generated automatically
