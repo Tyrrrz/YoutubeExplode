@@ -107,7 +107,7 @@ namespace YoutubeExplode
 
             // Get file size header
             string cl = headers.GetOrDefault("Content-Length");
-            if (cl == null)
+            if (cl.IsBlank())
                 throw new KeyNotFoundException("Content-Length header not found");
 
             return cl.ParseLong();
