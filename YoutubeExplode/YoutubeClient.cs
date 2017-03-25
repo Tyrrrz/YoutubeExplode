@@ -68,35 +68,6 @@ namespace YoutubeExplode
             return playerSource;
         }
 
-        private async Task DecipherAsync(VideoInfo videoInfo, string playerVersion)
-        {
-            if (videoInfo == null)
-                throw new ArgumentNullException(nameof(videoInfo));
-            if (!videoInfo.NeedsDeciphering)
-                throw new ArgumentException("Does not need to be deciphered", nameof(videoInfo));
-
-            // Get player source
-            var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
-
-            // Decipher streams
-            foreach (var streamInfo in videoInfo.Streams.Where(s => s.NeedsDeciphering))
-            {
-                string sig = streamInfo.Signature;
-                string newSig = playerSource.Decipher(sig);
-                streamInfo.Url = streamInfo.Url.SetQueryParameter("signature", newSig);
-                streamInfo.NeedsDeciphering = false;
-            }
-
-            // Decipher dash manifest
-            if (videoInfo.DashManifest != null && videoInfo.DashManifest.NeedsDeciphering)
-            {
-                string sig = videoInfo.DashManifest.Signature;
-                string newSig = playerSource.Decipher(sig);
-                videoInfo.DashManifest.Url = videoInfo.DashManifest.Url.SetPathParameter("signature", newSig);
-                videoInfo.DashManifest.NeedsDeciphering = false;
-            }
-        }
-
         private async Task<long> GetContentLengthAsync(string url)
         {
             if (url == null)
@@ -107,10 +78,10 @@ namespace YoutubeExplode
 
             // Get file size header
             string cl = headers.GetOrDefault("Content-Length");
-            if (cl.IsBlank())
+            if (cl == null)
                 throw new KeyNotFoundException("Content-Length header not found");
 
-            return cl.ParseLong();
+            return cl.ParseLongOrDefault();
         }
 
         /// <summary>
@@ -166,30 +137,49 @@ namespace YoutubeExplode
             // Parse video info
             var result = Parser.VideoInfoFromUrlEncoded(response);
 
-            // Get extended video info
+            // Get video info extension
             url = $"https://www.youtube.com/get_video_metadata?video_id={videoId}";
             response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
 
-            // Parse extended video info and copy metadata
+            // Parse video info extension and copy metadata
             var resultExtension = Parser.VideoInfoFromXml(response);
             result.Author = resultExtension.Author;
             result.Description = resultExtension.Description;
             result.LikeCount = resultExtension.LikeCount;
             result.DislikeCount = resultExtension.DislikeCount;
 
-            // Decipher
+            // Check if decipher is needed
             if (result.NeedsDeciphering)
             {
-                await DecipherAsync(result, videoContext.PlayerVersion).ConfigureAwait(false);
+                // Get player
+                var playerSource = await GetPlayerSourceAsync(videoContext.PlayerVersion).ConfigureAwait(false);
+
+                // Decipher streams
+                foreach (var streamInfo in result.Streams.Where(s => s.NeedsDeciphering))
+                {
+                    string sig = streamInfo.Signature;
+                    string newSig = playerSource.Decipher(sig);
+                    streamInfo.Url = streamInfo.Url.SetQueryParameter("signature", newSig);
+                    streamInfo.NeedsDeciphering = false;
+                }
+
+                // Decipher dash manifest
+                if (result.DashManifest != null && result.DashManifest.NeedsDeciphering)
+                {
+                    string sig = result.DashManifest.Signature;
+                    string newSig = playerSource.Decipher(sig);
+                    result.DashManifest.Url = result.DashManifest.Url.SetPathParameter("signature", newSig);
+                    result.DashManifest.NeedsDeciphering = false;
+                }
             }
 
-            // Get additional streams from dash if available
+            // Check if dash manifest is available
             if (result.DashManifest != null)
             {
-                // Get
+                // Get dash manifest
                 response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
 
-                // Parse and concat with new streams
+                // Parse and add new streams
                 var dashStreams = Parser.MediaStreamInfosFromXml(response);
                 result.Streams = result.Streams.Concat(dashStreams).ToArray();
             }
@@ -246,14 +236,14 @@ namespace YoutubeExplode
                 response = await _requestService.GetStringAsync(nextUrl).ConfigureAwait(false);
 
                 // Parse and concat IDs
-                var extension = Parser.PlaylistInfoFromXml(response);
+                var resultExtension = Parser.PlaylistInfoFromXml(response);
                 int delta = result.VideoIds.Count;
-                result.VideoIds = result.VideoIds.Concat(extension.VideoIds).Distinct().ToArray();
+                result.VideoIds = result.VideoIds.Concat(resultExtension.VideoIds).Distinct().ToArray();
                 delta = result.VideoIds.Count - delta;
 
-                // Go for the next batch
+                // Go for the next batch if needed
                 hasMore = delta > 0;
-                offset += extension.VideoIds.Count;
+                offset += resultExtension.VideoIds.Count;
             }
 
             return result;
