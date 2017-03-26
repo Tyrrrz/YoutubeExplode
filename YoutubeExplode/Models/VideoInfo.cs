@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace YoutubeExplode.Models
 {
@@ -126,20 +125,9 @@ namespace YoutubeExplode.Models
         /// </summary>
         internal DashManifestInfo DashManifest { get; set; }
 
-        /// <summary>
-        /// Whether the signature needs to be deciphered
-        /// </summary>
-        internal bool NeedsDeciphering
+        internal VideoInfo()
         {
-            get
-            {
-                return
-                    (Streams != null && Streams.Any(s => s.NeedsDeciphering)) ||
-                    (DashManifest != null && DashManifest.NeedsDeciphering);
-            }
         }
-
-        internal VideoInfo() { }
 
         /// <inheritdoc />
         public override string ToString()

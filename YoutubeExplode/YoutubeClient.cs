@@ -148,13 +148,37 @@ namespace YoutubeExplode
             result.LikeCount = resultExtension.LikeCount;
             result.DislikeCount = resultExtension.DislikeCount;
 
-            // Check if decipher is needed
-            if (result.NeedsDeciphering)
+            // Check if dash manifest is available
+            if (result.DashManifest != null)
             {
-                // Get player
+                // Decipher if needed
+                if (result.DashManifest.NeedsDeciphering)
+                {
+                    // Get player source
+                    var playerSource = await GetPlayerSourceAsync(videoContext.PlayerVersion).ConfigureAwait(false);
+
+                    // Update signature
+                    string sig = result.DashManifest.Signature;
+                    string newSig = playerSource.Decipher(sig);
+                    result.DashManifest.Url = result.DashManifest.Url.SetPathParameter("signature", newSig);
+                    result.DashManifest.NeedsDeciphering = false;
+                }
+
+                // Get dash manifest
+                response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
+
+                // Parse and add new streams
+                var dashStreams = Parser.MediaStreamInfosFromXml(response);
+                result.Streams = result.Streams.Concat(dashStreams).ToArray();
+            }
+
+            // Decipher streams if needed
+            if (result.Streams.Any(s => s.NeedsDeciphering))
+            {
+                // Get player source
                 var playerSource = await GetPlayerSourceAsync(videoContext.PlayerVersion).ConfigureAwait(false);
 
-                // Decipher streams
+                // Update signatures
                 foreach (var streamInfo in result.Streams.Where(s => s.NeedsDeciphering))
                 {
                     string sig = streamInfo.Signature;
@@ -162,26 +186,6 @@ namespace YoutubeExplode
                     streamInfo.Url = streamInfo.Url.SetQueryParameter("signature", newSig);
                     streamInfo.NeedsDeciphering = false;
                 }
-
-                // Decipher dash manifest
-                if (result.DashManifest != null && result.DashManifest.NeedsDeciphering)
-                {
-                    string sig = result.DashManifest.Signature;
-                    string newSig = playerSource.Decipher(sig);
-                    result.DashManifest.Url = result.DashManifest.Url.SetPathParameter("signature", newSig);
-                    result.DashManifest.NeedsDeciphering = false;
-                }
-            }
-
-            // Check if dash manifest is available
-            if (result.DashManifest != null)
-            {
-                // Get dash manifest
-                response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
-
-                // Parse and add new streams
-                var dashStreams = Parser.MediaStreamInfosFromXml(response);
-                result.Streams = result.Streams.Concat(dashStreams).ToArray();
             }
 
             // Get file size of streams that don't have it yet
