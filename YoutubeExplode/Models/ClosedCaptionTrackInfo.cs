@@ -8,12 +8,12 @@ namespace YoutubeExplode.Models
     public class ClosedCaptionTrackInfo
     {
         /// <summary>
-        /// URL for this caption track's manifest
+        /// Manifest URL
         /// </summary>
         public string Url { get; internal set; }
 
         /// <summary>
-        /// This closed caption track's culture
+        /// Text culture
         /// </summary>
         public CultureInfo Culture { get; internal set; }
 

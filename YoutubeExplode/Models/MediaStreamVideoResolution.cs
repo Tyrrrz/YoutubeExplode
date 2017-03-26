@@ -3,14 +3,14 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Width and height
+    /// Width and height of a video stream
     /// </summary>
-    public struct Resolution : IEquatable<Resolution>
+    public struct MediaStreamVideoResolution : IEquatable<MediaStreamVideoResolution>
     {
         /// <summary>
         /// Empty resolution
         /// </summary>
-        public static Resolution Empty { get; } = new Resolution();
+        public static MediaStreamVideoResolution Empty { get; } = new MediaStreamVideoResolution();
 
         /// <summary>
         /// Width
@@ -22,7 +22,7 @@ namespace YoutubeExplode.Models
         /// </summary>
         public int Height { get; }
 
-        internal Resolution(int width, int height)
+        internal MediaStreamVideoResolution(int width, int height)
         {
             Width = width;
             Height = height;
@@ -31,16 +31,16 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (obj is Resolution)
+            if (obj is MediaStreamVideoResolution)
             {
-                var other = (Resolution) obj;
+                var other = (MediaStreamVideoResolution) obj;
                 return Equals(other);
             }
             return false;
         }
 
         /// <inheritdoc />
-        public bool Equals(Resolution other)
+        public bool Equals(MediaStreamVideoResolution other)
         {
             return Width == other.Width && Height == other.Height;
         }
@@ -61,9 +61,9 @@ namespace YoutubeExplode.Models
         }
 
         /// <inheritdoc />
-        public static bool operator ==(Resolution r1, Resolution r2) => r1.Equals(r2);
+        public static bool operator ==(MediaStreamVideoResolution r1, MediaStreamVideoResolution r2) => r1.Equals(r2);
 
         /// <inheritdoc />
-        public static bool operator !=(Resolution r1, Resolution r2) => !(r1 == r2);
+        public static bool operator !=(MediaStreamVideoResolution r1, MediaStreamVideoResolution r2) => !(r1 == r2);
     }
 }

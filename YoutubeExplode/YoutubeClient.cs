@@ -238,7 +238,7 @@ namespace YoutubeExplode
                 // Parse and concat IDs
                 var resultExtension = Parser.PlaylistInfoFromXml(response);
                 int delta = result.VideoIds.Count;
-                result.VideoIds = result.VideoIds.Concat(resultExtension.VideoIds).Distinct().ToArray();
+                result.VideoIds = result.VideoIds.Union(resultExtension.VideoIds).ToArray();
                 delta = result.VideoIds.Count - delta;
 
                 // Go for the next batch if needed

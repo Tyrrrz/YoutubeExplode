@@ -61,11 +61,11 @@
     <Compile Include="Models\ClosedCaptionTrackInfo.cs" />
     <Compile Include="Models\DashManifestInfo.cs" />
     <Compile Include="Models\VideoInfo.cs" />
-    <Compile Include="Models\ContentType.cs" />
+    <Compile Include="Models\MediaStreamContentType.cs" />
     <Compile Include="Models\MediaStreamInfo.cs" />
-    <Compile Include="Models\VideoQuality.cs" />
-    <Compile Include="Models\Resolution.cs" />
-    <Compile Include="Models\ContainerType.cs" />
+    <Compile Include="Models\MediaStreamVideoQuality.cs" />
+    <Compile Include="Models\MediaStreamVideoResolution.cs" />
+    <Compile Include="Models\MediaStreamContainerType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DefaultRequestService.cs" />
     <Compile Include="Services\IRequestService.cs" />

@@ -1,11 +1,11 @@
-﻿// ReSharper disable InconsistentNaming (File extensions)
+﻿// ReSharper disable InconsistentNaming (file types)
 
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Defines possible container types
+    /// Defines possible media stream container types
     /// </summary>
-    public enum ContainerType
+    public enum MediaStreamContainerType
     {
         /// <summary>
         /// Container type could not be identified
@@ -23,7 +23,7 @@ namespace YoutubeExplode.Models
         M4A,
 
         /// <summary>
-        /// WebM (.webm)
+        /// Web Media (.webm)
         /// </summary>
         WebM,
 
@@ -33,12 +33,12 @@ namespace YoutubeExplode.Models
         TGPP,
 
         /// <summary>
-        /// Flash (.flv)
+        /// Flash Video (.flv)
         /// </summary>
         FLV,
 
         /// <summary>
-        /// Transport stream (.ts)
+        /// Transport Stream (.ts)
         /// </summary>
         TS
     }

@@ -10,112 +10,114 @@ namespace YoutubeExplode.Models
     public class VideoInfo
     {
         /// <summary>
-        /// ID of this video
+        /// ID
         /// </summary>
         public string Id { get; internal set; }
 
         /// <summary>
-        /// Title of this video
+        /// Title
         /// </summary>
         public string Title { get; internal set; }
 
         /// <summary>
-        /// Author metadata of this video
+        /// Author metadata
         /// </summary>
         public UserInfo Author { get; internal set; }
 
         /// <summary>
-        /// Length of this video
+        /// Duration
         /// </summary>
-        public TimeSpan Length { get; internal set; }
+        public TimeSpan Duration { get; internal set; }
 
         /// <summary>
-        /// Description of this video
+        /// Description
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// View count of this video
-        /// </summary>
-        public long ViewCount { get; internal set; }
-
-        /// <summary>
-        /// Like count for this video
-        /// </summary>
-        public long LikeCount { get; internal set; }
-
-        /// <summary>
-        /// Dislike count for this video
-        /// </summary>
-        public long DislikeCount { get; internal set; }
-
-        /// <summary>
-        /// Average user rating for this video (0* to 5*)
-        /// </summary>
-        public double AverageRating => 5.0*LikeCount/(LikeCount + DislikeCount);
-
-        /// <summary>
-        /// This video's search keywords
+        /// Search keywords
         /// </summary>
         public IReadOnlyList<string> Keywords { get; internal set; }
 
         /// <summary>
-        /// URL for the thumbnail image for this video
+        /// Thumbnail image URL
         /// </summary>
         public string ImageThumbnailUrl => $"https://img.youtube.com/vi/{Id}/default.jpg";
 
         /// <summary>
-        /// URL for the default resolution image (not always available) for this video
-        /// </summary>
-        public string ImageStandardResUrl => $"https://img.youtube.com/vi/{Id}/sddefault.jpg";
-
-        /// <summary>
-        /// URL for the highest resolution image (not always available) for this video
-        /// </summary>
-        public string ImageMaxResUrl => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
-
-        /// <summary>
-        /// URL for the high resolution image for this video
-        /// </summary>
-        public string ImageHighResUrl => $"https://img.youtube.com/vi/{Id}/hqdefault.jpg";
-
-        /// <summary>
-        /// URL for the medium resolution image for this video
+        /// Medium resolution image URL
         /// </summary>
         public string ImageMediumResUrl => $"https://img.youtube.com/vi/{Id}/mqdefault.jpg";
 
         /// <summary>
-        /// Collection of watermark URLs for this video
+        /// High resolution image URL
+        /// </summary>
+        public string ImageHighResUrl => $"https://img.youtube.com/vi/{Id}/hqdefault.jpg";
+
+        /// <summary>
+        /// Standard resolution image URL.
+        /// Not always available.
+        /// </summary>
+        public string ImageStandardResUrl => $"https://img.youtube.com/vi/{Id}/sddefault.jpg";
+
+        /// <summary>
+        /// Highest resolution image URL.
+        /// Not always available.
+        /// </summary>
+        public string ImageMaxResUrl => $"https://img.youtube.com/vi/{Id}/maxresdefault.jpg";
+
+        /// <summary>
+        /// Collection of watermark URLs
         /// </summary>
         public IReadOnlyList<string> Watermarks { get; internal set; }
 
         /// <summary>
-        /// Whether this video is listed publicly
+        /// View count
+        /// </summary>
+        public long ViewCount { get; internal set; }
+
+        /// <summary>
+        /// Like count
+        /// </summary>
+        public long LikeCount { get; internal set; }
+
+        /// <summary>
+        /// Dislike count
+        /// </summary>
+        public long DislikeCount { get; internal set; }
+
+        /// <summary>
+        /// Average user rating in stars (0* to 5*)
+        /// </summary>
+        public double AverageRating => 5.0*LikeCount/(LikeCount + DislikeCount);
+
+        /// <summary>
+        /// Whether this video is publicly listed
         /// </summary>
         public bool IsListed { get; internal set; }
 
         /// <summary>
-        /// Whether it is allowed to leave user rating on this video
+        /// Whether liking/disliking this video is allowed
         /// </summary>
         public bool IsRatingAllowed { get; internal set; }
 
         /// <summary>
-        /// Whether the audio has been muted on this video
+        /// Whether the audio track has been muted
         /// </summary>
         public bool IsMuted { get; internal set; }
 
         /// <summary>
-        /// Whether it is allowed to embed this video on 3rd party sites
+        /// Whether embedding this video on other websites is allowed
         /// </summary>
         public bool IsEmbeddingAllowed { get; internal set; }
 
         /// <summary>
-        /// Metadata for this video's media streams
+        /// Collection of metadata for this video's media streams
         /// </summary>
         public IReadOnlyList<MediaStreamInfo> Streams { get; internal set; }
 
         /// <summary>
-        /// Metadata for this video's closed caption tracks
+        /// Collection of metadata for this video's closed caption tracks
         /// </summary>
         public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTracks { get; internal set; }
 
@@ -125,7 +127,7 @@ namespace YoutubeExplode.Models
         internal DashManifestInfo DashManifest { get; set; }
 
         /// <summary>
-        /// Whether this video uses an encrypted signature for its streams that needs to be deciphered before the streams can be accessed
+        /// Whether the signature needs to be deciphered
         /// </summary>
         internal bool NeedsDeciphering
         {

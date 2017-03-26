@@ -1,22 +1,22 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Defines possible content types
+    /// Defines possible media stream content types
     /// </summary>
-    public enum ContentType
+    public enum MediaStreamContentType
     {
         /// <summary>
-        /// Contains both video and audio
+        /// Contains both video and audio in a single stream
         /// </summary>
         Mixed,
 
         /// <summary>
-        /// Only contains video
+        /// Contains only video
         /// </summary>
         Video,
 
         /// <summary>
-        /// Only contains audio
+        /// Contains only audio
         /// </summary>
         Audio
     }

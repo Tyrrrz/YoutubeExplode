@@ -62,7 +62,7 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("_QdPW8JrYzQ", videoInfo.Id);
             Assert.AreEqual("This is what happens when you reply to spam email | James Veitch", videoInfo.Title);
-            Assert.IsTrue(588 <= videoInfo.Length.TotalSeconds);
+            Assert.IsTrue(588 <= videoInfo.Duration.TotalSeconds);
             Assert.AreEqual(1659729120, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(10000000 <= videoInfo.ViewCount);
             Assert.IsTrue(263000 <= videoInfo.LikeCount);
@@ -98,8 +98,8 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
-                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
+                Assert.AreNotEqual(MediaStreamVideoQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(MediaStreamContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -127,7 +127,7 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("9bZkp7q19f0", videoInfo.Id);
             Assert.AreEqual("PSY - GANGNAM STYLE(강남스타일) M/V", videoInfo.Title);
-            Assert.IsTrue(252 <= videoInfo.Length.TotalSeconds);
+            Assert.IsTrue(252 <= videoInfo.Duration.TotalSeconds);
             Assert.AreEqual(2103509192, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(2750000000 <= videoInfo.ViewCount);
             Assert.IsTrue(12000000 <= videoInfo.LikeCount);
@@ -166,8 +166,8 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
-                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
+                Assert.AreNotEqual(MediaStreamVideoQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(MediaStreamContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -195,7 +195,7 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("SkRSXFQerZs", videoInfo.Id);
             Assert.AreEqual("HELLOVENUS 헬로비너스 - 위글위글(WiggleWiggle) M/V", videoInfo.Title);
-            Assert.IsTrue(203 <= videoInfo.Length.TotalSeconds);
+            Assert.IsTrue(203 <= videoInfo.Duration.TotalSeconds);
             Assert.AreEqual(1475277231, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(1200000 <= videoInfo.ViewCount);
             Assert.IsTrue(20000 <= videoInfo.LikeCount);
@@ -235,8 +235,8 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
-                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
+                Assert.AreNotEqual(MediaStreamVideoQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(MediaStreamContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -264,7 +264,7 @@ namespace YoutubeExplode.Tests
             // Basic metadata
             Assert.AreEqual("_kmeFXjjGfk", videoInfo.Id);
             Assert.AreEqual("Cam'ron- Killa Kam (dirty)", videoInfo.Title);
-            Assert.IsTrue(359 <= videoInfo.Length.TotalSeconds);
+            Assert.IsTrue(359 <= videoInfo.Duration.TotalSeconds);
             Assert.AreEqual(1462671500, videoInfo.Description.GetStaticHashCode());
             Assert.IsTrue(3600000 <= videoInfo.ViewCount);
             Assert.IsTrue(19000 <= videoInfo.LikeCount);
@@ -300,8 +300,8 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in videoInfo.Streams)
             {
                 Assert.IsNotNull(streamInfo.Url);
-                Assert.AreNotEqual(VideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(ContainerType.Unknown, streamInfo.ContainerType);
+                Assert.AreNotEqual(MediaStreamVideoQuality.Unknown, streamInfo.Quality);
+                Assert.AreNotEqual(MediaStreamContainerType.Unknown, streamInfo.ContainerType);
                 Assert.IsNotNull(streamInfo.QualityLabel);
                 Assert.IsNotNull(streamInfo.FileExtension);
                 Assert.IsTrue(0 < streamInfo.FileSize);
@@ -496,7 +496,7 @@ namespace YoutubeExplode.Tests
             var videoInfo = await _client.GetVideoInfoAsync("_QdPW8JrYzQ");
             var trackInfo = videoInfo.ClosedCaptionTracks.FirstOrDefault(c => c.Culture.Name == "en");
             var track = await _client.GetClosedCaptionTrackAsync(trackInfo);
-            var caption = track.GetByOffset(TimeSpan.FromSeconds(40));
+            var caption = track.GetByTime(TimeSpan.FromSeconds(40));
 
             Assert.IsNotNull(track);
             Assert.IsNotNull(track.Captions);

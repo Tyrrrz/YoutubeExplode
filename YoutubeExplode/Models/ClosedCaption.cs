@@ -8,17 +8,17 @@ namespace YoutubeExplode.Models
     public class ClosedCaption
     {
         /// <summary>
-        /// Text shown by this caption
+        /// Text displayed by this caption
         /// </summary>
         public string Text { get; internal set; }
 
         /// <summary>
-        /// Offset from the start of the video, when the caption is shown
+        /// When the caption is shown, relative to video's timeline
         /// </summary>
         public TimeSpan Offset { get; internal set; }
 
         /// <summary>
-        /// Duration of time the caption is shown
+        /// Duration of this caption
         /// </summary>
         public TimeSpan Duration { get; internal set; }
 

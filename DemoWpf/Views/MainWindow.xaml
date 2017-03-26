@@ -132,7 +132,7 @@
                                                          Margin="5,0,0,0"
                                                          Kind="Clock" />
                                 <TextBlock Margin="4,2,0,0"
-                                           Text="{Binding VideoInfo.Length, Mode=OneWay}"
+                                           Text="{Binding VideoInfo.Duration, Mode=OneWay}"
                                            TextTrimming="CharacterEllipsis"
                                            TextWrapping="NoWrap" />
 

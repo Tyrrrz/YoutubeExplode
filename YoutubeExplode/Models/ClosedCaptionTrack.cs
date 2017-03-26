@@ -16,7 +16,7 @@ namespace YoutubeExplode.Models
         public ClosedCaptionTrackInfo Info { get; internal set; }
 
         /// <summary>
-        /// Closed captions inside this track
+        /// Closed captions contained inside this track
         /// </summary>
         public IReadOnlyList<ClosedCaption> Captions { get; internal set; }
 
@@ -25,12 +25,12 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets caption for given time offset
+        /// Gets the caption displayed at the given point in time, relative to video's timeline
         /// </summary>
-        /// <returns>Found caption or null if there's no caption shown at given offset</returns>
-        public ClosedCaption GetByOffset(TimeSpan offset)
+        /// <returns><see cref="ClosedCaption"/> or null if there's no caption shown at given offset</returns>
+        public ClosedCaption GetByTime(TimeSpan time)
         {
-            return Captions.FirstOrDefault(c => offset.IsInRange(c.Offset, c.Offset + c.Duration));
+            return Captions.FirstOrDefault(c => time.IsInRange(c.Offset, c.Offset + c.Duration));
         }
 
         /// <inheritdoc />

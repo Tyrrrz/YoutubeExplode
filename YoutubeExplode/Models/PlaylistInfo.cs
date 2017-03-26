@@ -9,12 +9,12 @@ namespace YoutubeExplode.Models
     public class PlaylistInfo
     {
         /// <summary>
-        /// Id of this playlist
+        /// ID
         /// </summary>
         public string Id { get; internal set; }
 
         /// <summary>
-        /// Type of this playlist
+        /// Type
         /// </summary>
         public PlaylistType Type
         {
@@ -40,27 +40,27 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Title of this playlist
+        /// Title
         /// </summary>
         public string Title { get; internal set; }
 
         /// <summary>
-        /// This playlist's author's name
+        /// Author's display name
         /// </summary>
         public string Author { get; internal set; }
 
         /// <summary>
-        /// Description of this playlist
+        /// Description
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// View count of this playlist
+        /// View count
         /// </summary>
         public long ViewCount { get; internal set; }
 
         /// <summary>
-        /// IDs of the videos in this playlist
+        /// IDs of the videos in the playlist
         /// </summary>
         public IReadOnlyList<string> VideoIds { get; internal set; }
 
