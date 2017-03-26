@@ -333,6 +333,7 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("Google Analytics", playlistInfo.Author);
             Assert.AreEqual(-1627795933, playlistInfo.Description.GetStaticHashCode());
             Assert.IsTrue(339000 <= playlistInfo.ViewCount);
+            // Likes/dislikes not checked because I don't know where they come from
 
             // Video ids
             Assert.IsNotNull(playlistInfo.VideoIds);
@@ -361,6 +362,7 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("Tomas Nilsson", playlistInfo.Author);
             Assert.AreEqual(-1351967013, playlistInfo.Description.GetStaticHashCode());
             Assert.IsTrue(339000 <= playlistInfo.ViewCount);
+            // Likes/dislikes not checked because I don't know where they come from
 
             // Video ids
             Assert.IsNotNull(playlistInfo.VideoIds);
@@ -382,6 +384,7 @@ namespace YoutubeExplode.Tests
             Assert.IsTrue(playlistInfo.Author.IsBlank()); // mixes have no author
             Assert.IsTrue(playlistInfo.Description.IsBlank()); // and no description
             Assert.IsTrue(29000 <= playlistInfo.ViewCount);
+            // Likes/dislikes not checked because I don't know where they come from
 
             // Video ids (not predictable because it's a mix)
             Assert.IsNotNull(playlistInfo.VideoIds);
@@ -403,6 +406,7 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("Tyrrrz", playlistInfo.Author);
             Assert.IsTrue(playlistInfo.Description.IsBlank());
             Assert.IsTrue(10 <= playlistInfo.ViewCount);
+            // Likes/dislikes not checked because I don't know where they come from
 
             // Video ids
             Assert.IsNotNull(playlistInfo.VideoIds);
@@ -424,6 +428,7 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("Tyrrrz", playlistInfo.Author);
             Assert.IsTrue(playlistInfo.Description.IsBlank());
             Assert.IsTrue(40 <= playlistInfo.ViewCount);
+            // Likes/dislikes not checked because I don't know where they come from
 
             // Video ids
             Assert.IsNotNull(playlistInfo.VideoIds);

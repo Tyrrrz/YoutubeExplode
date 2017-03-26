@@ -426,6 +426,8 @@ namespace YoutubeExplode.Internal
             string author = root.Element("author")?.Value;
             string description = root.Element("description")?.Value;
             long viewCount = (root.Element("views")?.Value).ParseLongOrDefault();
+            long likeCount = (root.Element("likes")?.Value).ParseLongOrDefault();
+            long dislikeCount = (root.Element("dislikes")?.Value).ParseLongOrDefault();
 
             // Get video ids
             var ids = root.Descendants("encrypted_id").Select(e => e.Value);
@@ -436,6 +438,8 @@ namespace YoutubeExplode.Internal
             result.Author = author;
             result.Description = description;
             result.ViewCount = viewCount;
+            result.LikeCount = likeCount;
+            result.DislikeCount = dislikeCount;
             result.VideoIds = ids.ToArray();
 
             return result;

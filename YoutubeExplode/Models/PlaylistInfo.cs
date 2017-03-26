@@ -60,6 +60,21 @@ namespace YoutubeExplode.Models
         public long ViewCount { get; internal set; }
 
         /// <summary>
+        /// Like count
+        /// </summary>
+        public long LikeCount { get; internal set; }
+
+        /// <summary>
+        /// Dislike count
+        /// </summary>
+        public long DislikeCount { get; internal set; }
+
+        /// <summary>
+        /// Average user rating in stars (0* to 5*)
+        /// </summary>
+        public double AverageRating => 5.0*LikeCount/(LikeCount + DislikeCount);
+
+        /// <summary>
         /// IDs of the videos in the playlist
         /// </summary>
         public IReadOnlyList<string> VideoIds { get; internal set; }
