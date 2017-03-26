@@ -12,7 +12,7 @@
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
         FocusManager.FocusedElement="{Binding ElementName=VideoIdTextBox}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Icon="/YoutubeExplodeDemoWpf;component/favicon.ico"
+        Icon="/YoutubeExplode.DemoWpf;component/favicon.ico"
         SnapsToDevicePixels="True"
         TextElement.FontSize="13"
         TextElement.FontWeight="Regular"
