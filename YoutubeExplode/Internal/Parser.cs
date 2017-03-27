@@ -104,12 +104,9 @@ namespace YoutubeExplode.Internal
             if (rawJs == null)
                 throw new ArgumentNullException(nameof(rawJs));
 
-            // Get cipher operations
-            var operations = CipherOperationsFromJs(rawJs).ToArray();
-
-            // Populate
+            // Parse
             var result = new PlayerSource();
-            result.CipherOperations = operations;
+            result.CipherOperations = CipherOperationsFromJs(rawJs).ToArray();
 
             return result;
         }
@@ -175,31 +172,22 @@ namespace YoutubeExplode.Internal
             {
                 var dic = DictionaryFromUrlEncoded(streamRaw);
 
-                // Get metadata
-                string url = dic.GetOrDefault("url");
-                string sig = dic.GetOrDefault("s");
-                int itag = dic.GetOrDefault("itag").ParseIntOrDefault();
-                long bitrate = dic.GetOrDefault("bitrate").ParseLongOrDefault();
-                double fps = dic.GetOrDefault("fps").ParseDoubleOrDefault();
-                long size = dic.GetOrDefault("clen").ParseLongOrDefault();
+                // Parse
+                var result = new MediaStreamInfo();
+                result.Url = dic.GetOrDefault("url");
+                result.Signature = dic.GetOrDefault("s");
+                result.NeedsDeciphering = result.Signature.IsNotBlank();
+                result.Itag = dic.GetOrDefault("itag").ParseIntOrDefault();
+                result.Bitrate = dic.GetOrDefault("bitrate").ParseLongOrDefault();
+                result.Framerate = dic.GetOrDefault("fps").ParseDoubleOrDefault();
+                result.FileSize = dic.GetOrDefault("clen").ParseLongOrDefault();
 
-                // Get resolution
+                // Parse resolution
                 int width = (dic.GetOrDefault("size")?.SubstringUntil("x")).ParseIntOrDefault();
                 int height = (dic.GetOrDefault("size")?.SubstringAfter("x")).ParseIntOrDefault();
-                var resolution = width != 0 && height != 0
+                result.Resolution = width != 0 && height != 0
                     ? new MediaStreamVideoResolution(width, height)
                     : MediaStreamVideoResolution.Empty;
-
-                // Populate
-                var result = new MediaStreamInfo();
-                result.Url = url;
-                result.Signature = sig;
-                result.NeedsDeciphering = sig.IsNotBlank();
-                result.Itag = itag;
-                result.Resolution = resolution;
-                result.Bitrate = bitrate;
-                result.Framerate = fps;
-                result.FileSize = size;
 
                 yield return result;
             }
@@ -224,30 +212,20 @@ namespace YoutubeExplode.Internal
                 // Get base URL node
                 var xBaseUrl = xStreamInfo.Element("BaseURL");
 
-                // Get metadata
-                string url = xBaseUrl?.Value;
-                int itag = (xStreamInfo.Attribute("id")?.Value).ParseIntOrDefault();
-                long bitrate = (xStreamInfo.Attribute("bandwidth")?.Value).ParseLongOrDefault();
-                double fps = (xStreamInfo.Attribute("frameRate")?.Value).ParseDoubleOrDefault();
-                long size = (xBaseUrl?.Attribute("contentLength")?.Value).ParseLongOrDefault();
+                // Parse
+                var result = new MediaStreamInfo();
+                result.Url = xBaseUrl?.Value;
+                result.Itag = (xStreamInfo.Attribute("id")?.Value).ParseIntOrDefault();
+                result.Bitrate = (xStreamInfo.Attribute("bandwidth")?.Value).ParseLongOrDefault();
+                result.Framerate = (xStreamInfo.Attribute("frameRate")?.Value).ParseDoubleOrDefault();
+                result.FileSize = (xBaseUrl?.Attribute("contentLength")?.Value).ParseLongOrDefault();
 
-                // Get resolution
+                // Parse resolution
                 int width = (xStreamInfo.Attribute("width")?.Value).ParseIntOrDefault();
                 int height = (xStreamInfo.Attribute("height")?.Value).ParseIntOrDefault();
-                var resolution = width != 0 && height != 0
+                result.Resolution = width != 0 && height != 0
                     ? new MediaStreamVideoResolution(width, height)
                     : MediaStreamVideoResolution.Empty;
-
-                // Populate
-                var result = new MediaStreamInfo();
-                result.Url = url;
-                result.Signature = null;
-                result.NeedsDeciphering = false;
-                result.Itag = itag;
-                result.Resolution = resolution;
-                result.Bitrate = bitrate;
-                result.Framerate = fps;
-                result.FileSize = size;
 
                 yield return result;
             }
@@ -262,22 +240,15 @@ namespace YoutubeExplode.Internal
             {
                 var dic = DictionaryFromUrlEncoded(captionRaw);
 
-                // Get metadata
-                string url = dic.GetOrDefault("u");
-                string lang = dic.GetOrDefault("lc");
-                bool isAuto = dic.GetOrDefault("v")?.ContainsInvariant("a.") ?? false;
-
-                // HACK: Google uses wrong code for Hebrew
-                if (lang == "iw") lang = "he";
-
-                // Get culture info
-                var culture = lang.IsNotBlank() ? new CultureInfo(lang) : null;
-
-                // Populate
+                // Parse
                 var result = new ClosedCaptionTrackInfo();
-                result.Url = url;
-                result.Culture = culture;
-                result.IsAutoGenerated = isAuto;
+                result.Url = dic.GetOrDefault("u");
+                result.IsAutoGenerated = dic.GetOrDefault("v")?.ContainsInvariant("a.") ?? false;
+
+                // Parse culture
+                string lang = dic.GetOrDefault("lc");
+                if (lang == "iw") lang = "he"; // HACK: Google uses wrong code for Hebrew
+                result.Culture = lang.IsNotBlank() ? new CultureInfo(lang) : null;
 
                 yield return result;
             }
@@ -288,16 +259,11 @@ namespace YoutubeExplode.Internal
             if (rawUrl == null)
                 throw new ArgumentNullException(nameof(rawUrl));
 
-            // Get metadata
-            string url = rawUrl;
-            string sig = Regex.Match(url, @"/s/(.*?)(?:/|$)").Groups[1].Value;
-            bool needsDeciphering = sig.IsNotBlank();
-
-            // Populate
+            // Parse
             var result = new DashManifestInfo();
-            result.Url = url;
-            result.Signature = sig;
-            result.NeedsDeciphering = needsDeciphering;
+            result.Url = rawUrl;
+            result.Signature = Regex.Match(rawUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
+            result.NeedsDeciphering = result.Signature.IsNotBlank();
 
             return result;
         }
@@ -319,56 +285,42 @@ namespace YoutubeExplode.Internal
                 throw new YoutubeErrorException(errorCode, reason);
             }
 
-            // Get metadata
-            string id = dic.GetOrDefault("video_id");
-            string title = dic.GetOrDefault("title");
-            var length = TimeSpan.FromSeconds(dic.GetOrDefault("length_seconds").ParseDoubleOrDefault());
-            long viewCount = dic.GetOrDefault("view_count").ParseLongOrDefault();
-            var keywords = dic.GetOrDefault("keywords")?.Split(",") ?? new string[0];
-            var watermarks = dic.GetOrDefault("watermark")?.Split(",") ?? new string[0];
-            bool isListed = dic.GetOrDefault("is_listed").ParseIntOrDefault(1) == 1;
-            bool isRatingAllowed = dic.GetOrDefault("allow_ratings").ParseIntOrDefault(1) == 1;
-            bool isMuted = dic.GetOrDefault("muted").ParseIntOrDefault() == 1;
-            bool isEmbeddingAllowed = dic.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
+            // Parse
+            var result = new VideoInfo();
+            result.Id = dic.GetOrDefault("video_id");
+            result.Title = dic.GetOrDefault("title");
+            result.Duration = TimeSpan.FromSeconds(dic.GetOrDefault("length_seconds").ParseDoubleOrDefault());
+            result.ViewCount = dic.GetOrDefault("view_count").ParseLongOrDefault();
+            result.Keywords = dic.GetOrDefault("keywords")?.Split(",") ?? new string[0];
+            result.Watermarks = dic.GetOrDefault("watermark")?.Split(",") ?? new string[0];
+            result.IsListed = dic.GetOrDefault("is_listed").ParseIntOrDefault(1) == 1;
+            result.IsRatingAllowed = dic.GetOrDefault("allow_ratings").ParseIntOrDefault(1) == 1;
+            result.IsMuted = dic.GetOrDefault("muted").ParseIntOrDefault() == 1;
+            result.IsEmbeddingAllowed = dic.GetOrDefault("allow_embed").ParseIntOrDefault(1) == 1;
 
-            // Get adaptive streams
+            // Parse streams
             string adaptiveStreamsRaw = dic.GetOrDefault("adaptive_fmts");
             var adaptiveStreams = adaptiveStreamsRaw.IsNotBlank()
                 ? MediaStreamInfosFromUrlEncoded(adaptiveStreamsRaw).ToArray()
                 : new MediaStreamInfo[0];
-
-            // Get mixed streams
             string mixedStreamsRaw = dic.GetOrDefault("url_encoded_fmt_stream_map");
             var mixedStreams = mixedStreamsRaw.IsNotBlank()
                 ? MediaStreamInfosFromUrlEncoded(mixedStreamsRaw).ToArray()
                 : new MediaStreamInfo[0];
+            result.Streams = adaptiveStreams.Concat(mixedStreams).ToArray();
 
-            // Get the caption tracks
+            // Prase closed caption tracks
             string captionTracksRaw = dic.GetOrDefault("caption_tracks");
             var captionTracks = captionTracksRaw.IsNotBlank()
                 ? ClosedCaptionTrackInfosFromUrlEncoded(captionTracksRaw).ToArray()
                 : new ClosedCaptionTrackInfo[0];
+            result.ClosedCaptionTracks = captionTracks;
 
-            // Dash manifest
+            // Prase dash manifest
             string dashMpdUrl = dic.GetOrDefault("dashmpd");
             var dashManifest = dashMpdUrl.IsNotBlank()
                 ? DashManifestInfoFromUrl(dashMpdUrl)
                 : null;
-
-            // Populate
-            var result = new VideoInfo();
-            result.Id = id;
-            result.Title = title;
-            result.Duration = length;
-            result.ViewCount = viewCount;
-            result.Keywords = keywords;
-            result.Watermarks = watermarks;
-            result.IsListed = isListed;
-            result.IsRatingAllowed = isRatingAllowed;
-            result.IsMuted = isMuted;
-            result.IsEmbeddingAllowed = isEmbeddingAllowed;
-            result.Streams = adaptiveStreams.Concat(mixedStreams).ToArray();
-            result.ClosedCaptionTracks = captionTracks;
             result.DashManifest = dashManifest;
 
             return result;
@@ -386,30 +338,20 @@ namespace YoutubeExplode.Internal
             var xVideoInfo = xHtmlContent?.Element("video_info");
             var xUserInfo = xHtmlContent?.Element("user_info");
 
-            // Get metadata
-            string description = xVideoInfo?.Element("description")?.Value;
-            long likeCount = (xVideoInfo?.Element("likes_count_unformatted")?.Value).ParseLongOrDefault();
-            long dislikeCount = (xVideoInfo?.Element("dislikes_count_unformatted")?.Value).ParseLongOrDefault();
-
-            // Get author
-            string authorId = xUserInfo?.Element("channel_external_id")?.Value;
-            string authorName = xUserInfo?.Element("username")?.Value;
-            string authorDisplayName = xUserInfo?.Element("public_name")?.Value;
-            string authorChannelTitle = xUserInfo?.Element("channel_title")?.Value;
-            bool authorIsPaid = (xUserInfo?.Element("channel_paid")?.Value).ParseIntOrDefault() == 1;
-            var author = new UserInfo();
-            author.Id = authorId;
-            author.Name = authorName;
-            author.DisplayName = authorDisplayName;
-            author.ChannelTitle = authorChannelTitle;
-            author.IsPaid = authorIsPaid;
-
-            // Populate
+            // Parse
             var result = new VideoInfo();
+            result.Description = xVideoInfo?.Element("description")?.Value;
+            result.LikeCount = (xVideoInfo?.Element("likes_count_unformatted")?.Value).ParseLongOrDefault();
+            result.DislikeCount = (xVideoInfo?.Element("dislikes_count_unformatted")?.Value).ParseLongOrDefault();
+
+            // Parse author
+            var author = new UserInfo();
+            author.Id = xUserInfo?.Element("channel_external_id")?.Value;
+            author.Name = xUserInfo?.Element("username")?.Value;
+            author.DisplayName = xUserInfo?.Element("public_name")?.Value;
+            author.ChannelTitle = xUserInfo?.Element("channel_title")?.Value;
+            author.IsPaid = (xUserInfo?.Element("channel_paid")?.Value).ParseIntOrDefault() == 1;
             result.Author = author;
-            result.Description = description;
-            result.LikeCount = likeCount;
-            result.DislikeCount = dislikeCount;
 
             return result;
         }
@@ -421,26 +363,15 @@ namespace YoutubeExplode.Internal
 
             var root = XElement.Parse(rawXml).StripNamespaces();
 
-            // Get playlist metadata
-            string title = root.Element("title")?.Value;
-            string author = root.Element("author")?.Value;
-            string description = root.Element("description")?.Value;
-            long viewCount = (root.Element("views")?.Value).ParseLongOrDefault();
-            long likeCount = (root.Element("likes")?.Value).ParseLongOrDefault();
-            long dislikeCount = (root.Element("dislikes")?.Value).ParseLongOrDefault();
-
-            // Get video ids
-            var ids = root.Descendants("encrypted_id").Select(e => e.Value);
-
-            // Populate
+            // Parse
             var result = new PlaylistInfo();
-            result.Title = title;
-            result.Author = author;
-            result.Description = description;
-            result.ViewCount = viewCount;
-            result.LikeCount = likeCount;
-            result.DislikeCount = dislikeCount;
-            result.VideoIds = ids.ToArray();
+            result.Title = root.Element("title")?.Value;
+            result.Author = root.Element("author")?.Value;
+            result.Description = root.Element("description")?.Value;
+            result.ViewCount = (root.Element("views")?.Value).ParseLongOrDefault();
+            result.LikeCount = (root.Element("likes")?.Value).ParseLongOrDefault();
+            result.DislikeCount = (root.Element("likes")?.Value).ParseLongOrDefault();
+            result.VideoIds = root.Descendants("encrypted_id").Select(e => e.Value).ToArray();
 
             return result;
         }
@@ -455,16 +386,11 @@ namespace YoutubeExplode.Internal
 
             foreach (var xText in xTexts)
             {
-                // Get metadata
-                string text = xText.Value;
-                var offset = TimeSpan.FromSeconds((xText.Attribute("start")?.Value).ParseDoubleOrDefault());
-                var duration = TimeSpan.FromSeconds((xText.Attribute("dur")?.Value).ParseDoubleOrDefault());
-
-                // Populate
+                // Parse
                 var result = new ClosedCaption();
-                result.Text = text;
-                result.Offset = offset;
-                result.Duration = duration;
+                result.Text = xText.Value;
+                result.Offset = TimeSpan.FromSeconds((xText.Attribute("start")?.Value).ParseDoubleOrDefault());
+                result.Duration = TimeSpan.FromSeconds((xText.Attribute("dur")?.Value).ParseDoubleOrDefault());
 
                 yield return result;
             }
@@ -475,12 +401,9 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            // Get metadata
-            var captions = ClosedCaptionsFromXml(rawXml).ToArray();
-
-            // Populate
+            // Parse
             var result = new ClosedCaptionTrack();
-            result.Captions = captions;
+            result.Captions = ClosedCaptionsFromXml(rawXml).ToArray();
 
             return result;
         }
