@@ -12,34 +12,28 @@ namespace YoutubeExplode
     /// <summary>
     /// YoutubeClient
     /// </summary>
-    public partial class YoutubeClient : IDisposable
+    public partial class YoutubeClient
     {
-        private readonly IRequestService _requestService;
+        private readonly IHttpService _httpService;
         private readonly Dictionary<string, PlayerSource> _playerSourceCache = new Dictionary<string, PlayerSource>();
 
         /// <summary>
         /// Creates an instance of <see cref="YoutubeClient"/> with custom services
         /// </summary>
-        public YoutubeClient(IRequestService requestService)
+        public YoutubeClient(IHttpService httpService)
         {
-            if (requestService == null)
-                throw new ArgumentNullException(nameof(requestService));
+            if (httpService == null)
+                throw new ArgumentNullException(nameof(httpService));
 
-            _requestService = requestService;
+            _httpService = httpService;
         }
 
         /// <summary>
         /// Creates an instance of <see cref="YoutubeClient"/> with default services
         /// </summary>
         public YoutubeClient()
-            : this(new DefaultRequestService())
+            : this(HttpService.Instance)
         {
-        }
-
-        /// <inheritdoc />
-        ~YoutubeClient()
-        {
-            Dispose(false);
         }
 
         private async Task<PlayerSource> GetPlayerSourceAsync(string version)
@@ -55,7 +49,7 @@ namespace YoutubeExplode
             {
                 // Get
                 string url = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
-                string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+                string response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
                 // Parse
                 playerSource = Parser.PlayerSourceFromJs(response);
@@ -74,7 +68,7 @@ namespace YoutubeExplode
                 throw new ArgumentNullException(nameof(url));
 
             // Get the headers
-            var headers = await _requestService.GetHeadersAsync(url).ConfigureAwait(false);
+            var headers = await _httpService.GetHeadersAsync(url).ConfigureAwait(false);
 
             // Get file size header
             string cl = headers.GetOrDefault("Content-Length");
@@ -96,7 +90,7 @@ namespace YoutubeExplode
 
             // Get
             string url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
-            string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+            string response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse
             var dic = Parser.DictionaryFromUrlEncoded(response);
@@ -125,21 +119,21 @@ namespace YoutubeExplode
 
             // Get video context
             string url = $"https://www.youtube.com/embed/{videoId}";
-            string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+            string response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse video context
             var videoContext = Parser.VideoContextFromHtml(response);
 
             // Get video info
             url = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}&el=info&ps=default";
-            response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+            response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse video info
             var result = Parser.VideoInfoFromUrlEncoded(response);
 
             // Get video info extension
             url = $"https://www.youtube.com/get_video_metadata?video_id={videoId}";
-            response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+            response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse video info extension and copy metadata
             var resultExtension = Parser.VideoInfoFromXml(response);
@@ -165,7 +159,7 @@ namespace YoutubeExplode
                 }
 
                 // Get dash manifest
-                response = await _requestService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
+                response = await _httpService.GetStringAsync(result.DashManifest.Url).ConfigureAwait(false);
 
                 // Parse and add new streams
                 var dashStreams = Parser.MediaStreamInfosFromXml(response);
@@ -222,7 +216,7 @@ namespace YoutubeExplode
 
             // Get
             string url = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
-            string response = await _requestService.GetStringAsync(url).ConfigureAwait(false);
+            string response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse
             var result = Parser.PlaylistInfoFromXml(response);
@@ -237,7 +231,7 @@ namespace YoutubeExplode
             {
                 // Get
                 string nextUrl = url + $"&index={offset}";
-                response = await _requestService.GetStringAsync(nextUrl).ConfigureAwait(false);
+                response = await _httpService.GetStringAsync(nextUrl).ConfigureAwait(false);
 
                 // Parse and concat IDs
                 var resultExtension = Parser.PlaylistInfoFromXml(response);
@@ -266,7 +260,7 @@ namespace YoutubeExplode
                 throw new ArgumentException("Needs to be deciphered first", nameof(mediaStreamInfo));
 
             // Get
-            var stream = await _requestService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
+            var stream = await _httpService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
 
             // Pack
             var result = new MediaStream(stream, mediaStreamInfo);
@@ -285,32 +279,13 @@ namespace YoutubeExplode
                 throw new ArgumentException("Does not have a URL", nameof(closedCaptionTrackInfo));
 
             // Get
-            string response = await _requestService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
+            string response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
 
             // Parse
             var result = Parser.ClosedCaptionTrackFromXml(response);
             result.Info = closedCaptionTrackInfo;
 
             return result;
-        }
-
-        /// <summary>
-        /// Dispose method
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // HACK: disposing the request service, may be undesired
-                (_requestService as IDisposable)?.Dispose();
-            }
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 

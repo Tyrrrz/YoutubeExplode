@@ -9,16 +9,16 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Services
 {
     /// <summary>
-    /// Uses <see cref="HttpClient"/> for handling requests
+    /// Simple HTTP service that uses <see cref="HttpClient"/> for handling requests
     /// </summary>
-    public partial class DefaultRequestService : IRequestService, IDisposable
+    public partial class HttpService : IHttpService, IDisposable
     {
         private readonly HttpClient _httpClient;
 
         /// <summary>
-        /// Creates an instance of <see cref="DefaultRequestService"/> with a custom <see cref="HttpClient"/>
+        /// Creates an instance of <see cref="HttpService"/> with a custom <see cref="HttpClient"/>
         /// </summary>
-        public DefaultRequestService(HttpClient client)
+        public HttpService(HttpClient client)
         {
             if (client == null)
                 throw new ArgumentNullException(nameof(client));
@@ -27,9 +27,9 @@ namespace YoutubeExplode.Services
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="DefaultRequestService"/>
+        /// Creates an instance of <see cref="HttpService"/>
         /// </summary>
-        public DefaultRequestService()
+        public HttpService()
         {
             var httpClientHandler = new HttpClientHandler();
             if (httpClientHandler.SupportsAutomaticDecompression)
@@ -41,7 +41,7 @@ namespace YoutubeExplode.Services
         }
 
         /// <inheritdoc />
-        ~DefaultRequestService()
+        ~HttpService()
         {
             Dispose(false);
         }
@@ -98,8 +98,15 @@ namespace YoutubeExplode.Services
         }
     }
 
-    public partial class DefaultRequestService
+    public partial class HttpService
     {
+        private static HttpService _instance;
+
+        /// <summary>
+        /// Returns a reusable instance of HttpService
+        /// </summary>
+        public static HttpService Instance => _instance ?? (_instance = new HttpService());
+
         private static IDictionary<string, string> NormalizeResponseHeaders(HttpResponseMessage response)
         {
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

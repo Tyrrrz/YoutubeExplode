@@ -282,7 +282,7 @@ namespace YoutubeExplode.Internal
             {
                 string reason = dic.GetOrDefault("reason");
                 int errorCode = dic.GetOrDefault("errorcode").ParseIntOrDefault();
-                throw new YoutubeErrorException(errorCode, reason);
+                throw new YoutubeException(errorCode, reason);
             }
 
             // Parse

@@ -78,7 +78,6 @@ namespace YoutubeExplode.DemoConsole
 
             Console.WriteLine("Download complete!");
             Console.ReadKey();
-            client.Dispose();
         }
 
         public static void Main(string[] args)

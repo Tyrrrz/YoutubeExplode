@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\ParserException.cs" />
-    <Compile Include="Exceptions\YoutubeErrorException.cs" />
+    <Compile Include="Exceptions\YoutubeException.cs" />
     <Compile Include="Internal\Extensions.cs" />
     <Compile Include="Internal\CipherOperations\ICipherOperation.cs" />
     <Compile Include="Internal\ItagHelper.cs" />
@@ -67,8 +67,8 @@
     <Compile Include="Models\MediaStreamVideoResolution.cs" />
     <Compile Include="Models\MediaStreamContainerType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DefaultRequestService.cs" />
-    <Compile Include="Services\IRequestService.cs" />
+    <Compile Include="Services\HttpService.cs" />
+    <Compile Include="Services\IHttpService.cs" />
     <Compile Include="YoutubeClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

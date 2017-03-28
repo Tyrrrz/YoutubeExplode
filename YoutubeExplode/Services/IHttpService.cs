@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 namespace YoutubeExplode.Services
 {
     /// <summary>
-    /// Service that performs HTTP requests for <see cref="YoutubeClient"/>
+    /// Performs HTTP requests
     /// </summary>
-    public interface IRequestService
+    public interface IHttpService
     {
         /// <summary>
         /// Performs a GET request and returns the response content as a string

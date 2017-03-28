@@ -17,7 +17,6 @@ namespace YoutubeExplode.DemoWpf
 
         public static void Cleanup()
         {
-            Resolve<YoutubeClient>().Dispose();
         }
 
         public static T Resolve<T>() => ServiceLocator.Current.GetInstance<T>();
