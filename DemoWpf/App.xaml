@@ -90,6 +90,9 @@
 
             <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
+                <Setter Property="Height" Value="2" />
+                <Setter Property="Minimum" Value="0" />
+                <Setter Property="Maximum" Value="1" />
                 <Setter Property="BorderThickness" Value="0" />
             </Style>
 
@@ -100,7 +103,7 @@
                 <Setter Property="CanUserResizeRows" Value="False" />
             </Style>
 
-            <Style BasedOn="{StaticResource MaterialDesignBody1TextBlock}" TargetType="{x:Type TextBlock}">
+            <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                 <Setter Property="TextWrapping" Value="NoWrap" />
             </Style>
@@ -136,18 +139,6 @@
             <Style BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" TargetType="{x:Type ToggleButton}">
                 <Setter Property="HorizontalAlignment" Value="Left" />
                 <Setter Property="VerticalAlignment" Value="Top" />
-            </Style>
-
-            <Style x:Key="FlatButtonStyle"
-                   BasedOn="{StaticResource MaterialDesignRaisedButton}"
-                   TargetType="{x:Type Button}">
-                <Setter Property="Padding" Value="4" />
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}" />
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="materialDesign:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignFlatButtonRipple}" />
-                <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth0" />
-                <Setter Property="BorderThickness" Value="0" />
             </Style>
 
             <Style TargetType="{x:Type materialDesign:Card}">

@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Title="YoutubeExplode Demo"
         Width="700"
-        Height="650"
+        Height="610"
         Background="{DynamicResource MaterialDesignPaper}"
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
         FocusManager.FocusedElement="{Binding ElementName=VideoIdTextBox}"
@@ -64,11 +64,8 @@
                 </materialDesign:Card>
 
                 <!--  Progress  -->
-                <ProgressBar Height="2"
-                             Background="Transparent"
+                <ProgressBar Background="Transparent"
                              IsIndeterminate="{Binding IsProgressIndeterminate}"
-                             Maximum="1"
-                             Minimum="0"
                              Value="{Binding Progress, Mode=OneWay}" />
             </StackPanel>
         </materialDesign:ColorZone>
@@ -98,99 +95,115 @@
             </ScrollViewer.Style>
 
             <StackPanel Orientation="Vertical">
-                <!--  Basic metadata and image  -->
-                <materialDesign:Card Margin="5,5,5,5">
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="120" />
-                        </Grid.ColumnDefinitions>
+                <!--  Image  -->
+                <Border HorizontalAlignment="Stretch" Background="Black">
+                    <Image Source="{Binding VideoInfo.ImageMediumResUrl}" />
+                </Border>
 
-                        <StackPanel Grid.Column="0" Orientation="Vertical">
-                            <!--  Title  -->
-                            <TextBlock Margin="5"
-                                       FontSize="18"
-                                       Foreground="{DynamicResource PrimaryTextBrush}"
-                                       Text="{Binding VideoInfo.Title}" />
+                <!--  Basic metadata  -->
+                <materialDesign:Card Margin="3,3,3,3">
+                    <StackPanel Orientation="Vertical">
+                        <!--  Title  -->
+                        <TextBlock Margin="5"
+                                   FontSize="18"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   Text="{Binding VideoInfo.Title}" />
 
-                            <!--  Author, length, views, likes, dislikes  -->
-                            <StackPanel Margin="5" Orientation="Horizontal">
-                                <!--  Author  -->
-                                <materialDesign:PackIcon Width="18"
-                                                         Height="18"
-                                                         Kind="Account" />
-                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.Author, Mode=OneWay}" />
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                                <!--  Length  -->
-                                <materialDesign:PackIcon Width="18"
-                                                         Height="18"
-                                                         Margin="5,0,0,0"
-                                                         Kind="Clock" />
-                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.Duration, Mode=OneWay}" />
+                            <!--  Author image  -->
+                            <Image Grid.Column="0"
+                                   Width="50"
+                                   Height="50"
+                                   Margin="5"
+                                   VerticalAlignment="Top"
+                                   Source="{Binding VideoInfo.Author.ChannelLogoUrl}" />
+
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--  Author name  -->
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="0"
+                                           Margin="5"
+                                           FontSize="16"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"
+                                           Text="{Binding VideoInfo.Author.DisplayName}" />
 
                                 <!--  Views  -->
-                                <materialDesign:PackIcon Width="18"
-                                                         Height="18"
-                                                         Margin="5,0,0,0"
-                                                         Kind="Eye" />
-                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="1"
+                                           Margin="5"
+                                           HorizontalAlignment="Right"
+                                           FontSize="16">
+                                    <Run Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                    <Run Text="views" />
+                                </TextBlock>
 
-                                <!--  Likes  -->
-                                <materialDesign:PackIcon Width="18"
-                                                         Height="18"
-                                                         Margin="5,0,0,0"
-                                                         Kind="ThumbUp" />
-                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                <!--  Divider  -->
+                                <Border Grid.Row="1"
+                                        Grid.Column="0"
+                                        Height="2"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        Background="{DynamicResource MiscBrush}"
+                                        Opacity="0.5" />
 
-                                <!--  Dislikes  -->
-                                <materialDesign:PackIcon Width="18"
-                                                         Height="18"
-                                                         Margin="5,0,0,0"
-                                                         Kind="ThumbDown" />
-                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
-                            </StackPanel>
+                                <!--  Rating bar  -->
+                                <ProgressBar Grid.Row="1"
+                                             Grid.Column="1"
+                                             MinWidth="150"
+                                             Margin="0,0,5,0"
+                                             HorizontalAlignment="Stretch"
+                                             Maximum="5"
+                                             Minimum="0"
+                                             Value="{Binding VideoInfo.AverageRating, Mode=OneWay}" />
 
-                            <!--  Flags  -->
-                            <StackPanel Margin="5" Orientation="Horizontal">
-                                <!--  Is listed  -->
-                                <CheckBox Content="Publicly listed"
-                                          Foreground="{DynamicResource SecondaryTextBrush}"
-                                          IsChecked="{Binding VideoInfo.IsListed, Mode=OneWay}"
-                                          IsHitTestVisible="False" />
+                                <!--  Video length  -->
+                                <TextBlock Grid.Row="2"
+                                           Grid.Column="0"
+                                           Margin="5"
+                                           Text="{Binding VideoInfo.Duration}" />
 
-                                <!--  Is rating allowed  -->
-                                <CheckBox Margin="5,0,0,0"
-                                          Content="Rating allowed"
-                                          Foreground="{DynamicResource SecondaryTextBrush}"
-                                          IsChecked="{Binding VideoInfo.IsRatingAllowed, Mode=OneWay}"
-                                          IsHitTestVisible="False" />
-
-                                <!--  Is audio muted  -->
-                                <CheckBox Margin="5,0,0,0"
-                                          Content="Audio muted"
-                                          Foreground="{DynamicResource SecondaryTextBrush}"
-                                          IsChecked="{Binding VideoInfo.IsMuted, Mode=OneWay}"
-                                          IsHitTestVisible="False" />
-
-                                <!--  Is embeddable  -->
-                                <CheckBox Margin="5,0,0,0"
-                                          Content="Embedding allowed"
-                                          Foreground="{DynamicResource SecondaryTextBrush}"
-                                          IsChecked="{Binding VideoInfo.IsEmbeddingAllowed, Mode=OneWay}"
-                                          IsHitTestVisible="False" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!--  Image  -->
-                        <Image Grid.Column="1"
-                               Margin="5"
-                               VerticalAlignment="Center"
-                               Source="{Binding VideoInfo.ImageHighResUrl}" />
-                    </Grid>
+                                <!--  Likes and dislikes  -->
+                                <StackPanel Grid.Row="2"
+                                            Grid.Column="1"
+                                            Margin="5"
+                                            HorizontalAlignment="Right"
+                                            Orientation="Horizontal">
+                                    <materialDesign:PackIcon VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             Kind="ThumbUp" />
+                                    <TextBlock Margin="3,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}}" />
+                                    <materialDesign:PackIcon Margin="10,0,0,0"
+                                                             VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             Kind="ThumbDown" />
+                                    <TextBlock Margin="3,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}}" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </StackPanel>
                 </materialDesign:Card>
 
                 <!--  Description  -->
-                <materialDesign:Card Margin="5,0,5,5">
+                <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <TextBlock FontSize="14">
@@ -205,7 +218,7 @@
                 </materialDesign:Card>
 
                 <!--  Keywords  -->
-                <materialDesign:Card Margin="5,0,5,5">
+                <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <TextBlock FontSize="14">
@@ -221,7 +234,7 @@
                 </materialDesign:Card>
 
                 <!--  Media streams  -->
-                <materialDesign:Card Margin="5,0,5,5">
+                <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <TextBlock FontSize="14">
@@ -266,7 +279,7 @@
                 </materialDesign:Card>
 
                 <!--  Closed captions  -->
-                <materialDesign:Card Margin="5,0,5,5">
+                <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <TextBlock FontSize="14">
@@ -294,7 +307,7 @@
                                             <Run Text="Language:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Culture.EnglishName, Mode=OneWay}" />
                                             <Run />
-                                            <Run Text="Auto:" />
+                                            <Run Text="Autogenerated:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding IsAutoGenerated, Converter={StaticResource BoolToStringConverter}, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>
