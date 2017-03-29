@@ -6,7 +6,7 @@ namespace YoutubeExplode.DemoWpf
 {
     public class Locator
     {
-        static Locator()
+        public static void Init()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
@@ -19,9 +19,6 @@ namespace YoutubeExplode.DemoWpf
         {
         }
 
-        public static T Resolve<T>() => ServiceLocator.Current.GetInstance<T>();
-        public static T Resolve<T>(string id) => ServiceLocator.Current.GetInstance<T>(id);
-
-        public IMainViewModel MainViewModel => Resolve<IMainViewModel>();
+        public IMainViewModel MainViewModel => ServiceLocator.Current.GetInstance<IMainViewModel>();
     }
 }

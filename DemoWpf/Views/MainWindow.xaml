@@ -111,9 +111,7 @@
                             <TextBlock Margin="5"
                                        FontSize="18"
                                        Foreground="{DynamicResource PrimaryTextBrush}"
-                                       Text="{Binding VideoInfo.Title}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap" />
+                                       Text="{Binding VideoInfo.Title}" />
 
                             <!--  Author, length, views, likes, dislikes  -->
                             <StackPanel Margin="5" Orientation="Horizontal">
@@ -121,50 +119,35 @@
                                 <materialDesign:PackIcon Width="18"
                                                          Height="18"
                                                          Kind="Account" />
-                                <TextBlock Margin="4,2,0,0"
-                                           Text="{Binding VideoInfo.Author, Mode=OneWay}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap" />
+                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.Author, Mode=OneWay}" />
 
                                 <!--  Length  -->
                                 <materialDesign:PackIcon Width="18"
                                                          Height="18"
                                                          Margin="5,0,0,0"
                                                          Kind="Clock" />
-                                <TextBlock Margin="4,2,0,0"
-                                           Text="{Binding VideoInfo.Duration, Mode=OneWay}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap" />
+                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.Duration, Mode=OneWay}" />
 
                                 <!--  Views  -->
                                 <materialDesign:PackIcon Width="18"
                                                          Height="18"
                                                          Margin="5,0,0,0"
                                                          Kind="Eye" />
-                                <TextBlock Margin="4,2,0,0"
-                                           Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap" />
+                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
 
                                 <!--  Likes  -->
                                 <materialDesign:PackIcon Width="18"
                                                          Height="18"
                                                          Margin="5,0,0,0"
                                                          Kind="ThumbUp" />
-                                <TextBlock Margin="4,2,0,0"
-                                           Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}, Mode=OneWay}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap" />
+                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
 
                                 <!--  Dislikes  -->
                                 <materialDesign:PackIcon Width="18"
                                                          Height="18"
                                                          Margin="5,0,0,0"
                                                          Kind="ThumbDown" />
-                                <TextBlock Margin="4,2,0,0"
-                                           Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}, Mode=OneWay}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap" />
+                                <TextBlock Margin="4,2,0,0" Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
                             </StackPanel>
 
                             <!--  Flags  -->
@@ -217,7 +200,6 @@
                         <TextBlock Margin="10"
                                    Foreground="{DynamicResource PrimaryTextBrush}"
                                    Text="{Binding VideoInfo.Description}"
-                                   TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap" />
                     </Expander>
                 </materialDesign:Card>
@@ -234,7 +216,6 @@
                         <TextBlock Margin="10"
                                    Foreground="{DynamicResource PrimaryTextBrush}"
                                    Text="{Binding VideoInfo.Keywords, Converter={StaticResource ArrayToStringConverter}}"
-                                   TextTrimming="CharacterEllipsis"
                                    TextWrapping="Wrap" />
                     </Expander>
                 </materialDesign:Card>
@@ -264,10 +245,7 @@
                                         </Button>
 
                                         <!--  Stream info  -->
-                                        <TextBlock Margin="5,0,0,0"
-                                                   VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="NoWrap">
+                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
                                             <Run Text="Quality:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
                                             <Run />
@@ -312,10 +290,7 @@
                                         </Button>
 
                                         <!--  Closed caption track info  -->
-                                        <TextBlock Margin="5,0,0,0"
-                                                   VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="NoWrap">
+                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
                                             <Run Text="Language:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Culture.EnglishName, Mode=OneWay}" />
                                             <Run />

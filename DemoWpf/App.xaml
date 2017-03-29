@@ -8,6 +8,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Exit="App_OnExit"
+             Startup="App_OnStartup"
              StartupUri="Views/MainWindow.xaml"
              mc:Ignorable="d ignore">
 
@@ -23,8 +24,8 @@
             <Color x:Key="PrimaryColor">#343838</Color>
             <Color x:Key="PrimaryDarkColor">#2B2C2C</Color>
             <Color x:Key="AccentColor">#F9A825</Color>
-            <Color x:Key="TextColor">Black</Color>
-            <Color x:Key="InverseTextColor">Snow</Color>
+            <Color x:Key="TextColor">#000000</Color>
+            <Color x:Key="InverseTextColor">#fffffa</Color>
 
             <SolidColorBrush x:Key="PrimaryHueLightBrush"
                              Opacity="0.75"
@@ -77,10 +78,6 @@
                              Color="{DynamicResource TextColor}" />
 
             <!--  Styles  -->
-            <Style TargetType="{x:Type materialDesign:Card}">
-                <Setter Property="Margin" Value="5" />
-            </Style>
-
             <Style TargetType="{x:Type Image}">
                 <Setter Property="StretchDirection" Value="DownOnly" />
                 <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
@@ -91,19 +88,21 @@
                 </Style.Triggers>
             </Style>
 
-            <Style BasedOn="{StaticResource {x:Type ProgressBar}}" TargetType="{x:Type ProgressBar}">
+            <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
                 <Setter Property="BorderThickness" Value="0" />
             </Style>
 
-            <Style TargetType="{x:Type Hyperlink}">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Style BasedOn="{StaticResource MaterialDesignDataGrid}" TargetType="{x:Type DataGrid}">
+                <Setter Property="AutoGenerateColumns" Value="False" />
+                <Setter Property="CanUserAddRows" Value="False" />
+                <Setter Property="CanUserDeleteRows" Value="False" />
+                <Setter Property="CanUserResizeRows" Value="False" />
+            </Style>
 
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
-                    </Trigger>
-                </Style.Triggers>
+            <Style BasedOn="{StaticResource MaterialDesignBody1TextBlock}" TargetType="{x:Type TextBlock}">
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                <Setter Property="TextWrapping" Value="NoWrap" />
             </Style>
 
             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="{x:Type TextBox}">
@@ -132,6 +131,27 @@
 
             <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            </Style>
+
+            <Style BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" TargetType="{x:Type ToggleButton}">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="VerticalAlignment" Value="Top" />
+            </Style>
+
+            <Style x:Key="FlatButtonStyle"
+                   BasedOn="{StaticResource MaterialDesignRaisedButton}"
+                   TargetType="{x:Type Button}">
+                <Setter Property="Padding" Value="4" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="materialDesign:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignFlatButtonRipple}" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth0" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+
+            <Style TargetType="{x:Type materialDesign:Card}">
+                <Setter Property="Margin" Value="5" />
             </Style>
 
             <converters:FileSizeToStringConverter x:Key="FileSizeToStringConverter" />
