@@ -351,6 +351,8 @@ namespace YoutubeExplode.Internal
             author.DisplayName = xUserInfo?.Element("public_name")?.Value;
             author.ChannelTitle = xUserInfo?.Element("channel_title")?.Value;
             author.IsPaid = (xUserInfo?.Element("channel_paid")?.Value).ParseIntOrDefault() == 1;
+            author.ChannelLogoUrl = xUserInfo?.Element("channel_logo_url")?.Value;
+            author.ChannelBannerUrl = xUserInfo?.Element("channel_banner_url")?.Value;
             result.Author = author;
 
             return result;

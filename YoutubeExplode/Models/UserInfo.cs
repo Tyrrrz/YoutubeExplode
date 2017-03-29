@@ -35,6 +35,16 @@
         /// </summary>
         public bool IsPaid { get; internal set; }
 
+        /// <summary>
+        /// Channel logo URL
+        /// </summary>
+        public string ChannelLogoUrl { get; internal set; }
+
+        /// <summary>
+        /// Channel banner URL
+        /// </summary>
+        public string ChannelBannerUrl { get; internal set; }
+
         internal UserInfo()
         {
         }
