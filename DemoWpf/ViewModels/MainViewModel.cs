@@ -32,7 +32,11 @@ namespace YoutubeExplode.DemoWpf.ViewModels
         public string VideoId
         {
             get { return _videoId; }
-            set { Set(ref _videoId, value); }
+            set
+            {
+                Set(ref _videoId, value);
+                GetVideoInfoCommand.RaiseCanExecuteChanged();
+            }
         }
 
         public VideoInfo VideoInfo
@@ -69,7 +73,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             _client = client;
 
             // Commands
-            GetVideoInfoCommand = new RelayCommand(GetVideoInfoAsync, () => !IsBusy);
+            GetVideoInfoCommand = new RelayCommand(GetVideoInfoAsync, () => !IsBusy && VideoId.IsNotBlank());
             DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStreamAsync, vse => !IsBusy);
             DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(
                 DownloadClosedCaptionTrackAsync, vse => !IsBusy);

@@ -55,7 +55,7 @@
                                 Margin="5"
                                 Padding="4"
                                 Command="{Binding GetVideoInfoCommand}"
-                                Style="{StaticResource MaterialDesignFlatButton}">
+                                Style="{DynamicResource MaterialDesignFlatButton}">
                             <materialDesign:PackIcon Width="24"
                                                      Height="24"
                                                      Kind="ArrowRight" />
@@ -238,7 +238,7 @@
                                                 VerticalAlignment="Center"
                                                 Command="{Binding MainViewModel.DownloadMediaStreamCommand, Source={StaticResource Locator}}"
                                                 CommandParameter="{Binding}"
-                                                Style="{StaticResource MaterialDesignFlatButton}">
+                                                Style="{DynamicResource MaterialDesignFlatButton}">
                                             <materialDesign:PackIcon Width="24"
                                                                      Height="24"
                                                                      Kind="Download" />
@@ -283,7 +283,7 @@
                                                 VerticalAlignment="Center"
                                                 Command="{Binding MainViewModel.DownloadClosedCaptionTrackCommand, Source={StaticResource Locator}}"
                                                 CommandParameter="{Binding}"
-                                                Style="{StaticResource MaterialDesignFlatButton}">
+                                                Style="{DynamicResource MaterialDesignFlatButton}">
                                             <materialDesign:PackIcon Width="24"
                                                                      Height="24"
                                                                      Kind="Download" />
