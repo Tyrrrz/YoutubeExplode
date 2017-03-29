@@ -4,6 +4,9 @@ YoutubeExplode
 
 Zero-dependency .NET library that parses public metadata on Youtube videos
 
+**Screenshots:**
+
+![](http://www.tyrrrz.me/projects/images/ytexplode_1.png)
 
 **Download:**
 
@@ -43,6 +46,3 @@ Wpf demo:
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions) - my set of various extensions for rapid development
 - [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions) - my set of various WPF extensions for rapid development
  
-**Screenshots:**
-
-![](http://www.tyrrrz.me/projects/images/ytexplode_1.png)
