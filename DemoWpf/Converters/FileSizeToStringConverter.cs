@@ -7,9 +7,13 @@ namespace YoutubeExplode.DemoWpf.Converters
     [ValueConversion(typeof(long), typeof(string))]
     public class FileSizeToStringConverter : IValueConverter
     {
+        private static readonly string[] Units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             double size = (long) value;
             int unit = 0;
 
@@ -19,7 +23,7 @@ namespace YoutubeExplode.DemoWpf.Converters
                 ++unit;
             }
 
-            return $"{size:0.#} {units[unit]}";
+            return $"{size:0.#} {Units[unit]}";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
