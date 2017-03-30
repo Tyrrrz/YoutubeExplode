@@ -22,35 +22,20 @@
 
             <!--  Colors  -->
             <Color x:Key="PrimaryColor">#343838</Color>
-            <Color x:Key="PrimaryDarkColor">#2B2C2C</Color>
+            <Color x:Key="PrimaryLightColor">#525656</Color>
+            <Color x:Key="PrimaryDarkColor">#2F3232</Color>
             <Color x:Key="AccentColor">#F9A825</Color>
             <Color x:Key="TextColor">#000000</Color>
-            <Color x:Key="InverseTextColor">#fffffa</Color>
+            <Color x:Key="InverseTextColor">#FFFFFF</Color>
 
-            <SolidColorBrush x:Key="PrimaryHueLightBrush"
-                             Opacity="0.75"
-                             Color="{DynamicResource PrimaryColor}" />
-            <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush"
-                             Opacity="0.87"
-                             Color="{DynamicResource TextColor}" />
-            <SolidColorBrush x:Key="PrimaryHueMidBrush"
-                             Opacity="1"
-                             Color="{DynamicResource PrimaryColor}" />
-            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush"
-                             Opacity="1"
-                             Color="{DynamicResource InverseTextColor}" />
-            <SolidColorBrush x:Key="PrimaryHueDarkBrush"
-                             Opacity="1"
-                             Color="{DynamicResource PrimaryDarkColor}" />
-            <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush"
-                             Opacity="0.7"
-                             Color="{DynamicResource InverseTextColor}" />
-            <SolidColorBrush x:Key="SecondaryAccentBrush"
-                             Opacity="1"
-                             Color="{DynamicResource AccentColor}" />
-            <SolidColorBrush x:Key="SecondaryAccentForegroundBrush"
-                             Opacity="0.64"
-                             Color="{DynamicResource TextColor}" />
+            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{DynamicResource PrimaryLightColor}" />
+            <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="{DynamicResource InverseTextColor}" />
+            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{DynamicResource PrimaryColor}" />
+            <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="{DynamicResource InverseTextColor}" />
+            <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="{DynamicResource PrimaryDarkColor}" />
+            <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="{DynamicResource InverseTextColor}" />
+            <SolidColorBrush x:Key="SecondaryAccentBrush" Color="{DynamicResource AccentColor}" />
+            <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{DynamicResource TextColor}" />
 
             <SolidColorBrush x:Key="PrimaryTextBrush"
                              Opacity="0.87"
@@ -73,19 +58,11 @@
             <SolidColorBrush x:Key="AccentTextBrush"
                              Opacity="1"
                              Color="{DynamicResource AccentColor}" />
-            <SolidColorBrush x:Key="MiscBrush"
-                             Opacity="0.18"
-                             Color="{DynamicResource TextColor}" />
 
             <!--  Styles  -->
             <Style TargetType="{x:Type Image}">
                 <Setter Property="StretchDirection" Value="DownOnly" />
                 <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
-                <Style.Triggers>
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Opacity" Value="0.5" />
-                    </Trigger>
-                </Style.Triggers>
             </Style>
 
             <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
@@ -96,58 +73,15 @@
                 <Setter Property="BorderThickness" Value="0" />
             </Style>
 
-            <Style BasedOn="{StaticResource MaterialDesignDataGrid}" TargetType="{x:Type DataGrid}">
-                <Setter Property="AutoGenerateColumns" Value="False" />
-                <Setter Property="CanUserAddRows" Value="False" />
-                <Setter Property="CanUserDeleteRows" Value="False" />
-                <Setter Property="CanUserResizeRows" Value="False" />
-            </Style>
-
-            <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-                <Setter Property="TextWrapping" Value="NoWrap" />
-            </Style>
-
             <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="{x:Type TextBox}">
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
             </Style>
 
-            <Style BasedOn="{StaticResource MaterialDesignPasswordBox}" TargetType="{x:Type PasswordBox}">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
-            </Style>
-
-            <Style BasedOn="{StaticResource MaterialDesignComboBox}" TargetType="{x:Type ComboBox}">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
-            </Style>
-
-            <Style BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
-            </Style>
-
-            <Style BasedOn="{StaticResource MaterialDesignRadioButton}" TargetType="{x:Type RadioButton}">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
-            </Style>
-
-            <Style BasedOn="{StaticResource MaterialDesignListBox}" TargetType="{x:Type ListBox}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            </Style>
-
-            <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListBoxItem}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            </Style>
-
-            <Style BasedOn="{StaticResource MaterialDesignSwitchToggleButton}" TargetType="{x:Type ToggleButton}">
-                <Setter Property="HorizontalAlignment" Value="Left" />
-                <Setter Property="VerticalAlignment" Value="Top" />
-            </Style>
-
-            <Style TargetType="{x:Type materialDesign:Card}">
-                <Setter Property="Margin" Value="5" />
-            </Style>
-
+            <!--  Converters  -->
             <converters:FileSizeToStringConverter x:Key="FileSizeToStringConverter" />
             <converters:BoolToStringConverter x:Key="BoolToStringConverter" />
 
+            <!--  Locator  -->
             <demoWpf:Locator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>
     </Application.Resources>
