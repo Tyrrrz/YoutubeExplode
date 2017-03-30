@@ -47,7 +47,7 @@
                                  Margin="5"
                                  materialDesign:HintAssist.Hint="Youtube video URL or ID"
                                  BorderThickness="0"
-                                 FontSize="15"
+                                 FontSize="16"
                                  KeyDown="tbVideoId_KeyDown"
                                  Text="{Binding VideoId, UpdateSourceTrigger=PropertyChanged}" />
                         <Button x:Name="GetDataButton"
@@ -106,7 +106,6 @@
                         <!--  Title  -->
                         <TextBlock Margin="5"
                                    FontSize="18"
-                                   FontWeight="Medium"
                                    Foreground="{DynamicResource PrimaryTextBrush}"
                                    Text="{Binding VideoInfo.Title}" />
 
@@ -138,17 +137,18 @@
                                 <!--  Author name  -->
                                 <TextBlock Grid.Row="0"
                                            Grid.Column="0"
-                                           Margin="5"
-                                           FontSize="15"
+                                           Margin="5,5,5,2"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="14"
                                            Foreground="{DynamicResource PrimaryTextBrush}"
                                            Text="{Binding VideoInfo.Author.DisplayName}" />
 
                                 <!--  Views  -->
                                 <TextBlock Grid.Row="0"
                                            Grid.Column="1"
-                                           Margin="5"
+                                           Margin="5,5,5,2"
                                            HorizontalAlignment="Right"
-                                           FontSize="15">
+                                           FontSize="16">
                                     <Run Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
                                     <Run Text="views" />
                                 </TextBlock>
