@@ -63,8 +63,8 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("TED", videoInfo.Author.DisplayName);
             Assert.AreEqual("TED", videoInfo.Author.ChannelTitle);
             Assert.IsFalse(videoInfo.Author.IsPaid);
-            Assert.IsNotNull(videoInfo.Author.ChannelLogoUrl);
-            Assert.IsNotNull(videoInfo.Author.ChannelBannerUrl);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelLogoUrl));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelBannerUrl));
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -131,8 +131,8 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("officialpsy", videoInfo.Author.DisplayName);
             Assert.AreEqual("officialpsy", videoInfo.Author.ChannelTitle);
             Assert.IsFalse(videoInfo.Author.IsPaid);
-            Assert.IsNotNull(videoInfo.Author.ChannelLogoUrl);
-            Assert.IsNotNull(videoInfo.Author.ChannelBannerUrl);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelLogoUrl));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelBannerUrl));
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -202,8 +202,8 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("fantagio 판타지오", videoInfo.Author.DisplayName);
             Assert.AreEqual("fantagio 판타지오", videoInfo.Author.ChannelTitle);
             Assert.IsFalse(videoInfo.Author.IsPaid);
-            Assert.IsNotNull(videoInfo.Author.ChannelLogoUrl);
-            Assert.IsNotNull(videoInfo.Author.ChannelBannerUrl);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelLogoUrl));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelBannerUrl));
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
@@ -274,8 +274,8 @@ namespace YoutubeExplode.Tests
             Assert.AreEqual("Ralph Arellano", videoInfo.Author.DisplayName);
             Assert.AreEqual("Ralph Arellano", videoInfo.Author.ChannelTitle);
             Assert.IsFalse(videoInfo.Author.IsPaid);
-            Assert.IsNotNull(videoInfo.Author.ChannelLogoUrl);
-            Assert.IsNotNull(videoInfo.Author.ChannelBannerUrl);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelLogoUrl));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(videoInfo.Author.ChannelBannerUrl));
 
             // Keywords
             Assert.IsNotNull(videoInfo.Keywords);
