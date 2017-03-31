@@ -29,10 +29,9 @@
         </Grid.RowDefinitions>
 
         <!--  Toolbar  -->
-        <materialDesign:ColorZone Grid.Row="0"
-                                  Panel.ZIndex="1"
-                                  materialDesign:ShadowAssist.ShadowDepth="Depth1"
-                                  Mode="PrimaryMid">
+        <Border Grid.Row="0"
+                Background="{DynamicResource PrimaryHueMidBrush}"
+                TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
             <StackPanel Orientation="Vertical">
                 <!--  Query  -->
                 <materialDesign:Card Margin="5">
@@ -68,11 +67,10 @@
                              IsIndeterminate="{Binding IsProgressIndeterminate}"
                              Value="{Binding Progress, Mode=OneWay}" />
             </StackPanel>
-        </materialDesign:ColorZone>
+        </Border>
 
         <!--  Video info  -->
         <ScrollViewer Grid.Row="1"
-                      Panel.ZIndex="0"
                       HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsVideoInfoAvailable, Converter={StaticResource BoolToVisibilityConverter}}">

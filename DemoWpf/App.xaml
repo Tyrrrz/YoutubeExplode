@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:demoWpf="clr-namespace:YoutubeExplode.DemoWpf"
              xmlns:ignore="http://www.galasoft.ch/ignore"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Exit="App_OnExit"
              Startup="App_OnStartup"
@@ -60,11 +59,6 @@
                              Color="{DynamicResource AccentColor}" />
 
             <!--  Styles  -->
-            <Style TargetType="{x:Type Image}">
-                <Setter Property="StretchDirection" Value="DownOnly" />
-                <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
-            </Style>
-
             <Style BasedOn="{StaticResource MaterialDesignLinearProgressBar}" TargetType="{x:Type ProgressBar}">
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}" />
                 <Setter Property="Height" Value="2" />
