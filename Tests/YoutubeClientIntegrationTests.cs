@@ -367,7 +367,7 @@ namespace YoutubeExplode.Tests
 
             // Video ids
             Assert.IsNotNull(playlistInfo.VideoIds);
-            Assert.AreEqual(1338, playlistInfo.VideoIds.Count);
+            Assert.IsTrue(1338 <= playlistInfo.VideoIds.Count);
         }
 
         [TestMethod]

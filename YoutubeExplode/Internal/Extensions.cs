@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -10,10 +11,6 @@ namespace YoutubeExplode.Internal
 {
     internal static class Extensions
     {
-        public delegate T ParseDelegate<out T>(string str);
-
-        public delegate bool TryParseDelegate<T>(string str, out T result);
-
         public static bool IsEither<T>(this T value, params T[] potentialValues)
         {
             foreach (var o in potentialValues)
@@ -80,43 +77,65 @@ namespace YoutubeExplode.Internal
             return str.Substring(index + sub.Length, str.Length - index - sub.Length);
         }
 
-        public static T Parse<T>(this string str, ParseDelegate<T> handler)
+        public static double ParseDouble(this string str)
         {
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
 
-            return handler(str);
+            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            return double.Parse(str, style, CultureInfo.InvariantCulture);
         }
 
-        public static T ParseOrDefault<T>(this string str, TryParseDelegate<T> handler, T defaultValue = default(T))
+        public static int ParseInt(this string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+
+            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            return int.Parse(str, style, CultureInfo.InvariantCulture);
+        }
+
+        public static long ParseLong(this string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+
+            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            return long.Parse(str, style, CultureInfo.InvariantCulture);
+        }
+
+        public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
         {
             if (str == null)
                 return defaultValue;
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
 
-            return handler(str, out var result) ? result : defaultValue;
+            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            if (double.TryParse(str, style, CultureInfo.InvariantCulture, out double result))
+                return result;
+            return defaultValue;
         }
 
-        public static double ParseDouble(this string str)
-            => Parse(str, double.Parse);
-
-        public static int ParseInt(this string str)
-            => Parse(str, int.Parse);
-
-        public static long ParseLong(this string str)
-            => Parse(str, long.Parse);
-
-        public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
-            => ParseOrDefault(str, double.TryParse, defaultValue);
-
         public static int ParseIntOrDefault(this string str, int defaultValue = default(int))
-            => ParseOrDefault(str, int.TryParse, defaultValue);
+        {
+            if (str == null)
+                return defaultValue;
+
+            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            if (int.TryParse(str, style, CultureInfo.InvariantCulture, out int result))
+                return result;
+            return defaultValue;
+        }
 
         public static long ParseLongOrDefault(this string str, long defaultValue = default(long))
-            => ParseOrDefault(str, long.TryParse, defaultValue);
+        {
+            if (str == null)
+                return defaultValue;
+
+            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            if (long.TryParse(str, style, CultureInfo.InvariantCulture, out long result))
+                return result;
+            return defaultValue;
+        }
 
         public static string Reverse(this string str)
         {
