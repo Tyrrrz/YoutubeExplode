@@ -21,8 +21,8 @@
 
             <!--  Colors  -->
             <Color x:Key="PrimaryColor">#343838</Color>
-            <Color x:Key="PrimaryLightColor">#525656</Color>
-            <Color x:Key="PrimaryDarkColor">#2F3232</Color>
+            <Color x:Key="PrimaryLightColor">#5E6262</Color>
+            <Color x:Key="PrimaryDarkColor">#0D1212</Color>
             <Color x:Key="AccentColor">#F9A825</Color>
             <Color x:Key="TextColor">#000000</Color>
             <Color x:Key="InverseTextColor">#FFFFFF</Color>
