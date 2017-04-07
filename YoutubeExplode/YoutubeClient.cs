@@ -353,8 +353,7 @@ namespace YoutubeExplode
             if (videoUrl == null)
                 throw new ArgumentNullException(nameof(videoUrl));
 
-            string result;
-            bool success = TryParseVideoId(videoUrl, out result);
+            bool success = TryParseVideoId(videoUrl, out string result);
             if (success)
                 return result;
 
@@ -432,8 +431,7 @@ namespace YoutubeExplode
             if (playlistUrl == null)
                 throw new ArgumentNullException(nameof(playlistUrl));
 
-            string result;
-            bool success = TryParsePlaylistId(playlistUrl, out result);
+            bool success = TryParsePlaylistId(playlistUrl, out string result);
             if (success)
                 return result;
 

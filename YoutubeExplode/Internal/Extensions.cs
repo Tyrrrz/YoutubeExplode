@@ -97,8 +97,7 @@ namespace YoutubeExplode.Internal
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
 
-            T result;
-            return handler(str, out result) ? result : defaultValue;
+            return handler(str, out var result) ? result : defaultValue;
         }
 
         public static double ParseDouble(this string str)
@@ -281,8 +280,7 @@ namespace YoutubeExplode.Internal
             if (dic == null)
                 throw new ArgumentNullException(nameof(dic));
 
-            TValue result;
-            if (dic.TryGetValue(key, out result))
+            if (dic.TryGetValue(key, out var result))
                 return result;
             return defaultValue;
         }

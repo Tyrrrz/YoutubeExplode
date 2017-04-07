@@ -15,14 +15,6 @@ namespace YoutubeExplode.Internal
         // This contains all parsing logic in YoutubeExplode and is kinda messy
         // ...mostly because Youtube's internal API is messy itself
 
-        public static string FunctionCallFromLineJs(string rawJs)
-        {
-            if (rawJs == null)
-                throw new ArgumentNullException(nameof(rawJs));
-
-            return Regex.Match(rawJs, @"\w+\.(\w+)\(").Groups[1].Value;
-        }
-
         public static IEnumerable<ICipherOperation> CipherOperationsFromJs(string rawJs)
         {
             // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
@@ -54,7 +46,9 @@ namespace YoutubeExplode.Internal
                     break;
 
                 // Get the function called on this line
-                string calledFunctionName = FunctionCallFromLineJs(line);
+                string calledFunctionName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
+                if (calledFunctionName.IsBlank())
+                    continue;
 
                 // Compose regexes to identify what function we're dealing with
                 // -- reverse (0 params)
@@ -77,7 +71,9 @@ namespace YoutubeExplode.Internal
             foreach (string line in funcLines)
             {
                 // Get the function called on this line
-                string calledFunctionName = FunctionCallFromLineJs(line);
+                string calledFunctionName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
+                if (calledFunctionName.IsBlank())
+                    continue;
 
                 // Swap operation
                 if (calledFunctionName == charSwapFuncName)
@@ -248,7 +244,7 @@ namespace YoutubeExplode.Internal
                 // Parse culture
                 string lang = dic.GetOrDefault("lc");
                 if (lang == "iw") lang = "he"; // HACK: Google uses wrong code for Hebrew
-                result.Culture = lang.IsNotBlank() ? new CultureInfo(lang) : null;
+                result.Culture = lang.IsNotBlank() ? new CultureInfo(lang) : CultureInfo.InvariantCulture;
 
                 yield return result;
             }

@@ -70,6 +70,9 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public MainViewModel(YoutubeClient client)
         {
+            if (client == null)
+                throw new ArgumentNullException(nameof(client));
+
             _client = client;
 
             // Commands
@@ -92,8 +95,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             VideoInfo = null;
 
             // Parse URL if necessary
-            string id;
-            if (!YoutubeClient.TryParseVideoId(VideoId, out id))
+            if (!YoutubeClient.TryParseVideoId(VideoId, out string id))
                 id = VideoId;
 
             // Perform the request

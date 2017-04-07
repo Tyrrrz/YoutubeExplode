@@ -37,10 +37,6 @@
     <DocumentationFile>bin\Release\YoutubeExplode.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Exceptions\YoutubeException.cs" />
     <Compile Include="Internal\Extensions.cs" />
@@ -70,6 +66,9 @@
     <Compile Include="Services\HttpService.cs" />
     <Compile Include="Services\IHttpService.cs" />
     <Compile Include="YoutubeClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

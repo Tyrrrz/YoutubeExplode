@@ -14,8 +14,7 @@ namespace YoutubeExplode.DemoConsole
         /// </summary>
         private static string NormalizeId(string input)
         {
-            string id;
-            if (!YoutubeClient.TryParseVideoId(input, out id))
+            if (!YoutubeClient.TryParseVideoId(input, out string id))
                 id = input;
             return id;
         }

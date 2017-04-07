@@ -106,8 +106,7 @@ namespace YoutubeExplode.Tests
             {
                 string url = urls[i];
                 string id = ids[i];
-                string parsed;
-                bool success = YoutubeClient.TryParseVideoId(url, out parsed);
+                bool success = YoutubeClient.TryParseVideoId(url, out string parsed);
                 Assert.IsTrue(success);
                 Assert.AreEqual(id, parsed);
             }
@@ -127,8 +126,7 @@ namespace YoutubeExplode.Tests
 
             foreach (string url in urls)
             {
-                string parsed;
-                bool success = YoutubeClient.TryParseVideoId(url, out parsed);
+                bool success = YoutubeClient.TryParseVideoId(url, out string parsed);
                 Assert.IsFalse(success);
             }
         }
@@ -212,8 +210,7 @@ namespace YoutubeExplode.Tests
             {
                 string url = urls[i];
                 string id = ids[i];
-                string parsed;
-                bool success = YoutubeClient.TryParsePlaylistId(url, out parsed);
+                bool success = YoutubeClient.TryParsePlaylistId(url, out string parsed);
                 Assert.IsTrue(success);
                 Assert.AreEqual(id, parsed);
             }
@@ -234,8 +231,7 @@ namespace YoutubeExplode.Tests
 
             foreach (string url in urls)
             {
-                string parsed;
-                bool success = YoutubeClient.TryParsePlaylistId(url, out parsed);
+                bool success = YoutubeClient.TryParsePlaylistId(url, out string parsed);
                 Assert.IsFalse(success);
             }
         }
