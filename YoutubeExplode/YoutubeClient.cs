@@ -22,10 +22,7 @@ namespace YoutubeExplode
         /// </summary>
         public YoutubeClient(IHttpService httpService)
         {
-            if (httpService == null)
-                throw new ArgumentNullException(nameof(httpService));
-
-            _httpService = httpService;
+            _httpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
         }
 
         /// <summary>
