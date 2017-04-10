@@ -171,9 +171,9 @@ namespace YoutubeExplode.Internal
                 // Parse
                 var result = new MediaStreamInfo();
                 result.Url = dic.GetOrDefault("url");
+                result.Itag = dic.GetOrDefault("itag").ParseIntOrDefault();
                 result.Signature = dic.GetOrDefault("s");
                 result.NeedsDeciphering = result.Signature.IsNotBlank();
-                result.Itag = dic.GetOrDefault("itag").ParseIntOrDefault();
                 result.Bitrate = dic.GetOrDefault("bitrate").ParseLongOrDefault();
                 result.Framerate = dic.GetOrDefault("fps").ParseDoubleOrDefault();
                 result.FileSize = dic.GetOrDefault("clen").ParseLongOrDefault();
@@ -194,17 +194,17 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawXml).StripNamespaces();
-            var xStreamInfos = root.Descendants("Representation");
+            var xRoot = XElement.Parse(rawXml).StripNamespaces();
+            var xStreamInfos = xRoot.Descendants("Representation");
+
+            // Skip partial streams
+            // TODO: maybe add support for partial streams
+            xStreamInfos = xStreamInfos.Where(x => !(x.Descendant("Initialization")
+                                                         ?.Attribute("sourceURL")
+                                                         ?.Value.ContainsInvariant("sq/") ?? false));
 
             foreach (var xStreamInfo in xStreamInfos)
             {
-                // Skip partial streams
-                // TODO: maybe add support for partial streams
-                string initUrl = xStreamInfo.Descendant("Initialization")?.Attribute("sourceURL")?.Value;
-                if (initUrl.IsNotBlank() && initUrl.ContainsInvariant("sq/"))
-                    continue;
-
                 // Get base URL node
                 var xBaseUrl = xStreamInfo.Element("BaseURL");
 
@@ -244,7 +244,7 @@ namespace YoutubeExplode.Internal
                 // Parse culture
                 string lang = dic.GetOrDefault("lc");
                 if (lang == "iw") lang = "he"; // HACK: Google uses wrong code for Hebrew
-                result.Culture = lang.IsNotBlank() ? new CultureInfo(lang) : CultureInfo.InvariantCulture;
+                result.Culture = new CultureInfo(lang);
 
                 yield return result;
             }
@@ -276,8 +276,8 @@ namespace YoutubeExplode.Internal
             string status = dic.GetOrDefault("status");
             if (status.EqualsInvariant("fail"))
             {
-                string reason = dic.GetOrDefault("reason");
                 int errorCode = dic.GetOrDefault("errorcode").ParseIntOrDefault();
+                string reason = dic.GetOrDefault("reason");
                 throw new YoutubeException(errorCode, reason);
             }
 
@@ -327,10 +327,10 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawXml).StripNamespaces();
+            var xRoot = XElement.Parse(rawXml).StripNamespaces();
 
             // Get nodes
-            var xHtmlContent = root.Element("html_content");
+            var xHtmlContent = xRoot.Element("html_content");
             var xVideoInfo = xHtmlContent?.Element("video_info");
             var xUserInfo = xHtmlContent?.Element("user_info");
 
@@ -359,17 +359,17 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawXml).StripNamespaces();
+            var xRoot = XElement.Parse(rawXml).StripNamespaces();
 
             // Parse
             var result = new PlaylistInfo();
-            result.Title = root.Element("title")?.Value;
-            result.Author = root.Element("author")?.Value;
-            result.Description = root.Element("description")?.Value;
-            result.ViewCount = (root.Element("views")?.Value).ParseLongOrDefault();
-            result.LikeCount = (root.Element("likes")?.Value).ParseLongOrDefault();
-            result.DislikeCount = (root.Element("likes")?.Value).ParseLongOrDefault();
-            result.VideoIds = root.Descendants("encrypted_id").Select(e => e.Value).ToArray();
+            result.Title = xRoot.Element("title")?.Value;
+            result.Author = xRoot.Element("author")?.Value;
+            result.Description = xRoot.Element("description")?.Value;
+            result.ViewCount = (xRoot.Element("views")?.Value).ParseLongOrDefault();
+            result.LikeCount = (xRoot.Element("likes")?.Value).ParseLongOrDefault();
+            result.DislikeCount = (xRoot.Element("likes")?.Value).ParseLongOrDefault();
+            result.VideoIds = xRoot.Descendants("encrypted_id").Select(e => e.Value).ToArray();
 
             return result;
         }
@@ -379,8 +379,8 @@ namespace YoutubeExplode.Internal
             if (rawXml == null)
                 throw new ArgumentNullException(nameof(rawXml));
 
-            var root = XElement.Parse(rawXml).StripNamespaces();
-            var xTexts = root.Descendants("text");
+            var xRoot = XElement.Parse(rawXml).StripNamespaces();
+            var xTexts = xRoot.Descendants("text");
 
             foreach (var xText in xTexts)
             {

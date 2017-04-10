@@ -91,7 +91,7 @@ namespace YoutubeExplode.Internal
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
 
-            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            const NumberStyles style = NumberStyles.Integer;
             return int.Parse(str, style, CultureInfo.InvariantCulture);
         }
 
@@ -100,7 +100,7 @@ namespace YoutubeExplode.Internal
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
 
-            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            const NumberStyles style = NumberStyles.Integer;
             return long.Parse(str, style, CultureInfo.InvariantCulture);
         }
 
@@ -120,7 +120,7 @@ namespace YoutubeExplode.Internal
             if (str == null)
                 return defaultValue;
 
-            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            const NumberStyles style = NumberStyles.Integer;
             if (int.TryParse(str, style, CultureInfo.InvariantCulture, out int result))
                 return result;
             return defaultValue;
@@ -131,7 +131,7 @@ namespace YoutubeExplode.Internal
             if (str == null)
                 return defaultValue;
 
-            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
+            const NumberStyles style = NumberStyles.Integer;
             if (long.TryParse(str, style, CultureInfo.InvariantCulture, out long result))
                 return result;
             return defaultValue;
