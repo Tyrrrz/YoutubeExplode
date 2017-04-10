@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace YoutubeExplode.Models
 {
@@ -36,11 +35,6 @@ namespace YoutubeExplode.Models
 
         internal MediaStream(Stream innerStream, MediaStreamInfo mediaStreamInfo)
         {
-            if (innerStream == null)
-                throw new ArgumentNullException(nameof(innerStream));
-            if (mediaStreamInfo == null)
-                throw new ArgumentNullException(nameof(mediaStreamInfo));
-
             _innerStream = innerStream;
             Info = mediaStreamInfo;
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using YoutubeExplode.Internal.CipherOperations;
 
 namespace YoutubeExplode.Internal
@@ -12,9 +11,6 @@ namespace YoutubeExplode.Internal
 
         public string Decipher(string input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             foreach (var operation in CipherOperations)
                 input = operation.Decipher(input);
             return input;

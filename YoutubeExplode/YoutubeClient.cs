@@ -38,9 +38,6 @@ namespace YoutubeExplode
 
         private async Task<PlayerSource> GetPlayerSourceAsync(string version)
         {
-            if (version == null)
-                throw new ArgumentNullException(nameof(version));
-
             // Try get cached player source
             var playerSource = _playerSourceCache.GetOrDefault(version);
 
@@ -64,9 +61,6 @@ namespace YoutubeExplode
 
         private async Task<long> GetContentLengthAsync(string url)
         {
-            if (url == null)
-                throw new ArgumentNullException(nameof(url));
-
             // Get the headers
             var headers = await _httpService.GetHeadersAsync(url).ConfigureAwait(false);
 
@@ -254,10 +248,6 @@ namespace YoutubeExplode
         {
             if (mediaStreamInfo == null)
                 throw new ArgumentNullException(nameof(mediaStreamInfo));
-            if (mediaStreamInfo.Url == null)
-                throw new ArgumentException("Does not have a URL", nameof(mediaStreamInfo));
-            if (mediaStreamInfo.NeedsDeciphering)
-                throw new ArgumentException("Needs to be deciphered first", nameof(mediaStreamInfo));
 
             // Get
             var stream = await _httpService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
@@ -275,8 +265,6 @@ namespace YoutubeExplode
         {
             if (closedCaptionTrackInfo == null)
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
-            if (closedCaptionTrackInfo.Url == null)
-                throw new ArgumentException("Does not have a URL", nameof(closedCaptionTrackInfo));
 
             // Get
             string response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);

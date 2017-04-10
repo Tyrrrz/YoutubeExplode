@@ -45,21 +45,11 @@ namespace YoutubeExplode.Internal
 
         public static bool ContainsInvariant(this string str, string other)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
-
             return str.IndexOf(other, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static string SubstringUntil(this string str, string sub, StringComparison comparison = StringComparison.Ordinal)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-            if (sub == null)
-                throw new ArgumentNullException(nameof(sub));
-
             int index = str.IndexOf(sub, comparison);
             if (index < 0) return str;
             return str.Substring(0, index);
@@ -67,11 +57,6 @@ namespace YoutubeExplode.Internal
 
         public static string SubstringAfter(this string str, string sub, StringComparison comparison = StringComparison.Ordinal)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-            if (sub == null)
-                throw new ArgumentNullException(nameof(sub));
-
             int index = str.IndexOf(sub, comparison);
             if (index < 0) return string.Empty;
             return str.Substring(index + sub.Length, str.Length - index - sub.Length);
@@ -79,36 +64,24 @@ namespace YoutubeExplode.Internal
 
         public static double ParseDouble(this string str)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-
             const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
             return double.Parse(str, style, CultureInfo.InvariantCulture);
         }
 
         public static int ParseInt(this string str)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-
             const NumberStyles style = NumberStyles.Integer;
             return int.Parse(str, style, CultureInfo.InvariantCulture);
         }
 
         public static long ParseLong(this string str)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-
             const NumberStyles style = NumberStyles.Integer;
             return long.Parse(str, style, CultureInfo.InvariantCulture);
         }
 
         public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
         {
-            if (str == null)
-                return defaultValue;
-
             const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
             if (double.TryParse(str, style, CultureInfo.InvariantCulture, out double result))
                 return result;
@@ -117,9 +90,6 @@ namespace YoutubeExplode.Internal
 
         public static int ParseIntOrDefault(this string str, int defaultValue = default(int))
         {
-            if (str == null)
-                return defaultValue;
-
             const NumberStyles style = NumberStyles.Integer;
             if (int.TryParse(str, style, CultureInfo.InvariantCulture, out int result))
                 return result;
@@ -128,9 +98,6 @@ namespace YoutubeExplode.Internal
 
         public static long ParseLongOrDefault(this string str, long defaultValue = default(long))
         {
-            if (str == null)
-                return defaultValue;
-
             const NumberStyles style = NumberStyles.Integer;
             if (long.TryParse(str, style, CultureInfo.InvariantCulture, out long result))
                 return result;
@@ -139,9 +106,6 @@ namespace YoutubeExplode.Internal
 
         public static string Reverse(this string str)
         {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-
             var sb = new StringBuilder(str.Length);
             for (int i = str.Length - 1; i >= 0; i--)
                 sb.Append(str[i]);
@@ -150,26 +114,16 @@ namespace YoutubeExplode.Internal
 
         public static string UrlEncode(this string url)
         {
-            if (url == null)
-                throw new ArgumentNullException(nameof(url));
-
             return WebUtility.UrlEncode(url);
         }
 
         public static string UrlDecode(this string url)
         {
-            if (url == null)
-                throw new ArgumentNullException(nameof(url));
-
             return WebUtility.UrlDecode(url);
         }
 
         public static string SetQueryParameter(this string url, string key, string value)
         {
-            if (url == null)
-                throw new ArgumentNullException(nameof(url));
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
             if (value == null)
                 value = string.Empty;
 
@@ -205,10 +159,6 @@ namespace YoutubeExplode.Internal
 
         public static string SetPathParameter(this string url, string key, string value)
         {
-            if (IsBlank(url))
-                throw new ArgumentNullException(nameof(url));
-            if (IsBlank(key))
-                throw new ArgumentNullException(nameof(key));
             if (value == null)
                 value = string.Empty;
 
@@ -238,29 +188,16 @@ namespace YoutubeExplode.Internal
 
         public static string JoinToString<T>(this IEnumerable<T> enumerable, string separator)
         {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-            if (separator == null)
-                throw new ArgumentNullException(nameof(separator));
-
             return string.Join(separator, enumerable);
         }
 
         public static string[] Split(this string input, params string[] separators)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             return input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public static IEnumerable<TSource> Distinct<TSource, TKey>(this IEnumerable<TSource> enumerable, Func<TSource, TKey> selector)
         {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-            if (selector == null)
-                throw new ArgumentNullException(nameof(selector));
-
             var existing = new HashSet<TKey>();
             foreach (var element in enumerable)
             {
@@ -271,10 +208,6 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> enumerable, int count)
         {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-            if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count));
             if (count == 0)
                 return Enumerable.Empty<T>();
 
@@ -283,10 +216,6 @@ namespace YoutubeExplode.Internal
 
         public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
         {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-            if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count));
             if (count == 0)
                 return enumerable;
 
@@ -296,9 +225,6 @@ namespace YoutubeExplode.Internal
         public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key,
             TValue defaultValue = default(TValue))
         {
-            if (dic == null)
-                throw new ArgumentNullException(nameof(dic));
-
             if (dic.TryGetValue(key, out var result))
                 return result;
             return defaultValue;
@@ -307,9 +233,6 @@ namespace YoutubeExplode.Internal
         public static XElement StripNamespaces(this XElement element)
         {
             // Original code credit: http://stackoverflow.com/a/1147012
-
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
 
             var result = new XElement(element);
             foreach (var e in result.DescendantsAndSelf())
@@ -327,11 +250,6 @@ namespace YoutubeExplode.Internal
 
         public static XElement Descendant(this XElement element, XName name)
         {
-            if (element == null)
-                throw new ArgumentNullException(nameof(element));
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
-
             return element.Descendants(name).FirstOrDefault();
         }
     }

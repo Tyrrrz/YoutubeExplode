@@ -70,9 +70,6 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public MainViewModel(YoutubeClient client)
         {
-            if (client == null)
-                throw new ArgumentNullException(nameof(client));
-
             _client = client;
 
             // Commands
