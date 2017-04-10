@@ -3,16 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:YoutubeExplode.DemoWpf.Converters"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:demoWpf="clr-namespace:YoutubeExplode.DemoWpf"
-    xmlns:ignore="http://www.galasoft.ch/ignore"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Exit="App_OnExit"
     Startup="App_OnStartup"
-    StartupUri="Views/MainWindow.xaml"
-    mc:Ignorable="d ignore">
-
+    StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -89,7 +84,7 @@
             <converters:BoolToStringConverter x:Key="BoolToStringConverter" />
 
             <!--  Locator  -->
-            <demoWpf:Locator x:Key="Locator" d:IsDataSource="True" />
+            <demoWpf:Locator x:Key="Locator" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

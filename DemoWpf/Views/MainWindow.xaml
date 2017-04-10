@@ -77,25 +77,6 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto"
             Visibility="{Binding IsVideoInfoAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
-            <ScrollViewer.Style>
-                <Style BasedOn="{StaticResource {x:Type ScrollViewer}}" TargetType="{x:Type ScrollViewer}">
-                    <Style.Triggers>
-                        <Trigger Property="Visibility" Value="Visible">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard TargetProperty="Opacity">
-                                        <DoubleAnimation
-                                            From="0"
-                                            To="1"
-                                            Duration="0:0:0.7" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ScrollViewer.Style>
-
             <StackPanel Orientation="Vertical">
                 <!--  Image  -->
                 <Border HorizontalAlignment="Stretch" Background="Black">

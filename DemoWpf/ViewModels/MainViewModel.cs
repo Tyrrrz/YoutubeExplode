@@ -20,7 +20,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public bool IsBusy
         {
-            get { return _isBusy; }
+            get => _isBusy;
             private set
             {
                 Set(ref _isBusy, value);
@@ -31,7 +31,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public string VideoId
         {
-            get { return _videoId; }
+            get => _videoId;
             set
             {
                 Set(ref _videoId, value);
@@ -41,7 +41,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public VideoInfo VideoInfo
         {
-            get { return _videoInfo; }
+            get => _videoInfo;
             private set
             {
                 Set(ref _videoInfo, value);
@@ -53,14 +53,14 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public double Progress
         {
-            get { return _progress; }
-            private set { Set(ref _progress, value); }
+            get => _progress;
+            private set => Set(ref _progress, value);
         }
 
         public bool IsProgressIndeterminate
         {
-            get { return _isProgressIndeterminate; }
-            private set { Set(ref _isProgressIndeterminate, value); }
+            get => _isProgressIndeterminate;
+            private set => Set(ref _isProgressIndeterminate, value);
         }
 
         // Commands

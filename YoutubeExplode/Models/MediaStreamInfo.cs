@@ -100,7 +100,7 @@ namespace YoutubeExplode.Models
                 var quality = Quality;
 
                 if (quality == MediaStreamVideoQuality.NoVideo)
-                    return "No video";
+                    return "N/A";
 
                 if (quality == MediaStreamVideoQuality.Low144)
                     return "144p";

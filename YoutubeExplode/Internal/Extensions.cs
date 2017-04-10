@@ -65,25 +65,25 @@ namespace YoutubeExplode.Internal
         public static double ParseDouble(this string str)
         {
             const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
-            return double.Parse(str, style, CultureInfo.InvariantCulture);
+            return double.Parse(str, style, NumberFormatInfo.InvariantInfo);
         }
 
         public static int ParseInt(this string str)
         {
             const NumberStyles style = NumberStyles.Integer;
-            return int.Parse(str, style, CultureInfo.InvariantCulture);
+            return int.Parse(str, style, NumberFormatInfo.InvariantInfo);
         }
 
         public static long ParseLong(this string str)
         {
             const NumberStyles style = NumberStyles.Integer;
-            return long.Parse(str, style, CultureInfo.InvariantCulture);
+            return long.Parse(str, style, NumberFormatInfo.InvariantInfo);
         }
 
         public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
         {
             const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
-            if (double.TryParse(str, style, CultureInfo.InvariantCulture, out double result))
+            if (double.TryParse(str, style, NumberFormatInfo.InvariantInfo, out double result))
                 return result;
             return defaultValue;
         }
@@ -91,7 +91,7 @@ namespace YoutubeExplode.Internal
         public static int ParseIntOrDefault(this string str, int defaultValue = default(int))
         {
             const NumberStyles style = NumberStyles.Integer;
-            if (int.TryParse(str, style, CultureInfo.InvariantCulture, out int result))
+            if (int.TryParse(str, style, NumberFormatInfo.InvariantInfo, out int result))
                 return result;
             return defaultValue;
         }
@@ -99,7 +99,7 @@ namespace YoutubeExplode.Internal
         public static long ParseLongOrDefault(this string str, long defaultValue = default(long))
         {
             const NumberStyles style = NumberStyles.Integer;
-            if (long.TryParse(str, style, CultureInfo.InvariantCulture, out long result))
+            if (long.TryParse(str, style, NumberFormatInfo.InvariantInfo, out long result))
                 return result;
             return defaultValue;
         }
