@@ -116,7 +116,8 @@ namespace YoutubeExplode
             var videoContext = Parser.VideoContextFromHtml(response);
 
             // Get video info
-            url = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}&el=info&ps=default";
+            url =
+                $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={videoContext.Sts}&el=info&ps=default";
             response = await _httpService.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse video info
@@ -192,18 +193,19 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets playlist metadata by playlist ID
+        /// Gets playlist metadata by playlist ID, truncating video list at given number of pages
         /// </summary>
-        public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
+        public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages)
         {
             // Original code credit: https://github.com/dr-BEat
+            // Can also use `action_get_user_uploads_by_user=1` for user uploads...
 
             if (playlistId == null)
                 throw new ArgumentNullException(nameof(playlistId));
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException("Invalid Youtube playlist ID", nameof(playlistId));
-
-            // Can also use `action_get_user_uploads_by_user=1` for user uploads...
+            if (maxPages <= 0)
+                throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
             // Get
             string url = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
@@ -215,10 +217,11 @@ namespace YoutubeExplode
 
             // Keep requesting again with offset to make sure we get everything
             // HACK: forces at minimum 2 requests per playlist, would be nice if it could be optimized
-            // Can't evaluate `hasMore` to `result.VideoIds.Count == 200` because playlist can have deleted videos
-            bool hasMore = result.VideoIds.Count > 0;
+            // Can't evaluate `canContinue` to `result.VideoIds.Count == 200` because playlist can have deleted videos
+            int pagesDone = 1;
+            bool canContinue = pagesDone < maxPages && result.VideoIds.Count > 0;
             int offset = result.VideoIds.Count;
-            while (hasMore)
+            while (canContinue)
             {
                 // Get
                 string nextUrl = url + $"&index={offset}";
@@ -231,7 +234,8 @@ namespace YoutubeExplode
                 delta = result.VideoIds.Count - delta;
 
                 // Go for the next batch if needed
-                hasMore = delta > 0;
+                pagesDone++;
+                canContinue = pagesDone < maxPages && delta > 0;
                 offset += resultExtension.VideoIds.Count;
             }
 
@@ -239,7 +243,13 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets media stream by its metadata
+        /// Gets playlist metadata by playlist ID
+        /// </summary>
+        public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
+            => await GetPlaylistInfoAsync(playlistId, int.MaxValue).ConfigureAwait(false);
+
+        /// <summary>
+        /// Gets actual media stream by its metadata
         /// </summary>
         public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
@@ -256,7 +266,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets closed caption track by its metadata
+        /// Gets actual closed caption track by its metadata
         /// </summary>
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {
