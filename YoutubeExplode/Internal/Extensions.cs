@@ -62,24 +62,6 @@ namespace YoutubeExplode.Internal
             return str.Substring(index + sub.Length, str.Length - index - sub.Length);
         }
 
-        public static double ParseDouble(this string str)
-        {
-            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
-            return double.Parse(str, style, NumberFormatInfo.InvariantInfo);
-        }
-
-        public static int ParseInt(this string str)
-        {
-            const NumberStyles style = NumberStyles.Integer;
-            return int.Parse(str, style, NumberFormatInfo.InvariantInfo);
-        }
-
-        public static long ParseLong(this string str)
-        {
-            const NumberStyles style = NumberStyles.Integer;
-            return long.Parse(str, style, NumberFormatInfo.InvariantInfo);
-        }
-
         public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
         {
             const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;

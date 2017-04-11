@@ -75,13 +75,13 @@ namespace YoutubeExplode.Internal
                 // Swap operation
                 if (calledFunctionName == charSwapFuncName)
                 {
-                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
+                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseIntOrDefault();
                     yield return new SwapCipherOperation(index);
                 }
                 // Slice operation
                 else if (calledFunctionName == sliceFuncName)
                 {
-                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
+                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseIntOrDefault();
                     yield return new SliceCipherOperation(index);
                 }
                 // Reverse operation
