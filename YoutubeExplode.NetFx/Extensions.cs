@@ -24,7 +24,7 @@ namespace YoutubeExplode
                 throw new ArgumentNullException(nameof(mediaStreamInfo));
             if (filePath == null)
                 throw new ArgumentNullException(nameof(filePath));
-            if (bufferSize < 1)
+            if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
             // Get and create streams
@@ -93,7 +93,7 @@ namespace YoutubeExplode
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
             if (filePath == null)
                 throw new ArgumentNullException(nameof(filePath));
-            if (bufferSize < 1)
+            if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
             // Get and create streams

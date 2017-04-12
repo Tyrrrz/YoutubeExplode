@@ -6,6 +6,9 @@ namespace YoutubeExplode.Internal
     {
         public static MediaStreamContentType GetContentType(int itag)
         {
+            if (itag.IsEither(17, 36, 18, 22, 43, 91, 92, 93, 94, 95, 96))
+                return MediaStreamContentType.Mixed;
+
             if (itag.IsEither(160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 278, 242, 243, 244, 247, 248, 271,
                 313, 272, 302, 303, 308, 315, 330, 331, 332, 333, 334, 335, 336, 337, 212, 213, 214, 215, 216, 217))
                 return MediaStreamContentType.Video;
@@ -13,7 +16,7 @@ namespace YoutubeExplode.Internal
             if (itag.IsEither(140, 141, 171, 249, 250, 251))
                 return MediaStreamContentType.Audio;
 
-            return MediaStreamContentType.Mixed;
+            return MediaStreamContentType.Unknown;
         }
 
         public static bool GetIsVideo3D(int itag)
@@ -108,7 +111,7 @@ namespace YoutubeExplode.Internal
             if (type == MediaStreamContainerType.TS)
                 return "ts";
 
-            return null;
+            return type.ToString();
         }
 
         public static MediaStreamVideoResolution GetDefaultResolution(int itag)

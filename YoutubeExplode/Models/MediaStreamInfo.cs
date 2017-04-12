@@ -129,7 +129,7 @@ namespace YoutubeExplode.Models
                 if (quality == MediaStreamVideoQuality.High3072)
                     return Framerate > 30 ? $"3072p{Framerate:N0}" : "3072p";
 
-                return null;
+                return string.Empty;
             }
         }
 

@@ -6,6 +6,11 @@
     public enum MediaStreamContentType
     {
         /// <summary>
+        /// Content type could not be identified
+        /// </summary>
+        Unknown,
+
+        /// <summary>
         /// Contains both video and audio in a single stream
         /// </summary>
         Mixed,
