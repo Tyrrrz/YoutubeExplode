@@ -15,7 +15,7 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         private readonly IHttpService _httpService;
-        private readonly Dictionary<string, PlayerSource> _playerSourceCache = new Dictionary<string, PlayerSource>();
+        private readonly Dictionary<string, PlayerSource> _playerSourceCache;
 
         /// <summary>
         /// Creates an instance of <see cref="YoutubeClient"/> with custom services
@@ -23,6 +23,7 @@ namespace YoutubeExplode
         public YoutubeClient(IHttpService httpService)
         {
             _httpService = httpService ?? throw new ArgumentNullException(nameof(httpService));
+            _playerSourceCache = new Dictionary<string, PlayerSource>();
         }
 
         /// <summary>
@@ -198,7 +199,6 @@ namespace YoutubeExplode
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages)
         {
             // Original code credit: https://github.com/dr-BEat
-            // Can also use `action_get_user_uploads_by_user=1` for user uploads...
 
             if (playlistId == null)
                 throw new ArgumentNullException(nameof(playlistId));
@@ -215,13 +215,11 @@ namespace YoutubeExplode
             var result = Parser.PlaylistInfoFromXml(response);
             result.Id = playlistId;
 
-            // Keep requesting again with offset to make sure we get everything
-            // HACK: forces at minimum 2 requests per playlist, would be nice if it could be optimized
-            // Can't evaluate `canContinue` to `result.VideoIds.Count == 200` because playlist can have deleted videos
+            // Continue with next pages
             int pagesDone = 1;
-            bool canContinue = pagesDone < maxPages && result.VideoIds.Count > 0;
+            bool canContinue = result.VideoIds.Count > 0;
             int offset = result.VideoIds.Count;
-            while (canContinue)
+            while (pagesDone < maxPages && canContinue)
             {
                 // Get
                 string nextUrl = url + $"&index={offset}";
@@ -235,7 +233,7 @@ namespace YoutubeExplode
 
                 // Go for the next batch if needed
                 pagesDone++;
-                canContinue = pagesDone < maxPages && delta > 0;
+                canContinue = delta > 0;
                 offset += resultExtension.VideoIds.Count;
             }
 
