@@ -24,7 +24,10 @@ namespace YoutubeExplode.Models
                     return PlaylistType.UserMade;
 
                 if (Id.StartsWith("RD", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.Mix;
+                    return PlaylistType.VideoMix;
+
+                if (Id.StartsWith("UL", StringComparison.OrdinalIgnoreCase))
+                    return PlaylistType.ChannelMix;
 
                 if (Id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
                     return PlaylistType.Liked;

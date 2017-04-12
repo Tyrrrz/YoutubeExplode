@@ -18,7 +18,12 @@
         /// <summary>
         /// Mix playlist generated to group similar videos
         /// </summary>
-        Mix,
+        VideoMix,
+
+        /// <summary>
+        /// Mix playlist generated based on channel's uploads
+        /// </summary>
+        ChannelMix,
 
         /// <summary>
         /// System playlist for videos liked by a user
