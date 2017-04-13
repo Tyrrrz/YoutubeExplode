@@ -1,16 +1,12 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D3632A9-3DE4-4E64-AC3E-94810F2F55D0}"
 	ProjectSection(SolutionItems) = preProject
 		License.txt = License.txt
-		Package.nuspec = Package.nuspec
 		ReadMe.md = ReadMe.md
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWpf", "DemoWpf\DemoWpf.csproj", "{0B29C8A6-714C-41F0-8C66-C548A1D04A78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoConsole", "DemoConsole\DemoConsole.csproj", "{6983B0A4-44B0-4FAF-81C7-94CC784570F0}"
 EndProject
@@ -18,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode", "YoutubeExplode\YoutubeExplode.csproj", "{2019E360-0E05-4824-9EDE-7723AF45E10C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode.NetFx", "YoutubeExplode.NetFx\YoutubeExplode.NetFx.csproj", "{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWpf", "DemoWpf\DemoWpf.csproj", "{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,10 +22,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0B29C8A6-714C-41F0-8C66-C548A1D04A78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B29C8A6-714C-41F0-8C66-C548A1D04A78}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B29C8A6-714C-41F0-8C66-C548A1D04A78}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B29C8A6-714C-41F0-8C66-C548A1D04A78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6983B0A4-44B0-4FAF-81C7-94CC784570F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6983B0A4-44B0-4FAF-81C7-94CC784570F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6983B0A4-44B0-4FAF-81C7-94CC784570F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -42,10 +34,10 @@ Global
 		{2019E360-0E05-4824-9EDE-7723AF45E10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2019E360-0E05-4824-9EDE-7723AF45E10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2019E360-0E05-4824-9EDE-7723AF45E10C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B728D4D-4EA6-4B0E-82D5-6A12EB0DED7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

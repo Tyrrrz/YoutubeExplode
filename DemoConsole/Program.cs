@@ -50,7 +50,7 @@ namespace YoutubeExplode.DemoConsole
             // Get the video info
             Console.WriteLine("Loading...");
             var videoInfo = await client.GetVideoInfoAsync(id);
-            Console.WriteLine('-'.Repeat(15));
+            Console.WriteLine('-'.Repeat(100));
 
             // Print metadata
             Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author}");
@@ -72,8 +72,10 @@ namespace YoutubeExplode.DemoConsole
 
             // Download video
             Console.WriteLine($"Downloading to [{fileName}]...");
-            Console.WriteLine('-'.Repeat(15));
-            await client.DownloadMediaStreamAsync(streamInfo, fileName);
+            Console.WriteLine('-'.Repeat(100));
+
+            var progress = new Progress<double>(p => Console.Title = $"YoutubeExplode Demo [{p:P0}]");
+            await client.DownloadMediaStreamAsync(streamInfo, fileName, progress);
 
             Console.WriteLine("Download complete!");
             Console.ReadKey();
@@ -85,8 +87,6 @@ namespace YoutubeExplode.DemoConsole
             // It's intended to be very simple and straight to the point
             // For a more complicated example - check out the WPF demo
             Console.Title = "YoutubeExplode Demo";
-            Console.WindowWidth = 86;
-            Console.WindowHeight = 38;
 
             // Main method in consoles cannot be asynchronous so we run everything synchronously
             MainAsync().GetAwaiter().GetResult();

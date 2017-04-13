@@ -1,81 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2019E360-0E05-4824-9EDE-7723AF45E10C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>YoutubeExplode</RootNamespace>
+    <TargetFrameworks>netstandard1.1;net45</TargetFrameworks>
     <AssemblyName>YoutubeExplode</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <RootNamespace>YoutubeExplode</RootNamespace>
+    <PackageId>YoutubeExplode</PackageId>
+    <Product>YoutubeExplode</Product>
+    <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
+    <AssemblyVersion>2.5</AssemblyVersion>
+    <PackageVersion>2.5</PackageVersion>
+    <FileVersion>2.5</FileVersion>
+    <Company>Tyrrrz</Company>
+    <Authors>Tyrrrz</Authors>
+    <Copyright>Copyright (C) Alexey 'Tyrrrz' Golub 2016-2017</Copyright>
+    <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/License.txt</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\YoutubeExplode.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\YoutubeExplode.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\YoutubeExplode.xml</DocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Exceptions\ParserException.cs" />
-    <Compile Include="Exceptions\YoutubeException.cs" />
-    <Compile Include="Internal\Extensions.cs" />
-    <Compile Include="Internal\CipherOperations\ICipherOperation.cs" />
-    <Compile Include="Internal\ItagHelper.cs" />
-    <Compile Include="Internal\Parser.cs" />
-    <Compile Include="Internal\PlayerSource.cs" />
-    <Compile Include="Internal\CipherOperations\ReverseCipherOperation.cs" />
-    <Compile Include="Internal\CipherOperations\SliceCipherOperation.cs" />
-    <Compile Include="Internal\CipherOperations\SwapCipherOperation.cs" />
-    <Compile Include="Internal\VideoContext.cs" />
-    <Compile Include="Models\PlaylistType.cs" />
-    <Compile Include="Models\UserInfo.cs" />
-    <Compile Include="Models\MediaStream.cs" />
-    <Compile Include="Models\PlaylistInfo.cs" />
-    <Compile Include="Models\ClosedCaption.cs" />
-    <Compile Include="Models\ClosedCaptionTrack.cs" />
-    <Compile Include="Models\ClosedCaptionTrackInfo.cs" />
-    <Compile Include="Models\DashManifestInfo.cs" />
-    <Compile Include="Models\VideoInfo.cs" />
-    <Compile Include="Models\MediaStreamContentType.cs" />
-    <Compile Include="Models\MediaStreamInfo.cs" />
-    <Compile Include="Models\MediaStreamVideoQuality.cs" />
-    <Compile Include="Models\MediaStreamVideoResolution.cs" />
-    <Compile Include="Models\MediaStreamContainerType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\HttpService.cs" />
-    <Compile Include="Services\IHttpService.cs" />
-    <Compile Include="YoutubeClient.cs" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
