@@ -5,19 +5,19 @@
     <AssemblyName>YoutubeExplode</AssemblyName>
     <RootNamespace>YoutubeExplode</RootNamespace>
     <PackageId>YoutubeExplode</PackageId>
-    <Product>YoutubeExplode</Product>
+    <Product>Youtube Explode</Product>
     <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
     <AssemblyVersion>2.5</AssemblyVersion>
-    <PackageVersion>2.5</PackageVersion>
-    <FileVersion>2.5</FileVersion>
+    <PackageVersion>$(AssemblyVersion)</PackageVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
     <Company>Tyrrrz</Company>
-    <Authors>Tyrrrz</Authors>
+    <Authors>$(Company)</Authors>
     <Copyright>Copyright (C) Alexey 'Tyrrrz' Golub 2016-2017</Copyright>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/License.txt</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\YoutubeExplode.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
