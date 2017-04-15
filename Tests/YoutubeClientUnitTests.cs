@@ -1,238 +1,190 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tyrrrz.Extensions;
 
 namespace YoutubeExplode.Tests
 {
-    // These unit tests validate YoutubeClient's workflow in predictable manner.
-
     [TestClass]
     public class YoutubeClientUnitTests
     {
         [TestMethod]
         public void ValidateVideoId_Valid_Test()
         {
-            string[] ids =
-            {
-                "cpm00Hv1Umg",
-                "aI5pUqiVJdw",
-                "9onx5sgnkPQ",
-                "lg0s242Hg-8",
-                "fIDyDVzlqN4",
-                "JE1Gvzxfm1E",
-                "OpV62-86Fv4",
-                "UnUkNfX8v1E",
-                "aGTz8o_fey8",
-                "10V6xet5ODk"
-            };
+            var data = File.ReadAllLines("Data\\ValidVideoIds.txt");
 
-            foreach (string id in ids)
+            foreach (string datastr in data)
+            {
+                string id = datastr;
+
                 Assert.IsTrue(YoutubeClient.ValidateVideoId(id));
+            }
         }
 
         [TestMethod]
         public void ValidateVideoId_Invalid_Test()
         {
-            string[] ids =
-            {
-                null,
-                "",
-                "@pm!!Hv#Lmg",
-                "lg0s242Hg#8",
-                "f`DyDVzlqN`",
-                "JE1Gv[]fm1E",
-                "***62-86Fv4",
-                "U  kNfX8v1E",
-                "aGяк8o_fey8",
-                "10Vあxet5ODk"
-            };
+            var data = File.ReadAllLines("Data\\InvalidVideoIds.txt");
 
-            foreach (string id in ids)
+            foreach (string datastr in data)
+            {
+                string id = datastr;
+
                 Assert.IsFalse(YoutubeClient.ValidateVideoId(id));
-        }
-
-        [TestMethod]
-        public void ParseVideoId_Valid_Test()
-        {
-            string[] urls =
-            {
-                "https://www.youtube.com/watch?v=cpm00Hv1Umg",
-                "https://youtu.be/yIVRs6YSbOM",
-                "https://www.youtube.com.ua/watch?v=10V6xet5ODk",
-                "https://www.youtube.co.il/watch?v=OpV62-86Fv4",
-                "https://www.youtube.be/watch?v=Nsib94LHi9I&gl=BE",
-                "https://www.youtube.co.kr/embed/Y_t4kg1z-sA"
-            };
-            string[] ids =
-            {
-                "cpm00Hv1Umg",
-                "yIVRs6YSbOM",
-                "10V6xet5ODk",
-                "OpV62-86Fv4",
-                "Nsib94LHi9I",
-                "Y_t4kg1z-sA"
-            };
-
-            for (int i = 0; i < urls.Length; i++)
-            {
-                string url = urls[i];
-                string id = ids[i];
-                string parsed = YoutubeClient.ParseVideoId(url);
-                Assert.AreEqual(id, parsed);
             }
         }
 
         [TestMethod]
         public void TryParseVideoId_Valid_Test()
         {
-            string[] urls =
-            {
-                "https://www.youtube.com/watch?v=cpm00Hv1Umg",
-                "https://youtu.be/yIVRs6YSbOM",
-                "https://www.youtube.com.ua/watch?v=10V6xet5ODk",
-                "https://www.youtube.co.il/watch?v=OpV62-86Fv4",
-                "https://www.youtube.be/watch?v=Nsib94LHi9I&gl=BE",
-                "https://www.youtube.co.kr/embed/Y_t4kg1z-sA"
-            };
-            string[] ids =
-            {
-                "cpm00Hv1Umg",
-                "yIVRs6YSbOM",
-                "10V6xet5ODk",
-                "OpV62-86Fv4",
-                "Nsib94LHi9I",
-                "Y_t4kg1z-sA"
-            };
+            var data = File.ReadAllLines("Data\\ValidVideoUrls.txt");
 
-            for (int i = 0; i < urls.Length; i++)
+            foreach (string datastr in data)
             {
-                string url = urls[i];
-                string id = ids[i];
-                bool success = YoutubeClient.TryParseVideoId(url, out string parsed);
+                string url = datastr.SubstringUntil(";");
+                string id = datastr.SubstringAfter(";");
+
+                bool success = YoutubeClient.TryParseVideoId(url, out string actualId);
                 Assert.IsTrue(success);
-                Assert.AreEqual(id, parsed);
+                Assert.AreEqual(id, actualId);
             }
         }
 
         [TestMethod]
         public void TryParseVideoId_Invalid_Test()
         {
-            string[] urls =
-            {
-                null,
-                "",
-                "https://www.youtube.com",
-                "https://www.youtube.com/watch?v=@pm!!Hv#Lmg",
-                "https://www.youtube.com/qweasd?v=Nsib94LHi9I"
-            };
+            var data = File.ReadAllLines("Data\\InvalidVideoUrls.txt");
 
-            foreach (string url in urls)
+            foreach (string datastr in data)
             {
-                bool success = YoutubeClient.TryParseVideoId(url, out string parsed);
+                string url = datastr;
+
+                bool success = YoutubeClient.TryParseVideoId(url, out _);
                 Assert.IsFalse(success);
+            }
+        }
+
+        [TestMethod]
+        public void ParseVideoId_Guard_Test()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => YoutubeClient.ParseVideoId(null));
+        }
+
+        [TestMethod]
+        public void ParseVideoId_Valid_Test()
+        {
+            var data = File.ReadAllLines("Data\\ValidVideoUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr.SubstringUntil(";");
+                string id = datastr.SubstringAfter(";");
+
+                string actualId = YoutubeClient.ParseVideoId(url);
+                Assert.AreEqual(id, actualId);
+            }
+        }
+
+        [TestMethod]
+        public void ParseVideoId_Invalid_Test()
+        {
+            var data = File.ReadAllLines("Data\\InvalidVideoUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr;
+
+                Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseVideoId(url));
             }
         }
 
         [TestMethod]
         public void ValidatePlaylistId_Valid_Test()
         {
-            string[] ids =
-            {
-                "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
-                "WL",
-                "RDE2NZB6E5-do",
-                "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
-            };
+            var data = File.ReadAllLines("Data\\ValidPlaylistIds.txt");
 
-            foreach (string id in ids)
+            foreach (string datastr in data)
+            {
+                string id = datastr;
+
                 Assert.IsTrue(YoutubeClient.ValidatePlaylistId(id));
+            }
         }
 
         [TestMethod]
         public void ValidatePlaylistId_Invalid_Test()
         {
-            string[] ids =
-            {
-                null,
-                "",
-                "@pm!!Hv#Lmgeghdfhdh",
-                "adadasd*asdadasd aa"
-            };
+            var data = File.ReadAllLines("Data\\InvalidPlaylistIds.txt");
 
-            foreach (string id in ids)
+            foreach (string datastr in data)
+            {
+                string id = datastr;
+
                 Assert.IsFalse(YoutubeClient.ValidatePlaylistId(id));
-        }
-
-        [TestMethod]
-        public void ParsePlaylistId_Valid_Test()
-        {
-            string[] urls =
-            {
-                "https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
-                "https://www.youtube.com/playlist?list=WL",
-                "https://youtu.be/E2NZB6E5-do/?list=RDE2NZB6E5-do",
-                "https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
-            };
-            string[] ids =
-            {
-                "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
-                "WL",
-                "RDE2NZB6E5-do",
-                "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
-            };
-
-            for (int i = 0; i < urls.Length; i++)
-            {
-                string url = urls[i];
-                string id = ids[i];
-                string parsed = YoutubeClient.ParsePlaylistId(url);
-                Assert.AreEqual(id, parsed);
             }
         }
 
         [TestMethod]
         public void TryParsePlaylistId_Valid_Test()
         {
-            string[] urls =
-            {
-                "https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
-                "https://www.youtube.com/playlist?list=WL",
-                "https://youtu.be/E2NZB6E5-do/?list=RDE2NZB6E5-do",
-                "https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
-            };
-            string[] ids =
-            {
-                "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
-                "WL",
-                "RDE2NZB6E5-do",
-                "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
-            };
+            var data = File.ReadAllLines("Data\\ValidPlaylistUrls.txt");
 
-            for (int i = 0; i < urls.Length; i++)
+            foreach (string datastr in data)
             {
-                string url = urls[i];
-                string id = ids[i];
-                bool success = YoutubeClient.TryParsePlaylistId(url, out string parsed);
+                string url = datastr.SubstringUntil(";");
+                string id = datastr.SubstringAfter(";");
+
+                bool success = YoutubeClient.TryParsePlaylistId(url, out string actualId);
                 Assert.IsTrue(success);
-                Assert.AreEqual(id, parsed);
+                Assert.AreEqual(id, actualId);
             }
         }
 
         [TestMethod]
         public void TryParsePlaylistId_Invalid_Test()
         {
-            string[] urls =
-            {
-                null,
-                "",
-                "https://www.youtube.com",
-                "https://www.youtube.com/playlist?list=@pm!!Hv#Lmg",
-                "https://www.youtube.co.il/watch?v=OpV62-86Fv4",
-                "https://www.youtube.com/qweasd?list=Nsib94LHi9I"
-            };
+            var data = File.ReadAllLines("Data\\InvalidPlaylistUrls.txt");
 
-            foreach (string url in urls)
+            foreach (string datastr in data)
             {
-                bool success = YoutubeClient.TryParsePlaylistId(url, out string parsed);
+                string url = datastr;
+
+                bool success = YoutubeClient.TryParsePlaylistId(url, out _);
                 Assert.IsFalse(success);
+            }
+        }
+
+        [TestMethod]
+        public void ParsePlaylistId_Guard_Test()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() => YoutubeClient.ParsePlaylistId(null));
+        }
+
+        [TestMethod]
+        public void ParsePlaylistId_Valid_Test()
+        {
+            var data = File.ReadAllLines("Data\\ValidPlaylistUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr.SubstringUntil(";");
+                string id = datastr.SubstringAfter(";");
+
+                string actualId = YoutubeClient.ParsePlaylistId(url);
+                Assert.AreEqual(id, actualId);
+            }
+        }
+
+        [TestMethod]
+        public void ParsePlaylistId_Invalid_Test()
+        {
+            var data = File.ReadAllLines("Data\\InvalidPlaylistUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr;
+
+                Assert.ThrowsException<FormatException>(() => YoutubeClient.ParsePlaylistId(url));
             }
         }
     }
