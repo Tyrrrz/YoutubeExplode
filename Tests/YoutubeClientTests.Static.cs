@@ -5,8 +5,7 @@ using Tyrrrz.Extensions;
 
 namespace YoutubeExplode.Tests
 {
-    [TestClass]
-    public class YoutubeClientUnitTests
+    public partial class YoutubeClientTests
     {
         [TestMethod]
         public void ValidateVideoId_Valid_Test()
