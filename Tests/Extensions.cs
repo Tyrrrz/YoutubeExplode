@@ -11,6 +11,18 @@ namespace YoutubeExplode.Tests
             Assert.IsTrue(str.IsNotBlank());
         }
 
+        public static void IsSet(this Assert assert, UserInfo userInfo)
+        {
+            Assert.IsNotNull(userInfo);
+            Assert.That.IsNotBlank(userInfo.Id);
+            Assert.That.IsNotBlank(userInfo.Name);
+            Assert.That.IsNotBlank(userInfo.DisplayName);
+            Assert.That.IsNotBlank(userInfo.ChannelTitle);
+            Assert.That.IsNotBlank(userInfo.ChannelUrl);
+            Assert.That.IsNotBlank(userInfo.ChannelBannerUrl);
+            Assert.That.IsNotBlank(userInfo.ChannelLogoUrl);
+        }
+
         public static void IsSet(this Assert assert, VideoInfo videoInfo)
         {
             Assert.IsNotNull(videoInfo);
@@ -20,14 +32,7 @@ namespace YoutubeExplode.Tests
             Assert.AreNotEqual(0, videoInfo.Duration.TotalSeconds);
             Assert.IsNotNull(videoInfo.Description);
 
-            Assert.IsNotNull(videoInfo.Author);
-            Assert.That.IsNotBlank(videoInfo.Author.Id);
-            Assert.That.IsNotBlank(videoInfo.Author.Name);
-            Assert.That.IsNotBlank(videoInfo.Author.DisplayName);
-            Assert.That.IsNotBlank(videoInfo.Author.ChannelTitle);
-            Assert.That.IsNotBlank(videoInfo.Author.ChannelUrl);
-            Assert.That.IsNotBlank(videoInfo.Author.ChannelBannerUrl);
-            Assert.That.IsNotBlank(videoInfo.Author.ChannelLogoUrl);
+            Assert.That.IsSet(videoInfo.Author);
 
             Assert.IsNotNull(videoInfo.Keywords);
             Assert.IsNotNull(videoInfo.Watermarks);

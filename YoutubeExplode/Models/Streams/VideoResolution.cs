@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace YoutubeExplode.Models
+namespace YoutubeExplode.Models.Streams
 {
     /// <summary>
     /// Width and height of a video stream
     /// </summary>
-    public struct MediaStreamVideoResolution : IEquatable<MediaStreamVideoResolution>
+    public struct VideoResolution : IEquatable<VideoResolution>
     {
         /// <summary>
         /// Empty resolution
         /// </summary>
-        public static MediaStreamVideoResolution Empty { get; } = new MediaStreamVideoResolution();
+        public static VideoResolution Empty { get; } = new VideoResolution();
 
         /// <summary>
         /// Width
@@ -22,7 +22,7 @@ namespace YoutubeExplode.Models
         /// </summary>
         public int Height { get; }
 
-        internal MediaStreamVideoResolution(int width, int height)
+        internal VideoResolution(int width, int height)
         {
             Width = width;
             Height = height;
@@ -31,16 +31,16 @@ namespace YoutubeExplode.Models
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (obj is MediaStreamVideoResolution)
+            if (obj is VideoResolution)
             {
-                var other = (MediaStreamVideoResolution) obj;
+                var other = (VideoResolution) obj;
                 return Equals(other);
             }
             return false;
         }
 
         /// <inheritdoc />
-        public bool Equals(MediaStreamVideoResolution other)
+        public bool Equals(VideoResolution other)
         {
             return Width == other.Width && Height == other.Height;
         }
@@ -61,9 +61,9 @@ namespace YoutubeExplode.Models
         }
 
         /// <inheritdoc />
-        public static bool operator ==(MediaStreamVideoResolution r1, MediaStreamVideoResolution r2) => r1.Equals(r2);
+        public static bool operator ==(VideoResolution r1, VideoResolution r2) => r1.Equals(r2);
 
         /// <inheritdoc />
-        public static bool operator !=(MediaStreamVideoResolution r1, MediaStreamVideoResolution r2) => !(r1 == r2);
+        public static bool operator !=(VideoResolution r1, VideoResolution r2) => !(r1 == r2);
     }
 }

@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal.CipherOperations;
 using YoutubeExplode.Models;
+using YoutubeExplode.Models.Streams;
 
 namespace YoutubeExplode.Internal
 {
@@ -167,8 +168,8 @@ namespace YoutubeExplode.Internal
                 int width = (dic.GetOrDefault("size")?.SubstringUntil("x")).ParseIntOrDefault();
                 int height = (dic.GetOrDefault("size")?.SubstringAfter("x")).ParseIntOrDefault();
                 result.Resolution = width != 0 && height != 0
-                    ? new MediaStreamVideoResolution(width, height)
-                    : MediaStreamVideoResolution.Empty;
+                    ? new VideoResolution(width, height)
+                    : VideoResolution.Empty;
 
                 yield return result;
             }
@@ -202,8 +203,8 @@ namespace YoutubeExplode.Internal
                 int width = (xStreamInfo.Attribute("width")?.Value).ParseIntOrDefault();
                 int height = (xStreamInfo.Attribute("height")?.Value).ParseIntOrDefault();
                 result.Resolution = width != 0 && height != 0
-                    ? new MediaStreamVideoResolution(width, height)
-                    : MediaStreamVideoResolution.Empty;
+                    ? new VideoResolution(width, height)
+                    : VideoResolution.Empty;
 
                 yield return result;
             }
