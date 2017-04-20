@@ -5,13 +5,8 @@ namespace YoutubeExplode.Models.Streams
     /// <summary>
     /// Width and height of a video stream
     /// </summary>
-    public struct VideoResolution : IEquatable<VideoResolution>
+    public partial struct VideoResolution : IEquatable<VideoResolution>
     {
-        /// <summary>
-        /// Empty resolution
-        /// </summary>
-        public static VideoResolution Empty { get; } = new VideoResolution();
-
         /// <summary>
         /// Width
         /// </summary>
@@ -22,7 +17,8 @@ namespace YoutubeExplode.Models.Streams
         /// </summary>
         public int Height { get; }
 
-        internal VideoResolution(int width, int height)
+        /// <inheritdoc />
+        public VideoResolution(int width, int height)
         {
             Width = width;
             Height = height;
@@ -59,7 +55,10 @@ namespace YoutubeExplode.Models.Streams
         {
             return $"{Width}x{Height}";
         }
+    }
 
+    public partial struct VideoResolution
+    {
         /// <inheritdoc />
         public static bool operator ==(VideoResolution r1, VideoResolution r2) => r1.Equals(r2);
 

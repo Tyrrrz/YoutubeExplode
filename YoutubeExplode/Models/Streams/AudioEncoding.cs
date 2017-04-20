@@ -1,7 +1,7 @@
 ﻿namespace YoutubeExplode.Models.Streams
 {
     /// <summary>
-    /// Audio encoding
+    /// Audio stream encoding
     /// </summary>
     public enum AudioEncoding
     {

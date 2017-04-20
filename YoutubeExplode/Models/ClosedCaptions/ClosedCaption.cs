@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExplode.Models
+namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
     /// Closed caption
@@ -24,12 +24,6 @@ namespace YoutubeExplode.Models
 
         internal ClosedCaption()
         {
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"[{Offset:g} --> {Offset + Duration:g}] {Text}";
         }
     }
 }

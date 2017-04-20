@@ -19,16 +19,16 @@ namespace YoutubeExplode.Models.Streams
         public ContainerType ContainerType { get; }
 
         /// <summary>
-        /// File size
+        /// File size (bytes)
         /// </summary>
         public long ContentLength { get; internal set; }
 
         /// <inheritdoc />
-        protected MediaStreamInfo(int itag, string url)
+        protected MediaStreamInfo(int itag, string url, long contentLength)
         {
             Url = url;
             ContainerType = GetContainerType(itag);
-            ContentLength = -1;
+            ContentLength = contentLength;
         }
     }
 

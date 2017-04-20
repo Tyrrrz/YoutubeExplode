@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Internal;
 
-namespace YoutubeExplode.Models
+namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
     /// Closed caption track
@@ -31,12 +31,6 @@ namespace YoutubeExplode.Models
         public ClosedCaption GetByTime(TimeSpan time)
         {
             return Captions.FirstOrDefault(c => time.IsInRange(c.Offset, c.Offset + c.Duration));
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"{Captions.Count} captions";
         }
     }
 }

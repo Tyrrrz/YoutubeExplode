@@ -13,32 +13,32 @@
         /// <summary>
         /// Video encoding
         /// </summary>
-        public VideoEncoding Encoding { get; }
+        public VideoEncoding VideoEncoding { get; }
 
         /// <summary>
         /// Video quality
         /// </summary>
-        public VideoQuality Quality { get; }
+        public VideoQuality VideoQuality { get; }
 
         /// <summary>
         /// Video resoution
         /// </summary>
-        public VideoResolution Resolution { get; }
+        public VideoResolution VideoResolution { get; }
 
         /// <summary>
         /// Video framerate (fps)
         /// </summary>
-        public double Framerate { get; }
+        public double VideoFramerate { get; }
 
         /// <inheritdoc />
-        public VideoStreamInfo(int itag, string url, long bitrate, VideoResolution resolution, double framerate) 
-            : base(itag, url)
+        public VideoStreamInfo(int itag, string url, long contentLength, long bitrate, VideoResolution videoResolution, double videoFramerate) 
+            : base(itag, url, contentLength)
         {
             Bitrate = bitrate;
-            Encoding = GetVideoEncoding(itag);
-            Quality = GetVideoQuality(itag);
-            Resolution = resolution;
-            Framerate = framerate;
+            VideoEncoding = GetVideoEncoding(itag);
+            VideoQuality = GetVideoQuality(itag);
+            VideoResolution = videoResolution;
+            VideoFramerate = videoFramerate;
         }
     }
 }

@@ -13,14 +13,14 @@
         /// <summary>
         /// Audio encoding
         /// </summary>
-        public AudioEncoding Encoding { get; }
+        public AudioEncoding AudioEncoding { get; }
 
         /// <inheritdoc />
-        public AudioStreamInfo(int itag, string url, long bitrate)
-            : base(itag, url)
+        public AudioStreamInfo(int itag, string url, long contentLength, long bitrate)
+            : base(itag, url, contentLength)
         {
             Bitrate = bitrate;
-            Encoding = GetAudioEncoding(itag);
+            AudioEncoding = GetAudioEncoding(itag);
         }
     }
 }

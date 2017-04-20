@@ -1,7 +1,7 @@
 ﻿namespace YoutubeExplode.Models.Streams
 {
     /// <summary>
-    /// Quality of a video stream
+    /// Video stream quality
     /// </summary>
     public enum VideoQuality
     {
