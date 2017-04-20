@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
+using YoutubeExplode.Models.ClosedCaptions;
+using YoutubeExplode.Models.Streams;
 using YoutubeExplode.Services;
 
 namespace YoutubeExplode

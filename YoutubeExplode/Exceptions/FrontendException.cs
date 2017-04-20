@@ -5,14 +5,14 @@ namespace YoutubeExplode.Exceptions
     /// <summary>
     /// Thrown when Youtube's frontend returns an error
     /// </summary>
-    public class YoutubeException : Exception
+    public class FrontendException : Exception
     {
         /// <summary>
         /// Error code
         /// </summary>
         public int Code { get; }
 
-        internal YoutubeException(int code, string message)
+        internal FrontendException(int code, string message)
             : base(message)
         {
             Code = code;

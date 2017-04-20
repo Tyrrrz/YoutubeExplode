@@ -24,12 +24,12 @@ namespace YoutubeExplode.Internal
             // Get the name of the function that handles deciphering
             string funcName = Regex.Match(rawJs, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
             if (funcName.IsBlank())
-                throw new ParserException("Could not find the entry function for signature deciphering");
+                throw new ParseException("Could not find the entry function for signature deciphering");
 
             // Get the body of the function
             string funcBody = Regex.Match(rawJs, @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{.*?\}", RegexOptions.Singleline).Value;
             if (funcBody.IsBlank())
-                throw new ParserException("Could not get the signature decipherer function body");
+                throw new ParseException("Could not get the signature decipherer function body");
             var funcLines = funcBody.Split(";").Skip(1).SkipLast(1).ToArray();
 
             // Identify cipher functions
@@ -108,12 +108,12 @@ namespace YoutubeExplode.Internal
             // Get player version
             string version = Regex.Match(rawHtml, @"<script\s*src=""/yts/jsbin/player-(.*?)/base.js").Groups[1].Value;
             if (version.IsBlank())
-                throw new ParserException("Could not parse player version");
+                throw new ParseException("Could not parse player version");
 
             // Get sts (wtf is sts?)
             string sts = Regex.Match(rawHtml, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
             if (sts.IsBlank())
-                throw new ParserException("Could not parse sts");
+                throw new ParseException("Could not parse sts");
 
             // Populate
             var result = new VideoContext();
@@ -253,7 +253,7 @@ namespace YoutubeExplode.Internal
             {
                 int errorCode = dic.GetOrDefault("errorcode").ParseIntOrDefault();
                 string reason = dic.GetOrDefault("reason");
-                throw new YoutubeException(errorCode, reason);
+                throw new FrontendException(errorCode, reason);
             }
 
             // Parse

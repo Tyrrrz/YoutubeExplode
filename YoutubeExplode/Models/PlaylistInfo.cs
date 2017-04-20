@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Models
 {
@@ -99,7 +100,7 @@ namespace YoutubeExplode.Models
             if (id.StartsWith("WL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.WatchLater;
 
-            throw new ArgumentException($"Unknown playlist ID [{id}]", nameof(id));
+            throw new UnexpectedIdentifierException($"Unexpected playlist ID [{id}]");
         }
     }
 }
