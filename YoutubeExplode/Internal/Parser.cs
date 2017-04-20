@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal.CipherOperations;
 using YoutubeExplode.Models;
+using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.Streams;
 
 namespace YoutubeExplode.Internal

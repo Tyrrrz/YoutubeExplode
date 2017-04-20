@@ -1,4 +1,4 @@
-﻿using YoutubeExplode.Exceptions;
+﻿using System;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.Streams
@@ -59,7 +59,7 @@ namespace YoutubeExplode.Models.Streams
             if (itag.IsEither(91, 92, 93, 94, 95, 96, 127, 128))
                 return ContainerType.Ts;
 
-            throw new ItagMappingException(itag);
+            throw new ArgumentException($"Unknown itag [{itag}]", nameof(itag));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace YoutubeExplode.Models.Streams
             if (itag.IsEither(249, 250, 251))
                 return AudioEncoding.Opus;
 
-            throw new ItagMappingException(itag);
+            throw new ArgumentException($"Unknown itag [{itag}]", nameof(itag));
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace YoutubeExplode.Models.Streams
                 335, 336, 337))
                 return VideoEncoding.Vp9;
 
-            throw new ItagMappingException(itag);
+            throw new ArgumentException($"Unknown itag [{itag}]", nameof(itag));
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace YoutubeExplode.Models.Streams
             if (itag.IsEither(38))
                 return VideoQuality.High3072;
 
-            throw new ItagMappingException(itag);
+            throw new ArgumentException($"Unknown itag [{itag}]", nameof(itag));
         }
     }
 }

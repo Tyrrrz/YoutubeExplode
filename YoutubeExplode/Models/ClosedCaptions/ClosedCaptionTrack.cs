@@ -13,15 +13,18 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary>
         /// Metadata associated with this caption track
         /// </summary>
-        public ClosedCaptionTrackInfo Info { get; internal set; }
+        public ClosedCaptionTrackInfo Info { get; }
 
         /// <summary>
         /// Closed captions contained inside this track
         /// </summary>
-        public IReadOnlyList<ClosedCaption> Captions { get; internal set; }
+        public IReadOnlyList<ClosedCaption> Captions { get; }
 
-        internal ClosedCaptionTrack()
+        /// <inheritdoc />
+        public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IEnumerable<ClosedCaption> captions)
         {
+            Info = info;
+            Captions = captions.ToArray();
         }
 
         /// <summary>

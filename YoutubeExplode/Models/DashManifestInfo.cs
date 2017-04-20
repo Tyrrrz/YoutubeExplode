@@ -1,27 +1,19 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Dash manifest metadata
+    /// Dash manifest info
     /// </summary>
     public class DashManifestInfo
     {
         /// <summary>
         /// Manifest URL
         /// </summary>
-        public string Url { get; internal set; }
+        public string Url { get; }
 
-        /// <summary>
-        /// Authorization signature
-        /// </summary>
-        internal string Signature { get; set; }
-
-        /// <summary>
-        /// Whether the signature needs to be deciphered
-        /// </summary>
-        internal bool NeedsDeciphering { get; set; }
-
-        internal DashManifestInfo()
+        /// <inheritdoc />
+        public DashManifestInfo(string url)
         {
+            Url = url;
         }
     }
 }
