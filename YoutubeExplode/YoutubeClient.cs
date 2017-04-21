@@ -232,6 +232,9 @@ namespace YoutubeExplode
                     // Get content length
                     long contentLength = await GetContentLengthAsync(url).ConfigureAwait(false);
 
+                    // Set rate bypass
+                    url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
+
                     var stream = new MixedStreamInfo(itag, url, contentLength);
                     mixedStreams.Add(stream);
                 }
@@ -262,6 +265,9 @@ namespace YoutubeExplode
                         sig = playerSource.Decipher(sig);
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
+
+                    // Set rate bypass
+                    url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
 
                     // If audio stream
                     if (type.ContainsInvariant("audio/"))
@@ -323,6 +329,12 @@ namespace YoutubeExplode
                     // Extract content length
                     long contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
 
+                    // Set rate bypass
+                    url = url.ContainsInvariant("&")
+                        ? UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes")
+                        : UrlHelper.SetUrlPathParameter(url, "ratebypass", "yes");
+
+                    // Check if audio stream
                     var audioConfigurationXml = streamXml.Element("AudioChannelConfiguration");
 
                     // If audio stream
