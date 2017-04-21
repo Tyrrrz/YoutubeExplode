@@ -32,6 +32,11 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public double VideoFramerate { get; }
 
+        /// <summary>
+        /// Video quality label as seen on Youtube
+        /// </summary>
+        public string VideoQualityLabel { get; }
+
         /// <inheritdoc />
         public VideoStreamInfo(int itag, string url, long contentLength, long bitrate, VideoResolution videoResolution, double videoFramerate) 
             : base(itag, url, contentLength)
@@ -41,6 +46,7 @@ namespace YoutubeExplode.Models.MediaStreams
             VideoQuality = GetVideoQuality(itag);
             VideoResolution = videoResolution;
             VideoFramerate = videoFramerate > 0 ? videoFramerate : throw new ArgumentOutOfRangeException(nameof(videoFramerate));
+            VideoQualityLabel = GetVideoQualityLabel(VideoQuality, videoFramerate);
         }
     }
 }

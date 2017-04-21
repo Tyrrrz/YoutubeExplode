@@ -201,9 +201,7 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15">
-                                <Run Text="Description" />
-                            </TextBlock>
+                            <TextBlock FontSize="15" Text="Description" />
                         </Expander.Header>
                         <TextBlock
                             Margin="10"
@@ -217,10 +215,7 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15">
-                                <Run Text="Keywords" />
-                                <Run Text="(" /><Run Text="{Binding VideoInfo.Keywords.Count, Mode=OneWay}" /><Run Text=")" />
-                            </TextBlock>
+                            <TextBlock FontSize="15" Text="Keywords" />
                         </Expander.Header>
                         <TextBlock
                             Margin="10"
@@ -234,46 +229,123 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15">
-                                <Run Text="Media streams" />
-                                <Run Text="(" /><Run Text="{Binding VideoInfo.Streams.Count, Mode=OneWay}" /><Run Text=")" />
-                            </TextBlock>
+                            <TextBlock FontSize="15" Text="Media streams" />
                         </Expander.Header>
-                        <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.Streams}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <!--  Download button  -->
-                                        <Button
-                                            Padding="4"
-                                            VerticalAlignment="Center"
-                                            Command="{Binding MainViewModel.DownloadMediaStreamCommand, Source={StaticResource Locator}}"
-                                            CommandParameter="{Binding}"
-                                            Style="{DynamicResource MaterialDesignFlatButton}">
-                                            <materialDesign:PackIcon
-                                                Width="24"
-                                                Height="24"
-                                                Kind="Download" />
-                                        </Button>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Margin="10,5,5,5"
+                                FontSize="14"
+                                Text="Mixed streams:" />
+                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding VideoInfo.MixedStreams}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--  Download button  -->
+                                            <Button
+                                                Padding="4"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding MainViewModel.DownloadMediaStreamCommand, Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{DynamicResource MaterialDesignFlatButton}">
+                                                <materialDesign:PackIcon
+                                                    Width="24"
+                                                    Height="24"
+                                                    Kind="Download" />
+                                            </Button>
 
-                                        <!--  Stream info  -->
-                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
-                                            <Run Text="Quality:" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
-                                            <Run />
-                                            <Run Text="Content:" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentType, Mode=OneWay}" />
-                                            <Run />
-                                            <Run Text="Container:" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContainerType, Mode=OneWay}" />
-                                            <Run />
-                                            <Run Text="Size:" />
-                                            <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding FileSize, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                            <!--  Stream info  -->
+                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                                <Run Text="Quality:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Container:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Size:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock
+                                Margin="10,5,5,5"
+                                FontSize="14"
+                                Text="Video-only streams:" />
+                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding VideoInfo.VideoStreams}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--  Download button  -->
+                                            <Button
+                                                Padding="4"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding MainViewModel.DownloadMediaStreamCommand, Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{DynamicResource MaterialDesignFlatButton}">
+                                                <materialDesign:PackIcon
+                                                    Width="24"
+                                                    Height="24"
+                                                    Kind="Download" />
+                                            </Button>
+
+                                            <!--  Stream info  -->
+                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                                <Run Text="Quality:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Container:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Bitrate:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Bitrate, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}it/s, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Size:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock
+                                Margin="10,5,5,5"
+                                FontSize="14"
+                                Text="Audio-only streams:" />
+                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding VideoInfo.AudioStreams}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--  Download button  -->
+                                            <Button
+                                                Padding="4"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding MainViewModel.DownloadMediaStreamCommand, Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{DynamicResource MaterialDesignFlatButton}">
+                                                <materialDesign:PackIcon
+                                                    Width="24"
+                                                    Height="24"
+                                                    Kind="Download" />
+                                            </Button>
+
+                                            <!--  Stream info  -->
+                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                                <Run Text="Container:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Bitrate:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Bitrate, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}it/s, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Size:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
                     </Expander>
                 </materialDesign:Card>
 
@@ -281,10 +353,7 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15">
-                                <Run Text="Closed captions" />
-                                <Run Text="(" /><Run Text="{Binding VideoInfo.ClosedCaptionTracks.Count, Mode=OneWay}" /><Run Text=")" />
-                            </TextBlock>
+                            <TextBlock FontSize="15" Text="Closed captions" />
                         </Expander.Header>
                         <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.ClosedCaptionTracks}">
                             <ItemsControl.ItemTemplate>

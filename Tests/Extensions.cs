@@ -48,6 +48,7 @@ namespace YoutubeExplode.Tests
                 Assert.IsNotNull(streamInfo);
                 Assert.That.IsNotBlank(streamInfo.Url);
                 Assert.IsTrue(0 < streamInfo.ContentLength);
+                Assert.That.IsNotBlank(streamInfo.VideoQualityLabel);
             }
 
             foreach (var streamInfo in videoInfo.AudioStreams)
@@ -65,6 +66,7 @@ namespace YoutubeExplode.Tests
                 Assert.IsTrue(0 < streamInfo.ContentLength);
                 Assert.IsTrue(0 < streamInfo.Bitrate);
                 Assert.IsTrue(0 < streamInfo.VideoFramerate);
+                Assert.That.IsNotBlank(streamInfo.VideoQualityLabel);
             }
 
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
