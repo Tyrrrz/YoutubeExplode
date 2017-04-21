@@ -46,12 +46,18 @@ namespace YoutubeExplode.Services
         /// <inheritdoc />
         public virtual async Task<string> GetStringAsync(string url)
         {
+            if (url == null)
+                throw new ArgumentNullException(nameof(url));
+
             return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public virtual async Task<IDictionary<string, string>> GetHeadersAsync(string url)
         {
+            if (url == null)
+                throw new ArgumentNullException(nameof(url));
+
             const HttpCompletionOption compl = HttpCompletionOption.ResponseHeadersRead;
             using (var request = new HttpRequestMessage(HttpMethod.Head, url))
             using (var response = await _httpClient.SendAsync(request, compl).ConfigureAwait(false))
@@ -64,6 +70,9 @@ namespace YoutubeExplode.Services
         /// <inheritdoc />
         public virtual async Task<Stream> GetStreamAsync(string url)
         {
+            if (url == null)
+                throw new ArgumentNullException(nameof(url));
+
             return await _httpClient.GetStreamAsync(url).ConfigureAwait(false);
         }
 
@@ -95,8 +104,14 @@ namespace YoutubeExplode.Services
         /// </summary>
         public static HttpService Instance => _instance ?? (_instance = new HttpService());
 
-        private static IDictionary<string, string> NormalizeResponseHeaders(HttpResponseMessage response)
+        /// <summary>
+        /// Converts headers returned by <see cref="HttpResponseMessage"/> into a dictionary
+        /// </summary>
+        protected static IDictionary<string, string> NormalizeResponseHeaders(HttpResponseMessage response)
         {
+            if (response == null)
+                throw new ArgumentNullException(nameof(response));
+
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var header in response.Headers)
                 result.Add(header.Key, header.Value.JoinToString(" "));
