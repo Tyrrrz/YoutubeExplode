@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Internal;
 
-namespace YoutubeExplode.Models
+namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
     /// Closed caption track
@@ -13,15 +13,18 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Metadata associated with this caption track
         /// </summary>
-        public ClosedCaptionTrackInfo Info { get; internal set; }
+        public ClosedCaptionTrackInfo Info { get; }
 
         /// <summary>
         /// Closed captions contained inside this track
         /// </summary>
-        public IReadOnlyList<ClosedCaption> Captions { get; internal set; }
+        public IReadOnlyList<ClosedCaption> Captions { get; }
 
-        internal ClosedCaptionTrack()
+        /// <inheritdoc />
+        public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IEnumerable<ClosedCaption> captions)
         {
+            Info = info ?? throw new ArgumentNullException(nameof(info));
+            Captions = captions?.ToArray() ?? throw new ArgumentNullException(nameof(captions));
         }
 
         /// <summary>
@@ -31,12 +34,6 @@ namespace YoutubeExplode.Models
         public ClosedCaption GetByTime(TimeSpan time)
         {
             return Captions.FirstOrDefault(c => time.IsInRange(c.Offset, c.Offset + c.Duration));
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"{Captions.Count} captions";
         }
     }
 }

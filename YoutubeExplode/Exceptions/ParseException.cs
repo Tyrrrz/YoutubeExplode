@@ -5,9 +5,9 @@ namespace YoutubeExplode.Exceptions
     /// <summary>
     /// Thrown when there was an error parsing a response from Youtube's frontend
     /// </summary>
-    public class ParserException : Exception
+    public class ParseException : Exception
     {
-        internal ParserException(string message)
+        internal ParseException(string message)
             : base(message)
         {
         }

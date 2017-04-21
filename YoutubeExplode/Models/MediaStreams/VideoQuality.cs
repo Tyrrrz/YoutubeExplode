@@ -1,20 +1,10 @@
-﻿namespace YoutubeExplode.Models
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Defines possible media stream video quality values
+    /// Video stream quality
     /// </summary>
-    public enum MediaStreamVideoQuality
+    public enum VideoQuality
     {
-        /// <summary>
-        /// Video quality could not be identified
-        /// </summary>
-        Unknown,
-
-        /// <summary>
-        /// No video at all
-        /// </summary>
-        NoVideo,
-
         /// <summary>
         /// 144p low-quality video stream
         /// </summary>

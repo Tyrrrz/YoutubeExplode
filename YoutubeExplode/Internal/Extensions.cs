@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace YoutubeExplode.Internal
@@ -62,28 +61,19 @@ namespace YoutubeExplode.Internal
             return str.Substring(index + sub.Length, str.Length - index - sub.Length);
         }
 
-        public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
+        public static double ParseDouble(this string str)
         {
-            const NumberStyles style = NumberStyles.Float | NumberStyles.AllowThousands;
-            if (double.TryParse(str, style, NumberFormatInfo.InvariantInfo, out double result))
-                return result;
-            return defaultValue;
+            return double.Parse(str, NumberFormatInfo.InvariantInfo);
         }
 
-        public static int ParseIntOrDefault(this string str, int defaultValue = default(int))
+        public static int ParseInt(this string str)
         {
-            const NumberStyles style = NumberStyles.Integer;
-            if (int.TryParse(str, style, NumberFormatInfo.InvariantInfo, out int result))
-                return result;
-            return defaultValue;
+            return int.Parse(str, NumberFormatInfo.InvariantInfo);
         }
 
-        public static long ParseLongOrDefault(this string str, long defaultValue = default(long))
+        public static long ParseLong(this string str)
         {
-            const NumberStyles style = NumberStyles.Integer;
-            if (long.TryParse(str, style, NumberFormatInfo.InvariantInfo, out long result))
-                return result;
-            return defaultValue;
+            return long.Parse(str, NumberFormatInfo.InvariantInfo);
         }
 
         public static string Reverse(this string str)
@@ -102,70 +92,6 @@ namespace YoutubeExplode.Internal
         public static string UrlDecode(this string url)
         {
             return WebUtility.UrlDecode(url);
-        }
-
-        public static string SetQueryParameter(this string url, string key, string value)
-        {
-            if (value == null)
-                value = string.Empty;
-
-            // Find existing parameter
-            var existingMatch = Regex.Match(url, $@"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
-
-            // Parameter already set to something
-            if (existingMatch.Success)
-            {
-                var group = existingMatch.Groups[1];
-
-                // Remove existing
-                url = url.Remove(group.Index, group.Length);
-
-                // Insert new one
-                url = url.Insert(group.Index, $"{key}={value}");
-
-                return url;
-            }
-            // Parameter hasn't been set yet
-            else
-            {
-                // See if there are other parameters
-                bool hasOtherParams = url.IndexOf('?') >= 0;
-
-                // Prepend either & or ? depending on that
-                char separator = hasOtherParams ? '&' : '?';
-
-                // Assemble new query string
-                return url + separator + key + '=' + value;
-            }
-        }
-
-        public static string SetPathParameter(this string url, string key, string value)
-        {
-            if (value == null)
-                value = string.Empty;
-
-            // Find existing parameter
-            var existingMatch = Regex.Match(url, $@"/({Regex.Escape(key)}/?.*?)(?:/|$)");
-
-            // Parameter already set to something
-            if (existingMatch.Success)
-            {
-                var group = existingMatch.Groups[1];
-
-                // Remove existing
-                url = url.Remove(group.Index, group.Length);
-
-                // Insert new one
-                url = url.Insert(group.Index, $"{key}/{value}");
-
-                return url;
-            }
-            // Parameter hasn't been set yet
-            else
-            {
-                // Assemble new query string
-                return url + '/' + key + '/' + value;
-            }
         }
 
         public static string JoinToString<T>(this IEnumerable<T> enumerable, string separator)

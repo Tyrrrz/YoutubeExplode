@@ -1,15 +1,10 @@
 ﻿namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Defines possible playlist types
+    /// Playlist type
     /// </summary>
     public enum PlaylistType
     {
-        /// <summary>
-        /// Playlist type could not be identified
-        /// </summary>
-        Unknown,
-
         /// <summary>
         /// Regular playlist created by a user
         /// </summary>

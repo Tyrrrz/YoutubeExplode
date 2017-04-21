@@ -5,6 +5,8 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
 using Tyrrrz.Extensions;
 using YoutubeExplode.Models;
+using YoutubeExplode.Models.ClosedCaptions;
+using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.DemoWpf.ViewModels
 {
@@ -105,15 +107,16 @@ namespace YoutubeExplode.DemoWpf.ViewModels
         private async void DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
             // Create dialog
-            string defaultFileName = $"{VideoInfo.Title}.{mediaStreamInfo.QualityLabel}.{mediaStreamInfo.FileExtension}";
+            string fileExtension = mediaStreamInfo.Container.GetFileExtension();
+            string defaultFileName = $"{VideoInfo.Title}.{fileExtension}";
             defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
             string fileFilter =
-                $"{mediaStreamInfo.ContainerType} Files|" +
-                $"*.{mediaStreamInfo.FileExtension}|All files|*.*";
+                $"{mediaStreamInfo.Container} Files|*.{fileExtension}|" +
+                "All files|*.*";
             var sfd = new SaveFileDialog
             {
                 AddExtension = true,
-                DefaultExt = mediaStreamInfo.FileExtension,
+                DefaultExt = fileExtension,
                 FileName = defaultFileName,
                 Filter = fileFilter
             };

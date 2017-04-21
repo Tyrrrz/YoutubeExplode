@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using YoutubeExplode.Models;
+using YoutubeExplode.Models.ClosedCaptions;
+using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.DemoWpf.ViewModels
 {

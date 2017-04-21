@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace YoutubeExplode.Models
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Media stream
@@ -24,7 +25,7 @@ namespace YoutubeExplode.Models
         public override bool CanWrite => _innerStream.CanWrite;
 
         /// <inheritdoc />
-        public override long Length => Info.FileSize;
+        public override long Length => Info.ContentLength;
 
         /// <inheritdoc />
         public override long Position
@@ -33,10 +34,11 @@ namespace YoutubeExplode.Models
             set => _innerStream.Position = value;
         }
 
-        internal MediaStream(Stream innerStream, MediaStreamInfo mediaStreamInfo)
+        /// <inheritdoc />
+        public MediaStream(Stream innerStream, MediaStreamInfo mediaStreamInfo)
         {
-            _innerStream = innerStream;
-            Info = mediaStreamInfo;
+            _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
+            Info = mediaStreamInfo ?? throw new ArgumentNullException(nameof(mediaStreamInfo));
         }
 
         /// <inheritdoc />

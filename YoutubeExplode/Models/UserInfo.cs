@@ -1,14 +1,16 @@
-﻿namespace YoutubeExplode.Models
+﻿using System;
+
+namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// User metadata
+    /// User info
     /// </summary>
     public class UserInfo
     {
         /// <summary>
         /// ID
         /// </summary>
-        public string Id { get; internal set; }
+        public string Id { get; }
 
         /// <summary>
         /// Channel URL
@@ -18,41 +20,44 @@
         /// <summary>
         /// Actual username
         /// </summary>
-        public string Name { get; internal set; }
+        public string Name { get; }
 
         /// <summary>
         /// Display name
         /// </summary>
-        public string DisplayName { get; internal set; }
+        public string DisplayName { get; }
 
         /// <summary>
         /// Channel title
         /// </summary>
-        public string ChannelTitle { get; internal set; }
+        public string ChannelTitle { get; }
 
         /// <summary>
         /// Whether this user's channel is paid
         /// </summary>
-        public bool IsPaid { get; internal set; }
+        public bool IsPaid { get; }
 
         /// <summary>
         /// Channel logo URL
         /// </summary>
-        public string ChannelLogoUrl { get; internal set; }
+        public string ChannelLogoUrl { get; }
 
         /// <summary>
         /// Channel banner URL
         /// </summary>
-        public string ChannelBannerUrl { get; internal set; }
+        public string ChannelBannerUrl { get; }
 
-        internal UserInfo()
+        /// <inheritdoc />
+        public UserInfo(string id, string name, string displayName, string channelTitle, bool isPaid,
+            string channelLogoUrl, string channelBannerUrl)
         {
-        }
-
-        /// <inhertidoc />
-        public override string ToString()
-        {
-            return $"{DisplayName}";
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+            ChannelTitle = channelTitle ?? throw new ArgumentNullException(nameof(channelTitle));
+            IsPaid = isPaid;
+            ChannelLogoUrl = channelLogoUrl ?? throw new ArgumentNullException(nameof(channelLogoUrl));
+            ChannelBannerUrl = channelBannerUrl ?? throw new ArgumentNullException(nameof(channelBannerUrl));
         }
     }
 }

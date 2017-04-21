@@ -1,95 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Playlist metadata
+    /// Playlist info
     /// </summary>
-    public class PlaylistInfo
+    public partial class PlaylistInfo
     {
         /// <summary>
         /// ID
         /// </summary>
-        public string Id { get; internal set; }
+        public string Id { get; }
 
         /// <summary>
         /// Type
         /// </summary>
-        public PlaylistType Type
-        {
-            get
-            {
-                if (Id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.UserMade;
-
-                if (Id.StartsWith("RD", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.VideoMix;
-
-                if (Id.StartsWith("UL", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.ChannelMix;
-
-                if (Id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.Liked;
-
-                if (Id.StartsWith("FL", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.Favorites;
-
-                if (Id.StartsWith("WL", StringComparison.OrdinalIgnoreCase))
-                    return PlaylistType.WatchLater;
-
-                return PlaylistType.Unknown;
-            }
-        }
+        public PlaylistType Type { get; }
 
         /// <summary>
         /// Title
         /// </summary>
-        public string Title { get; internal set; }
+        public string Title { get; }
 
         /// <summary>
         /// Author's display name
         /// </summary>
-        public string Author { get; internal set; }
+        public string Author { get; }
 
         /// <summary>
         /// Description
         /// </summary>
-        public string Description { get; internal set; }
+        public string Description { get; }
 
         /// <summary>
         /// View count
         /// </summary>
-        public long ViewCount { get; internal set; }
-
-        /// <summary>
-        /// Like count
-        /// </summary>
-        public long LikeCount { get; internal set; }
-
-        /// <summary>
-        /// Dislike count
-        /// </summary>
-        public long DislikeCount { get; internal set; }
-
-        /// <summary>
-        /// Average user rating in stars (0* to 5*)
-        /// </summary>
-        public double AverageRating => 5.0*LikeCount/(LikeCount + DislikeCount);
+        public long ViewCount { get; }
 
         /// <summary>
         /// IDs of the videos in the playlist
         /// </summary>
-        public IReadOnlyList<string> VideoIds { get; internal set; }
+        public IReadOnlyList<string> VideoIds { get; }
 
-        internal PlaylistInfo()
+        internal PlaylistInfo(string id, string title, string author, string description, long viewCount,
+            IEnumerable<string> videoIds)
         {
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Type = GetPlaylistType(id);
+            Title = title ?? throw new ArgumentNullException(nameof(title));
+            Author = author ?? throw new ArgumentNullException(nameof(author));
+            Description = description ?? throw new ArgumentNullException(nameof(description));
+            ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
+            VideoIds = videoIds?.ToArray() ?? throw new ArgumentNullException(nameof(videoIds));
         }
+    }
 
-        /// <inheritdoc />
-        public override string ToString()
+    public partial class PlaylistInfo
+    {
+        /// <summary>
+        /// Get playlist type from playlist id
+        /// </summary>
+        protected static PlaylistType GetPlaylistType(string id)
         {
-            return $"{Title}";
+            if (id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.UserMade;
+
+            if (id.StartsWith("RD", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.VideoMix;
+
+            if (id.StartsWith("UL", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.ChannelMix;
+
+            if (id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.Liked;
+
+            if (id.StartsWith("FL", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.Favorites;
+
+            if (id.StartsWith("WL", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.WatchLater;
+
+            throw new UnexpectedIdentifierException($"Unexpected playlist ID [{id}]");
         }
     }
 }
