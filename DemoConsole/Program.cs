@@ -54,7 +54,7 @@ namespace YoutubeExplode.DemoConsole
             Console.WriteLine('-'.Repeat(100));
 
             // Print metadata
-            Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author}");
+            Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author.DisplayName}");
 
             // Get the most preferable stream
             Console.WriteLine("Looking for the best mixed stream...");
@@ -62,12 +62,11 @@ namespace YoutubeExplode.DemoConsole
                 .OrderBy(s => s.VideoQuality)
                 .Last();
             string normalizedFileSize = NormalizeFileSize(streamInfo.ContentLength);
-            string qualityLabel = streamInfo.VideoQuality.GetLabel();
-            Console.WriteLine($"Quality: {qualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
+            Console.WriteLine($"Quality: {streamInfo.VideoQualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata
             string fileExtension = streamInfo.Container.GetFileExtension();
-            string fileName = $"{videoInfo.Title}.{qualityLabel}.{fileExtension}";
+            string fileName = $"{videoInfo.Title}.{fileExtension}";
 
             // Remove illegal characters from file name
             fileName = fileName.Except(Path.GetInvalidFileNameChars());
