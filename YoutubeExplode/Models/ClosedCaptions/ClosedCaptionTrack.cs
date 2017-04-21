@@ -23,8 +23,8 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <inheritdoc />
         public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IEnumerable<ClosedCaption> captions)
         {
-            Info = info;
-            Captions = captions.ToArray();
+            Info = info ?? throw new ArgumentNullException(nameof(info));
+            Captions = captions?.ToArray() ?? throw new ArgumentNullException(nameof(captions));
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tyrrrz.Extensions;
 using YoutubeExplode.Models;
+using YoutubeExplode.Models.ClosedCaptions;
+using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Tests
 {
@@ -37,20 +39,38 @@ namespace YoutubeExplode.Tests
             Assert.IsNotNull(videoInfo.Keywords);
             Assert.IsNotNull(videoInfo.Watermarks);
 
-            Assert.IsNotNull(videoInfo.Streams);
-            foreach (var streamInfo in videoInfo.Streams)
+            Assert.IsNotNull(videoInfo.MixedStreams);
+            Assert.IsNotNull(videoInfo.AudioStreams);
+            Assert.IsNotNull(videoInfo.VideoStreams);
+
+            foreach (var streamInfo in videoInfo.MixedStreams)
             {
+                Assert.IsNotNull(streamInfo);
                 Assert.That.IsNotBlank(streamInfo.Url);
-                Assert.AreNotEqual(MediaStreamVideoQuality.Unknown, streamInfo.Quality);
-                Assert.AreNotEqual(MediaStreamContainerType.Unknown, streamInfo.ContainerType);
-                Assert.That.IsNotBlank(streamInfo.QualityLabel);
-                Assert.That.IsNotBlank(streamInfo.FileExtension);
-                Assert.AreNotEqual(0, streamInfo.FileSize);
+                Assert.IsTrue(0 < streamInfo.ContentLength);
+            }
+
+            foreach (var streamInfo in videoInfo.AudioStreams)
+            {
+                Assert.IsNotNull(streamInfo);
+                Assert.That.IsNotBlank(streamInfo.Url);
+                Assert.IsTrue(0 < streamInfo.ContentLength);
+                Assert.IsTrue(0 < streamInfo.Bitrate);
+            }
+
+            foreach (var streamInfo in videoInfo.VideoStreams)
+            {
+                Assert.IsNotNull(streamInfo);
+                Assert.That.IsNotBlank(streamInfo.Url);
+                Assert.IsTrue(0 < streamInfo.ContentLength);
+                Assert.IsTrue(0 < streamInfo.Bitrate);
+                Assert.IsTrue(0 < streamInfo.VideoFramerate);
             }
 
             Assert.IsNotNull(videoInfo.ClosedCaptionTracks);
             foreach (var captionTrack in videoInfo.ClosedCaptionTracks)
             {
+                Assert.IsNotNull(captionTrack);
                 Assert.That.IsNotBlank(captionTrack.Url);
                 Assert.IsNotNull(captionTrack.Culture);
             }
@@ -61,10 +81,8 @@ namespace YoutubeExplode.Tests
             Assert.IsNotNull(playlistInfo);
 
             Assert.That.IsNotBlank(playlistInfo.Id);
-            Assert.AreNotEqual(PlaylistType.Unknown, playlistInfo.Type);
             Assert.That.IsNotBlank(playlistInfo.Title);
-            if (playlistInfo.Type != PlaylistType.VideoMix)
-                Assert.IsNotNull(playlistInfo.Author);
+            Assert.IsNotNull(playlistInfo.Author);
             Assert.IsNotNull(playlistInfo.Description);
             Assert.IsNotNull(playlistInfo.VideoIds);
         }
@@ -82,6 +100,12 @@ namespace YoutubeExplode.Tests
             Assert.IsNotNull(closedCaption);
             Assert.IsNotNull(closedCaption.Info);
             Assert.IsNotNull(closedCaption.Captions);
+
+            foreach (var caption in closedCaption.Captions)
+            {
+                Assert.IsNotNull(caption);
+                Assert.IsNotNull(caption.Text);
+            }
         }
     }
 }

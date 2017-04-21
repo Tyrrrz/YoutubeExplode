@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Models.ClosedCaptions;
-using YoutubeExplode.Models.Streams;
+using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Models
 {
@@ -140,24 +140,24 @@ namespace YoutubeExplode.Models
             IEnumerable<MixedStreamInfo> mixedStreams, IEnumerable<AudioStreamInfo> audioStreams,
             IEnumerable<VideoStreamInfo> videoStreams, IEnumerable<ClosedCaptionTrackInfo> closedCaptionTracks)
         {
-            Id = id;
-            Title = title;
-            Author = author;
-            Duration = duration;
-            Description = description;
-            Keywords = keywords.ToArray();
-            Watermarks = watermarks.ToArray();
-            ViewCount = viewCount;
-            LikeCount = likeCount;
-            DislikeCount = dislikeCount;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Title = title ?? throw new ArgumentNullException(nameof(title));
+            Author = author ?? throw new ArgumentNullException(nameof(author));
+            Duration = duration >= TimeSpan.Zero ? duration : throw new ArgumentOutOfRangeException(nameof(duration));
+            Description = description ?? throw new ArgumentNullException(nameof(description));
+            Keywords = keywords?.ToArray() ?? throw new ArgumentNullException(nameof(keywords));
+            Watermarks = watermarks?.ToArray() ?? throw new ArgumentNullException(nameof(watermarks));
+            ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
+            LikeCount = likeCount >= 0 ? likeCount : throw new ArgumentOutOfRangeException(nameof(likeCount));
+            DislikeCount = dislikeCount >= 0 ? dislikeCount : throw new ArgumentOutOfRangeException(nameof(dislikeCount));
             IsListed = isListed;
             IsRatingAllowed = isRatingAllowed;
             IsMuted = isMuted;
             IsEmbeddingAllowed = isEmbeddingAllowed;
-            MixedStreams = mixedStreams.ToArray();
-            AudioStreams = audioStreams.ToArray();
-            VideoStreams = videoStreams.ToArray();
-            ClosedCaptionTracks = closedCaptionTracks.ToArray();
+            MixedStreams = mixedStreams?.ToArray() ?? throw new ArgumentNullException(nameof(mixedStreams));
+            AudioStreams = audioStreams?.ToArray() ?? throw new ArgumentNullException(nameof(audioStreams));
+            VideoStreams = videoStreams?.ToArray() ?? throw new ArgumentNullException(nameof(videoStreams));
+            ClosedCaptionTracks = closedCaptionTracks?.ToArray() ?? throw new ArgumentNullException(nameof(closedCaptionTracks));
         }
     }
 }

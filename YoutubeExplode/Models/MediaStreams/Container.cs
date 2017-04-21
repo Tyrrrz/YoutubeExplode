@@ -1,9 +1,9 @@
-﻿namespace YoutubeExplode.Models.Streams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Media stream container type
     /// </summary>
-    public enum ContainerType
+    public enum Container
     {
         /// <summary>
         /// MPEG-4 Part 14 (.mp4)

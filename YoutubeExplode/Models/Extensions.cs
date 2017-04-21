@@ -1,5 +1,5 @@
 ﻿using System;
-using YoutubeExplode.Models.Streams;
+using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Models
 {
@@ -11,31 +11,31 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Get file extension based on container type
         /// </summary>
-        public static string GetFileExtension(ContainerType containerType)
+        public static string GetFileExtension(this Container container)
         {
-            switch (containerType)
+            switch (container)
             {
-                case ContainerType.Mp4:
+                case Container.Mp4:
                     return "mp4";
-                case ContainerType.M4A:
+                case Container.M4A:
                     return "m4a";
-                case ContainerType.WebM:
+                case Container.WebM:
                     return "webm";
-                case ContainerType.Tgpp:
+                case Container.Tgpp:
                     return "3gpp";
-                case ContainerType.Flv:
+                case Container.Flv:
                     return "flv";
-                case ContainerType.Ts:
+                case Container.Ts:
                     return "ts";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(containerType), "Unknown container type");
+                    throw new ArgumentOutOfRangeException(nameof(container), "Unknown container type");
             }
         }
 
         /// <summary>
         /// Get video quality label based on video quality and framerate
         /// </summary>
-        public static string GetLabel(VideoQuality videoQuality, double framerate = 0)
+        public static string GetLabel(this VideoQuality videoQuality, double framerate = 0)
         {
             // Video quality
             string qualityPart;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExplode.Models.Streams
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Width and height of a video stream
@@ -20,8 +20,8 @@ namespace YoutubeExplode.Models.Streams
         /// <inheritdoc />
         public VideoResolution(int width, int height)
         {
-            Width = width;
-            Height = height;
+            Width = width >= 0 ? width : throw new ArgumentOutOfRangeException(nameof(width));
+            Height = height >= 0 ? height : throw new ArgumentOutOfRangeException(nameof(height));
         }
 
         /// <inheritdoc />

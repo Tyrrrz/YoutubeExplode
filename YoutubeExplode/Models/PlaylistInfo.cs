@@ -63,15 +63,15 @@ namespace YoutubeExplode.Models
         internal PlaylistInfo(string id, string title, string author, string description, long viewCount,
             long likeCount, long dislikeCount, IEnumerable<string> videoIds)
         {
-            Id = id;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
             Type = GetPlaylistType(id);
-            Title = title;
-            Author = author;
-            Description = description;
-            ViewCount = viewCount;
-            LikeCount = likeCount;
-            DislikeCount = dislikeCount;
-            VideoIds = videoIds.ToArray();
+            Title = title ?? throw new ArgumentNullException(nameof(title));
+            Author = author ?? throw new ArgumentNullException(nameof(author));
+            Description = description ?? throw new ArgumentNullException(nameof(description));
+            ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
+            LikeCount = likeCount >= 0 ? likeCount : throw new ArgumentOutOfRangeException(nameof(likeCount));
+            DislikeCount = dislikeCount >= 0 ? dislikeCount : throw new ArgumentOutOfRangeException(nameof(dislikeCount));
+            VideoIds = videoIds?.ToArray() ?? throw new ArgumentNullException(nameof(videoIds));
         }
     }
 

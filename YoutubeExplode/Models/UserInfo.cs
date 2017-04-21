@@ -1,4 +1,6 @@
-﻿namespace YoutubeExplode.Models
+﻿using System;
+
+namespace YoutubeExplode.Models
 {
     /// <summary>
     /// User info
@@ -49,13 +51,13 @@
         public UserInfo(string id, string name, string displayName, string channelTitle, bool isPaid,
             string channelLogoUrl, string channelBannerUrl)
         {
-            Id = id;
-            Name = name;
-            DisplayName = displayName;
-            ChannelTitle = channelTitle;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+            ChannelTitle = channelTitle ?? throw new ArgumentNullException(nameof(channelTitle));
             IsPaid = isPaid;
-            ChannelLogoUrl = channelLogoUrl;
-            ChannelBannerUrl = channelBannerUrl;
+            ChannelLogoUrl = channelLogoUrl ?? throw new ArgumentNullException(nameof(channelLogoUrl));
+            ChannelBannerUrl = channelBannerUrl ?? throw new ArgumentNullException(nameof(channelBannerUrl));
         }
     }
 }

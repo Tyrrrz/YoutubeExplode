@@ -1,4 +1,6 @@
-﻿namespace YoutubeExplode.Models.Streams
+﻿using System;
+
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Audio stream info
@@ -19,7 +21,7 @@
         public AudioStreamInfo(int itag, string url, long contentLength, long bitrate)
             : base(itag, url, contentLength)
         {
-            Bitrate = bitrate;
+            Bitrate = bitrate > 0 ? bitrate : throw new ArgumentOutOfRangeException(nameof(bitrate));
             AudioEncoding = GetAudioEncoding(itag);
         }
     }

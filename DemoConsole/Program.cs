@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Tyrrrz.Extensions;
+using YoutubeExplode.Models;
 
 namespace YoutubeExplode.DemoConsole
 {
@@ -56,16 +57,17 @@ namespace YoutubeExplode.DemoConsole
             Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author}");
 
             // Get the most preferable stream
-            Console.WriteLine("Looking for the best stream that has both video and audio tracks...");
-            var streamInfo = videoInfo.Streams
-                .Where(s => s.ContainsVideo && s.ContainsAudio)
-                .OrderBy(s => s.Quality)
+            Console.WriteLine("Looking for the best mixed stream...");
+            var streamInfo = videoInfo.MixedStreams
+                .OrderBy(s => s.VideoQuality)
                 .Last();
-            string normalizedFileSize = NormalizeFileSize(streamInfo.FileSize);
-            Console.WriteLine($"Quality: {streamInfo.QualityLabel} | Container: {streamInfo.ContainerType} | Size: {normalizedFileSize}");
+            string normalizedFileSize = NormalizeFileSize(streamInfo.ContentLength);
+            string qualityLabel = streamInfo.VideoQuality.GetLabel();
+            Console.WriteLine($"Quality: {qualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata
-            string fileName = $"{videoInfo.Title}.{streamInfo.QualityLabel}.{streamInfo.FileExtension}";
+            string fileExtension = streamInfo.Container.GetFileExtension();
+            string fileName = $"{videoInfo.Title}.{qualityLabel}.{fileExtension}";
 
             // Remove illegal characters from file name
             fileName = fileName.Except(Path.GetInvalidFileNameChars());

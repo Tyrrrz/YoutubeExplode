@@ -2,13 +2,18 @@
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 
-namespace YoutubeExplode.Models.Streams
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Base media stream info
     /// </summary>
     public abstract partial class MediaStreamInfo
     {
+        /// <summary>
+        /// Itag
+        /// </summary>
+        public int Itag { get; }
+
         /// <summary>
         /// Url
         /// </summary>
@@ -17,19 +22,20 @@ namespace YoutubeExplode.Models.Streams
         /// <summary>
         /// Container type
         /// </summary>
-        public ContainerType ContainerType { get; }
+        public Container Container { get; }
 
         /// <summary>
-        /// File size (bytes)
+        /// Stream content size (bytes)
         /// </summary>
-        public long ContentLength { get; internal set; }
+        public long ContentLength { get; }
 
         /// <inheritdoc />
         protected MediaStreamInfo(int itag, string url, long contentLength)
         {
-            Url = url;
-            ContainerType = GetContainerType(itag);
-            ContentLength = contentLength;
+            Itag = itag > 0 ? itag : throw new ArgumentOutOfRangeException(nameof(itag));
+            Url = url ?? throw new ArgumentNullException(nameof(url));
+            Container = GetContainer(itag);
+            ContentLength = contentLength > 0 ? contentLength : throw new ArgumentOutOfRangeException(nameof(contentLength));
         }
     }
 
@@ -38,27 +44,27 @@ namespace YoutubeExplode.Models.Streams
         /// <summary>
         /// Get container type for the given itag
         /// </summary>
-        protected static ContainerType GetContainerType(int itag)
+        protected static Container GetContainer(int itag)
         {
             if (itag.IsEither(18, 22, 82, 83, 84, 85, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 212, 213,
                 214, 215, 216, 217))
-                return ContainerType.Mp4;
+                return Container.Mp4;
 
             if (itag.IsEither(140, 141))
-                return ContainerType.M4A;
+                return Container.M4A;
 
             if (itag.IsEither(43, 100, 278, 242, 243, 244, 247, 248, 271, 313, 272, 302, 303, 308, 315, 330, 331, 332,
                 333, 334, 335, 336, 337, 171, 249, 250, 251))
-                return ContainerType.WebM;
+                return Container.WebM;
 
             if (itag.IsEither(13, 17, 36))
-                return ContainerType.Tgpp;
+                return Container.Tgpp;
 
             if (itag.IsEither(5, 6, 34, 35))
-                return ContainerType.Flv;
+                return Container.Flv;
 
             if (itag.IsEither(91, 92, 93, 94, 95, 96, 127, 128))
-                return ContainerType.Ts;
+                return Container.Ts;
 
             throw new UnexpectedIdentifierException($"Unexpected itag [{itag}]");
         }
@@ -88,14 +94,15 @@ namespace YoutubeExplode.Models.Streams
             if (itag.IsEither(17, 36))
                 return VideoEncoding.Mp4V;
 
-            if (itag.IsEither(18, 22, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 91, 92, 93, 94, 95, 96))
+            if (itag.IsEither(18, 22, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 91, 92, 93, 94, 95, 96, 212, 213,
+                214, 215, 216, 217))
                 return VideoEncoding.H264;
 
             if (itag.IsEither(43))
                 return VideoEncoding.Vp8;
 
             if (itag.IsEither(278, 242, 243, 244, 247, 248, 271, 313, 272, 302, 303, 308, 315, 330, 331, 332, 333, 334,
-                335, 336, 337))
+                335, 336, 337, 171, 249, 250, 251))
                 return VideoEncoding.Vp9;
 
             throw new UnexpectedIdentifierException($"Unexpected itag [{itag}]");

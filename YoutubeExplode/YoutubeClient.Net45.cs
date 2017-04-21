@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Models.ClosedCaptions;
-using YoutubeExplode.Models.Streams;
+using YoutubeExplode.Models.MediaStreams;
 
 #endif
 

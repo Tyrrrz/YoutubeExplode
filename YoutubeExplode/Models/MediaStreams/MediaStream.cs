@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace YoutubeExplode.Models.Streams
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Media stream
@@ -36,8 +37,8 @@ namespace YoutubeExplode.Models.Streams
         /// <inheritdoc />
         public MediaStream(Stream innerStream, MediaStreamInfo mediaStreamInfo)
         {
-            _innerStream = innerStream;
-            Info = mediaStreamInfo;
+            _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
+            Info = mediaStreamInfo ?? throw new ArgumentNullException(nameof(mediaStreamInfo));
         }
 
         /// <inheritdoc />

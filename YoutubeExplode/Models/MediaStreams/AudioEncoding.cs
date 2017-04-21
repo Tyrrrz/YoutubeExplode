@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Models.Streams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Audio stream encoding

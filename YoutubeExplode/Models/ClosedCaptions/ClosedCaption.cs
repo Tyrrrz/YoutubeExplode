@@ -25,9 +25,9 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <inheritdoc />
         public ClosedCaption(string text, TimeSpan offset, TimeSpan duration)
         {
-            Text = text;
-            Offset = offset;
-            Duration = duration;
+            Text = text ?? throw new ArgumentNullException(nameof(text));
+            Offset = offset >= TimeSpan.Zero ? offset : throw new ArgumentOutOfRangeException(nameof(offset));
+            Duration = duration >= TimeSpan.Zero ? duration : throw new ArgumentOutOfRangeException(nameof(offset));
         }
     }
 }
