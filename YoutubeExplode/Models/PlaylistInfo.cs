@@ -41,27 +41,12 @@ namespace YoutubeExplode.Models
         public long ViewCount { get; }
 
         /// <summary>
-        /// Like count
-        /// </summary>
-        public long LikeCount { get; }
-
-        /// <summary>
-        /// Dislike count
-        /// </summary>
-        public long DislikeCount { get; }
-
-        /// <summary>
-        /// Average user rating in stars (0* to 5*)
-        /// </summary>
-        public double AverageRating => 5.0 * LikeCount / (LikeCount + DislikeCount);
-
-        /// <summary>
         /// IDs of the videos in the playlist
         /// </summary>
         public IReadOnlyList<string> VideoIds { get; }
 
         internal PlaylistInfo(string id, string title, string author, string description, long viewCount,
-            long likeCount, long dislikeCount, IEnumerable<string> videoIds)
+            IEnumerable<string> videoIds)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Type = GetPlaylistType(id);
@@ -69,8 +54,6 @@ namespace YoutubeExplode.Models
             Author = author ?? throw new ArgumentNullException(nameof(author));
             Description = description ?? throw new ArgumentNullException(nameof(description));
             ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
-            LikeCount = likeCount >= 0 ? likeCount : throw new ArgumentOutOfRangeException(nameof(likeCount));
-            DislikeCount = dislikeCount >= 0 ? dislikeCount : throw new ArgumentOutOfRangeException(nameof(dislikeCount));
             VideoIds = videoIds?.ToArray() ?? throw new ArgumentNullException(nameof(videoIds));
         }
     }

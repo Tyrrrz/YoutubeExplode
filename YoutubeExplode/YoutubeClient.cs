@@ -191,7 +191,7 @@ namespace YoutubeExplode
             if (videoInfoDic.ContainsKey("errorcode"))
             {
                 int errorCode = videoInfoDic["errorcode"].ParseInt();
-                string errorReason = videoInfoDic.GetOrDefault("reason", "<no reason>");
+                string errorReason = videoInfoDic.GetOrDefault("reason") ?? "<no reason>";
                 throw new FrontendException(errorCode, errorReason);
             }
 
@@ -215,7 +215,7 @@ namespace YoutubeExplode
                 {
                     var streamDic = UrlHelper.DictionaryFromUrlEncoded(streamEncoded);
 
-                    // Extract data
+                    // Parse data
                     int itag = streamDic["itag"].ParseInt();
                     string url = streamDic["url"];
                     string sig = streamDic.GetOrDefault("s");
@@ -246,7 +246,7 @@ namespace YoutubeExplode
                 {
                     var streamDic = UrlHelper.DictionaryFromUrlEncoded(streamEncoded);
 
-                    // Extract data
+                    // Parse data
                     int itag = streamDic["itag"].ParseInt();
                     string url = streamDic["url"];
                     string sig = streamDic.GetOrDefault("s");
@@ -271,7 +271,7 @@ namespace YoutubeExplode
                     // If video stream
                     else
                     {
-                        // Extract additional data
+                        // Parse additional data
                         string size = streamDic["size"];
                         int width = size.SubstringUntil("x").ParseInt();
                         int height = size.SubstringAfter("x").ParseInt();
@@ -303,11 +303,10 @@ namespace YoutubeExplode
                 request = dashMpdUrl;
                 response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
-                // Parse the manifest
                 var dashManifestXml = XElement.Parse(response).StripNamespaces();
                 var streamsXml = dashManifestXml.Descendants("Representation");
 
-                // Skip partial streams
+                // Filter out partial streams
                 streamsXml = streamsXml
                     .Where(x => !(x.Descendant("Initialization")
                                       ?.Attribute("sourceURL")
@@ -316,7 +315,7 @@ namespace YoutubeExplode
                 // Parse streams
                 foreach (var streamXml in streamsXml)
                 {
-                    // Extract data
+                    // Parse data
                     int itag = (int) streamXml.Attribute("id");
                     string url = (string) streamXml.Element("BaseURL");
                     long bitrate = (long) streamXml.Attribute("bandwidth");
@@ -335,7 +334,7 @@ namespace YoutubeExplode
                     // If video stream
                     else
                     {
-                        // Extract additional data
+                        // Parse additional data
                         int width = (int) streamXml.Attribute("width");
                         int height = (int) streamXml.Attribute("height");
                         var resolution = new VideoResolution(width, height);
@@ -361,7 +360,7 @@ namespace YoutubeExplode
                 {
                     var captionDic = UrlHelper.DictionaryFromUrlEncoded(captionEncoded);
 
-                    // Extract data
+                    // Parse data
                     string url = captionDic["u"];
                     bool isAuto = captionDic["v"].ContainsInvariant("a.");
                     string lang = captionDic["lc"];
@@ -375,12 +374,12 @@ namespace YoutubeExplode
                 }
             }
 
-            // Get video info extension
+            // Get metadata extension
             request = $"https://www.youtube.com/get_video_metadata?video_id={videoId}";
             response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var videoInfoExtXml = XElement.Parse(response).StripNamespaces().Element("html_content");
 
-            // Parse extension
+            // Parse extension metadata
             string description = (string) videoInfoExtXml?.Element("video_info")?.Element("description");
             long likeCount = (long) videoInfoExtXml?.Element("video_info")?.Element("likes_count_unformatted");
             long dislikeCount = (long) videoInfoExtXml?.Element("video_info")?.Element("dislikes_count_unformatted");
@@ -410,8 +409,6 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages = int.MaxValue)
         {
-            // Original code credit: https://github.com/dr-BEat
-
             if (playlistId == null)
                 throw new ArgumentNullException(nameof(playlistId));
             if (!ValidatePlaylistId(playlistId))
@@ -419,11 +416,46 @@ namespace YoutubeExplode
             if (maxPages <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
-            // Get
+            // Get playlist info
             string request = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var playlistInfoXml = XElement.Parse(response).StripNamespaces();
 
-            throw new NotImplementedException();
+            // Parse metadata
+            string title = (string) playlistInfoXml.Element("title");
+            string author = (string) playlistInfoXml.Element("author") ?? "";
+            string description = (string) playlistInfoXml.Element("description");
+            long viewCount = (long) playlistInfoXml.Element("views");
+
+            // Parse video IDs
+            var videoIds = playlistInfoXml.Descendants("encrypted_id").Select(e => (string) e).ToArray();
+
+            // Continue with next pages
+            int pagesDone = 1;
+            bool canContinue = videoIds.Length > 0;
+            int offset = videoIds.Length;
+            while (pagesDone < maxPages && canContinue)
+            {
+                // Get next page
+                string nextRequest = request + $"&index={offset}";
+                response = await _httpService.GetStringAsync(nextRequest).ConfigureAwait(false);
+
+                // Parse video IDs
+                var nextPlatlistInfoXml = XElement.Parse(response).StripNamespaces();
+                var nextVideoIds = nextPlatlistInfoXml.Descendants("encrypted_id").Select(e => (string) e);
+                int delta = videoIds.Length;
+                videoIds = videoIds.Union(nextVideoIds).ToArray();
+                delta = videoIds.Length - delta;
+
+                // Check if there's more pages
+                pagesDone++;
+                canContinue = delta > 0;
+                offset += videoIds.Length;
+            }
+
+            return new PlaylistInfo(
+                playlistId, title, author, description, viewCount,
+                videoIds);
         }
 
         /// <summary>
