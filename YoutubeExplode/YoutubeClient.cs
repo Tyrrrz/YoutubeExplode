@@ -44,11 +44,11 @@ namespace YoutubeExplode
         {
             // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
 
+            // Try to get from cache
             var playerSource = _playerSourceCache.GetOrDefault(version);
-            if (playerSource != null)
-                return playerSource;
+            if (playerSource != null) return playerSource;
 
-            // Get
+            // Get player source code
             string request = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
@@ -58,12 +58,11 @@ namespace YoutubeExplode
                 throw new ParseException("Could not find the entry function for signature deciphering");
 
             // Get the body of the function
-            string funcBody =
-                Regex.Match(response, @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{.*?\}",
-                    RegexOptions.Singleline).Value;
+            string funcPattern = @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{(.*?)\}";
+            string funcBody = Regex.Match(response, funcPattern, RegexOptions.Singleline).Groups[1].Value;
             if (funcBody.IsBlank())
                 throw new ParseException("Could not get the signature decipherer function body");
-            var funcLines = funcBody.Split(";").Skip(1).SkipLast(1).ToArray();
+            var funcLines = funcBody.Split(";").ToArray();
 
             // Identify cipher functions
             string reverseFuncName = null;
@@ -86,9 +85,11 @@ namespace YoutubeExplode
                 // Find cipher function names
                 if (Regex.IsMatch(response, $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\)"))
                     reverseFuncName = calledFunctionName;
-                else if (Regex.IsMatch(response, $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
+                else if (Regex.IsMatch(response,
+                    $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
                     sliceFuncName = calledFunctionName;
-                else if (Regex.IsMatch(response, $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
+                else if (Regex.IsMatch(response,
+                    $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
                     charSwapFuncName = calledFunctionName;
             }
 
@@ -285,22 +286,22 @@ namespace YoutubeExplode
             }
 
             // Parse adaptive streams from dash
-            string dashMpdUrl = videoInfoDic.GetOrDefault("dashmpd");
-            if (dashMpdUrl.IsNotBlank())
+            string dashManifestUrl = videoInfoDic.GetOrDefault("dashmpd");
+            if (dashManifestUrl.IsNotBlank())
             {
                 // Parse signature
-                string sig = Regex.Match(dashMpdUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
+                string sig = Regex.Match(dashManifestUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
 
                 // Decipher signature
                 if (sig.IsNotBlank())
                 {
                     var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
                     sig = playerSource.Decipher(sig);
-                    dashMpdUrl = UrlHelper.SetUrlPathParameter(dashMpdUrl, "signature", sig);
+                    dashManifestUrl = UrlHelper.SetUrlPathParameter(dashManifestUrl, "signature", sig);
                 }
 
                 // Get the manifest
-                response = await _httpService.GetStringAsync(dashMpdUrl).ConfigureAwait(false);
+                response = await _httpService.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
 
                 var dashManifestXml = XElement.Parse(response).StripNamespaces();
                 var streamsXml = dashManifestXml.Descendants("Representation");
@@ -468,10 +469,7 @@ namespace YoutubeExplode
             // Get the stream
             var stream = await _httpService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
 
-            // Pack into container
-            var result = new MediaStream(stream, mediaStreamInfo);
-
-            return result;
+            return new MediaStream(stream, mediaStreamInfo);
         }
 
         /// <summary>
@@ -483,8 +481,7 @@ namespace YoutubeExplode
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
 
             // Get closed caption track manifest
-            string request = closedCaptionTrackInfo.Url;
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            string response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
             var captionTrackXml = XElement.Parse(response).StripNamespaces();
 
             // Parse content
@@ -493,7 +490,7 @@ namespace YoutubeExplode
             {
                 string text = (string) captionXml;
                 var offset = TimeSpan.FromSeconds((double) captionXml.Attribute("start"));
-                var duration = TimeSpan.FromSeconds((double)captionXml.Attribute("dur"));
+                var duration = TimeSpan.FromSeconds((double) captionXml.Attribute("dur"));
 
                 var caption = new ClosedCaption(text, offset, duration);
                 captions.Add(caption);

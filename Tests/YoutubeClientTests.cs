@@ -322,7 +322,7 @@ namespace YoutubeExplode.Tests
             Assert.That.IsSet(playlistInfo);
             Assert.AreEqual("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk", playlistInfo.Id);
             Assert.AreEqual(PlaylistType.UserMade, playlistInfo.Type);
-            Assert.IsTrue(400 >= playlistInfo.VideoIds.Count);
+            Assert.IsTrue(1000 >= playlistInfo.VideoIds.Count);
         }
 
         [TestMethod]
