@@ -300,8 +300,7 @@ namespace YoutubeExplode
                 }
 
                 // Get the manifest
-                request = dashMpdUrl;
-                response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+                response = await _httpService.GetStringAsync(dashMpdUrl).ConfigureAwait(false);
 
                 var dashManifestXml = XElement.Parse(response).StripNamespaces();
                 var streamsXml = dashManifestXml.Descendants("Representation");
@@ -441,8 +440,8 @@ namespace YoutubeExplode
                 response = await _httpService.GetStringAsync(nextRequest).ConfigureAwait(false);
 
                 // Parse video IDs
-                var nextPlatlistInfoXml = XElement.Parse(response).StripNamespaces();
-                var nextVideoIds = nextPlatlistInfoXml.Descendants("encrypted_id").Select(e => (string) e);
+                var nextPlaylistInfoXml = XElement.Parse(response).StripNamespaces();
+                var nextVideoIds = nextPlaylistInfoXml.Descendants("encrypted_id").Select(e => (string) e);
                 int delta = videoIds.Length;
                 videoIds = videoIds.Union(nextVideoIds).ToArray();
                 delta = videoIds.Length - delta;
@@ -466,10 +465,10 @@ namespace YoutubeExplode
             if (mediaStreamInfo == null)
                 throw new ArgumentNullException(nameof(mediaStreamInfo));
 
-            // Get
+            // Get the stream
             var stream = await _httpService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
 
-            // Pack
+            // Pack into container
             var result = new MediaStream(stream, mediaStreamInfo);
 
             return result;
@@ -483,11 +482,24 @@ namespace YoutubeExplode
             if (closedCaptionTrackInfo == null)
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
 
-            // Get
-            string response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
+            // Get closed caption track manifest
+            string request = closedCaptionTrackInfo.Url;
+            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var captionTrackXml = XElement.Parse(response).StripNamespaces();
 
-            // Parse
-            throw new NotImplementedException();
+            // Parse content
+            var captions = new List<ClosedCaption>();
+            foreach (var captionXml in captionTrackXml.Descendants("text"))
+            {
+                string text = (string) captionXml;
+                var offset = TimeSpan.FromSeconds((double) captionXml.Attribute("start"));
+                var duration = TimeSpan.FromSeconds((double)captionXml.Attribute("dur"));
+
+                var caption = new ClosedCaption(text, offset, duration);
+                captions.Add(caption);
+            }
+
+            return new ClosedCaptionTrack(closedCaptionTrackInfo, captions);
         }
     }
 
