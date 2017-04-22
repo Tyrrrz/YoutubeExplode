@@ -91,7 +91,8 @@
                             Margin="5"
                             FontSize="18"
                             Foreground="{DynamicResource PrimaryTextBrush}"
-                            Text="{Binding VideoInfo.Title}" />
+                            Text="{Binding VideoInfo.Title}"
+                            TextTrimming="CharacterEllipsis" />
 
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -201,7 +202,18 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15" Text="Description" />
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Width="18"
+                                    Height="18"
+                                    VerticalAlignment="Center"
+                                    Kind="CommentTextOutline" />
+                                <TextBlock
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Text="Description" />
+                            </StackPanel>
                         </Expander.Header>
                         <TextBlock
                             Margin="10"
@@ -215,7 +227,18 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15" Text="Keywords" />
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Width="18"
+                                    Height="18"
+                                    VerticalAlignment="Center"
+                                    Kind="Magnify" />
+                                <TextBlock
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Text="Keywords" />
+                            </StackPanel>
                         </Expander.Header>
                         <TextBlock
                             Margin="10"
@@ -229,7 +252,18 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15" Text="Media streams" />
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Width="18"
+                                    Height="18"
+                                    VerticalAlignment="Center"
+                                    Kind="PlayCircleOutline" />
+                                <TextBlock
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Text="Media streams" />
+                            </StackPanel>
                         </Expander.Header>
                         <StackPanel Orientation="Vertical">
                             <TextBlock
@@ -260,6 +294,9 @@
                                                 <Run />
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
+                                                <Run />
+                                                <Run Text="Encoding:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" /><Run Text="/" /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
@@ -298,8 +335,8 @@
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Bitrate:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Bitrate, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}it/s, Mode=OneWay}" />
+                                                <Run Text="Encoding:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
@@ -335,8 +372,8 @@
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Bitrate:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Bitrate, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}it/s, Mode=OneWay}" />
+                                                <Run Text="Encoding:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
@@ -353,7 +390,18 @@
                 <materialDesign:Card Margin="3,0,3,3">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
-                            <TextBlock FontSize="15" Text="Closed captions" />
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Width="18"
+                                    Height="18"
+                                    VerticalAlignment="Center"
+                                    Kind="ClosedCaption" />
+                                <TextBlock
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="15"
+                                    Text="Closed captions" />
+                            </StackPanel>
                         </Expander.Header>
                         <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.ClosedCaptionTracks}">
                             <ItemsControl.ItemTemplate>
