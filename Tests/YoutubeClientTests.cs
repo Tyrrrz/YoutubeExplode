@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tyrrrz.Extensions;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
 
@@ -67,12 +68,6 @@ namespace YoutubeExplode.Tests
                 bool success = YoutubeClient.TryParseVideoId(url, out _);
                 Assert.IsFalse(success);
             }
-        }
-
-        [TestMethod]
-        public void ParseVideoId_Guard_Test()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => YoutubeClient.ParseVideoId(null));
         }
 
         [TestMethod]
@@ -160,12 +155,6 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public void ParsePlaylistId_Guard_Test()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => YoutubeClient.ParsePlaylistId(null));
-        }
-
-        [TestMethod]
         public void ParsePlaylistId_Valid_Test()
         {
             var data = File.ReadAllLines("Data\\ValidPlaylistUrls.txt");
@@ -194,14 +183,6 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task CheckVideoExistsAsync_Guard_Test()
-        {
-            var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.CheckVideoExistsAsync(null));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(() => client.CheckVideoExistsAsync("invalid_id"));
-        }
-
-        [TestMethod]
         public async Task CheckVideoExistsAsync_Existing_Test()
         {
             var client = new YoutubeClient();
@@ -220,11 +201,10 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_Guard_Test()
+        public async Task GetVideoInfoAsync_NonExisting_Test()
         {
             var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.GetVideoInfoAsync(null));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(() => client.GetVideoInfoAsync("invalid_id"));
+            await Assert.ThrowsExceptionAsync<FrontendException>(() => client.GetVideoInfoAsync("qld9w0b-1ao"));
         }
 
         [TestMethod]
@@ -276,15 +256,6 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_Guard_Test()
-        {
-            var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.GetPlaylistInfoAsync(null));
-            await Assert.ThrowsExceptionAsync<ArgumentException>(() => client.GetPlaylistInfoAsync("invalid_id"));
-            await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => client.GetPlaylistInfoAsync("WL", 0));
-        }
-
-        [TestMethod]
         public async Task GetPlaylistInfoAsync_Normal_Test()
         {
             // Playlist created by a user
@@ -308,7 +279,7 @@ namespace YoutubeExplode.Tests
             Assert.That.IsSet(playlistInfo);
             Assert.AreEqual("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk", playlistInfo.Id);
             Assert.AreEqual(PlaylistType.UserMade, playlistInfo.Type);
-            Assert.IsTrue(200 < playlistInfo.VideoIds.Count);
+            Assert.IsTrue(1000 <= playlistInfo.VideoIds.Count);
         }
 
         [TestMethod]
@@ -395,13 +366,6 @@ namespace YoutubeExplode.Tests
 
             Assert.IsNotNull(videoIds);
             Assert.IsTrue(videoIds.Any());
-        }
-
-        [TestMethod]
-        public async Task GetMediaStreamAsync_Guard_Test()
-        {
-            var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.GetMediaStreamAsync(null));
         }
 
         [TestMethod]
@@ -494,13 +458,6 @@ namespace YoutubeExplode.Tests
                     await stream.ReadAsync(buffer, 0, buffer.Length);
                 }
             }
-        }
-
-        [TestMethod]
-        public async Task GetClosedCaptionTrackAsync_Guard_Test()
-        {
-            var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => client.GetClosedCaptionTrackAsync(null));
         }
 
         [TestMethod]

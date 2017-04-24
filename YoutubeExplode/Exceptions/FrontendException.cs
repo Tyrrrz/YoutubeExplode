@@ -12,7 +12,8 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public int Code { get; }
 
-        internal FrontendException(int code, string message)
+        /// <inheritdoc />
+        public FrontendException(int code, string message)
             : base(message)
         {
             Code = code;

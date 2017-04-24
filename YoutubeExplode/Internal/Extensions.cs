@@ -20,7 +20,7 @@ namespace YoutubeExplode.Internal
             return false;
         }
 
-        public static bool IsInRange(this IComparable value, IComparable min, IComparable max)
+        public static bool IsInRange<T>(this T value, T min, T max) where T : IComparable
         {
             return value.CompareTo(min) >= 0 && value.CompareTo(max) <= 0;
         }
@@ -114,20 +114,11 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> enumerable, int count)
+        public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
         {
-            if (count == 0)
-                return Enumerable.Empty<T>();
-
-            return enumerable.Reverse().Take(count).Reverse();
-        }
-
-        public static IEnumerable<T> SkipLast<T>(this IEnumerable<T> enumerable, int count)
-        {
-            if (count == 0)
-                return enumerable;
-
-            return enumerable.Reverse().Skip(count).Reverse();
+            if (dic.TryGetValue(key, out var result))
+                return result;
+            throw new KeyNotFoundException($"Could not find key [{key}]");
         }
 
         public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key,
@@ -159,6 +150,16 @@ namespace YoutubeExplode.Internal
         public static XElement Descendant(this XElement element, XName name)
         {
             return element.Descendants(name).FirstOrDefault();
+        }
+
+        public static XElement ElementStrict(this XElement element, XName name)
+        {
+            return element.Element(name) ?? throw new KeyNotFoundException($"Could not find element [{name}]");
+        }
+
+        public static XAttribute AttributeStrict(this XElement element, XName name)
+        {
+            return element.Attribute(name) ?? throw new KeyNotFoundException($"Could not find attribute [{name}]");
         }
     }
 }

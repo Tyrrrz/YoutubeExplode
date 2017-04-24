@@ -7,7 +7,8 @@ namespace YoutubeExplode.Exceptions
     /// </summary>
     public class ParseException : Exception
     {
-        internal ParseException(string message)
+        /// <inheritdoc />
+        public ParseException(string message)
             : base(message)
         {
         }

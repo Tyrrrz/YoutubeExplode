@@ -7,7 +7,8 @@ namespace YoutubeExplode.Exceptions
     /// </summary>
     public class UnexpectedIdentifierException : Exception
     {
-        internal UnexpectedIdentifierException(string message)
+        /// <inheritdoc />
+        public UnexpectedIdentifierException(string message)
             : base(message)
         {
         }
