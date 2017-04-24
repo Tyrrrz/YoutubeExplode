@@ -378,6 +378,26 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
+        public async Task GetUserUploadsAsync_Test()
+        {
+            var client = new YoutubeClient();
+            var videoIds = await client.GetUserUploadsAsync("TheTyrrr");
+
+            Assert.IsNotNull(videoIds);
+            Assert.IsTrue(videoIds.Any());
+        }
+
+        [TestMethod]
+        public async Task SearchAsync_Test()
+        {
+            var client = new YoutubeClient();
+            var videoIds = await client.SearchAsync("funny cat videos");
+
+            Assert.IsNotNull(videoIds);
+            Assert.IsTrue(videoIds.Any());
+        }
+
+        [TestMethod]
         public async Task GetMediaStreamAsync_Guard_Test()
         {
             var client = new YoutubeClient();

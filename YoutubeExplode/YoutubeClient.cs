@@ -44,24 +44,25 @@ namespace YoutubeExplode
         {
             // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
 
-            // Try to get from cache
+            // Try to resolve from cache first
             var playerSource = _playerSourceCache.GetOrDefault(version);
-            if (playerSource != null) return playerSource;
+            if (playerSource != null)
+                return playerSource;
 
             // Get player source code
             string request = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
-            // Get the name of the function that handles deciphering
+            // Find the name of the function that handles deciphering
             string funcName = Regex.Match(response, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
             if (funcName.IsBlank())
                 throw new ParseException("Could not find the entry function for signature deciphering");
 
-            // Get the body of the function
+            // Find the body of the function
             string funcPattern = @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{(.*?)\}";
             string funcBody = Regex.Match(response, funcPattern, RegexOptions.Singleline).Groups[1].Value;
             if (funcBody.IsBlank())
-                throw new ParseException("Could not get the signature decipherer function body");
+                throw new ParseException("Could not find the signature decipherer function body");
             var funcLines = funcBody.Split(";").ToArray();
 
             // Identify cipher functions
@@ -84,13 +85,19 @@ namespace YoutubeExplode
 
                 // Find cipher function names
                 if (Regex.IsMatch(response, $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\)"))
+                {
                     reverseFuncName = calledFunctionName;
+                }
                 else if (Regex.IsMatch(response,
                     $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
+                {
                     sliceFuncName = calledFunctionName;
+                }
                 else if (Regex.IsMatch(response,
                     $@"{Regex.Escape(calledFunctionName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
+                {
                     charSwapFuncName = calledFunctionName;
+                }
             }
 
             // Analyze the function body again to determine the operation set and order
@@ -256,7 +263,6 @@ namespace YoutubeExplode
                     string sig = streamDic.GetOrDefault("s");
                     long contentLength = streamDic["clen"].ParseLong();
                     long bitrate = streamDic["bitrate"].ParseLong();
-                    string type = streamDic["type"];
 
                     // Decipher signature
                     if (sig.IsNotBlank())
@@ -269,8 +275,11 @@ namespace YoutubeExplode
                     // Set rate bypass
                     url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
 
+                    // Check if audio
+                    bool isAudio = streamDic["type"].ContainsInvariant("audio/");
+
                     // If audio stream
-                    if (type.ContainsInvariant("audio/"))
+                    if (isAudio)
                     {
                         var stream = new AudioStreamInfo(itag, url, contentLength, bitrate);
                         audioStreams.Add(stream);
@@ -308,7 +317,6 @@ namespace YoutubeExplode
 
                 // Get the manifest
                 response = await _httpService.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
-
                 var dashManifestXml = XElement.Parse(response).StripNamespaces();
                 var streamsXml = dashManifestXml.Descendants("Representation");
 
@@ -335,10 +343,10 @@ namespace YoutubeExplode
                         : UrlHelper.SetUrlPathParameter(url, "ratebypass", "yes");
 
                     // Check if audio stream
-                    var audioConfigurationXml = streamXml.Element("AudioChannelConfiguration");
+                    bool isAudio = streamXml.Element("AudioChannelConfiguration") != null;
 
                     // If audio stream
-                    if (audioConfigurationXml != null)
+                    if (isAudio)
                     {
                         var stream = new AudioStreamInfo(itag, url, contentLength, bitrate);
                         audioStreams.Add(stream);
@@ -391,7 +399,7 @@ namespace YoutubeExplode
             response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var videoInfoExtXml = XElement.Parse(response).StripNamespaces().Element("html_content");
 
-            // Parse extension metadata
+            // Parse
             string description = (string) videoInfoExtXml?.Element("video_info")?.Element("description");
             long likeCount = (long) videoInfoExtXml?.Element("video_info")?.Element("likes_count_unformatted");
             long dislikeCount = (long) videoInfoExtXml?.Element("video_info")?.Element("dislikes_count_unformatted");
@@ -417,7 +425,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets playlist metadata by playlist ID, optionally truncating video list at given number of pages
+        /// Gets playlist info by playlist ID, optionally truncating list of videos at given number of pages
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages = int.MaxValue)
         {
@@ -428,12 +436,12 @@ namespace YoutubeExplode
             if (maxPages <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
-            // Get playlist info
+            // Get
             string request = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var playlistInfoXml = XElement.Parse(response).StripNamespaces();
 
-            // Parse metadata
+            // Parse
             string title = (string) playlistInfoXml.Element("title");
             string author = (string) playlistInfoXml.Element("author") ?? "";
             string description = (string) playlistInfoXml.Element("description");
@@ -471,32 +479,74 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets actual media stream by its metadata
+        /// Gets videos uploaded by a user in form of list of video IDs
+        /// </summary>
+        /// <remarks>Caps out at 100 videos returned due to a limitation in frontend API</remarks>
+        public async Task<IEnumerable<string>> GetUserUploadsAsync(string username)
+        {
+            if (username == null)
+                throw new ArgumentNullException(nameof(username));
+
+            // Get
+            string request =
+                $"https://www.youtube.com/list_ajax?style=xml&action_get_user_uploads_by_user=1&username={username}";
+            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var userUploadsXml = XElement.Parse(response).StripNamespaces();
+
+            // Parse
+            var videoIds = userUploadsXml.Descendants("encrypted_id").Select(e => (string) e).ToArray();
+
+            return videoIds;
+        }
+
+        /// <summary>
+        /// Searches for videos using the given search query and returns results in form of list of video IDs
+        /// </summary>
+        /// <remarks>Is not equivalent to actual Youtube search</remarks>
+        public async Task<IEnumerable<string>> SearchAsync(string searchQuery)
+        {
+            if (searchQuery == null)
+                throw new ArgumentNullException(nameof(searchQuery));
+
+            // Get
+            string encodedQuery = searchQuery.UrlEncode();
+            string request = $"https://www.youtube.com/search_ajax?style=xml&search_query={encodedQuery}";
+            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var searchResultsXml = XElement.Parse(response).StripNamespaces();
+
+            // Parse
+            var videoIds = searchResultsXml.Descendants("encrypted_id").Select(e => (string) e).ToArray();
+
+            return videoIds;
+        }
+
+        /// <summary>
+        /// Gets the actual media stream represented by given metadata
         /// </summary>
         public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
             if (mediaStreamInfo == null)
                 throw new ArgumentNullException(nameof(mediaStreamInfo));
 
-            // Get the stream
+            // Get
             var stream = await _httpService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
 
             return new MediaStream(stream, mediaStreamInfo);
         }
 
         /// <summary>
-        /// Gets actual closed caption track by its metadata
+        /// Gets the actual closed caption track represented by given metadata
         /// </summary>
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {
             if (closedCaptionTrackInfo == null)
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
 
-            // Get closed caption track manifest
+            // Get
             string response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
             var captionTrackXml = XElement.Parse(response).StripNamespaces();
 
-            // Parse content
+            // Parse
             var captions = new List<ClosedCaption>();
             foreach (var captionXml in captionTrackXml.Descendants("text"))
             {
