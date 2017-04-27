@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
-
 #endif
 
 namespace YoutubeExplode
@@ -29,7 +28,7 @@ namespace YoutubeExplode
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
             // Get and create streams
-            var input = await GetMediaStreamAsync(mediaStreamInfo);
+            var input = await GetMediaStreamAsync(mediaStreamInfo).ConfigureAwait(false);
             var output = File.Create(filePath, bufferSize);
 
             // Get and save to file with progress reporting
@@ -43,9 +42,14 @@ namespace YoutubeExplode
                     long totalBytesRead = 0;
                     do
                     {
+                        // Read
                         totalBytesRead += bytesRead =
-                            await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                        await output.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+                            await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+
+                        // Write
+                        await output.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+
+                        // Report progress
                         progress.Report(1.0 * totalBytesRead / input.Length);
                     } while (bytesRead > 0);
                 }
@@ -56,7 +60,7 @@ namespace YoutubeExplode
                 using (input)
                 using (output)
                 {
-                    await input.CopyToAsync(output, bufferSize, cancellationToken);
+                    await input.CopyToAsync(output, bufferSize, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
@@ -66,20 +70,23 @@ namespace YoutubeExplode
         /// </summary>
         public async Task DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo, string filePath,
             IProgress<double> progress, CancellationToken cancellationToken)
-            => await DownloadMediaStreamAsync(mediaStreamInfo, filePath, progress, cancellationToken, 4096);
+            => await DownloadMediaStreamAsync(mediaStreamInfo, filePath, progress, cancellationToken, 4096)
+                .ConfigureAwait(false);
 
         /// <summary>
         /// Downloads a media stream to file
         /// </summary>
         public async Task DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo, string filePath,
             IProgress<double> progress)
-            => await DownloadMediaStreamAsync(mediaStreamInfo, filePath, progress, CancellationToken.None);
+            => await DownloadMediaStreamAsync(mediaStreamInfo, filePath, progress, CancellationToken.None)
+                .ConfigureAwait(false);
 
         /// <summary>
         /// Downloads a media stream to file
         /// </summary>
         public async Task DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo, string filePath)
-            => await DownloadMediaStreamAsync(mediaStreamInfo, filePath, null);
+            => await DownloadMediaStreamAsync(mediaStreamInfo, filePath, null)
+                .ConfigureAwait(false);
 
         /// <summary>
         /// Downloads a closed caption track to file
@@ -95,7 +102,7 @@ namespace YoutubeExplode
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
             // Get and create streams
-            var closedCaptionTrack = await GetClosedCaptionTrackAsync(closedCaptionTrackInfo);
+            var closedCaptionTrack = await GetClosedCaptionTrackAsync(closedCaptionTrackInfo).ConfigureAwait(false);
             var output = File.Create(filePath, bufferSize);
             var sw = new StreamWriter(output, Encoding.UTF8, bufferSize);
 
@@ -105,25 +112,29 @@ namespace YoutubeExplode
             {
                 for (int i = 0; i < closedCaptionTrack.Captions.Count; i++)
                 {
+                    // Make sure cancellation was not requested
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     var closedCaption = closedCaptionTrack.Captions[i];
+                    var buffer = new StringBuilder();
 
                     // Line number
-                    await sw.WriteLineAsync((i + 1).ToString());
+                    buffer.AppendLine((i + 1).ToString());
 
                     // Time start --> time end
-                    await sw.WriteAsync(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
-                    await sw.WriteAsync(" --> ");
-                    await sw.WriteAsync((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
-                    await sw.WriteLineAsync();
+                    buffer.Append(closedCaption.Offset.ToString(@"hh\:mm\:ss\,fff"));
+                    buffer.Append(" --> ");
+                    buffer.Append((closedCaption.Offset + closedCaption.Duration).ToString(@"hh\:mm\:ss\,fff"));
+                    buffer.AppendLine();
 
                     // Actual text
-                    await sw.WriteLineAsync(closedCaption.Text);
+                    buffer.AppendLine(closedCaption.Text);
 
-                    // Separator
-                    await sw.WriteLineAsync();
+                    // Write to stream
+                    await sw.WriteLineAsync(buffer.ToString()).ConfigureAwait(false);
 
+                    // Report progress
                     progress?.Report((i + 1.0) / closedCaptionTrack.Captions.Count);
-                    cancellationToken.ThrowIfCancellationRequested();
                 }
             }
         }
@@ -134,7 +145,8 @@ namespace YoutubeExplode
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo,
             string filePath, IProgress<double> progress, CancellationToken cancellationToken)
             => await DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath, progress,
-                cancellationToken, 4096);
+                    cancellationToken, 4096)
+                .ConfigureAwait(false);
 
         /// <summary>
         /// Downloads a closed caption track to file
@@ -142,14 +154,16 @@ namespace YoutubeExplode
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo,
             string filePath, IProgress<double> progress)
             => await DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath, progress,
-                CancellationToken.None);
+                    CancellationToken.None)
+                .ConfigureAwait(false);
 
         /// <summary>
         /// Downloads a closed caption track to file
         /// </summary>
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo,
             string filePath)
-            => await DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath, null);
+            => await DownloadClosedCaptionTrackAsync(closedCaptionTrackInfo, filePath, null)
+                .ConfigureAwait(false);
 
 #endif
     }

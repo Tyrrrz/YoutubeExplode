@@ -425,9 +425,9 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets playlist info by playlist ID, optionally truncating list of videos at given number of pages
+        /// Gets playlist info by playlist ID, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
         /// </summary>
-        public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages = int.MaxValue)
+        public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages)
         {
             if (playlistId == null)
                 throw new ArgumentNullException(nameof(playlistId));
@@ -479,7 +479,13 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets videos uploaded by a user in form of list of video IDs
+        /// Gets playlist info by playlist ID
+        /// </summary>
+        public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
+            => await GetPlaylistInfoAsync(playlistId, int.MaxValue).ConfigureAwait(false);
+
+        /// <summary>
+        /// Gets videos uploaded by a user as a list of video IDs
         /// </summary>
         /// <remarks>Caps out at 100 videos returned due to a limitation in frontend API</remarks>
         public async Task<IEnumerable<string>> GetUserUploadsAsync(string username)
@@ -501,7 +507,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Searches for videos using the given search query and returns results in form of list of video IDs
+        /// Searches for videos using the given search query and returns results as a list of video IDs
         /// </summary>
         /// <remarks>Is not equivalent to actual Youtube search</remarks>
         public async Task<IEnumerable<string>> SearchAsync(string searchQuery)
