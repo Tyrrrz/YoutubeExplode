@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Tyrrrz.Extensions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
@@ -12,178 +9,10 @@ using YoutubeExplode.Models.MediaStreams;
 namespace YoutubeExplode.Tests
 {
     [TestClass]
-    public class YoutubeClientTests
+    public class IntegrationTests
     {
         [TestMethod]
-        public void ValidateVideoId_Valid_Test()
-        {
-            var data = File.ReadAllLines("Data\\ValidVideoIds.txt");
-
-            foreach (string datastr in data)
-            {
-                string id = datastr;
-
-                Assert.IsTrue(YoutubeClient.ValidateVideoId(id));
-            }
-        }
-
-        [TestMethod]
-        public void ValidateVideoId_Invalid_Test()
-        {
-            var data = File.ReadAllLines("Data\\InvalidVideoIds.txt");
-
-            foreach (string datastr in data)
-            {
-                string id = datastr;
-
-                Assert.IsFalse(YoutubeClient.ValidateVideoId(id));
-            }
-        }
-
-        [TestMethod]
-        public void TryParseVideoId_Valid_Test()
-        {
-            var data = File.ReadAllLines("Data\\ValidVideoUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr.SubstringUntil(";");
-                string id = datastr.SubstringAfter(";");
-
-                bool success = YoutubeClient.TryParseVideoId(url, out string actualId);
-                Assert.IsTrue(success);
-                Assert.AreEqual(id, actualId);
-            }
-        }
-
-        [TestMethod]
-        public void TryParseVideoId_Invalid_Test()
-        {
-            var data = File.ReadAllLines("Data\\InvalidVideoUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr;
-
-                bool success = YoutubeClient.TryParseVideoId(url, out _);
-                Assert.IsFalse(success);
-            }
-        }
-
-        [TestMethod]
-        public void ParseVideoId_Valid_Test()
-        {
-            var data = File.ReadAllLines("Data\\ValidVideoUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr.SubstringUntil(";");
-                string id = datastr.SubstringAfter(";");
-
-                string actualId = YoutubeClient.ParseVideoId(url);
-                Assert.AreEqual(id, actualId);
-            }
-        }
-
-        [TestMethod]
-        public void ParseVideoId_Invalid_Test()
-        {
-            var data = File.ReadAllLines("Data\\InvalidVideoUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr;
-
-                Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseVideoId(url));
-            }
-        }
-
-        [TestMethod]
-        public void ValidatePlaylistId_Valid_Test()
-        {
-            var data = File.ReadAllLines("Data\\ValidPlaylistIds.txt");
-
-            foreach (string datastr in data)
-            {
-                string id = datastr;
-
-                Assert.IsTrue(YoutubeClient.ValidatePlaylistId(id));
-            }
-        }
-
-        [TestMethod]
-        public void ValidatePlaylistId_Invalid_Test()
-        {
-            var data = File.ReadAllLines("Data\\InvalidPlaylistIds.txt");
-
-            foreach (string datastr in data)
-            {
-                string id = datastr;
-
-                Assert.IsFalse(YoutubeClient.ValidatePlaylistId(id));
-            }
-        }
-
-        [TestMethod]
-        public void TryParsePlaylistId_Valid_Test()
-        {
-            var data = File.ReadAllLines("Data\\ValidPlaylistUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr.SubstringUntil(";");
-                string id = datastr.SubstringAfter(";");
-
-                bool success = YoutubeClient.TryParsePlaylistId(url, out string actualId);
-                Assert.IsTrue(success);
-                Assert.AreEqual(id, actualId);
-            }
-        }
-
-        [TestMethod]
-        public void TryParsePlaylistId_Invalid_Test()
-        {
-            var data = File.ReadAllLines("Data\\InvalidPlaylistUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr;
-
-                bool success = YoutubeClient.TryParsePlaylistId(url, out _);
-                Assert.IsFalse(success);
-            }
-        }
-
-        [TestMethod]
-        public void ParsePlaylistId_Valid_Test()
-        {
-            var data = File.ReadAllLines("Data\\ValidPlaylistUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr.SubstringUntil(";");
-                string id = datastr.SubstringAfter(";");
-
-                string actualId = YoutubeClient.ParsePlaylistId(url);
-                Assert.AreEqual(id, actualId);
-            }
-        }
-
-        [TestMethod]
-        public void ParsePlaylistId_Invalid_Test()
-        {
-            var data = File.ReadAllLines("Data\\InvalidPlaylistUrls.txt");
-
-            foreach (string datastr in data)
-            {
-                string url = datastr;
-
-                Assert.ThrowsException<FormatException>(() => YoutubeClient.ParsePlaylistId(url));
-            }
-        }
-
-        [TestMethod]
-        public async Task CheckVideoExistsAsync_Existing_Test()
+        public async Task YoutubeClient_CheckVideoExistsAsync_Existing_Test()
         {
             var client = new YoutubeClient();
             bool exists = await client.CheckVideoExistsAsync("Te_dGvF6CcE");
@@ -192,7 +21,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task CheckVideoExistsAsync_NonExisting_Test()
+        public async Task YoutubeClient_CheckVideoExistsAsync_NonExisting_Test()
         {
             var client = new YoutubeClient();
             bool exists = await client.CheckVideoExistsAsync("qld9w0b-1ao");
@@ -201,14 +30,14 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_NonExisting_Test()
+        public async Task YoutubeClient_GetVideoInfoAsync_NonExisting_Test()
         {
             var client = new YoutubeClient();
             await Assert.ThrowsExceptionAsync<FrontendException>(() => client.GetVideoInfoAsync("qld9w0b-1ao"));
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_Normal_Test()
+        public async Task YoutubeClient_GetVideoInfoAsync_Normal_Test()
         {
             // Most common video type
 
@@ -220,7 +49,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_Signed_Test()
+        public async Task YoutubeClient_GetVideoInfoAsync_Signed_Test()
         {
             // Video that uses signature cipher
 
@@ -232,7 +61,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_SignedRestricted_Test()
+        public async Task YoutubeClient_GetVideoInfoAsync_SignedRestricted_Test()
         {
             // Video that uses signature cipher and is also age-restricted
 
@@ -244,7 +73,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetVideoInfoAsync_CannotEmbed_Test()
+        public async Task YoutubeClient_GetVideoInfoAsync_CannotEmbed_Test()
         {
             // Video that cannot be embedded outside of Youtube
 
@@ -256,7 +85,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_Normal_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_Normal_Test()
         {
             // Playlist created by a user
 
@@ -269,7 +98,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_Large_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_Large_Test()
         {
             // Playlist created by a user with a lot of videos in it
 
@@ -283,7 +112,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_LargeTruncated_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_LargeTruncated_Test()
         {
             // Playlist created by a user with a lot of videos in it
 
@@ -297,7 +126,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_VideoMix_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_VideoMix_Test()
         {
             // Playlist generated by Youtube to group similar videos
 
@@ -310,7 +139,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_ChannelMix_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_ChannelMix_Test()
         {
             // Playlist generated by Youtube to group uploads by same user
 
@@ -323,7 +152,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_Liked_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_Liked_Test()
         {
             // System playlist for videos liked by a user
 
@@ -336,7 +165,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetPlaylistInfoAsync_Favorites_Test()
+        public async Task YoutubeClient_GetPlaylistInfoAsync_Favorites_Test()
         {
             // System playlist for videos favorited by a user
 
@@ -349,7 +178,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetUserUploadsAsync_Test()
+        public async Task YoutubeClient_GetUserUploadsAsync_Test()
         {
             var client = new YoutubeClient();
             var videoIds = await client.GetUserUploadsAsync("TheTyrrr");
@@ -359,7 +188,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task SearchAsync_Test()
+        public async Task YoutubeClient_SearchAsync_Test()
         {
             var client = new YoutubeClient();
             var videoIds = await client.SearchAsync("funny cat videos");
@@ -369,7 +198,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetMediaStreamAsync_Normal_Test()
+        public async Task YoutubeClient_GetMediaStreamAsync_Normal_Test()
         {
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync("_QdPW8JrYzQ");
@@ -392,7 +221,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetMediaStreamAsync_Signed_Test()
+        public async Task YoutubeClient_GetMediaStreamAsync_Signed_Test()
         {
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync("9bZkp7q19f0");
@@ -415,7 +244,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetMediaStreamAsync_SignedRestricted_Test()
+        public async Task YoutubeClient_GetMediaStreamAsync_SignedRestricted_Test()
         {
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync("SkRSXFQerZs");
@@ -438,7 +267,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetMediaStreamAsync_CannotEmbed_Test()
+        public async Task YoutubeClient_GetMediaStreamAsync_CannotEmbed_Test()
         {
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync("_kmeFXjjGfk");
@@ -461,7 +290,7 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task GetClosedCaptionTrackAsync_Test()
+        public async Task YoutubeClient_GetClosedCaptionTrackAsync_Normal_Test()
         {
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync("_QdPW8JrYzQ");
