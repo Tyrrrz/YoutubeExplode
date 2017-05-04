@@ -35,18 +35,6 @@ namespace YoutubeExplode.Internal
             return !string.IsNullOrWhiteSpace(str);
         }
 
-        public static bool EqualsInvariant(this string str, string other)
-        {
-            str = str?.Trim();
-            other = other?.Trim();
-            return string.Equals(str, other, StringComparison.OrdinalIgnoreCase);
-        }
-
-        public static bool ContainsInvariant(this string str, string other)
-        {
-            return str.IndexOf(other, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
         public static string SubstringUntil(this string str, string sub, StringComparison comparison = StringComparison.Ordinal)
         {
             int index = str.IndexOf(sub, comparison);

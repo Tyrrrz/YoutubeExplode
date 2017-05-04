@@ -276,7 +276,7 @@ namespace YoutubeExplode
                     url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
 
                     // Check if audio
-                    bool isAudio = streamDic.Get("type").ContainsInvariant("audio/");
+                    bool isAudio = streamDic.Get("type").Contains("audio/");
 
                     // If audio stream
                     if (isAudio)
@@ -324,7 +324,7 @@ namespace YoutubeExplode
                 streamsXml = streamsXml
                     .Where(x => !(x.Descendant("Initialization")
                                       ?.Attribute("sourceURL")
-                                      ?.Value.ContainsInvariant("sq/") ?? false));
+                                      ?.Value.Contains("sq/") ?? false));
 
                 // Parse streams
                 foreach (var streamXml in streamsXml)
@@ -338,7 +338,7 @@ namespace YoutubeExplode
                     long contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
 
                     // Set rate bypass
-                    url = url.ContainsInvariant("&")
+                    url = url.Contains("&")
                         ? UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes")
                         : UrlHelper.SetUrlPathParameter(url, "ratebypass", "yes");
 
@@ -382,11 +382,11 @@ namespace YoutubeExplode
 
                     // Parse data
                     string url = captionDic.Get("u");
-                    bool isAuto = captionDic.Get("v").ContainsInvariant("a.");
+                    bool isAuto = captionDic.Get("v").Contains("a.");
                     string lang = captionDic.Get("lc");
 
                     // Fix for Hebrew
-                    if (lang.EqualsInvariant("iw")) lang = "he";
+                    if (lang == "iw") lang = "he";
 
                     var culture = new CultureInfo(lang);
                     var caption = new ClosedCaptionTrackInfo(url, culture, isAuto);

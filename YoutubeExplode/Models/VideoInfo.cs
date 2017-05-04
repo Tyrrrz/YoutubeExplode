@@ -89,9 +89,9 @@ namespace YoutubeExplode.Models
         public long DislikeCount { get; }
 
         /// <summary>
-        /// Average user rating in stars (0* to 5*)
+        /// Average user rating in stars (1* to 5*)
         /// </summary>
-        public double AverageRating => 5.0*LikeCount/(LikeCount + DislikeCount);
+        public double AverageRating => 1 + 4.0 * LikeCount / (LikeCount + DislikeCount);
 
         /// <summary>
         /// Whether this video is publicly listed
