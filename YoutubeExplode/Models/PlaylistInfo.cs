@@ -65,6 +65,9 @@ namespace YoutubeExplode.Models
         /// </summary>
         protected static PlaylistType GetPlaylistType(string id)
         {
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
             if (id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.UserMade;
 

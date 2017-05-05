@@ -409,7 +409,7 @@ namespace YoutubeExplode
             string authorName = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("username");
             string authorDisplayName = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("public_name");
             string authorChannelTitle = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_title");
-            bool authorIsPaid = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_title") == "1";
+            bool authorIsPaid = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_paid") == "1";
             string authorLogoUrl = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_logo_url");
             string authorBannerUrl = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_banner_url");
             var author = new UserInfo(
