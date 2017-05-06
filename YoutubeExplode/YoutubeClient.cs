@@ -538,7 +538,7 @@ namespace YoutubeExplode
             // Get
             var stream = await _httpService.GetStreamAsync(mediaStreamInfo.Url).ConfigureAwait(false);
 
-            return new MediaStream(stream, mediaStreamInfo);
+            return new MediaStream(mediaStreamInfo, stream);
         }
 
         /// <summary>

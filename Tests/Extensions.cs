@@ -94,7 +94,7 @@ namespace YoutubeExplode.Tests
             Assert.IsNotNull(mediaStream);
             Assert.IsNotNull(mediaStream.Info);
             Assert.IsTrue(mediaStream.CanRead);
-            Assert.AreNotEqual(0, mediaStream.Length);
+            Assert.AreEqual(mediaStream.Info.ContentLength, mediaStream.Length);
         }
 
         public static void IsSet(this Assert assert, ClosedCaptionTrack closedCaption)

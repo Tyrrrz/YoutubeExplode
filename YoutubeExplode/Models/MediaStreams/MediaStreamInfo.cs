@@ -32,10 +32,10 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <inheritdoc />
         protected MediaStreamInfo(int itag, string url, long contentLength)
         {
-            Itag = itag > 0 ? itag : throw new ArgumentOutOfRangeException(nameof(itag));
+            Itag = itag;
             Url = url ?? throw new ArgumentNullException(nameof(url));
             Container = GetContainer(itag);
-            ContentLength = contentLength > 0 ? contentLength : throw new ArgumentOutOfRangeException(nameof(contentLength));
+            ContentLength = contentLength >= 0 ? contentLength : throw new ArgumentOutOfRangeException(nameof(contentLength));
         }
     }
 

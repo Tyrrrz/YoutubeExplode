@@ -35,10 +35,10 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <inheritdoc />
-        public MediaStream(Stream innerStream, MediaStreamInfo mediaStreamInfo)
+        public MediaStream(MediaStreamInfo mediaStreamInfo, Stream innerStream)
         {
-            _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
             Info = mediaStreamInfo ?? throw new ArgumentNullException(nameof(mediaStreamInfo));
+            _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
         }
 
         /// <inheritdoc />

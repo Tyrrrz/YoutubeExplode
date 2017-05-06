@@ -104,7 +104,7 @@ namespace YoutubeExplode
             // Get and create streams
             var closedCaptionTrack = await GetClosedCaptionTrackAsync(closedCaptionTrackInfo).ConfigureAwait(false);
             var output = File.Create(filePath, bufferSize);
-            var sw = new StreamWriter(output, Encoding.UTF8, bufferSize);
+            var sw = new StreamWriter(output, Encoding.Unicode, bufferSize);
 
             // Save to file as SRT
             using (output)

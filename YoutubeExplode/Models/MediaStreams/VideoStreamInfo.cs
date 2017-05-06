@@ -41,11 +41,11 @@ namespace YoutubeExplode.Models.MediaStreams
         public VideoStreamInfo(int itag, string url, long contentLength, long bitrate, VideoResolution videoResolution, double videoFramerate) 
             : base(itag, url, contentLength)
         {
-            Bitrate = bitrate > 0 ? bitrate : throw new ArgumentOutOfRangeException(nameof(bitrate));
+            Bitrate = bitrate >= 0 ? bitrate : throw new ArgumentOutOfRangeException(nameof(bitrate));
             VideoEncoding = GetVideoEncoding(itag);
             VideoQuality = GetVideoQuality(itag);
             VideoResolution = videoResolution;
-            VideoFramerate = videoFramerate > 0 ? videoFramerate : throw new ArgumentOutOfRangeException(nameof(videoFramerate));
+            VideoFramerate = videoFramerate >= 0 ? videoFramerate : throw new ArgumentOutOfRangeException(nameof(videoFramerate));
             VideoQualityLabel = GetVideoQualityLabel(VideoQuality, videoFramerate);
         }
     }
