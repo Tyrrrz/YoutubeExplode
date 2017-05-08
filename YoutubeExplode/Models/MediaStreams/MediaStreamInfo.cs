@@ -50,7 +50,7 @@ namespace YoutubeExplode.Models.MediaStreams
                 214, 215, 216, 217))
                 return Container.Mp4;
 
-            if (itag.IsEither(140, 141))
+            if (itag.IsEither(139, 140, 141))
                 return Container.M4A;
 
             if (itag.IsEither(43, 100, 278, 242, 243, 244, 247, 248, 271, 313, 272, 302, 303, 308, 315, 330, 331, 332,
@@ -74,7 +74,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         protected static AudioEncoding GetAudioEncoding(int itag)
         {
-            if (itag.IsEither(17, 36, 18, 22, 140, 91, 92, 93, 94, 95, 96))
+            if (itag.IsEither(17, 36, 18, 22, 139, 140, 141, 91, 92, 93, 94, 95, 96))
                 return AudioEncoding.Aac;
 
             if (itag.IsEither(43, 171))
