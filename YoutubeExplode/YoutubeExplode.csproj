@@ -7,7 +7,7 @@
     <PackageId>YoutubeExplode</PackageId>
     <Product>Youtube Explode</Product>
     <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
-    <AssemblyVersion>3.0</AssemblyVersion>
+    <AssemblyVersion>3.0.1</AssemblyVersion>
     <PackageVersion>$(AssemblyVersion)</PackageVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Company>Tyrrrz</Company>
