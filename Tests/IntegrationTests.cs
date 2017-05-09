@@ -33,7 +33,7 @@ namespace YoutubeExplode.Tests
         public async Task YoutubeClient_GetVideoInfoAsync_NonExisting_Test()
         {
             var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<FrontendException>(() => client.GetVideoInfoAsync("qld9w0b-1ao"));
+            await Assert.ThrowsExceptionAsync<VideoNotAvailableException>(() => client.GetVideoInfoAsync("qld9w0b-1ao"));
         }
 
         [TestMethod]

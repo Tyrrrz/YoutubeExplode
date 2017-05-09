@@ -1,5 +1,5 @@
 ﻿using System;
-using YoutubeExplode.Exceptions;
+using System.Collections.Generic;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
@@ -41,32 +41,93 @@ namespace YoutubeExplode.Models.MediaStreams
 
     public abstract partial class MediaStreamInfo
     {
+        private static readonly Dictionary<int, ItagDescriptor> ItagMap = new Dictionary<int, ItagDescriptor>
+        {
+            // Mixed
+            {5, new ItagDescriptor(Container.Flv, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Low144)},
+            {6, new ItagDescriptor(Container.Flv, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Low240)},
+            {34, new ItagDescriptor(Container.Flv, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Medium360)},
+            {35, new ItagDescriptor(Container.Flv, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Medium480)},
+
+            {13, new ItagDescriptor(Container.Tgpp, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Low144)},
+            {17, new ItagDescriptor(Container.Tgpp, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Low144)},
+            {36, new ItagDescriptor(Container.Tgpp, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Low240)},
+
+            {18, new ItagDescriptor(Container.Mp4, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.Medium360)},
+            {22, new ItagDescriptor(Container.Mp4, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.High720)},
+            {43, new ItagDescriptor(Container.WebM, AudioEncoding.Vorbis, VideoEncoding.Vp8, VideoQuality.Medium360)},
+
+            // Video-only
+            {160, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.Low144)},
+            {133, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.Low240)},
+            {134, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.Medium360)},
+            {135, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.Medium480)},
+            {212, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.Medium480)},
+            {213, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.Medium480)},
+            {136, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High720)},
+            {298, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High720)},
+            {214, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High720)},
+            {215, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High720)},
+            {137, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High1080)},
+            {299, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High1080)},
+            {216, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High1080)},
+            {217, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High1080)},
+            {264, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High1440)},
+            {266, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High2160)},
+            {138, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High4320)},
+
+            {278, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Low144)},
+            {330, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Low144)},
+            {242, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Low240)},
+            {331, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Low240)},
+            {243, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Medium360)},
+            {244, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Medium480)},
+            {247, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High720)},
+            {302, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High720)},
+            {248, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High1080)},
+            {303, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High1080)},
+            {271, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High1440)},
+            {308, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High1440)},
+            {313, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High2160)},
+            {272, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High2160)},
+            {315, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High2160)},
+            
+            {332, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Medium360)},
+            {333, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.Medium480)},
+            {334, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High720)},
+            {335, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High1080)},
+            {336, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High1440)},
+            {337, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp9, VideoQuality.High2160)},
+
+            // Audio-only
+            {139, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
+            {140, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
+            {141, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
+            {171, new ItagDescriptor(Container.WebM, AudioEncoding.Vorbis, null, null)},
+            {249, new ItagDescriptor(Container.WebM, AudioEncoding.Opus, null, null)},
+            {250, new ItagDescriptor(Container.WebM, AudioEncoding.Opus, null, null)},
+            {251, new ItagDescriptor(Container.WebM, AudioEncoding.Opus, null, null)},
+
+            // Live stream
+            {91, new ItagDescriptor(Container.Ts, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.Low144)},
+            {92, new ItagDescriptor(Container.Ts, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.Low240)},
+            {93, new ItagDescriptor(Container.Ts, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.Medium360)},
+            {94, new ItagDescriptor(Container.Ts, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.Medium480)},
+            {95, new ItagDescriptor(Container.Ts, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.High720)},
+            {96, new ItagDescriptor(Container.Ts, AudioEncoding.Aac, VideoEncoding.H264, VideoQuality.High1080)}
+        };
+
         /// <summary>
         /// Get container type for the given itag
         /// </summary>
         protected static Container GetContainer(int itag)
         {
-            if (itag.IsEither(18, 22, 82, 83, 84, 85, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 212, 213,
-                214, 215, 216, 217))
-                return Container.Mp4;
+            var result = ItagMap.GetOrDefault(itag)?.Container;
 
-            if (itag.IsEither(139, 140, 141))
-                return Container.M4A;
+            if (!result.HasValue)
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
 
-            if (itag.IsEither(43, 100, 278, 242, 243, 244, 247, 248, 271, 313, 272, 302, 303, 308, 315, 330, 331, 332,
-                333, 334, 335, 336, 337, 171, 249, 250, 251))
-                return Container.WebM;
-
-            if (itag.IsEither(13, 17, 36))
-                return Container.Tgpp;
-
-            if (itag.IsEither(5, 6, 34, 35))
-                return Container.Flv;
-
-            if (itag.IsEither(91, 92, 93, 94, 95, 96, 127, 128))
-                return Container.Ts;
-
-            throw new UnexpectedIdentifierException($"Unexpected itag [{itag}]");
+            return result.Value;
         }
 
         /// <summary>
@@ -74,16 +135,12 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         protected static AudioEncoding GetAudioEncoding(int itag)
         {
-            if (itag.IsEither(17, 36, 18, 22, 139, 140, 141, 91, 92, 93, 94, 95, 96))
-                return AudioEncoding.Aac;
+            var result = ItagMap.GetOrDefault(itag)?.AudioEncoding;
 
-            if (itag.IsEither(43, 171))
-                return AudioEncoding.Vorbis;
+            if (!result.HasValue)
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
 
-            if (itag.IsEither(249, 250, 251))
-                return AudioEncoding.Opus;
-
-            throw new UnexpectedIdentifierException($"Unexpected itag [{itag}]");
+            return result.Value;
         }
 
         /// <summary>
@@ -91,21 +148,12 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         protected static VideoEncoding GetVideoEncoding(int itag)
         {
-            if (itag.IsEither(17, 36))
-                return VideoEncoding.Mp4V;
+            var result = ItagMap.GetOrDefault(itag)?.VideoEncoding;
 
-            if (itag.IsEither(18, 22, 160, 133, 134, 135, 136, 298, 137, 299, 264, 266, 138, 91, 92, 93, 94, 95, 96, 212, 213,
-                214, 215, 216, 217))
-                return VideoEncoding.H264;
+            if (!result.HasValue)
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
 
-            if (itag.IsEither(43))
-                return VideoEncoding.Vp8;
-
-            if (itag.IsEither(278, 242, 243, 244, 247, 248, 271, 313, 272, 302, 303, 308, 315, 330, 331, 332, 333, 334,
-                335, 336, 337, 171, 249, 250, 251))
-                return VideoEncoding.Vp9;
-
-            throw new UnexpectedIdentifierException($"Unexpected itag [{itag}]");
+            return result.Value;
         }
 
         /// <summary>
@@ -113,34 +161,12 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         protected static VideoQuality GetVideoQuality(int itag)
         {
-            if (itag.IsEither(17, 91, 160, 219, 278, 330))
-                return VideoQuality.Low144;
+            var result = ItagMap.GetOrDefault(itag)?.VideoQuality;
 
-            if (itag.IsEither(5, 36, 83, 92, 132, 133, 242, 331))
-                return VideoQuality.Low240;
+            if (!result.HasValue)
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
 
-            if (itag.IsEither(18, 34, 43, 82, 93, 100, 134, 167, 243, 332))
-                return VideoQuality.Medium360;
-
-            if (itag.IsEither(35, 44, 83, 101, 94, 135, 168, 218, 244, 245, 246, 212, 213))
-                return VideoQuality.Medium480;
-
-            if (itag.IsEither(22, 45, 84, 102, 95, 136, 169, 244, 247, 298, 302, 334, 214, 215))
-                return VideoQuality.High720;
-
-            if (itag.IsEither(37, 46, 85, 96, 137, 299, 170, 248, 303, 335, 216, 217))
-                return VideoQuality.High1080;
-
-            if (itag.IsEither(264, 271, 308, 336))
-                return VideoQuality.High1440;
-
-            if (itag.IsEither(138, 266, 272, 313, 315, 337))
-                return VideoQuality.High2160;
-
-            if (itag.IsEither(38))
-                return VideoQuality.High3072;
-
-            throw new UnexpectedIdentifierException($"Unexpected itag [{itag}]");
+            return result.Value;
         }
 
         /// <summary>
@@ -177,13 +203,24 @@ namespace YoutubeExplode.Models.MediaStreams
             else if (videoQuality == VideoQuality.High3072)
                 qualityPart = "3072p";
 
+            else if (videoQuality == VideoQuality.High4320)
+                qualityPart = "4320p";
+
             else
-                throw new UnexpectedIdentifierException($"Unexpected video quality [{videoQuality}]");
+                throw new ArgumentOutOfRangeException(nameof(videoQuality), $"Unexpected video quality [{videoQuality}]");
 
             // Framerate
             var frameratePart = framerate > 30 ? "60" : string.Empty;
 
             return qualityPart + frameratePart;
+        }
+
+        /// <summary>
+        /// Check if the given itag is known
+        /// </summary>
+        public static bool IsKnown(int itag)
+        {
+            return ItagMap.ContainsKey(itag);
         }
     }
 }

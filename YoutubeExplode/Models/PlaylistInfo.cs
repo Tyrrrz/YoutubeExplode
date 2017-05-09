@@ -86,7 +86,7 @@ namespace YoutubeExplode.Models
             if (id.StartsWith("WL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.WatchLater;
 
-            throw new UnexpectedIdentifierException($"Unexpected playlist ID [{id}]");
+            throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}]");
         }
     }
 }

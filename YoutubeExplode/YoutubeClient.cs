@@ -200,7 +200,7 @@ namespace YoutubeExplode
             {
                 int errorCode = videoInfoDic.Get("errorcode").ParseInt();
                 string errorReason = videoInfoDic.GetOrDefault("reason") ?? "<no reason>";
-                throw new FrontendException(errorCode, errorReason);
+                throw new VideoNotAvailableException(errorCode, errorReason);
             }
 
             // Parse metadata
@@ -223,12 +223,17 @@ namespace YoutubeExplode
                 {
                     var streamDic = UrlHelper.DictionaryFromUrlEncoded(streamEncoded);
 
-                    // Parse data
                     int itag = streamDic.Get("itag").ParseInt();
+
+#if RELEASE
+                    // Skip unknown itags on RELEASE
+                    if (!MediaStreamInfo.IsKnown(itag)) continue;
+#endif
+
                     string url = streamDic.Get("url");
                     string sig = streamDic.GetOrDefault("s");
 
-                    // Decipher signature
+                    // Decipher signature if needed
                     if (sig.IsNotBlank())
                     {
                         var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
@@ -257,14 +262,19 @@ namespace YoutubeExplode
                 {
                     var streamDic = UrlHelper.DictionaryFromUrlEncoded(streamEncoded);
 
-                    // Parse data
                     int itag = streamDic.Get("itag").ParseInt();
+
+#if RELEASE
+                    // Skip unknown itags on RELEASE
+                    if (!MediaStreamInfo.IsKnown(itag)) continue;
+#endif
+
                     string url = streamDic.Get("url");
                     string sig = streamDic.GetOrDefault("s");
                     long contentLength = streamDic.Get("clen").ParseLong();
                     long bitrate = streamDic.Get("bitrate").ParseLong();
 
-                    // Decipher signature
+                    // Decipher signature if needed
                     if (sig.IsNotBlank())
                     {
                         var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
@@ -307,7 +317,7 @@ namespace YoutubeExplode
                 // Parse signature
                 string sig = Regex.Match(dashManifestUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
 
-                // Decipher signature
+                // Decipher signature if needed
                 if (sig.IsNotBlank())
                 {
                     var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
@@ -329,12 +339,17 @@ namespace YoutubeExplode
                 // Parse streams
                 foreach (var streamXml in streamsXml)
                 {
-                    // Parse data
                     int itag = (int) streamXml.AttributeStrict("id");
+
+#if RELEASE
+                    // Skip unknown itags on RELEASE
+                    if (!MediaStreamInfo.IsKnown(itag)) continue;
+#endif
+
                     string url = (string) streamXml.ElementStrict("BaseURL");
                     long bitrate = (long) streamXml.AttributeStrict("bandwidth");
 
-                    // Extract content length
+                    // Parse content length
                     long contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
 
                     // Set rate bypass

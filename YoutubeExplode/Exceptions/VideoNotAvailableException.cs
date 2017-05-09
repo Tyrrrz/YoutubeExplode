@@ -3,9 +3,9 @@
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when Youtube's frontend returns an error
+    /// Thrown when Youtube's frontend returns an error when getting video info
     /// </summary>
-    public class FrontendException : Exception
+    public class VideoNotAvailableException : Exception
     {
         /// <summary>
         /// Error code
@@ -13,7 +13,7 @@ namespace YoutubeExplode.Exceptions
         public int Code { get; }
 
         /// <inheritdoc />
-        public FrontendException(int code, string message)
+        public VideoNotAvailableException(int code, string message)
             : base(message)
         {
             Code = code;

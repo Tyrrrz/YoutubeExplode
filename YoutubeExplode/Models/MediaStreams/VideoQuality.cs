@@ -48,6 +48,11 @@
         /// <summary>
         /// 3072p HD video stream
         /// </summary>
-        High3072
+        High3072,
+
+        /// <summary>
+        /// 4320p HD video stream
+        /// </summary>
+        High4320
     }
 }
