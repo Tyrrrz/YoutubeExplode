@@ -13,6 +13,11 @@
         /// <summary>
         /// MPEG-4 Part 10, Advanced Video Coding
         /// </summary>
+        H263,
+
+        /// <summary>
+        /// MPEG-4 Part 10, Advanced Video Coding
+        /// </summary>
         H264,
 
         /// <summary>

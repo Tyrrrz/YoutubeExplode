@@ -6,6 +6,11 @@
     public enum AudioEncoding
     {
         /// <summary>
+        /// MPEG-2 Audio Layer III
+        /// </summary>
+        Mp3,
+
+        /// <summary>
         /// Advanced Audio Coding
         /// </summary>
         Aac,

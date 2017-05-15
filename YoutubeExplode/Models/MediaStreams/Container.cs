@@ -28,11 +28,6 @@
         /// <summary>
         /// Flash Video (.flv)
         /// </summary>
-        Flv,
-
-        /// <summary>
-        /// Transport Stream (.ts)
-        /// </summary>
-        Ts
+        Flv
     }
 }
