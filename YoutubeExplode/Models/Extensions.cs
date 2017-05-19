@@ -25,8 +25,6 @@ namespace YoutubeExplode.Models
                     return "3gpp";
                 case Container.Flv:
                     return "flv";
-                case Container.Ts:
-                    return "ts";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(container), "Unknown container type");
             }
