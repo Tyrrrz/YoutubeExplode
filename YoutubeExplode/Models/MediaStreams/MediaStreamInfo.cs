@@ -237,7 +237,7 @@ namespace YoutubeExplode.Models.MediaStreams
                 throw new ArgumentOutOfRangeException(nameof(videoQuality), $"Unexpected video quality [{videoQuality}]");
 
             // Framerate
-            var frameratePart = framerate > 30 ? "60" : string.Empty;
+            string frameratePart = framerate > 30 ? framerate.ToString("N0") : string.Empty;
 
             return qualityPart + frameratePart;
         }
