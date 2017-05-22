@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Models
 {
@@ -45,7 +44,8 @@ namespace YoutubeExplode.Models
         /// </summary>
         public IReadOnlyList<string> VideoIds { get; }
 
-        internal PlaylistInfo(string id, string title, string author, string description, long viewCount,
+        /// <inheritdoc />
+        public PlaylistInfo(string id, string title, string author, string description, long viewCount,
             IEnumerable<string> videoIds)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
