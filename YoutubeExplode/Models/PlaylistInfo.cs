@@ -77,6 +77,12 @@ namespace YoutubeExplode.Models
             if (id.StartsWith("UL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.ChannelMix;
 
+            if (id.StartsWith("UU", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.ChannelUploads;
+
+            if (id.StartsWith("PU", StringComparison.OrdinalIgnoreCase))
+                return PlaylistType.ChannelPopular;
+
             if (id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.Liked;
 

@@ -16,9 +16,19 @@
         VideoMix,
 
         /// <summary>
-        /// Mix playlist generated based on channel's uploads
+        /// Mix playlist generated to group similar videos uploaded by the same channel
         /// </summary>
         ChannelMix,
+
+        /// <summary>
+        /// Playlist generated from channel uploads
+        /// </summary>
+        ChannelUploads,
+
+        /// <summary>
+        /// Playlist generated from popular channel uploads
+        /// </summary>
+        ChannelPopular,
 
         /// <summary>
         /// System playlist for videos liked by a user
