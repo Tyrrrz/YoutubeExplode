@@ -22,7 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\InvalidChannelIds.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\InvalidPlaylistIds.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\InvalidChannelUrls.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\InvalidVideoIds.txt">
@@ -31,7 +37,13 @@
     <None Update="Data\InvalidPlaylistUrls.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Data\ValidChannelIds.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\ValidPlaylistIds.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\ValidChannelUrls.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\ValidVideoIds.txt">

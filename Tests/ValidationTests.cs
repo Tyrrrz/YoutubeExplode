@@ -175,5 +175,89 @@ namespace YoutubeExplode.Tests
                 Assert.ThrowsException<FormatException>(() => YoutubeClient.ParsePlaylistId(url));
             }
         }
+
+        [TestMethod]
+        public void YoutubeClient_ValidateChannelId_Valid_Test()
+        {
+            var data = File.ReadAllLines("Data\\ValidChannelIds.txt");
+
+            foreach (string datastr in data)
+            {
+                string id = datastr;
+
+                Assert.IsTrue(YoutubeClient.ValidateChannelId(id));
+            }
+        }
+
+        [TestMethod]
+        public void YoutubeClient_ValidateChannelId_Invalid_Test()
+        {
+            var data = File.ReadAllLines("Data\\InvalidChannelIds.txt");
+
+            foreach (string datastr in data)
+            {
+                string id = datastr;
+
+                Assert.IsFalse(YoutubeClient.ValidateChannelId(id));
+            }
+        }
+
+        [TestMethod]
+        public void YoutubeClient_TryParseChannelId_Valid_Test()
+        {
+            var data = File.ReadAllLines("Data\\ValidChannelUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr.SubstringUntil(";");
+                string id = datastr.SubstringAfter(";");
+
+                bool success = YoutubeClient.TryParseChannelId(url, out string actualId);
+                Assert.IsTrue(success);
+                Assert.AreEqual(id, actualId);
+            }
+        }
+
+        [TestMethod]
+        public void YoutubeClient_TryParseChannelId_Invalid_Test()
+        {
+            var data = File.ReadAllLines("Data\\InvalidChannelUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr;
+
+                bool success = YoutubeClient.TryParseChannelId(url, out _);
+                Assert.IsFalse(success);
+            }
+        }
+
+        [TestMethod]
+        public void YoutubeClient_ParseChannelId_Valid_Test()
+        {
+            var data = File.ReadAllLines("Data\\ValidChannelUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr.SubstringUntil(";");
+                string id = datastr.SubstringAfter(";");
+
+                string actualId = YoutubeClient.ParseChannelId(url);
+                Assert.AreEqual(id, actualId);
+            }
+        }
+
+        [TestMethod]
+        public void YoutubeClient_ParseChannelId_Invalid_Test()
+        {
+            var data = File.ReadAllLines("Data\\InvalidChannelUrls.txt");
+
+            foreach (string datastr in data)
+            {
+                string url = datastr;
+
+                Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseChannelId(url));
+            }
+        }
     }
 }
