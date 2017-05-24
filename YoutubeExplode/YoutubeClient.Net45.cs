@@ -31,37 +31,25 @@ namespace YoutubeExplode
             var input = await GetMediaStreamAsync(mediaStreamInfo).ConfigureAwait(false);
             var output = File.Create(filePath, bufferSize);
 
-            // Get and save to file with progress reporting
-            if (progress != null)
+            // Save to file
+            using (input)
+            using (output)
             {
-                using (input)
-                using (output)
+                var buffer = new byte[bufferSize];
+                int bytesRead;
+                long totalBytesRead = 0;
+                do
                 {
-                    var buffer = new byte[bufferSize];
-                    int bytesRead;
-                    long totalBytesRead = 0;
-                    do
-                    {
-                        // Read
-                        totalBytesRead += bytesRead =
-                            await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+                    // Read
+                    totalBytesRead += bytesRead =
+                        await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
 
-                        // Write
-                        await output.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                    // Write
+                    await output.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
 
-                        // Report progress
-                        progress.Report(1.0 * totalBytesRead / input.Length);
-                    } while (bytesRead > 0);
-                }
-            }
-            // Get and save to file without progress reporting
-            else
-            {
-                using (input)
-                using (output)
-                {
-                    await input.CopyToAsync(output, bufferSize, cancellationToken).ConfigureAwait(false);
-                }
+                    // Report progress
+                    progress?.Report(1.0 * totalBytesRead / input.Length);
+                } while (bytesRead > 0);
             }
         }
 

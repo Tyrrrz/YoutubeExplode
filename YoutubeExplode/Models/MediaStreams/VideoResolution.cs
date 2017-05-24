@@ -52,9 +52,7 @@ namespace YoutubeExplode.Models.MediaStreams
 
         /// <inheritdoc />
         public override string ToString()
-        {
-            return $"{Width}x{Height}";
-        }
+            => $"{Width}x{Height}";
     }
 
     public partial struct VideoResolution

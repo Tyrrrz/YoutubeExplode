@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -325,6 +326,42 @@ namespace YoutubeExplode.Tests
             var track = await client.GetClosedCaptionTrackAsync(trackInfo);
 
             Assert.That.IsSet(track);
+        }
+
+        [TestMethod]
+        public async Task YoutubeClient_DownloadMediaStreamAsync_Normal_Test()
+        {
+            var client = new YoutubeClient();
+            var videoInfo = await client.GetVideoInfoAsync("_QdPW8JrYzQ");
+
+            var streamInfo = videoInfo.AudioStreams.OrderBy(s => s.ContentLength).First();
+
+            string outputFilePath = "DownloadMediaStreamAsync_Normal_Test_Output.bin";
+
+            await client.DownloadMediaStreamAsync(streamInfo, outputFilePath);
+
+            var fi = new FileInfo(outputFilePath);
+            Assert.IsTrue(fi.Exists);
+            Assert.AreNotEqual(0, fi.Length);
+            fi.Delete();
+        }
+
+        [TestMethod]
+        public async Task YoutubeClient_DownloadClosedCaptionTrackAsync_Normal_Test()
+        {
+            var client = new YoutubeClient();
+            var videoInfo = await client.GetVideoInfoAsync("_QdPW8JrYzQ");
+
+            var streamInfo = videoInfo.ClosedCaptionTracks.First();
+
+            string outputFilePath = "DownloadClosedCaptionTrackAsync_Normal_Test_Output.bin";
+
+            await client.DownloadClosedCaptionTrackAsync(streamInfo, outputFilePath);
+
+            var fi = new FileInfo(outputFilePath);
+            Assert.IsTrue(fi.Exists);
+            Assert.AreNotEqual(0, fi.Length);
+            fi.Delete();
         }
     }
 }

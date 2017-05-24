@@ -29,6 +29,22 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
+        public void VideoResolution_Equality_Test()
+        {
+            var vr1 = new VideoResolution(800, 600);
+            var vr2 = new VideoResolution(800, 600);
+            var vr3 = new VideoResolution(640, 480);
+
+            Assert.IsTrue(vr1 == vr2);
+            Assert.IsFalse(vr2 == vr3);
+            Assert.IsTrue(vr2 != vr3);
+            Assert.AreEqual(vr1, vr2);
+            Assert.AreNotEqual(vr2, vr3);
+            Assert.AreEqual(vr1.GetHashCode(), vr2.GetHashCode());
+            Assert.AreNotEqual(vr2.GetHashCode(), vr3.GetHashCode());
+        }
+
+        [TestMethod]
         public void Extensions_GetFileExtension_Test()
         {
             var possibleValues = Enum.GetValues(typeof(Container)).Cast<Container>();
