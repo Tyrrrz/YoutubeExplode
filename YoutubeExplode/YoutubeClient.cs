@@ -500,26 +500,29 @@ namespace YoutubeExplode
             => await GetPlaylistInfoAsync(playlistId, int.MaxValue).ConfigureAwait(false);
 
         /// <summary>
-        /// Gets videos uploaded by a user as a list of video IDs
+        /// Gets videos uploaded by a channel as a list of video IDs, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
         /// </summary>
-        /// <remarks>Caps out at 100 videos returned due to a limitation in frontend API</remarks>
-        public async Task<IEnumerable<string>> GetUserUploadsAsync(string username)
+        public async Task<IEnumerable<string>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
-            if (username == null)
-                throw new ArgumentNullException(nameof(username));
+            if (channelId == null)
+                throw new ArgumentNullException(nameof(channelId));
+            if (!ValidateChannelId(channelId))
+                throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
 
-            // Get
-            string encodedUsername = username.UrlEncode();
-            string request =
-                $"https://www.youtube.com/list_ajax?style=xml&action_get_user_uploads_by_user=1&username={encodedUsername}";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-            var userUploadsXml = XElement.Parse(response).StripNamespaces();
+            // Compose a playlist ID
+            string playlistId = "UU" + channelId.SubstringAfter("UC");
 
-            // Parse
-            var videoIds = userUploadsXml.Descendants("encrypted_id").Select(e => (string) e);
+            // Get playlist info
+            var playlistInfo = await GetPlaylistInfoAsync(playlistId, maxPages).ConfigureAwait(false);
 
-            return videoIds;
+            return playlistInfo.VideoIds;
         }
+
+        /// <summary>
+        /// Gets videos uploaded by a channel as a list of video IDs, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
+        /// </summary>
+        public async Task<IEnumerable<string>> GetChannelUploadsAsync(string channelId)
+            => await GetChannelUploadsAsync(channelId, int.MaxValue).ConfigureAwait(false);
 
         /// <summary>
         /// Searches for videos using the given search query and returns results as a list of video IDs
@@ -601,7 +604,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Tries to parse video ID from a youtube video URL
+        /// Tries to parse video ID from a Youtube video URL
         /// </summary>
         public static bool TryParseVideoId(string videoUrl, out string videoId)
         {
@@ -731,6 +734,60 @@ namespace YoutubeExplode
                 return result;
 
             throw new FormatException($"Could not parse playlist ID from given string [{playlistUrl}]");
+        }
+
+        /// <summary>
+        /// Verifies that the given string is syntactically a valid Youtube channel ID
+        /// </summary>
+        public static bool ValidateChannelId(string channelId)
+        {
+            if (channelId.IsBlank())
+                return false;
+
+            if (channelId.Length != 24)
+                return false;
+
+            if (!channelId.StartsWith("UC", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            return !Regex.IsMatch(channelId, @"[^0-9a-zA-Z_\-]");
+        }
+
+        /// <summary>
+        /// Tries to parse channel ID from a Youtube channel URL
+        /// </summary>
+        public static bool TryParseChannelId(string channelUrl, out string channelId)
+        {
+            channelId = default(string);
+
+            if (channelUrl.IsBlank())
+                return false;
+
+            // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
+            string regularMatch =
+                Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:&|/|$)").Groups[1].Value;
+            if (regularMatch.IsNotBlank() && ValidateChannelId(regularMatch))
+            {
+                channelId = regularMatch;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Parses channel ID from a Youtube channel URL
+        /// </summary>
+        public static string ParseChannelId(string channelUrl)
+        {
+            if (channelUrl == null)
+                throw new ArgumentNullException(nameof(channelUrl));
+
+            bool success = TryParseChannelId(channelUrl, out string result);
+            if (success)
+                return result;
+
+            throw new FormatException($"Could not parse channel ID from given string [{channelUrl}]");
         }
     }
 }

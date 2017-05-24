@@ -204,10 +204,10 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
-        public async Task YoutubeClient_GetUserUploadsAsync_Test()
+        public async Task YoutubeClient_GetChannelUploadsAsync_Test()
         {
             var client = new YoutubeClient();
-            var videoIds = await client.GetUserUploadsAsync("TheTyrrr");
+            var videoIds = await client.GetChannelUploadsAsync("UC2pmfLm7iq6Ov1UwYrWYkZA");
 
             Assert.IsNotNull(videoIds);
             Assert.IsTrue(videoIds.Any());
