@@ -25,6 +25,16 @@ namespace YoutubeExplode.Tests
             Assert.That.IsNotBlank(userInfo.ChannelLogoUrl);
         }
 
+        public static void IsSet(this Assert assert, VideoInfoSnippet videoInfoSnippet)
+        {
+            Assert.IsNotNull(videoInfoSnippet);
+
+            Assert.That.IsNotBlank(videoInfoSnippet.Id);
+            Assert.That.IsNotBlank(videoInfoSnippet.Title);
+            Assert.IsNotNull(videoInfoSnippet.Description);
+            Assert.IsNotNull(videoInfoSnippet.Keywords);
+        }
+
         public static void IsSet(this Assert assert, VideoInfo videoInfo)
         {
             Assert.IsNotNull(videoInfo);
@@ -86,7 +96,10 @@ namespace YoutubeExplode.Tests
             Assert.That.IsNotBlank(playlistInfo.Title);
             Assert.IsNotNull(playlistInfo.Author);
             Assert.IsNotNull(playlistInfo.Description);
-            Assert.IsNotNull(playlistInfo.VideoIds);
+            Assert.IsNotNull(playlistInfo.Videos);
+
+            foreach (var video in playlistInfo.Videos)
+                Assert.That.IsSet(video);
         }
 
         public static void IsSet(this Assert assert, MediaStream mediaStream)

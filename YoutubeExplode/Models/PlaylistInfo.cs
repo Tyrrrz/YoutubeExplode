@@ -40,13 +40,13 @@ namespace YoutubeExplode.Models
         public long ViewCount { get; }
 
         /// <summary>
-        /// IDs of the videos in the playlist
+        /// Videos in the playlist
         /// </summary>
-        public IReadOnlyList<string> VideoIds { get; }
+        public IReadOnlyList<VideoInfoSnippet> Videos { get; }
 
         /// <inheritdoc />
         public PlaylistInfo(string id, string title, string author, string description, long viewCount,
-            IEnumerable<string> videoIds)
+            IEnumerable<VideoInfoSnippet> videos)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Type = GetPlaylistType(id);
@@ -54,7 +54,7 @@ namespace YoutubeExplode.Models
             Author = author ?? throw new ArgumentNullException(nameof(author));
             Description = description ?? throw new ArgumentNullException(nameof(description));
             ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
-            VideoIds = videoIds?.ToArray() ?? throw new ArgumentNullException(nameof(videoIds));
+            Videos = videos?.ToArray() ?? throw new ArgumentNullException(nameof(videos));
         }
     }
 

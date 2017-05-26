@@ -167,7 +167,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets video info by video ID
+        /// Gets video info by ID
         /// </summary>
         public async Task<VideoInfo> GetVideoInfoAsync(string videoId)
         {
@@ -395,7 +395,6 @@ namespace YoutubeExplode
                 {
                     var captionDic = UrlHelper.DictionaryFromUrlEncoded(captionEncoded);
 
-                    // Parse data
                     string url = captionDic.Get("u");
                     bool isAuto = captionDic.Get("v").Contains("a.");
                     string lang = captionDic.Get("lc");
@@ -440,7 +439,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets playlist info by playlist ID, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
+        /// Gets playlist info by ID, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId, int maxPages)
         {
@@ -462,47 +461,87 @@ namespace YoutubeExplode
             string description = (string) playlistInfoXml.ElementStrict("description");
             long viewCount = (long) playlistInfoXml.ElementStrict("views");
 
-            // Parse video IDs
-            var videoIds = playlistInfoXml.Descendants("encrypted_id").Select(e => (string) e).ToArray();
+            // Parse videos across multiple pages
+            var videos = new List<VideoInfoSnippet>();
+            var videoIds = new HashSet<string>();
 
-            // Continue with next pages
+            // Method to parse video info snippets from XML
+            VideoInfoSnippet Parse(XElement videoInfoSnippetXml)
+            {
+                // Basic info
+                string videoId = (string) videoInfoSnippetXml.ElementStrict("encrypted_id");
+                string videoTitle = (string) videoInfoSnippetXml.ElementStrict("title");
+                string videoDescription = (string) videoInfoSnippetXml.ElementStrict("description");
+                long videoViewCount = long.Parse((string) videoInfoSnippetXml.ElementStrict("views"),
+                    NumberStyles.AllowThousands);
+                long videoLikeCount = long.Parse((string) videoInfoSnippetXml.ElementStrict("likes"),
+                    NumberStyles.AllowThousands);
+                long videoDislikeCount = long.Parse((string) videoInfoSnippetXml.ElementStrict("dislikes"),
+                    NumberStyles.AllowThousands);
+
+                // Keywords
+                string videoKeywordsJoined = (string) videoInfoSnippetXml.ElementStrict("keywords");
+                var videoKeywords = Regex
+                    .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<quote>""?))([^""]|(""""))*?(?=\<quote>(?=\s|$))")
+                    .Cast<Match>()
+                    .Select(m => m.Value);
+
+                return new VideoInfoSnippet(videoId, videoTitle, videoDescription, videoKeywords,
+                    videoViewCount, videoLikeCount, videoDislikeCount);
+            }
+
+            // First page
+            foreach (var videoInfoSnippetXml in playlistInfoXml.Elements("video"))
+            {
+                var snippet = Parse(videoInfoSnippetXml);
+                videoIds.Add(snippet.Id);
+                videos.Add(snippet);
+            }
+
+            // Following pages
             int pagesDone = 1;
-            bool canContinue = videoIds.Length > 0;
-            int offset = videoIds.Length;
-            while (pagesDone < maxPages && canContinue)
+            bool hasMore = videoIds.Count > 0;
+            int offset = videoIds.Count;
+            while (pagesDone < maxPages && hasMore)
             {
                 // Get next page
                 string nextRequest = request + $"&index={offset}";
                 response = await _httpService.GetStringAsync(nextRequest).ConfigureAwait(false);
 
-                // Parse video IDs
+                // Parse
                 var nextPlaylistInfoXml = XElement.Parse(response).StripNamespaces();
-                var nextVideoIds = nextPlaylistInfoXml.Descendants("encrypted_id").Select(e => (string) e).ToArray();
-                int delta = videoIds.Length;
-                videoIds = videoIds.Union(nextVideoIds).ToArray();
-                delta = videoIds.Length - delta;
+                int total = 0;
+                int delta = 0;
+                foreach (var videoInfoSnippetXml in nextPlaylistInfoXml.Elements("video"))
+                {
+                    var snippet = Parse(videoInfoSnippetXml);
+                    if (videoIds.Add(snippet.Id))
+                    {
+                        videos.Add(snippet);
+                        delta++;
+                    }
+                    total++;
+                }
 
-                // Check if there's more pages
+                // Prepare for next page if necessary
                 pagesDone++;
-                canContinue = delta > 0;
-                offset += nextVideoIds.Length;
+                hasMore = delta > 0;
+                offset += total;
             }
 
-            return new PlaylistInfo(
-                playlistId, title, author, description, viewCount,
-                videoIds);
+            return new PlaylistInfo(playlistId, title, author, description, viewCount, videos);
         }
 
         /// <summary>
-        /// Gets playlist info by playlist ID
+        /// Gets playlist info by ID
         /// </summary>
         public async Task<PlaylistInfo> GetPlaylistInfoAsync(string playlistId)
             => await GetPlaylistInfoAsync(playlistId, int.MaxValue).ConfigureAwait(false);
 
         /// <summary>
-        /// Gets videos uploaded by a channel as a list of video IDs, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
+        /// Gets videos uploaded to a channel with given ID, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
         /// </summary>
-        public async Task<IEnumerable<string>> GetChannelUploadsAsync(string channelId, int maxPages)
+        public async Task<IEnumerable<VideoInfoSnippet>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
             if (channelId == null)
                 throw new ArgumentNullException(nameof(channelId));
@@ -515,35 +554,14 @@ namespace YoutubeExplode
             // Get playlist info
             var playlistInfo = await GetPlaylistInfoAsync(playlistId, maxPages).ConfigureAwait(false);
 
-            return playlistInfo.VideoIds;
+            return playlistInfo.Videos;
         }
 
         /// <summary>
-        /// Gets videos uploaded by a channel as a list of video IDs, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
+        /// Gets videos uploaded to a channel with given ID
         /// </summary>
-        public async Task<IEnumerable<string>> GetChannelUploadsAsync(string channelId)
+        public async Task<IEnumerable<VideoInfoSnippet>> GetChannelUploadsAsync(string channelId)
             => await GetChannelUploadsAsync(channelId, int.MaxValue).ConfigureAwait(false);
-
-        /// <summary>
-        /// Searches for videos using the given search query and returns results as a list of video IDs
-        /// </summary>
-        /// <remarks>Is not equivalent to actual Youtube search</remarks>
-        public async Task<IEnumerable<string>> SearchAsync(string searchQuery)
-        {
-            if (searchQuery == null)
-                throw new ArgumentNullException(nameof(searchQuery));
-
-            // Get
-            string encodedSearchQuery = searchQuery.UrlEncode();
-            string request = $"https://www.youtube.com/search_ajax?style=xml&search_query={encodedSearchQuery}";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-            var searchResultsXml = XElement.Parse(response).StripNamespaces();
-
-            // Parse
-            var videoIds = searchResultsXml.Descendants("encrypted_id").Select(e => (string) e);
-
-            return videoIds;
-        }
 
         /// <summary>
         /// Gets the actual media stream represented by given metadata

@@ -109,7 +109,7 @@ namespace YoutubeExplode.Tests
             Assert.That.IsSet(playlistInfo);
             Assert.AreEqual("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk", playlistInfo.Id);
             Assert.AreEqual(PlaylistType.UserMade, playlistInfo.Type);
-            Assert.IsTrue(1000 <= playlistInfo.VideoIds.Count);
+            Assert.IsTrue(1000 <= playlistInfo.Videos.Count);
         }
 
         [TestMethod]
@@ -123,7 +123,7 @@ namespace YoutubeExplode.Tests
             Assert.That.IsSet(playlistInfo);
             Assert.AreEqual("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk", playlistInfo.Id);
             Assert.AreEqual(PlaylistType.UserMade, playlistInfo.Type);
-            Assert.IsTrue(1000 >= playlistInfo.VideoIds.Count);
+            Assert.IsTrue(400 >= playlistInfo.Videos.Count);
         }
 
         [TestMethod]
@@ -209,16 +209,6 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
             var videoIds = await client.GetChannelUploadsAsync("UC2pmfLm7iq6Ov1UwYrWYkZA");
-
-            Assert.IsNotNull(videoIds);
-            Assert.IsTrue(videoIds.Any());
-        }
-
-        [TestMethod]
-        public async Task YoutubeClient_SearchAsync_Test()
-        {
-            var client = new YoutubeClient();
-            var videoIds = await client.SearchAsync("funny cat videos");
 
             Assert.IsNotNull(videoIds);
             Assert.IsTrue(videoIds.Any());
