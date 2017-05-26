@@ -48,16 +48,16 @@ namespace YoutubeExplode.Models
         public string BannerUrl { get; }
 
         /// <inheritdoc />
-        public ChannelInfo(string id, string name, string displayName, string channelTitle, bool isPaid,
-            string channelLogoUrl, string channelBannerUrl)
+        public ChannelInfo(string id, string name, string displayName, string title, bool isPaid,
+            string logoUrl, string bannerUrl)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name ?? throw new ArgumentNullException(nameof(name));
             DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-            Title = channelTitle ?? throw new ArgumentNullException(nameof(channelTitle));
+            Title = title ?? throw new ArgumentNullException(nameof(title));
             IsPaid = isPaid;
-            LogoUrl = channelLogoUrl ?? throw new ArgumentNullException(nameof(channelLogoUrl));
-            BannerUrl = channelBannerUrl ?? throw new ArgumentNullException(nameof(channelBannerUrl));
+            LogoUrl = logoUrl ?? throw new ArgumentNullException(nameof(logoUrl));
+            BannerUrl = bannerUrl ?? throw new ArgumentNullException(nameof(bannerUrl));
         }
     }
 }
