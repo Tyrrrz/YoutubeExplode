@@ -574,12 +574,13 @@ namespace YoutubeExplode
                 throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
 
             // Get channel uploads
-            var uploads = (await GetChannelUploadsAsync(channelId, 1).ConfigureAwait(false)).ToArray();
-            if (!uploads.Any())
+            var uploads = await GetChannelUploadsAsync(channelId, 1).ConfigureAwait(false);
+            var videoInfoSnippet = uploads.FirstOrDefault();
+            if (videoInfoSnippet == null)
                 throw new ParseException("Cannot get channel info because it doesn't have any uploaded videos");
 
             // Get video info of the first video
-            var videoInfo = await GetVideoInfoAsync(uploads.First().Id).ConfigureAwait(false);
+            var videoInfo = await GetVideoInfoAsync(videoInfoSnippet.Id).ConfigureAwait(false);
 
             return videoInfo.Author;
         }
