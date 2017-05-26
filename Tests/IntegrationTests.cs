@@ -208,10 +208,20 @@ namespace YoutubeExplode.Tests
         public async Task YoutubeClient_GetChannelUploadsAsync_Test()
         {
             var client = new YoutubeClient();
-            var videoIds = await client.GetChannelUploadsAsync("UC2pmfLm7iq6Ov1UwYrWYkZA");
+            var videos = await client.GetChannelUploadsAsync("UC2pmfLm7iq6Ov1UwYrWYkZA");
 
-            Assert.IsNotNull(videoIds);
-            Assert.IsTrue(videoIds.Any());
+            Assert.IsNotNull(videos);
+            foreach (var video in videos)
+                Assert.That.IsSet(video);
+        }
+
+        [TestMethod]
+        public async Task YoutubeClient_GetChannelInfoAsync_Test()
+        {
+            var client = new YoutubeClient();
+            var channelInfo = await client.GetChannelInfo("UC2pmfLm7iq6Ov1UwYrWYkZA");
+
+            Assert.That.IsSet(channelInfo);
         }
 
         [TestMethod]

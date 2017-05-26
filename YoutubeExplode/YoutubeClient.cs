@@ -426,7 +426,7 @@ namespace YoutubeExplode
             bool authorIsPaid = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_paid") == "1";
             string authorLogoUrl = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_logo_url");
             string authorBannerUrl = (string) videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_banner_url");
-            var author = new UserInfo(
+            var author = new ChannelInfo(
                 authorId, authorName, authorDisplayName, authorChannelTitle,
                 authorIsPaid, authorLogoUrl, authorBannerUrl);
 
@@ -562,6 +562,27 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<IEnumerable<VideoInfoSnippet>> GetChannelUploadsAsync(string channelId)
             => await GetChannelUploadsAsync(channelId, int.MaxValue).ConfigureAwait(false);
+
+        /// <summary>
+        /// Gets channel info by ID
+        /// </summary>
+        public async Task<ChannelInfo> GetChannelInfo(string channelId)
+        {
+            if (channelId == null)
+                throw new ArgumentNullException(nameof(channelId));
+            if (!ValidateChannelId(channelId))
+                throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
+
+            // Get channel uploads
+            var uploads = (await GetChannelUploadsAsync(channelId, 1).ConfigureAwait(false)).ToArray();
+            if (!uploads.Any())
+                throw new ParseException("Cannot get channel info because it doesn't have any uploaded videos");
+
+            // Get video info of the first video
+            var videoInfo = await GetVideoInfoAsync(uploads.First().Id).ConfigureAwait(false);
+
+            return videoInfo.Author;
+        }
 
         /// <summary>
         /// Gets the actual media stream represented by given metadata

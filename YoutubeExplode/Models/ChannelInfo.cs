@@ -3,9 +3,9 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// User info
+    /// Channel info
     /// </summary>
-    public class UserInfo
+    public class ChannelInfo
     {
         /// <summary>
         /// ID
@@ -13,9 +13,9 @@ namespace YoutubeExplode.Models
         public string Id { get; }
 
         /// <summary>
-        /// Channel URL
+        /// URL
         /// </summary>
-        public string ChannelUrl => $"https://www.youtube.com/channel/{Id}";
+        public string Url => $"https://www.youtube.com/channel/{Id}";
 
         /// <summary>
         /// Actual username
@@ -28,36 +28,36 @@ namespace YoutubeExplode.Models
         public string DisplayName { get; }
 
         /// <summary>
-        /// Channel title
+        /// Title
         /// </summary>
-        public string ChannelTitle { get; }
+        public string Title { get; }
 
         /// <summary>
-        /// Whether this user's channel is paid
+        /// Whether this channel is paid
         /// </summary>
         public bool IsPaid { get; }
 
         /// <summary>
-        /// Channel logo URL
+        /// Logo image URL
         /// </summary>
-        public string ChannelLogoUrl { get; }
+        public string LogoUrl { get; }
 
         /// <summary>
-        /// Channel banner URL
+        /// Banner image URL
         /// </summary>
-        public string ChannelBannerUrl { get; }
+        public string BannerUrl { get; }
 
         /// <inheritdoc />
-        public UserInfo(string id, string name, string displayName, string channelTitle, bool isPaid,
+        public ChannelInfo(string id, string name, string displayName, string channelTitle, bool isPaid,
             string channelLogoUrl, string channelBannerUrl)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name ?? throw new ArgumentNullException(nameof(name));
             DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-            ChannelTitle = channelTitle ?? throw new ArgumentNullException(nameof(channelTitle));
+            Title = channelTitle ?? throw new ArgumentNullException(nameof(channelTitle));
             IsPaid = isPaid;
-            ChannelLogoUrl = channelLogoUrl ?? throw new ArgumentNullException(nameof(channelLogoUrl));
-            ChannelBannerUrl = channelBannerUrl ?? throw new ArgumentNullException(nameof(channelBannerUrl));
+            LogoUrl = channelLogoUrl ?? throw new ArgumentNullException(nameof(channelLogoUrl));
+            BannerUrl = channelBannerUrl ?? throw new ArgumentNullException(nameof(channelBannerUrl));
         }
     }
 }

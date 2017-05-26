@@ -13,16 +13,16 @@ namespace YoutubeExplode.Tests
             Assert.IsTrue(str.IsNotBlank());
         }
 
-        public static void IsSet(this Assert assert, UserInfo userInfo)
+        public static void IsSet(this Assert assert, ChannelInfo channelInfo)
         {
-            Assert.IsNotNull(userInfo);
-            Assert.That.IsNotBlank(userInfo.Id);
-            Assert.That.IsNotBlank(userInfo.Name);
-            Assert.That.IsNotBlank(userInfo.DisplayName);
-            Assert.That.IsNotBlank(userInfo.ChannelTitle);
-            Assert.That.IsNotBlank(userInfo.ChannelUrl);
-            Assert.That.IsNotBlank(userInfo.ChannelBannerUrl);
-            Assert.That.IsNotBlank(userInfo.ChannelLogoUrl);
+            Assert.IsNotNull(channelInfo);
+            Assert.That.IsNotBlank(channelInfo.Id);
+            Assert.That.IsNotBlank(channelInfo.Name);
+            Assert.That.IsNotBlank(channelInfo.DisplayName);
+            Assert.That.IsNotBlank(channelInfo.Title);
+            Assert.That.IsNotBlank(channelInfo.Url);
+            Assert.That.IsNotBlank(channelInfo.BannerUrl);
+            Assert.That.IsNotBlank(channelInfo.LogoUrl);
         }
 
         public static void IsSet(this Assert assert, VideoInfoSnippet videoInfoSnippet)

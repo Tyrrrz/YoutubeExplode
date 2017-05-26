@@ -107,7 +107,7 @@
                                 Height="50"
                                 Margin="5"
                                 VerticalAlignment="Top"
-                                Source="{Binding VideoInfo.Author.ChannelLogoUrl}" />
+                                Source="{Binding VideoInfo.Author.LogoUrl}" />
 
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>

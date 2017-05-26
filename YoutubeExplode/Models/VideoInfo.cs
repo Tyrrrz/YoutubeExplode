@@ -14,7 +14,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Author
         /// </summary>
-        public UserInfo Author { get; }
+        public ChannelInfo Author { get; }
 
         /// <summary>
         /// Duration
@@ -67,7 +67,7 @@ namespace YoutubeExplode.Models
         public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTracks { get; }
 
         /// <inheritdoc />
-        public VideoInfo(string id, string title, UserInfo author, TimeSpan duration, string description,
+        public VideoInfo(string id, string title, ChannelInfo author, TimeSpan duration, string description,
             IEnumerable<string> keywords, IEnumerable<string> watermarks, long viewCount, long likeCount,
             long dislikeCount, bool isListed, bool isRatingAllowed, bool isMuted, bool isEmbeddingAllowed,
             IEnumerable<MixedStreamInfo> mixedStreams, IEnumerable<AudioStreamInfo> audioStreams,
