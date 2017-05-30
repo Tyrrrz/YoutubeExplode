@@ -51,17 +51,17 @@ namespace YoutubeExplode.Internal
 
         public static double ParseDouble(this string str)
         {
-            return double.Parse(str, NumberFormatInfo.InvariantInfo);
+            return double.Parse(str, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
         }
 
         public static int ParseInt(this string str)
         {
-            return int.Parse(str, NumberFormatInfo.InvariantInfo);
+            return int.Parse(str, NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
         }
 
         public static long ParseLong(this string str)
         {
-            return long.Parse(str, NumberFormatInfo.InvariantInfo);
+            return long.Parse(str, NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
         }
 
         public static string Reverse(this string str)
