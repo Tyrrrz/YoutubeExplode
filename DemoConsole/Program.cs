@@ -87,6 +87,7 @@ namespace YoutubeExplode.DemoConsole
             // This demo prompts for video ID, gets video info and downloads one media stream
             // It's intended to be very simple and straight to the point
             // For a more complicated example - check out the WPF demo
+
             Console.Title = "YoutubeExplode Demo";
 
             // Main method in consoles cannot be asynchronous so we run everything synchronously
