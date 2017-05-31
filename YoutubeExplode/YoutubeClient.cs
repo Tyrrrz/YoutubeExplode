@@ -548,6 +548,8 @@ namespace YoutubeExplode
                 throw new ArgumentNullException(nameof(channelId));
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
+            if (maxPages <= 0)
+                throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
             // Compose a playlist ID
             string playlistId = "UU" + channelId.SubstringAfter("UC");
