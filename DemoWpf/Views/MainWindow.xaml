@@ -128,7 +128,7 @@
                                     VerticalAlignment="Bottom"
                                     FontSize="14"
                                     Foreground="{DynamicResource PrimaryTextBrush}"
-                                    Text="{Binding VideoInfo.Author.DisplayName}" />
+                                    Text="{Binding VideoInfo.Author.Title}" />
 
                                 <!--  Views  -->
                                 <TextBlock

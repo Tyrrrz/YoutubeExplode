@@ -15,7 +15,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public int Itag { get; }
 
         /// <summary>
-        /// URL
+        /// Media stream URL
         /// </summary>
         public string Url { get; }
 
@@ -199,7 +199,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Compose video quality label from video quality and framerate
         /// </summary>
-        protected static string GetVideoQualityLabel(VideoQuality videoQuality, double framerate)
+        protected static string GetVideoQualityLabel(VideoQuality videoQuality, double framerate = 0)
         {
             // Video quality
             string qualityPart;

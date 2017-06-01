@@ -22,7 +22,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public override bool CanSeek => _innerStream.CanSeek;
 
         /// <inheritdoc />
-        public override bool CanWrite => _innerStream.CanWrite;
+        public override bool CanWrite => false;
 
         /// <inheritdoc />
         public override long Length => Info.ContentLength;

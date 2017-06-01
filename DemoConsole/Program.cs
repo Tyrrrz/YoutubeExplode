@@ -54,7 +54,7 @@ namespace YoutubeExplode.DemoConsole
             Console.WriteLine('-'.Repeat(100));
 
             // Print metadata
-            Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author.DisplayName}");
+            Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author.Title}");
 
             // Get the most preferable stream
             Console.WriteLine("Looking for the best mixed stream...");

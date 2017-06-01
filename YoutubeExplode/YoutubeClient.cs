@@ -157,13 +157,13 @@ namespace YoutubeExplode
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
             // Parse
-            var videoInfoDic = UrlHelper.DictionaryFromUrlEncoded(response);
+            var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
 
             // Check error code
             if (videoInfoDic.ContainsKey("errorcode"))
             {
                 int errorCode = videoInfoDic.Get("errorcode").ParseInt();
-                return !errorCode.IsEither(100, 150);
+                return errorCode != 100 && errorCode != 150;
             }
 
             return true;
@@ -196,7 +196,7 @@ namespace YoutubeExplode
             // Get video info
             request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={sts}&el=info&ps=default";
             response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-            var videoInfoDic = UrlHelper.DictionaryFromUrlEncoded(response);
+            var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
 
             // Check for error
             if (videoInfoDic.ContainsKey("errorcode"))
@@ -224,7 +224,7 @@ namespace YoutubeExplode
             {
                 foreach (string streamEncoded in mixedStreamsEncoded.Split(","))
                 {
-                    var streamDic = UrlHelper.DictionaryFromUrlEncoded(streamEncoded);
+                    var streamDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
 
                     int itag = streamDic.Get("itag").ParseInt();
 
@@ -263,7 +263,7 @@ namespace YoutubeExplode
             {
                 foreach (string streamEncoded in adaptiveStreamsEncoded.Split(","))
                 {
-                    var streamDic = UrlHelper.DictionaryFromUrlEncoded(streamEncoded);
+                    var streamDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
 
                     int itag = streamDic.Get("itag").ParseInt();
 
@@ -396,7 +396,7 @@ namespace YoutubeExplode
             {
                 foreach (string captionEncoded in captionsEncoded.Split(","))
                 {
-                    var captionDic = UrlHelper.DictionaryFromUrlEncoded(captionEncoded);
+                    var captionDic = UrlHelper.GetDictionaryFromUrlQuery(captionEncoded);
 
                     string url = captionDic.Get("u");
                     bool isAuto = captionDic.Get("v").Contains("a.");
@@ -424,13 +424,12 @@ namespace YoutubeExplode
             // Parse author info
             string authorId = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_external_id").Value;
             string authorName = videoInfoExtXml.ElementStrict("user_info").ElementStrict("username").Value;
-            string authorDisplayName = videoInfoExtXml.ElementStrict("user_info").ElementStrict("public_name").Value;
-            string authorChannelTitle = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_title").Value;
+            string authorTitle = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_title").Value;
             bool authorIsPaid = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_paid").Value == "1";
             string authorLogoUrl = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_logo_url").Value;
             string authorBannerUrl = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_banner_url").Value;
             var author = new ChannelInfo(
-                authorId, authorName, authorDisplayName, authorChannelTitle,
+                authorId, authorName, authorTitle,
                 authorIsPaid, authorLogoUrl, authorBannerUrl);
 
             return new VideoInfo(
@@ -855,7 +854,11 @@ namespace YoutubeExplode
             if (playlistId.IsBlank())
                 return false;
 
-            if (!playlistId.Length.IsEither(2, 13, 18, 24, 34))
+            if (playlistId.Length != 2 &&
+                playlistId.Length != 13 &&
+                playlistId.Length != 18 &&
+                playlistId.Length != 24 &&
+                playlistId.Length != 34)
                 return false;
 
             return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");

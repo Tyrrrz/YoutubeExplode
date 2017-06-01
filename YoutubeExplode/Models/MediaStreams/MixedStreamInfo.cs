@@ -32,7 +32,7 @@
             AudioEncoding = GetAudioEncoding(itag);
             VideoEncoding = GetVideoEncoding(itag);
             VideoQuality = GetVideoQuality(itag);
-            VideoQualityLabel = GetVideoQualityLabel(VideoQuality, 0);
+            VideoQualityLabel = GetVideoQualityLabel(VideoQuality);
         }
     }
 }

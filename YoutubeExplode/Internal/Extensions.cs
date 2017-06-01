@@ -10,21 +10,6 @@ namespace YoutubeExplode.Internal
 {
     internal static class Extensions
     {
-        public static bool IsEither<T>(this T value, params T[] potentialValues)
-        {
-            foreach (var o in potentialValues)
-            {
-                if (Equals(value, o))
-                    return true;
-            }
-            return false;
-        }
-
-        public static bool IsInRange<T>(this T value, T min, T max) where T : IComparable
-        {
-            return value.CompareTo(min) >= 0 && value.CompareTo(max) <= 0;
-        }
-
         public static bool IsBlank(this string str)
         {
             return string.IsNullOrWhiteSpace(str);

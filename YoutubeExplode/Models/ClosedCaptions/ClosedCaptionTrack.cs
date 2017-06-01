@@ -33,7 +33,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <returns><see cref="ClosedCaption"/> or null if there's no caption shown at given offset</returns>
         public ClosedCaption GetByTime(TimeSpan time)
         {
-            return Captions.FirstOrDefault(c => time.IsInRange(c.Offset, c.Offset + c.Duration));
+            return Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
         }
     }
 }

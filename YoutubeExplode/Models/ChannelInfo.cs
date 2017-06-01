@@ -23,11 +23,6 @@ namespace YoutubeExplode.Models
         public string Name { get; }
 
         /// <summary>
-        /// Display name
-        /// </summary>
-        public string DisplayName { get; }
-
-        /// <summary>
         /// Title
         /// </summary>
         public string Title { get; }
@@ -48,12 +43,10 @@ namespace YoutubeExplode.Models
         public string BannerUrl { get; }
 
         /// <inheritdoc />
-        public ChannelInfo(string id, string name, string displayName, string title, bool isPaid,
-            string logoUrl, string bannerUrl)
+        public ChannelInfo(string id, string name, string title, bool isPaid, string logoUrl, string bannerUrl)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name ?? throw new ArgumentNullException(nameof(name));
-            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
             Title = title ?? throw new ArgumentNullException(nameof(title));
             IsPaid = isPaid;
             LogoUrl = logoUrl ?? throw new ArgumentNullException(nameof(logoUrl));

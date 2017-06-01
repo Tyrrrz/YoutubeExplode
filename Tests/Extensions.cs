@@ -18,7 +18,6 @@ namespace YoutubeExplode.Tests
             Assert.IsNotNull(channelInfo);
             Assert.That.IsNotBlank(channelInfo.Id);
             Assert.That.IsNotBlank(channelInfo.Name);
-            Assert.That.IsNotBlank(channelInfo.DisplayName);
             Assert.That.IsNotBlank(channelInfo.Title);
             Assert.That.IsNotBlank(channelInfo.Url);
             Assert.That.IsNotBlank(channelInfo.BannerUrl);
