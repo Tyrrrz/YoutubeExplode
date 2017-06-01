@@ -2,7 +2,8 @@ YoutubeExplode
 ===================
 
 
-Zero-dependency .NET library that uses Youtube frontend API to parse various metadata, unwrap playlists, download videos, extract closed captions and much more. Does not require an API key and does not impose usage quotas.
+Zero-dependency .NET library that uses Youtube frontend API to parse various metadata, unwrap playlists, download videos, extract closed captions and much more.
+Does not require an API key and does not impose usage quotas.
 
 **Screenshots:**
 
@@ -11,21 +12,21 @@ Zero-dependency .NET library that uses Youtube frontend API to parse various met
 **Download:**
 
 - Using nuget: `Install-Package YoutubeExplode`
-- Manually: [go to release page](https://github.com/Tyrrrz/YoutubeExplode/releases)
+- Demo: [go to release page](https://github.com/Tyrrrz/YoutubeExplode/releases)
 
 **Features:**
 
-- Retrieves information on videos, playlists, media streams and closed caption tracks
+- Retrieves information on channels, videos, playlists, media streams and closed caption tracks
 - Handles normal, legacy, signed, restricted, non-embeddable and unlisted videos
 - Works with media streams of all types: mixed, embedded adaptive, dash adaptive
-- Downloads videos by exposing the media content as a stream
+- Downloads videos by exposing their media content as a stream
 - Extracts and parses closed caption tracks
 - Strong types and enums for everything
 - Static methods to validate IDs and to parse IDs from URLs
 - No need for an API key and no usage quotas
-- Fully asynchronous API
+- Fully asynchronous
 - MVVM ready
-- Targets [.NET Standard 1.1](https://github.com/dotnet/standard/blob/master/docs/versions.md) and .NET Framework 4.5
+- Targets all .NET platforms
 
 **Usage example:**
 
