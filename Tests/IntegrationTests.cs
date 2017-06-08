@@ -219,7 +219,7 @@ namespace YoutubeExplode.Tests
         public async Task YoutubeClient_GetChannelInfoAsync_Test()
         {
             var client = new YoutubeClient();
-            var channelInfo = await client.GetChannelInfo("UC2pmfLm7iq6Ov1UwYrWYkZA");
+            var channelInfo = await client.GetChannelInfoAsync("UC2pmfLm7iq6Ov1UwYrWYkZA");
 
             Assert.That.IsSet(channelInfo);
         }

@@ -568,7 +568,7 @@ namespace YoutubeExplode
         /// <summary>
         /// Gets channel info by ID
         /// </summary>
-        public async Task<ChannelInfo> GetChannelInfo(string channelId)
+        public async Task<ChannelInfo> GetChannelInfoAsync(string channelId)
         {
             if (channelId == null)
                 throw new ArgumentNullException(nameof(channelId));
