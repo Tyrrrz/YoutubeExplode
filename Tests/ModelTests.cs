@@ -10,7 +10,7 @@ namespace YoutubeExplode.Tests
     public class ModelTests
     {
         [TestMethod]
-        public void ClosedCaptionTrack_GetByTime_Existing_Test()
+        public void ClosedCaptionTrack_GetByTime_Test()
         {
             var captionTrack = Dummies.GetClosedCaptionTrack();
             var caption = captionTrack.GetByTime(TimeSpan.FromSeconds(0.5));
