@@ -22,41 +22,41 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\InvalidChannelIds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_ChannelIds_Invalid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\InvalidPlaylistIds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_ChannelIds_Valid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\InvalidChannelUrls.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_ChannelUrls_Invalid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\InvalidVideoIds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_ChannelUrls_Valid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\InvalidPlaylistUrls.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_PlaylistIds_Invalid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\ValidChannelIds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_PlaylistIds_Valid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\ValidPlaylistIds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_PlaylistUrls_Invalid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\ValidChannelUrls.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_PlaylistUrls_Valid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\ValidVideoIds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_VideoIds_Invalid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\InvalidVideoUrls.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_VideoIds_Valid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\ValidPlaylistUrls.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_VideoUrls_Invalid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\ValidVideoUrls.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Data\Validation_VideoUrls_Valid.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
