@@ -9,7 +9,7 @@ namespace YoutubeExplode.Exceptions
     {
         /// <inheritdoc />
         public VideoRequiresPurchaseException()
-            : base()
+            : base("The video is a paid Youtube Red video and cannot be processed")
         {
         }
     }

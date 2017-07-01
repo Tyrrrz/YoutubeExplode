@@ -207,7 +207,7 @@ namespace YoutubeExplode
             }
 
             // Check for paid content
-            if (videoInfoDic.ContainsKey("requires_purchase") && videoInfoDic.Get("requires_purchase") == "1")
+            if (videoInfoDic.GetOrDefault("requires_purchase") == "1")
             {
                 throw new VideoRequiresPurchaseException();
             }
