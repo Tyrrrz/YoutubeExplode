@@ -153,7 +153,7 @@ namespace YoutubeExplode
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
             // Get
-            string request = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default";
+            string request = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default&hl=en";
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
             // Parse
@@ -194,7 +194,7 @@ namespace YoutubeExplode
             }
 
             // Get video info
-            request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={sts}&el=info&ps=default";
+            request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={sts}&el=info&ps=default&hl=en";
             response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
 
@@ -400,21 +400,12 @@ namespace YoutubeExplode
 
                     string url = captionDic.Get("u");
                     bool isAuto = captionDic.Get("v").Contains("a.");
-                    string lang = captionDic.Get("lc");
+                    string code = captionDic.Get("lc");
+                    string name = captionDic.Get("n");
 
-                    // Fix for Hebrew
-                    if (lang == "iw") lang = "he";
-                    // Fix for Yi
-                    if (lang == "yi") lang = "ii";
-
-                    try {
-                        // Culture will not be found if it is unsupported by the current running system
-                        var culture = new CultureInfo(lang);
-                        var caption = new ClosedCaptionTrackInfo(url, culture, isAuto);
-                        captions.Add(caption);
-                    } catch (CultureNotFoundException) {
-                        continue;
-                    }
+                    var language = new Language(code, name);
+                    var caption = new ClosedCaptionTrackInfo(url, language, isAuto);
+                    captions.Add(caption);
                 }
             }
 

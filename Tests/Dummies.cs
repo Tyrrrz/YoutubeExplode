@@ -8,7 +8,7 @@ namespace YoutubeExplode.Tests
     {
         public static ClosedCaptionTrack GetClosedCaptionTrack()
         {
-            var info = new ClosedCaptionTrackInfo("test", new CultureInfo("en"), true);
+            var info = new ClosedCaptionTrackInfo("test", new Language("en", "English (auto-generated)"), true);
             return new ClosedCaptionTrack(info,
                 new[]
                 {
