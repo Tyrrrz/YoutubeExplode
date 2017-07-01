@@ -83,7 +83,7 @@ namespace YoutubeExplode.Tests
             {
                 Assert.IsNotNull(captionTrack);
                 Assert.That.IsNotBlank(captionTrack.Url);
-                Assert.IsNotNull(captionTrack.Culture);
+                Assert.IsNotNull(captionTrack.Language);
             }
         }
 

@@ -139,7 +139,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
         private async void DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {
             // Create dialog
-            string defaultFileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Culture.EnglishName}.srt";
+            string defaultFileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Language.Name}.srt";
             defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
             string fileFilter =
                 "SRT Files|*.srt|" +
