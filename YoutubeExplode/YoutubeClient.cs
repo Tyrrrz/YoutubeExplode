@@ -206,6 +206,12 @@ namespace YoutubeExplode
                 throw new VideoNotAvailableException(errorCode, errorReason);
             }
 
+            // Check for paid content
+            if (videoInfoDic.ContainsKey("requires_purchase") && videoInfoDic.Get("requires_purchase") == "1")
+            {
+                throw new VideoRequiresPurchaseException();
+            }
+
             // Parse metadata
             string title = videoInfoDic.Get("title");
             var duration = TimeSpan.FromSeconds(videoInfoDic.Get("length_seconds").ParseDouble());
