@@ -410,10 +410,17 @@ namespace YoutubeExplode
 
                     // Fix for Hebrew
                     if (lang == "iw") lang = "he";
+                    // Fix for Yi
+                    if (lang == "yi") lang = "ii";
 
-                    var culture = new CultureInfo(lang);
-                    var caption = new ClosedCaptionTrackInfo(url, culture, isAuto);
-                    captions.Add(caption);
+                    try {
+                        // Culture will not be found if it is unsupported by the current running system
+                        var culture = new CultureInfo(lang);
+                        var caption = new ClosedCaptionTrackInfo(url, culture, isAuto);
+                        captions.Add(caption);
+                    } catch (CultureNotFoundException) {
+                        continue;
+                    }
                 }
             }
 
