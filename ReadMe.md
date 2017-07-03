@@ -1,19 +1,18 @@
-YoutubeExplode
-===================
+# YoutubeExplode
 
 Library that lets you query various Youtube metadata, unwrap playlists, download videos, extract closed captions and much more.
 Does not require an API key and as such does not impose any usage quotas.
 
-**Screenshots:**
+## Screenshots:
 
 ![](http://www.tyrrrz.me/projects/images/ytexplode_1.png)
 
-**Download:**
+## Download:
 
 - Using nuget: `Install-Package YoutubeExplode`
 - Demo: [go to release page](https://github.com/Tyrrrz/YoutubeExplode/releases)
 
-**Features:**
+## Features:
 
 - Retrieves information on channels, videos, playlists, media streams and closed caption tracks
 - Handles normal, legacy, signed, restricted, non-embeddable and unlisted videos
@@ -28,14 +27,13 @@ Does not require an API key and as such does not impose any usage quotas.
 - Targets all .NET platforms
 - No external dependencies
 
-**Usage example:**
+## Usage example:
 
 Check out project's [wiki](https://github.com/Tyrrrz/YoutubeExplode/wiki) for usage examples and other information
 
-**Libraries used:**
+## Libraries used:
 
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 - [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions)
- 
