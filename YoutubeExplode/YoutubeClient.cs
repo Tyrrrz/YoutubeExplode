@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -133,15 +134,6 @@ namespace YoutubeExplode
             return _playerSourceCache[version] = new PlayerSource(version, operations);
         }
 
-        private async Task<long> GetContentLengthAsync(string url)
-        {
-            // Get the headers
-            var headers = await _httpService.GetHeadersAsync(url).ConfigureAwait(false);
-
-            // Extract content length
-            return headers.Get("Content-Length").ParseLong();
-        }
-
         /// <summary>
         /// Checks whether a video with the given ID exists
         /// </summary>
@@ -251,7 +243,23 @@ namespace YoutubeExplode
                     }
 
                     // Get content length
-                    long contentLength = await GetContentLengthAsync(url).ConfigureAwait(false);
+                    long contentLength;
+                    using (var reqMsg = new HttpRequestMessage(HttpMethod.Head, url))
+                    using (var resMsg = await _httpService.PerformRequestAsync(reqMsg).ConfigureAwait(false))
+                    {
+                        // Check status code (https://github.com/Tyrrrz/YoutubeExplode/issues/36)
+                        if (resMsg.StatusCode == HttpStatusCode.NotFound ||
+                            resMsg.StatusCode == HttpStatusCode.Gone)
+                            continue;
+
+                        // Ensure success
+                        resMsg.EnsureSuccessStatusCode();
+
+                        // Extract content length
+                        contentLength = resMsg.Content.Headers.ContentLength ?? -1;
+                        if (contentLength < 0)
+                            throw new ParseException("Could not extract content length");
+                    }
 
                     // Set rate bypass
                     url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
