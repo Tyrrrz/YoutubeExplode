@@ -194,7 +194,7 @@ namespace YoutubeExplode
             if (videoInfoDic.ContainsKey("errorcode"))
             {
                 int errorCode = videoInfoDic.Get("errorcode").ParseInt();
-                string errorReason = videoInfoDic.GetOrDefault("reason") ?? "<no reason>";
+                string errorReason = videoInfoDic.GetOrDefault("reason");
                 throw new VideoNotAvailableException(errorCode, errorReason);
             }
 
