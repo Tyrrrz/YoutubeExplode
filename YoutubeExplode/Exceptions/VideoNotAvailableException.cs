@@ -12,11 +12,17 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public int Code { get; }
 
+        /// <summary>
+        /// Error reason
+        /// </summary>
+        public string Reason { get; }
+
         /// <inheritdoc />
-        public VideoNotAvailableException(int code, string message)
-            : base(message)
+        public VideoNotAvailableException(int code, string reason)
+            : base("The video is not available")
         {
             Code = code;
+            Reason = reason;
         }
     }
 }
