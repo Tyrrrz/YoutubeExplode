@@ -8,7 +8,7 @@
     <Product>Youtube Explode</Product>
     <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
-    <AssemblyVersion>3.1.1</AssemblyVersion>
+    <AssemblyVersion>3.2</AssemblyVersion>
     <PackageVersion>$(AssemblyVersion)</PackageVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Company>Tyrrrz</Company>
