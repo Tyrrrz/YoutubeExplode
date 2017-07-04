@@ -41,10 +41,9 @@ namespace YoutubeExplode.Services
         }
 
         /// <inheritdoc />
-        public async Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request,
-            HttpCompletionOption completionOption = HttpCompletionOption.ResponseHeadersRead)
+        public async Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request)
         {
-            return await _httpClient.SendAsync(request, completionOption).ConfigureAwait(false);
+            return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         }
 
         /// <summary>

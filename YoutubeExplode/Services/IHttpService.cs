@@ -11,7 +11,6 @@ namespace YoutubeExplode.Services
         /// <summary>
         /// Performs a generic HTTP request
         /// </summary>
-        Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request,
-            HttpCompletionOption completionOption = HttpCompletionOption.ResponseHeadersRead);
+        Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request);
     }
 }
