@@ -672,13 +672,9 @@ namespace YoutubeExplode
             if (bufferSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
-            // Get and create streams
-            var input = await GetMediaStreamAsync(mediaStreamInfo).ConfigureAwait(false);
-            var output = File.Create(filePath, bufferSize);
-
             // Save to file
-            using (input)
-            using (output)
+            using (var input = await GetMediaStreamAsync(mediaStreamInfo).ConfigureAwait(false))
+            using (var output = File.Create(filePath, bufferSize))
             {
                 var buffer = new byte[bufferSize];
                 int bytesRead;
@@ -736,12 +732,10 @@ namespace YoutubeExplode
 
             // Get and create streams
             var closedCaptionTrack = await GetClosedCaptionTrackAsync(closedCaptionTrackInfo).ConfigureAwait(false);
-            var output = File.Create(filePath, bufferSize);
-            var sw = new StreamWriter(output, Encoding.Unicode, bufferSize);
 
             // Save to file as SRT
-            using (output)
-            using (sw)
+            using (var output = File.Create(filePath, bufferSize))
+            using (var sw = new StreamWriter(output, Encoding.Unicode, bufferSize))
             {
                 for (int i = 0; i < closedCaptionTrack.Captions.Count; i++)
                 {
