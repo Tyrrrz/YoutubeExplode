@@ -44,6 +44,30 @@ namespace YoutubeExplode
         {
         }
 
+        private async Task<PlayerContext> GetPlayerContextAsync(string videoId)
+        {
+            string version = null;
+            string sts = null;
+            int tries = 0;
+            const int maxTries = 10;
+
+            // Request with retry (https://github.com/Tyrrrz/YoutubeExplode/issues/38)
+            while (tries++ <= maxTries && (version.IsBlank() || sts.IsBlank()))
+            {
+                string request = $"https://www.youtube.com/embed/{videoId}";
+                string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+
+                version = Regex.Match(response, @"<script.*?\ssrc=""/yts/jsbin/player-(.*?)/base.js").Groups[1].Value;
+                sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
+            }
+
+            // Check if successful
+            if (version.IsBlank() || sts.IsBlank())
+                throw new ParseException("Could not parse player context");
+
+            return new PlayerContext(version, sts);
+        }
+
         private async Task<PlayerSource> GetPlayerSourceAsync(string version)
         {
             // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
@@ -171,23 +195,13 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
-            // Get video context
-            string request = $"https://www.youtube.com/embed/{videoId}";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-
-            // Parse video context
-            string playerVersion =
-                Regex.Match(response, @"<script.*?\ssrc=""/yts/jsbin/player-(.*?)/base.js").Groups[1].Value;
-            string sts =
-                Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
-            if (playerVersion.IsBlank() || sts.IsBlank())
-            {
-                throw new ParseException("Could not parse video context");
-            }
+            // Get player context
+            var playerContext = await GetPlayerContextAsync(videoId).ConfigureAwait(false);
 
             // Get video info
-            request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={sts}&el=info&ps=default&hl=en";
-            response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            string request =
+                $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={playerContext.Sts}&el=info&ps=default&hl=en";
+            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
 
             // Check for error
@@ -237,7 +251,7 @@ namespace YoutubeExplode
                     // Decipher signature if needed
                     if (sig.IsNotBlank())
                     {
-                        var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
+                        var playerSource = await GetPlayerSourceAsync(playerContext.Version).ConfigureAwait(false);
                         sig = playerSource.Decipher(sig);
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
@@ -294,7 +308,7 @@ namespace YoutubeExplode
                     // Decipher signature if needed
                     if (sig.IsNotBlank())
                     {
-                        var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
+                        var playerSource = await GetPlayerSourceAsync(playerContext.Version).ConfigureAwait(false);
                         sig = playerSource.Decipher(sig);
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
@@ -337,7 +351,7 @@ namespace YoutubeExplode
                 // Decipher signature if needed
                 if (sig.IsNotBlank())
                 {
-                    var playerSource = await GetPlayerSourceAsync(playerVersion).ConfigureAwait(false);
+                    var playerSource = await GetPlayerSourceAsync(playerContext.Version).ConfigureAwait(false);
                     sig = playerSource.Decipher(sig);
                     dashManifestUrl = UrlHelper.SetUrlPathParameter(dashManifestUrl, "signature", sig);
                 }
