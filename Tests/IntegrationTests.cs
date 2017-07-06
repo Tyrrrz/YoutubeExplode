@@ -66,6 +66,17 @@ namespace YoutubeExplode.Tests
         }
 
         [TestMethod]
+        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds_Paid.csv",
+            "Integration_VideoIds_Paid#csv", DataAccessMethod.Sequential)]
+        public async Task YoutubeClient_GetVideoInfoAsync_Paid_Test()
+        {
+            string id = (string) TestContext.DataRow["Id"];
+
+            var client = new YoutubeClient();
+            await Assert.ThrowsExceptionAsync<VideoRequiresPurchaseException>(() => client.GetVideoInfoAsync(id));
+        }
+
+        [TestMethod]
         [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_PlaylistIds.csv",
             "Integration_PlaylistIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetPlaylistInfoAsync_Test()
