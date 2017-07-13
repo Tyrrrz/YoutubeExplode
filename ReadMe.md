@@ -23,13 +23,14 @@ Does not require an API key and as such does not impose any usage quotas.
 - Static methods to validate IDs and to parse IDs from URLs
 - No need for an API key and no usage quotas
 - Fully asynchronous
-- MVVM ready
 - Targets all .NET platforms
 - No external dependencies
 
-## Usage example
+## Usage
 
-Check out project's [wiki](https://github.com/Tyrrrz/YoutubeExplode/wiki) for usage examples and other information
+Check out project's [wiki](https://github.com/Tyrrrz/YoutubeExplode/wiki) for usage examples and other information.
+
+You can also use the demo projects as a reference point.
 
 ## Libraries used
 
