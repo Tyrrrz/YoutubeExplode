@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using YoutubeExplode.Exceptions;
@@ -16,6 +13,12 @@ using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
 using YoutubeExplode.Services;
+
+#if NET45 || NETCOREAPP1_0
+using System.IO;
+using System.Text;
+using System.Threading;
+#endif
 
 namespace YoutubeExplode
 {
@@ -199,8 +202,7 @@ namespace YoutubeExplode
             var playerContext = await GetPlayerContextAsync(videoId).ConfigureAwait(false);
 
             // Get video info
-            string request =
-                $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={playerContext.Sts}&el=info&ps=default&hl=en";
+            string request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={playerContext.Sts}&el=info&ps=default&hl=en";
             string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
 
@@ -478,69 +480,47 @@ namespace YoutubeExplode
             if (maxPages <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
-            // Get
-            string request = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-            var playlistInfoXml = XElement.Parse(response).StripNamespaces();
-
-            // Parse
-            string title = playlistInfoXml.ElementStrict("title").Value;
-            string author = playlistInfoXml.Element("author")?.Value ?? "";
-            string description = playlistInfoXml.ElementStrict("description").Value;
-            long viewCount = (long) playlistInfoXml.ElementStrict("views");
-
-            // Parse videos across multiple pages
+            // Get all videos across pages
+            int pagesDone = 0;
+            int offset = 0;
+            XElement playlistInfoXml;
             var videos = new List<VideoInfoSnippet>();
             var videoIds = new HashSet<string>();
-
-            // Method to parse video info snippets from XML
-            VideoInfoSnippet Parse(XElement videoInfoSnippetXml)
+            do
             {
-                // Basic info
-                string videoId = videoInfoSnippetXml.ElementStrict("encrypted_id").Value;
-                string videoTitle = videoInfoSnippetXml.ElementStrict("title").Value;
-                string videoDescription = videoInfoSnippetXml.ElementStrict("description").Value;
-                long videoViewCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("views").Value, @"\D", "").ParseLong();
-                long videoLikeCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("likes").Value, @"\D", "").ParseLong();
-                long videoDislikeCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("dislikes").Value, @"\D", "").ParseLong();
+                // Get
+                string request = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={offset}";
+                string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+                playlistInfoXml = XElement.Parse(response).StripNamespaces();
 
-                // Keywords
-                string videoKeywordsJoined = videoInfoSnippetXml.ElementStrict("keywords").Value;
-                var videoKeywords = Regex
-                    .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<quote>""?))([^""]|(""""))*?(?=\<quote>(?=\s|$))")
-                    .Cast<Match>()
-                    .Select(m => m.Value)
-                    .Where(s => s.IsNotBlank());
-
-                return new VideoInfoSnippet(videoId, videoTitle, videoDescription, videoKeywords,
-                    videoViewCount, videoLikeCount, videoDislikeCount);
-            }
-
-            // First page
-            foreach (var videoInfoSnippetXml in playlistInfoXml.Elements("video"))
-            {
-                var snippet = Parse(videoInfoSnippetXml);
-                videoIds.Add(snippet.Id);
-                videos.Add(snippet);
-            }
-
-            // Following pages
-            int pagesDone = 1;
-            bool hasMore = videoIds.Count > 0;
-            int offset = videoIds.Count;
-            while (pagesDone < maxPages && hasMore)
-            {
-                // Get next page
-                string nextRequest = request + $"&index={offset}";
-                response = await _httpService.GetStringAsync(nextRequest).ConfigureAwait(false);
-
-                // Parse
-                var nextPlaylistInfoXml = XElement.Parse(response).StripNamespaces();
+                // Parse videos
                 int total = 0;
                 int delta = 0;
-                foreach (var videoInfoSnippetXml in nextPlaylistInfoXml.Elements("video"))
+                foreach (var videoInfoSnippetXml in playlistInfoXml.Elements("video"))
                 {
-                    var snippet = Parse(videoInfoSnippetXml);
+                    // Basic info
+                    string videoId = videoInfoSnippetXml.ElementStrict("encrypted_id").Value;
+                    string videoTitle = videoInfoSnippetXml.ElementStrict("title").Value;
+                    string videoDescription = videoInfoSnippetXml.ElementStrict("description").Value;
+                    long videoViewCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("views").Value, @"\D", "")
+                        .ParseLong();
+                    long videoLikeCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("likes").Value, @"\D", "")
+                        .ParseLong();
+                    long videoDislikeCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("dislikes").Value, @"\D", "")
+                        .ParseLong();
+
+                    // Keywords
+                    string videoKeywordsJoined = videoInfoSnippetXml.ElementStrict("keywords").Value;
+                    var videoKeywords = Regex
+                        .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<quote>""?))([^""]|(""""))*?(?=\<quote>(?=\s|$))")
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .Where(s => s.IsNotBlank());
+
+                    var snippet = new VideoInfoSnippet(videoId, videoTitle, videoDescription, videoKeywords,
+                        videoViewCount, videoLikeCount, videoDislikeCount);
+
+                    // Add to list if not already there
                     if (videoIds.Add(snippet.Id))
                     {
                         videos.Add(snippet);
@@ -549,11 +529,19 @@ namespace YoutubeExplode
                     total++;
                 }
 
-                // Prepare for next page if necessary
+                // Break if the videos started repeating
+                if (delta <= 0) break;
+
+                // Prepare for next page
                 pagesDone++;
-                hasMore = delta > 0;
                 offset += total;
-            }
+            } while (pagesDone <= maxPages);
+
+            // Parse metadata
+            string title = playlistInfoXml.ElementStrict("title").Value;
+            string author = playlistInfoXml.Element("author")?.Value ?? "";
+            string description = playlistInfoXml.ElementStrict("description").Value;
+            long viewCount = (long) playlistInfoXml.ElementStrict("views");
 
             return new PlaylistInfo(playlistId, title, author, description, viewCount, videos);
         }
