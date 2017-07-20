@@ -10,7 +10,7 @@ using YoutubeExplode.Models.MediaStreams;
 namespace YoutubeExplode.Tests
 {
     [TestClass]
-    public class IntegrationTests
+    public partial class IntegrationTests
     {
         public TestContext TestContext { get; set; }
 
@@ -190,13 +190,13 @@ namespace YoutubeExplode.Tests
             var videoInfo = await client.GetVideoInfoAsync(id);
 
             var streamInfo = videoInfo.AudioStreams.OrderBy(s => s.ContentLength).First();
-            string outputFilePath = Guid.NewGuid().ToString();
+            string outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(Shared.TempDirectoryPath);
             await client.DownloadMediaStreamAsync(streamInfo, outputFilePath);
 
-            var fi = new FileInfo(outputFilePath);
-            Assert.IsTrue(fi.Exists);
-            Assert.AreNotEqual(0, fi.Length);
-            fi.Delete();
+            var fileInfo = new FileInfo(outputFilePath);
+            Assert.IsTrue(fileInfo.Exists);
+            Assert.IsTrue(0 < fileInfo.Length);
         }
 
         [TestMethod]
@@ -210,13 +210,23 @@ namespace YoutubeExplode.Tests
             var videoInfo = await client.GetVideoInfoAsync(id);
 
             var streamInfo = videoInfo.ClosedCaptionTracks.First();
-            string outputFilePath = Guid.NewGuid().ToString();
+            string outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(Shared.TempDirectoryPath);
             await client.DownloadClosedCaptionTrackAsync(streamInfo, outputFilePath);
 
-            var fi = new FileInfo(outputFilePath);
-            Assert.IsTrue(fi.Exists);
-            Assert.AreNotEqual(0, fi.Length);
-            fi.Delete();
+            var fileInfo = new FileInfo(outputFilePath);
+            Assert.IsTrue(fileInfo.Exists);
+            Assert.IsTrue(0 < fileInfo.Length);
+        }
+    }
+
+    public partial class IntegrationTests
+    {
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            if (Directory.Exists(Shared.TempDirectoryPath))
+                Directory.Delete(Shared.TempDirectoryPath, true);
         }
     }
 }
