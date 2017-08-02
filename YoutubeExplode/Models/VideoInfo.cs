@@ -67,7 +67,7 @@ namespace YoutubeExplode.Models
             long dislikeCount, bool isListed, bool isRatingAllowed, bool isMuted, bool isEmbeddingAllowed,
             IEnumerable<MixedStreamInfo> mixedStreams, IEnumerable<AudioStreamInfo> audioStreams,
             IEnumerable<VideoStreamInfo> videoStreams, IEnumerable<ClosedCaptionTrackInfo> closedCaptionTracks)
-            : base(id, title, description, keywords, viewCount, likeCount, dislikeCount, duration)
+            : base(id, title, duration, description, keywords, viewCount, likeCount, dislikeCount)
         {
             Author = author ?? throw new ArgumentNullException(nameof(author));
             Watermarks = watermarks?.ToArray() ?? throw new ArgumentNullException(nameof(watermarks));

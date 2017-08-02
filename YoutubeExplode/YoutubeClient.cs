@@ -518,8 +518,8 @@ namespace YoutubeExplode
                         .Where(s => s.IsNotBlank());
 
                     var duration = TimeSpan.FromSeconds(videoInfoSnippetXml.ElementStrict("length_seconds").Value.ParseDouble());
-                    var snippet = new VideoInfoSnippet(videoId, videoTitle, videoDescription, videoKeywords,
-                        videoViewCount, videoLikeCount, videoDislikeCount, duration);
+                    var snippet = new VideoInfoSnippet(videoId, videoTitle, duration, videoDescription,
+                        videoKeywords, videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Add to list if not already there
                     if (videoIds.Add(snippet.Id))
