@@ -501,12 +501,15 @@ namespace YoutubeExplode
                     // Basic info
                     string videoId = videoInfoSnippetXml.ElementStrict("encrypted_id").Value;
                     string videoTitle = videoInfoSnippetXml.ElementStrict("title").Value;
+                    var videoDuration = TimeSpan.FromSeconds(videoInfoSnippetXml.ElementStrict("length_seconds")
+                        .Value.ParseDouble());
                     string videoDescription = videoInfoSnippetXml.ElementStrict("description").Value;
                     long videoViewCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("views").Value, @"\D", "")
                         .ParseLong();
                     long videoLikeCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("likes").Value, @"\D", "")
                         .ParseLong();
-                    long videoDislikeCount = Regex.Replace(videoInfoSnippetXml.ElementStrict("dislikes").Value, @"\D", "")
+                    long videoDislikeCount = Regex
+                        .Replace(videoInfoSnippetXml.ElementStrict("dislikes").Value, @"\D", "")
                         .ParseLong();
 
                     // Keywords
@@ -517,8 +520,7 @@ namespace YoutubeExplode
                         .Select(m => m.Value)
                         .Where(s => s.IsNotBlank());
 
-                    var duration = TimeSpan.FromSeconds(videoInfoSnippetXml.ElementStrict("length_seconds").Value.ParseDouble());
-                    var snippet = new VideoInfoSnippet(videoId, videoTitle, duration, videoDescription,
+                    var snippet = new VideoInfoSnippet(videoId, videoTitle, videoDuration, videoDescription,
                         videoKeywords, videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Add to list if not already there
