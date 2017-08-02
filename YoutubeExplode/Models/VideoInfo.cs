@@ -17,11 +17,6 @@ namespace YoutubeExplode.Models
         public ChannelInfo Author { get; }
 
         /// <summary>
-        /// Duration
-        /// </summary>
-        public TimeSpan Duration { get; }
-
-        /// <summary>
         /// Collection of watermark URLs
         /// </summary>
         public IReadOnlyList<string> Watermarks { get; }
@@ -72,10 +67,9 @@ namespace YoutubeExplode.Models
             long dislikeCount, bool isListed, bool isRatingAllowed, bool isMuted, bool isEmbeddingAllowed,
             IEnumerable<MixedStreamInfo> mixedStreams, IEnumerable<AudioStreamInfo> audioStreams,
             IEnumerable<VideoStreamInfo> videoStreams, IEnumerable<ClosedCaptionTrackInfo> closedCaptionTracks)
-            : base(id, title, description, keywords, viewCount, likeCount, dislikeCount)
+            : base(id, title, duration, description, keywords, viewCount, likeCount, dislikeCount)
         {
             Author = author ?? throw new ArgumentNullException(nameof(author));
-            Duration = duration >= TimeSpan.Zero ? duration : throw new ArgumentOutOfRangeException(nameof(duration));
             Watermarks = watermarks?.ToArray() ?? throw new ArgumentNullException(nameof(watermarks));
             IsListed = isListed;
             IsRatingAllowed = isRatingAllowed;
