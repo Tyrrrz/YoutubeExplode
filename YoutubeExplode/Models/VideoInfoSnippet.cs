@@ -76,9 +76,14 @@ namespace YoutubeExplode.Models
         /// </summary>
         public double AverageRating => 1 + 4.0 * LikeCount / (LikeCount + DislikeCount);
 
+        /// <summary>
+        /// Duration
+        /// </summary>
+        public TimeSpan Duration { get; }
+
         /// <inheritdoc />
         public VideoInfoSnippet(string id, string title, string description, IEnumerable<string> keywords,
-            long viewCount, long likeCount, long dislikeCount)
+            long viewCount, long likeCount, long dislikeCount, TimeSpan duration)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Title = title ?? throw new ArgumentNullException(nameof(title));
@@ -87,6 +92,7 @@ namespace YoutubeExplode.Models
             ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
             LikeCount = likeCount >= 0 ? likeCount : throw new ArgumentOutOfRangeException(nameof(likeCount));
             DislikeCount = dislikeCount >= 0 ? dislikeCount : throw new ArgumentOutOfRangeException(nameof(dislikeCount));
+            Duration = duration >= TimeSpan.Zero ? duration : throw new ArgumentOutOfRangeException(nameof(duration));
         }
     }
 }
