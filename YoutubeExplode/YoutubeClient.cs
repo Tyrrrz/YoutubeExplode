@@ -537,7 +537,7 @@ namespace YoutubeExplode
                 // Prepare for next page
                 pagesDone++;
                 offset += total;
-            } while (pagesDone <= maxPages);
+            } while (pagesDone < maxPages);
 
             // Parse metadata
             string title = playlistInfoXml.ElementStrict("title").Value;
