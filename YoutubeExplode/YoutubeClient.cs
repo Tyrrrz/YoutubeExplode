@@ -226,7 +226,7 @@ namespace YoutubeExplode
             long viewCount = videoInfoDic.Get("view_count").ParseLong();
             var keywords = videoInfoDic.Get("keywords").Split(",");
             var watermarks = videoInfoDic.Get("watermark").Split(",");
-            bool isListed = videoInfoDic.Get("is_listed") == "1";
+            bool isListed = videoInfoDic.GetOrDefault("is_listed") == "1"; // https://github.com/Tyrrrz/YoutubeExplode/issues/45
             bool isRatingAllowed = videoInfoDic.Get("allow_ratings") == "1";
             bool isMuted = videoInfoDic.Get("muted") == "1";
             bool isEmbeddingAllowed = videoInfoDic.Get("allow_embed") == "1";
