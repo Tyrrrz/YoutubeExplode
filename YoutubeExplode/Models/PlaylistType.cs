@@ -8,7 +8,7 @@
         /// <summary>
         /// Regular playlist created by a user
         /// </summary>
-        UserMade,
+        Normal,
 
         /// <summary>
         /// Mix playlist generated to group similar videos
@@ -18,22 +18,22 @@
         /// <summary>
         /// Mix playlist generated to group similar videos uploaded by the same channel
         /// </summary>
-        ChannelMix,
+        ChannelVideoMix,
 
         /// <summary>
         /// Playlist generated from channel uploads
         /// </summary>
-        ChannelUploads,
+        ChannelVideos,
 
         /// <summary>
         /// Playlist generated from popular channel uploads
         /// </summary>
-        ChannelPopular,
+        PopularChannelVideos,
 
         /// <summary>
         /// System playlist for videos liked by a user
         /// </summary>
-        Liked,
+        LikedVideos,
 
         /// <summary>
         /// System playlist for videos favorited by a user

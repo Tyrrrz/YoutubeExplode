@@ -69,22 +69,22 @@ namespace YoutubeExplode.Models
                 throw new ArgumentNullException(nameof(id));
 
             if (id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
-                return PlaylistType.UserMade;
+                return PlaylistType.Normal;
 
             if (id.StartsWith("RD", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.VideoMix;
 
             if (id.StartsWith("UL", StringComparison.OrdinalIgnoreCase))
-                return PlaylistType.ChannelMix;
+                return PlaylistType.ChannelVideoMix;
 
             if (id.StartsWith("UU", StringComparison.OrdinalIgnoreCase))
-                return PlaylistType.ChannelUploads;
+                return PlaylistType.ChannelVideos;
 
             if (id.StartsWith("PU", StringComparison.OrdinalIgnoreCase))
-                return PlaylistType.ChannelPopular;
+                return PlaylistType.PopularChannelVideos;
 
             if (id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
-                return PlaylistType.Liked;
+                return PlaylistType.LikedVideos;
 
             if (id.StartsWith("FL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.Favorites;
