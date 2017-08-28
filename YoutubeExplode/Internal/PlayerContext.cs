@@ -2,13 +2,13 @@
 {
     internal class PlayerContext
     {
-        public string Version { get; }
+        public string SourceUrl { get; }
 
         public string Sts { get; }
 
-        public PlayerContext(string version, string sts)
+        public PlayerContext(string sourceUrl, string sts)
         {
-            Version = version;
+            SourceUrl = sourceUrl;
             Sts = sts;
         }
     }

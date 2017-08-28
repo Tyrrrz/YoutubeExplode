@@ -6,13 +6,10 @@ namespace YoutubeExplode.Internal
 {
     internal class PlayerSource
     {
-        public string Version { get; }
-
         public IReadOnlyList<ICipherOperation> CipherOperations { get; }
 
-        public PlayerSource(string version, IEnumerable<ICipherOperation> cipherOperations)
+        public PlayerSource(IEnumerable<ICipherOperation> cipherOperations)
         {
-            Version = version;
             CipherOperations = cipherOperations.ToArray();
         }
 

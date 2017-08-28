@@ -49,42 +49,35 @@ namespace YoutubeExplode
 
         private async Task<PlayerContext> GetPlayerContextAsync(string videoId)
         {
-            string version = null;
-            string sts = null;
-            const int maxTries = 10;
-            int triesDone = 0;
+            // Get the embed video page
+            string request = $"https://www.youtube.com/embed/{videoId}";
+            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
-            // Request with retry (https://github.com/Tyrrrz/YoutubeExplode/issues/38)
-            while (triesDone <= maxTries && (version.IsBlank() || sts.IsBlank()))
-            {
-                string request = $"https://www.youtube.com/embed/{videoId}";
-                string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-
-                version = Regex.Match(response, @"""js""\s*:\s*.*?player-(.*?)/base\.js").Groups[1].Value.Replace("\\", "");
-                sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
-
-                triesDone++;
-            }
+            // Extract values
+            string sourceUrl = Regex.Match(response, @"""js""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
+            string sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
 
             // Check if successful
-            if (version.IsBlank() || sts.IsBlank())
+            if (sourceUrl.IsBlank() || sts.IsBlank())
                 throw new ParseException("Could not parse player context");
 
-            return new PlayerContext(version, sts);
+            // Append host to source url
+            sourceUrl = "https://www.youtube.com" + sourceUrl;
+
+            return new PlayerContext(sourceUrl, sts);
         }
 
-        private async Task<PlayerSource> GetPlayerSourceAsync(string version)
+        private async Task<PlayerSource> GetPlayerSourceAsync(string sourceUrl)
         {
             // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
 
             // Try to resolve from cache first
-            var playerSource = _playerSourceCache.GetOrDefault(version);
+            var playerSource = _playerSourceCache.GetOrDefault(sourceUrl);
             if (playerSource != null)
                 return playerSource;
 
             // Get player source code
-            string request = $"https://www.youtube.com/yts/jsbin/player-{version}/base.js";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            string response = await _httpService.GetStringAsync(sourceUrl).ConfigureAwait(false);
 
             // Find the name of the function that handles deciphering
             string funcName = Regex.Match(response, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
@@ -160,7 +153,7 @@ namespace YoutubeExplode
                 }
             }
 
-            return _playerSourceCache[version] = new PlayerSource(version, operations);
+            return _playerSourceCache[sourceUrl] = new PlayerSource(operations);
         }
 
         /// <summary>
@@ -255,7 +248,7 @@ namespace YoutubeExplode
                     // Decipher signature if needed
                     if (sig.IsNotBlank())
                     {
-                        var playerSource = await GetPlayerSourceAsync(playerContext.Version).ConfigureAwait(false);
+                        var playerSource = await GetPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
                         sig = playerSource.Decipher(sig);
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
@@ -312,7 +305,7 @@ namespace YoutubeExplode
                     // Decipher signature if needed
                     if (sig.IsNotBlank())
                     {
-                        var playerSource = await GetPlayerSourceAsync(playerContext.Version).ConfigureAwait(false);
+                        var playerSource = await GetPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
                         sig = playerSource.Decipher(sig);
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
@@ -355,7 +348,7 @@ namespace YoutubeExplode
                 // Decipher signature if needed
                 if (sig.IsNotBlank())
                 {
-                    var playerSource = await GetPlayerSourceAsync(playerContext.Version).ConfigureAwait(false);
+                    var playerSource = await GetPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
                     sig = playerSource.Decipher(sig);
                     dashManifestUrl = UrlHelper.SetUrlPathParameter(dashManifestUrl, "signature", sig);
                 }
