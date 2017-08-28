@@ -3,7 +3,7 @@ using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.DemoWpf.ViewModels
+namespace DemoWpf.ViewModels
 {
     public interface IMainViewModel
     {

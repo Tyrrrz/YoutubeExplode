@@ -1,7 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YoutubeExplode;
 
-namespace YoutubeExplode.Tests
+namespace Tests
 {
     [TestClass]
     public class ValidationTests

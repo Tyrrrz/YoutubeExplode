@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace YoutubeExplode.DemoWpf.Converters
+namespace DemoWpf.Converters
 {
     [ValueConversion(typeof(long), typeof(string))]
     public class FileSizeToStringConverter : IValueConverter

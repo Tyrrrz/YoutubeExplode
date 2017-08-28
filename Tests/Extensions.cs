@@ -4,7 +4,7 @@ using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Tests
+namespace Tests
 {
     public static class Extensions
     {

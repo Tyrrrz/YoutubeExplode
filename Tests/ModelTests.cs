@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Tests
+namespace Tests
 {
     [TestClass]
     public class ModelTests

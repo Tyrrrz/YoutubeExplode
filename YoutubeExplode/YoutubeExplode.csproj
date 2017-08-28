@@ -2,18 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;net45;netcoreapp1.0</TargetFrameworks>
-    <AssemblyName>YoutubeExplode</AssemblyName>
-    <RootNamespace>YoutubeExplode</RootNamespace>
-    <PackageId>YoutubeExplode</PackageId>
-    <Product>Youtube Explode</Product>
-    <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
-    <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
-    <AssemblyVersion>3.2.3</AssemblyVersion>
-    <PackageVersion>$(AssemblyVersion)</PackageVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <Version>3.2.3</Version>
     <Company>Tyrrrz</Company>
     <Authors>$(Company)</Authors>
-    <Copyright>Copyright (C) Alexey 'Tyrrrz' Golub 2016-2017</Copyright>
+    <Copyright>Copyright (C) 2016-2017 Alexey Golub</Copyright>
+    <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
+    <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/License.txt</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>

@@ -3,9 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Tyrrrz.Extensions;
+using YoutubeExplode;
 using YoutubeExplode.Models;
 
-namespace YoutubeExplode.DemoConsole
+namespace DemoConsole
 {
     public static class Program
     {

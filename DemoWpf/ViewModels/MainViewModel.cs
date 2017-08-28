@@ -4,11 +4,12 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
 using Tyrrrz.Extensions;
+using YoutubeExplode;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.DemoWpf.ViewModels
+namespace DemoWpf.ViewModels
 {
     public class MainViewModel : ViewModelBase, IMainViewModel
     {

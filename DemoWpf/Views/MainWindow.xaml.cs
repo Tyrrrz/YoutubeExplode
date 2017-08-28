@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
-using YoutubeExplode.DemoWpf.ViewModels;
+using DemoWpf.ViewModels;
 
-namespace YoutubeExplode.DemoWpf.Views
+namespace DemoWpf.Views
 {
     public partial class MainWindow
     {

@@ -1,8 +1,9 @@
-﻿using GalaSoft.MvvmLight.Ioc;
+﻿using DemoWpf.ViewModels;
+using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
-using YoutubeExplode.DemoWpf.ViewModels;
+using YoutubeExplode;
 
-namespace YoutubeExplode.DemoWpf
+namespace DemoWpf
 {
     public class Locator
     {

@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
-    <AssemblyName>YoutubeExplode.DemoConsole</AssemblyName>
-    <RootNamespace>YoutubeExplode.DemoConsole</RootNamespace>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 

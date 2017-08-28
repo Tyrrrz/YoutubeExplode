@@ -4,10 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YoutubeExplode;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Tests
+namespace Tests
 {
     [TestClass]
     public partial class IntegrationTests
