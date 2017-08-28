@@ -51,17 +51,19 @@ namespace YoutubeExplode
         {
             string version = null;
             string sts = null;
-            int tries = 0;
             const int maxTries = 10;
+            int triesDone = 0;
 
             // Request with retry (https://github.com/Tyrrrz/YoutubeExplode/issues/38)
-            while (tries++ <= maxTries && (version.IsBlank() || sts.IsBlank()))
+            while (triesDone <= maxTries && (version.IsBlank() || sts.IsBlank()))
             {
                 string request = $"https://www.youtube.com/embed/{videoId}";
                 string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
-                version = Regex.Match(response, @"<script.*?\ssrc=""/yts/jsbin/player-(.*?)/base.js").Groups[1].Value;
+                version = Regex.Match(response, @"""js""\s*:\s*.*?player-(.*?)/base\.js").Groups[1].Value.Replace("\\", "");
                 sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
+
+                triesDone++;
             }
 
             // Check if successful

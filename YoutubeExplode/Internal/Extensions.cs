@@ -20,14 +20,16 @@ namespace YoutubeExplode.Internal
             return !string.IsNullOrWhiteSpace(str);
         }
 
-        public static string SubstringUntil(this string str, string sub, StringComparison comparison = StringComparison.Ordinal)
+        public static string SubstringUntil(this string str, string sub,
+            StringComparison comparison = StringComparison.Ordinal)
         {
             int index = str.IndexOf(sub, comparison);
             if (index < 0) return str;
             return str.Substring(0, index);
         }
 
-        public static string SubstringAfter(this string str, string sub, StringComparison comparison = StringComparison.Ordinal)
+        public static string SubstringAfter(this string str, string sub,
+            StringComparison comparison = StringComparison.Ordinal)
         {
             int index = str.IndexOf(sub, comparison);
             if (index < 0) return string.Empty;
@@ -77,7 +79,8 @@ namespace YoutubeExplode.Internal
             return input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IEnumerable<TSource> Distinct<TSource, TKey>(this IEnumerable<TSource> enumerable, Func<TSource, TKey> selector)
+        public static IEnumerable<TSource> Distinct<TSource, TKey>(this IEnumerable<TSource> enumerable,
+            Func<TSource, TKey> selector)
         {
             var existing = new HashSet<TKey>();
             foreach (var element in enumerable)
