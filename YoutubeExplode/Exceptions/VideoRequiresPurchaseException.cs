@@ -7,10 +7,16 @@ namespace YoutubeExplode.Exceptions
     /// </summary>
     public class VideoRequiresPurchaseException : Exception
     {
+        /// <summary>
+        /// Id of the free preview video
+        /// </summary>
+        public string PreviewVideoId { get; }
+
         /// <inheritdoc />
-        public VideoRequiresPurchaseException()
+        public VideoRequiresPurchaseException(string previewVideoId)
             : base("The video is a paid Youtube Red video and cannot be processed")
         {
+            PreviewVideoId = previewVideoId;
         }
     }
 }

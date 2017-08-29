@@ -205,14 +205,15 @@ namespace YoutubeExplode
             if (videoInfoDic.ContainsKey("errorcode"))
             {
                 int errorCode = videoInfoDic.Get("errorcode").ParseInt();
-                string errorReason = videoInfoDic.GetOrDefault("reason");
+                string errorReason = videoInfoDic.Get("reason");
                 throw new VideoNotAvailableException(errorCode, errorReason);
             }
 
             // Check for paid content
             if (videoInfoDic.GetOrDefault("requires_purchase") == "1")
             {
-                throw new VideoRequiresPurchaseException();
+                string previewVideoId = videoInfoDic.Get("ypc_vid");
+                throw new VideoRequiresPurchaseException(previewVideoId);
             }
 
             // Parse metadata
