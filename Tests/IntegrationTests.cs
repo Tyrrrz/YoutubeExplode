@@ -20,10 +20,10 @@ namespace Tests
             "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_CheckVideoExistsAsync_Existing_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
-            bool exists = await client.CheckVideoExistsAsync(id);
+            var exists = await client.CheckVideoExistsAsync(id);
 
             Assert.IsTrue(exists);
         }
@@ -33,10 +33,10 @@ namespace Tests
             "Integration_VideoIds_NonExisting#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_CheckVideoExistsAsync_NonExisting_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
-            bool exists = await client.CheckVideoExistsAsync(id);
+            var exists = await client.CheckVideoExistsAsync(id);
 
             Assert.IsFalse(exists);
         }
@@ -46,7 +46,7 @@ namespace Tests
             "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetVideoInfoAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync(id);
@@ -60,7 +60,7 @@ namespace Tests
             "Integration_VideoIds_NonExisting#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetVideoInfoAsync_NonExisting_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             await Assert.ThrowsExceptionAsync<VideoNotAvailableException>(() => client.GetVideoInfoAsync(id));
@@ -71,7 +71,7 @@ namespace Tests
             "Integration_VideoIds_Paid#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetVideoInfoAsync_Paid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             await Assert.ThrowsExceptionAsync<VideoRequiresPurchaseException>(() => client.GetVideoInfoAsync(id));
@@ -82,8 +82,8 @@ namespace Tests
             "Integration_PlaylistIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetPlaylistInfoAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
-            int minVideoCount = (int) TestContext.DataRow["MinVideoCount"];
+            var id = (string) TestContext.DataRow["Id"];
+            var minVideoCount = (int) TestContext.DataRow["MinVideoCount"];
 
             var client = new YoutubeClient();
             var playlistInfo = await client.GetPlaylistInfoAsync(id);
@@ -98,8 +98,8 @@ namespace Tests
             "Integration_PlaylistIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetPlaylistInfoAsync_Truncated_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
-            int pageLimit = 1;
+            var id = (string) TestContext.DataRow["Id"];
+            var pageLimit = 1;
 
             var client = new YoutubeClient();
             var playlistInfo = await client.GetPlaylistInfoAsync(id, pageLimit);
@@ -114,7 +114,7 @@ namespace Tests
             "Integration_ChannelIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetChannelUploadsAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var videos = await client.GetChannelUploadsAsync(id);
@@ -129,7 +129,7 @@ namespace Tests
             "Integration_ChannelIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetChannelInfoAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var channelInfo = await client.GetChannelInfoAsync(id);
@@ -142,7 +142,7 @@ namespace Tests
             "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetMediaStreamAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync(id);
@@ -169,7 +169,7 @@ namespace Tests
             "Integration_VideoIds_HasCC#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_GetClosedCaptionTrackAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync(id);
@@ -185,13 +185,13 @@ namespace Tests
             "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_DownloadMediaStreamAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync(id);
 
             var streamInfo = videoInfo.AudioStreams.OrderBy(s => s.ContentLength).First();
-            string outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
+            var outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
             Directory.CreateDirectory(Shared.TempDirectoryPath);
             await client.DownloadMediaStreamAsync(streamInfo, outputFilePath);
 
@@ -205,13 +205,13 @@ namespace Tests
             "Integration_VideoIds_HasCC#csv", DataAccessMethod.Sequential)]
         public async Task YoutubeClient_DownloadClosedCaptionTrackAsync_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
 
             var client = new YoutubeClient();
             var videoInfo = await client.GetVideoInfoAsync(id);
 
             var streamInfo = videoInfo.ClosedCaptionTracks.First();
-            string outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
+            var outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
             Directory.CreateDirectory(Shared.TempDirectoryPath);
             await client.DownloadClosedCaptionTrackAsync(streamInfo, outputFilePath);
 

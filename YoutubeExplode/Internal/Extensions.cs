@@ -23,7 +23,7 @@ namespace YoutubeExplode.Internal
         public static string SubstringUntil(this string str, string sub,
             StringComparison comparison = StringComparison.Ordinal)
         {
-            int index = str.IndexOf(sub, comparison);
+            var index = str.IndexOf(sub, comparison);
             if (index < 0) return str;
             return str.Substring(0, index);
         }
@@ -31,7 +31,7 @@ namespace YoutubeExplode.Internal
         public static string SubstringAfter(this string str, string sub,
             StringComparison comparison = StringComparison.Ordinal)
         {
-            int index = str.IndexOf(sub, comparison);
+            var index = str.IndexOf(sub, comparison);
             if (index < 0) return string.Empty;
             return str.Substring(index + sub.Length, str.Length - index - sub.Length);
         }
@@ -54,7 +54,7 @@ namespace YoutubeExplode.Internal
         public static string Reverse(this string str)
         {
             var sb = new StringBuilder(str.Length);
-            for (int i = str.Length - 1; i >= 0; i--)
+            for (var i = str.Length - 1; i >= 0; i--)
                 sb.Append(str[i]);
             return sb.ToString();
         }

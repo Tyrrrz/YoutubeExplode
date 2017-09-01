@@ -50,12 +50,12 @@ namespace YoutubeExplode
         private async Task<PlayerContext> GetPlayerContextAsync(string videoId)
         {
             // Get the embed video page
-            string request = $"https://www.youtube.com/embed/{videoId}";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var request = $"https://www.youtube.com/embed/{videoId}";
+            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
             // Extract values
-            string sourceUrl = Regex.Match(response, @"""js""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
-            string sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
+            var sourceUrl = Regex.Match(response, @"""js""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
+            var sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
 
             // Check if successful
             if (sourceUrl.IsBlank() || sts.IsBlank())
@@ -77,16 +77,16 @@ namespace YoutubeExplode
                 return playerSource;
 
             // Get player source code
-            string response = await _httpService.GetStringAsync(sourceUrl).ConfigureAwait(false);
+            var response = await _httpService.GetStringAsync(sourceUrl).ConfigureAwait(false);
 
             // Find the name of the function that handles deciphering
-            string funcName = Regex.Match(response, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
+            var funcName = Regex.Match(response, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
             if (funcName.IsBlank())
                 throw new ParseException("Could not find the entry function for signature deciphering");
 
             // Find the body of the function
-            string funcPattern = @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{(.*?)\}";
-            string funcBody = Regex.Match(response, funcPattern, RegexOptions.Singleline).Groups[1].Value;
+            var funcPattern = @"(?!h\.)" + Regex.Escape(funcName) + @"=function\(\w+\)\{(.*?)\}";
+            var funcBody = Regex.Match(response, funcPattern, RegexOptions.Singleline).Groups[1].Value;
             if (funcBody.IsBlank())
                 throw new ParseException("Could not find the signature decipherer function body");
             var funcLines = funcBody.Split(";").ToArray();
@@ -98,14 +98,14 @@ namespace YoutubeExplode
             var operations = new List<ICipherOperation>();
 
             // Analyze the function body to determine the names of cipher functions
-            foreach (string line in funcLines)
+            foreach (var line in funcLines)
             {
                 // Break when all functions are found
                 if (reverseFuncName.IsNotBlank() && sliceFuncName.IsNotBlank() && charSwapFuncName.IsNotBlank())
                     break;
 
                 // Get the function called on this line
-                string calledFunctionName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
+                var calledFunctionName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
                 if (calledFunctionName.IsBlank())
                     continue;
 
@@ -127,23 +127,23 @@ namespace YoutubeExplode
             }
 
             // Analyze the function body again to determine the operation set and order
-            foreach (string line in funcLines)
+            foreach (var line in funcLines)
             {
                 // Get the function called on this line
-                string calledFunctionName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
+                var calledFunctionName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
                 if (calledFunctionName.IsBlank())
                     continue;
 
                 // Swap operation
                 if (calledFunctionName == charSwapFuncName)
                 {
-                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
+                    var index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
                     operations.Add(new SwapCipherOperation(index));
                 }
                 // Slice operation
                 else if (calledFunctionName == sliceFuncName)
                 {
-                    int index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
+                    var index = Regex.Match(line, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
                     operations.Add(new SliceCipherOperation(index));
                 }
                 // Reverse operation
@@ -167,8 +167,8 @@ namespace YoutubeExplode
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
             // Get
-            string request = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default&hl=en";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var request = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=info&ps=default&hl=en";
+            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
             // Parse
             var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
@@ -176,7 +176,7 @@ namespace YoutubeExplode
             // Check error code
             if (videoInfoDic.ContainsKey("errorcode"))
             {
-                int errorCode = videoInfoDic.Get("errorcode").ParseInt();
+                var errorCode = videoInfoDic.Get("errorcode").ParseInt();
                 return errorCode != 100 && errorCode != 150;
             }
 
@@ -197,54 +197,54 @@ namespace YoutubeExplode
             var playerContext = await GetPlayerContextAsync(videoId).ConfigureAwait(false);
 
             // Get video info
-            string request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={playerContext.Sts}&el=info&ps=default&hl=en";
-            string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var request = $"https://www.youtube.com/get_video_info?video_id={videoId}&sts={playerContext.Sts}&el=info&ps=default&hl=en";
+            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
             var videoInfoDic = UrlHelper.GetDictionaryFromUrlQuery(response);
 
             // Check for error
             if (videoInfoDic.ContainsKey("errorcode"))
             {
-                int errorCode = videoInfoDic.Get("errorcode").ParseInt();
-                string errorReason = videoInfoDic.Get("reason");
+                var errorCode = videoInfoDic.Get("errorcode").ParseInt();
+                var errorReason = videoInfoDic.Get("reason");
                 throw new VideoNotAvailableException(errorCode, errorReason);
             }
 
             // Check for paid content
             if (videoInfoDic.GetOrDefault("requires_purchase") == "1")
             {
-                string previewVideoId = videoInfoDic.Get("ypc_vid");
+                var previewVideoId = videoInfoDic.Get("ypc_vid");
                 throw new VideoRequiresPurchaseException(previewVideoId);
             }
 
             // Parse metadata
-            string title = videoInfoDic.Get("title");
+            var title = videoInfoDic.Get("title");
             var duration = TimeSpan.FromSeconds(videoInfoDic.Get("length_seconds").ParseDouble());
-            long viewCount = videoInfoDic.Get("view_count").ParseLong();
+            var viewCount = videoInfoDic.Get("view_count").ParseLong();
             var keywords = videoInfoDic.Get("keywords").Split(",");
             var watermarks = videoInfoDic.Get("watermark").Split(",");
-            bool isListed = videoInfoDic.GetOrDefault("is_listed") == "1"; // https://github.com/Tyrrrz/YoutubeExplode/issues/45
-            bool isRatingAllowed = videoInfoDic.Get("allow_ratings") == "1";
-            bool isMuted = videoInfoDic.Get("muted") == "1";
-            bool isEmbeddingAllowed = videoInfoDic.Get("allow_embed") == "1";
+            var isListed = videoInfoDic.GetOrDefault("is_listed") == "1"; // https://github.com/Tyrrrz/YoutubeExplode/issues/45
+            var isRatingAllowed = videoInfoDic.Get("allow_ratings") == "1";
+            var isMuted = videoInfoDic.Get("muted") == "1";
+            var isEmbeddingAllowed = videoInfoDic.Get("allow_embed") == "1";
 
             // Parse mixed streams
             var mixedStreams = new List<MixedStreamInfo>();
-            string mixedStreamsEncoded = videoInfoDic.GetOrDefault("url_encoded_fmt_stream_map");
+            var mixedStreamsEncoded = videoInfoDic.GetOrDefault("url_encoded_fmt_stream_map");
             if (mixedStreamsEncoded.IsNotBlank())
             {
-                foreach (string streamEncoded in mixedStreamsEncoded.Split(","))
+                foreach (var streamEncoded in mixedStreamsEncoded.Split(","))
                 {
                     var streamDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
 
-                    int itag = streamDic.Get("itag").ParseInt();
+                    var itag = streamDic.Get("itag").ParseInt();
 
 #if RELEASE
                     // Skip unknown itags on RELEASE
                     if (!MediaStreamInfo.IsKnown(itag)) continue;
 #endif
 
-                    string url = streamDic.Get("url");
-                    string sig = streamDic.GetOrDefault("s");
+                    var url = streamDic.Get("url");
+                    var sig = streamDic.GetOrDefault("s");
 
                     // Decipher signature if needed
                     if (sig.IsNotBlank())
@@ -284,24 +284,24 @@ namespace YoutubeExplode
             // Parse adaptive streams
             var audioStreams = new List<AudioStreamInfo>();
             var videoStreams = new List<VideoStreamInfo>();
-            string adaptiveStreamsEncoded = videoInfoDic.GetOrDefault("adaptive_fmts");
+            var adaptiveStreamsEncoded = videoInfoDic.GetOrDefault("adaptive_fmts");
             if (adaptiveStreamsEncoded.IsNotBlank())
             {
-                foreach (string streamEncoded in adaptiveStreamsEncoded.Split(","))
+                foreach (var streamEncoded in adaptiveStreamsEncoded.Split(","))
                 {
                     var streamDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
 
-                    int itag = streamDic.Get("itag").ParseInt();
+                    var itag = streamDic.Get("itag").ParseInt();
 
 #if RELEASE
                     // Skip unknown itags on RELEASE
                     if (!MediaStreamInfo.IsKnown(itag)) continue;
 #endif
 
-                    string url = streamDic.Get("url");
-                    string sig = streamDic.GetOrDefault("s");
-                    long contentLength = streamDic.Get("clen").ParseLong();
-                    long bitrate = streamDic.Get("bitrate").ParseLong();
+                    var url = streamDic.Get("url");
+                    var sig = streamDic.GetOrDefault("s");
+                    var contentLength = streamDic.Get("clen").ParseLong();
+                    var bitrate = streamDic.Get("bitrate").ParseLong();
 
                     // Decipher signature if needed
                     if (sig.IsNotBlank())
@@ -315,7 +315,7 @@ namespace YoutubeExplode
                     url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
 
                     // Check if audio
-                    bool isAudio = streamDic.Get("type").Contains("audio/");
+                    var isAudio = streamDic.Get("type").Contains("audio/");
 
                     // If audio stream
                     if (isAudio)
@@ -327,11 +327,11 @@ namespace YoutubeExplode
                     else
                     {
                         // Parse additional data
-                        string size = streamDic.Get("size");
-                        int width = size.SubstringUntil("x").ParseInt();
-                        int height = size.SubstringAfter("x").ParseInt();
+                        var size = streamDic.Get("size");
+                        var width = size.SubstringUntil("x").ParseInt();
+                        var height = size.SubstringAfter("x").ParseInt();
                         var resolution = new VideoResolution(width, height);
-                        double framerate = streamDic.Get("fps").ParseDouble();
+                        var framerate = streamDic.Get("fps").ParseDouble();
 
                         var stream = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
                         videoStreams.Add(stream);
@@ -340,11 +340,11 @@ namespace YoutubeExplode
             }
 
             // Parse adaptive streams from dash
-            string dashManifestUrl = videoInfoDic.GetOrDefault("dashmpd");
+            var dashManifestUrl = videoInfoDic.GetOrDefault("dashmpd");
             if (dashManifestUrl.IsNotBlank())
             {
                 // Parse signature
-                string sig = Regex.Match(dashManifestUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
+                var sig = Regex.Match(dashManifestUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
 
                 // Decipher signature if needed
                 if (sig.IsNotBlank())
@@ -368,18 +368,18 @@ namespace YoutubeExplode
                 // Parse streams
                 foreach (var streamXml in streamsXml)
                 {
-                    int itag = (int) streamXml.AttributeStrict("id");
+                    var itag = (int) streamXml.AttributeStrict("id");
 
 #if RELEASE
                     // Skip unknown itags on RELEASE
                     if (!MediaStreamInfo.IsKnown(itag)) continue;
 #endif
 
-                    string url = streamXml.ElementStrict("BaseURL").Value;
-                    long bitrate = (long) streamXml.AttributeStrict("bandwidth");
+                    var url = streamXml.ElementStrict("BaseURL").Value;
+                    var bitrate = (long) streamXml.AttributeStrict("bandwidth");
 
                     // Parse content length
-                    long contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
+                    var contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
 
                     // Set rate bypass
                     url = url.Contains("&")
@@ -387,7 +387,7 @@ namespace YoutubeExplode
                         : UrlHelper.SetUrlPathParameter(url, "ratebypass", "yes");
 
                     // Check if audio stream
-                    bool isAudio = streamXml.Element("AudioChannelConfiguration") != null;
+                    var isAudio = streamXml.Element("AudioChannelConfiguration") != null;
 
                     // If audio stream
                     if (isAudio)
@@ -399,10 +399,10 @@ namespace YoutubeExplode
                     else
                     {
                         // Parse additional data
-                        int width = (int) streamXml.AttributeStrict("width");
-                        int height = (int) streamXml.AttributeStrict("height");
+                        var width = (int) streamXml.AttributeStrict("width");
+                        var height = (int) streamXml.AttributeStrict("height");
                         var resolution = new VideoResolution(width, height);
-                        double framerate = (double) streamXml.AttributeStrict("frameRate");
+                        var framerate = (double) streamXml.AttributeStrict("frameRate");
 
                         var stream = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
                         videoStreams.Add(stream);
@@ -417,17 +417,17 @@ namespace YoutubeExplode
 
             // Parse closed caption tracks
             var captions = new List<ClosedCaptionTrackInfo>();
-            string captionsEncoded = videoInfoDic.GetOrDefault("caption_tracks");
+            var captionsEncoded = videoInfoDic.GetOrDefault("caption_tracks");
             if (captionsEncoded.IsNotBlank())
             {
-                foreach (string captionEncoded in captionsEncoded.Split(","))
+                foreach (var captionEncoded in captionsEncoded.Split(","))
                 {
                     var captionDic = UrlHelper.GetDictionaryFromUrlQuery(captionEncoded);
 
-                    string url = captionDic.Get("u");
-                    bool isAuto = captionDic.Get("v").Contains("a.");
-                    string code = captionDic.Get("lc");
-                    string name = captionDic.Get("n");
+                    var url = captionDic.Get("u");
+                    var isAuto = captionDic.Get("v").Contains("a.");
+                    var code = captionDic.Get("lc");
+                    var name = captionDic.Get("n");
 
                     var language = new Language(code, name);
                     var caption = new ClosedCaptionTrackInfo(url, language, isAuto);
@@ -441,17 +441,17 @@ namespace YoutubeExplode
             var videoInfoExtXml = XElement.Parse(response).StripNamespaces().ElementStrict("html_content");
 
             // Parse
-            string description = videoInfoExtXml.ElementStrict("video_info").ElementStrict("description").Value;
-            long likeCount = (long) videoInfoExtXml.ElementStrict("video_info").ElementStrict("likes_count_unformatted");
-            long dislikeCount = (long) videoInfoExtXml.ElementStrict("video_info").ElementStrict("dislikes_count_unformatted");
+            var description = videoInfoExtXml.ElementStrict("video_info").ElementStrict("description").Value;
+            var likeCount = (long) videoInfoExtXml.ElementStrict("video_info").ElementStrict("likes_count_unformatted");
+            var dislikeCount = (long) videoInfoExtXml.ElementStrict("video_info").ElementStrict("dislikes_count_unformatted");
 
             // Parse author info
-            string authorId = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_external_id").Value;
-            string authorName = videoInfoExtXml.ElementStrict("user_info").ElementStrict("username").Value;
-            string authorTitle = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_title").Value;
-            bool authorIsPaid = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_paid").Value == "1";
-            string authorLogoUrl = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_logo_url").Value;
-            string authorBannerUrl = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_banner_url").Value;
+            var authorId = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_external_id").Value;
+            var authorName = videoInfoExtXml.ElementStrict("user_info").ElementStrict("username").Value;
+            var authorTitle = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_title").Value;
+            var authorIsPaid = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_paid").Value == "1";
+            var authorLogoUrl = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_logo_url").Value;
+            var authorBannerUrl = videoInfoExtXml.ElementStrict("user_info").ElementStrict("channel_banner_url").Value;
             var author = new ChannelInfo(
                 authorId, authorName, authorTitle,
                 authorIsPaid, authorLogoUrl, authorBannerUrl);
@@ -477,38 +477,38 @@ namespace YoutubeExplode
                 throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
             // Get all videos across pages
-            int pagesDone = 0;
-            int offset = 0;
+            var pagesDone = 0;
+            var offset = 0;
             XElement playlistInfoXml;
             var videos = new List<VideoInfoSnippet>();
             var videoIds = new HashSet<string>();
             do
             {
                 // Get
-                string request = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={offset}";
-                string response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+                var request = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={offset}";
+                var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
                 playlistInfoXml = XElement.Parse(response).StripNamespaces();
 
                 // Parse videos
-                int total = 0;
-                int delta = 0;
+                var total = 0;
+                var delta = 0;
                 foreach (var videoInfoSnippetXml in playlistInfoXml.Elements("video"))
                 {
                     // Basic info
-                    string videoId = videoInfoSnippetXml.ElementStrict("encrypted_id").Value;
-                    string videoTitle = videoInfoSnippetXml.ElementStrict("title").Value;
+                    var videoId = videoInfoSnippetXml.ElementStrict("encrypted_id").Value;
+                    var videoTitle = videoInfoSnippetXml.ElementStrict("title").Value;
                     var videoDuration =
                         TimeSpan.FromSeconds(videoInfoSnippetXml.ElementStrict("length_seconds").Value.ParseDouble());
-                    string videoDescription = videoInfoSnippetXml.ElementStrict("description").Value;
-                    long videoViewCount =
+                    var videoDescription = videoInfoSnippetXml.ElementStrict("description").Value;
+                    var videoViewCount =
                         Regex.Replace(videoInfoSnippetXml.ElementStrict("views").Value, @"\D", "").ParseLong();
-                    long videoLikeCount =
+                    var videoLikeCount =
                         Regex.Replace(videoInfoSnippetXml.ElementStrict("likes").Value, @"\D", "").ParseLong();
-                    long videoDislikeCount =
+                    var videoDislikeCount =
                         Regex.Replace(videoInfoSnippetXml.ElementStrict("dislikes").Value, @"\D", "").ParseLong();
 
                     // Keywords
-                    string videoKeywordsJoined = videoInfoSnippetXml.ElementStrict("keywords").Value;
+                    var videoKeywordsJoined = videoInfoSnippetXml.ElementStrict("keywords").Value;
                     var videoKeywords = Regex
                         .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<quote>""?))([^""]|(""""))*?(?=\<quote>(?=\s|$))")
                         .Cast<Match>()
@@ -536,10 +536,10 @@ namespace YoutubeExplode
             } while (pagesDone < maxPages);
 
             // Parse metadata
-            string title = playlistInfoXml.ElementStrict("title").Value;
-            string author = playlistInfoXml.Element("author")?.Value ?? "";
-            string description = playlistInfoXml.ElementStrict("description").Value;
-            long viewCount = (long) playlistInfoXml.ElementStrict("views");
+            var title = playlistInfoXml.ElementStrict("title").Value;
+            var author = playlistInfoXml.Element("author")?.Value ?? "";
+            var description = playlistInfoXml.ElementStrict("description").Value;
+            var viewCount = (long) playlistInfoXml.ElementStrict("views");
 
             return new PlaylistInfo(playlistId, title, author, description, viewCount, videos);
         }
@@ -563,7 +563,7 @@ namespace YoutubeExplode
                 throw new ArgumentOutOfRangeException(nameof(maxPages), "Needs to be a positive number");
 
             // Compose a playlist ID
-            string playlistId = "UU" + channelId.SubstringAfter("UC");
+            var playlistId = "UU" + channelId.SubstringAfter("UC");
 
             // Get playlist info
             var playlistInfo = await GetPlaylistInfoAsync(playlistId, maxPages).ConfigureAwait(false);
@@ -622,14 +622,14 @@ namespace YoutubeExplode
                 throw new ArgumentNullException(nameof(closedCaptionTrackInfo));
 
             // Get
-            string response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
+            var response = await _httpService.GetStringAsync(closedCaptionTrackInfo.Url).ConfigureAwait(false);
             var captionTrackXml = XElement.Parse(response).StripNamespaces();
 
             // Parse
             var captions = new List<ClosedCaption>();
             foreach (var captionXml in captionTrackXml.Descendants("text"))
             {
-                string text = captionXml.Value;
+                var text = captionXml.Value;
                 var offset = TimeSpan.FromSeconds((double) captionXml.AttributeStrict("start"));
                 var duration = TimeSpan.FromSeconds((double) captionXml.AttributeStrict("dur"));
 
@@ -808,7 +808,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/watch?v=yIVRs6YSbOM
-            string regularMatch =
+            var regularMatch =
                 Regex.Match(videoUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateVideoId(regularMatch))
             {
@@ -817,7 +817,7 @@ namespace YoutubeExplode
             }
 
             // https://youtu.be/yIVRs6YSbOM
-            string shortMatch =
+            var shortMatch =
                 Regex.Match(videoUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (shortMatch.IsNotBlank() && ValidateVideoId(shortMatch))
             {
@@ -826,7 +826,7 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/embed/yIVRs6YSbOM
-            string embedMatch =
+            var embedMatch =
                 Regex.Match(videoUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (embedMatch.IsNotBlank() && ValidateVideoId(embedMatch))
             {
@@ -845,7 +845,7 @@ namespace YoutubeExplode
             if (videoUrl == null)
                 throw new ArgumentNullException(nameof(videoUrl));
 
-            bool success = TryParseVideoId(videoUrl, out string result);
+            var success = TryParseVideoId(videoUrl, out string result);
             if (success)
                 return result;
 
@@ -882,7 +882,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
-            string regularMatch =
+            var regularMatch =
                 Regex.Match(playlistUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidatePlaylistId(regularMatch))
             {
@@ -891,7 +891,7 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            string compositeMatch =
+            var compositeMatch =
                 Regex.Match(playlistUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (compositeMatch.IsNotBlank() && ValidatePlaylistId(compositeMatch))
             {
@@ -900,7 +900,7 @@ namespace YoutubeExplode
             }
 
             // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            string shortCompositeMatch =
+            var shortCompositeMatch =
                 Regex.Match(playlistUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (shortCompositeMatch.IsNotBlank() && ValidatePlaylistId(shortCompositeMatch))
             {
@@ -909,7 +909,7 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            string embedCompositeMatch =
+            var embedCompositeMatch =
                 Regex.Match(playlistUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (embedCompositeMatch.IsNotBlank() && ValidatePlaylistId(embedCompositeMatch))
             {
@@ -928,7 +928,7 @@ namespace YoutubeExplode
             if (playlistUrl == null)
                 throw new ArgumentNullException(nameof(playlistUrl));
 
-            bool success = TryParsePlaylistId(playlistUrl, out string result);
+            var success = TryParsePlaylistId(playlistUrl, out string result);
             if (success)
                 return result;
 
@@ -963,7 +963,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
-            string regularMatch =
+            var regularMatch =
                 Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateChannelId(regularMatch))
             {
@@ -982,7 +982,7 @@ namespace YoutubeExplode
             if (channelUrl == null)
                 throw new ArgumentNullException(nameof(channelUrl));
 
-            bool success = TryParseChannelId(channelUrl, out string result);
+            var success = TryParseChannelId(channelUrl, out string result);
             if (success)
                 return result;
 

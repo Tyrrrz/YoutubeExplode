@@ -12,7 +12,7 @@ namespace DemoWpf.Converters
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            bool b = (bool) value;
+            var b = (bool) value;
             return b ? "yes" : "no";
         }
 

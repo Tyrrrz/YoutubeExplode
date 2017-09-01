@@ -108,10 +108,10 @@ namespace DemoWpf.ViewModels
         private async void DownloadMediaStreamAsync(MediaStreamInfo mediaStreamInfo)
         {
             // Create dialog
-            string fileExtension = mediaStreamInfo.Container.GetFileExtension();
-            string defaultFileName = $"{VideoInfo.Title}.{fileExtension}";
+            var fileExtension = mediaStreamInfo.Container.GetFileExtension();
+            var defaultFileName = $"{VideoInfo.Title}.{fileExtension}";
             defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
-            string fileFilter =
+            var fileFilter =
                 $"{mediaStreamInfo.Container} Files|*.{fileExtension}|" +
                 "All files|*.*";
             var sfd = new SaveFileDialog
@@ -124,7 +124,7 @@ namespace DemoWpf.ViewModels
 
             // Select destination
             if (sfd.ShowDialog() != true) return;
-            string filePath = sfd.FileName;
+            var filePath = sfd.FileName;
 
             // Download and save to file
             IsBusy = true;
@@ -140,9 +140,9 @@ namespace DemoWpf.ViewModels
         private async void DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo closedCaptionTrackInfo)
         {
             // Create dialog
-            string defaultFileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Language.Name}.srt";
+            var defaultFileName = $"{VideoInfo.Title}.{closedCaptionTrackInfo.Language.Name}.srt";
             defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
-            string fileFilter =
+            var fileFilter =
                 "SRT Files|*.srt|" +
                 "All files|*.*";
             var sfd = new SaveFileDialog
@@ -154,7 +154,7 @@ namespace DemoWpf.ViewModels
             };
             // Select destination
             if (sfd.ShowDialog() != true) return;
-            string filePath = sfd.FileName;
+            var filePath = sfd.FileName;
 
             // Download
             IsBusy = true;

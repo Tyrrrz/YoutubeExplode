@@ -14,7 +14,7 @@ namespace Tests
             "Validation_VideoIds_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ValidateVideoId_Valid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
             Assert.IsTrue(YoutubeClient.ValidateVideoId(id));
         }
 
@@ -23,7 +23,7 @@ namespace Tests
             "Validation_VideoIds_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ValidateVideoId_Invalid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
             Assert.IsFalse(YoutubeClient.ValidateVideoId(id));
         }
 
@@ -32,10 +32,10 @@ namespace Tests
             "Validation_VideoUrls_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_TryParseVideoId_Valid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
-            string id = (string) TestContext.DataRow["Id"];
+            var url = (string) TestContext.DataRow["Url"];
+            var id = (string) TestContext.DataRow["Id"];
 
-            bool success = YoutubeClient.TryParseVideoId(url, out string actualId);
+            var success = YoutubeClient.TryParseVideoId(url, out string actualId);
             Assert.IsTrue(success);
             Assert.AreEqual(id, actualId);
         }
@@ -45,9 +45,9 @@ namespace Tests
             "Validation_VideoUrls_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_TryParseVideoId_Invalid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
+            var url = (string) TestContext.DataRow["Url"];
 
-            bool success = YoutubeClient.TryParseVideoId(url, out _);
+            var success = YoutubeClient.TryParseVideoId(url, out _);
             Assert.IsFalse(success);
         }
 
@@ -56,10 +56,10 @@ namespace Tests
             "Validation_VideoUrls_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ParseVideoId_Valid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
-            string id = (string) TestContext.DataRow["Id"];
+            var url = (string) TestContext.DataRow["Url"];
+            var id = (string) TestContext.DataRow["Id"];
 
-            string actualId = YoutubeClient.ParseVideoId(url);
+            var actualId = YoutubeClient.ParseVideoId(url);
             Assert.AreEqual(id, actualId);
         }
 
@@ -68,7 +68,7 @@ namespace Tests
             "Validation_VideoUrls_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ParseVideoId_Invalid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
+            var url = (string) TestContext.DataRow["Url"];
             Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseVideoId(url));
         }
 
@@ -77,7 +77,7 @@ namespace Tests
             "Validation_PlaylistIds_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ValidatePlaylistId_Valid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
             Assert.IsTrue(YoutubeClient.ValidatePlaylistId(id));
         }
 
@@ -86,7 +86,7 @@ namespace Tests
             "Validation_PlaylistIds_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ValidatePlaylistId_Invalid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
             Assert.IsFalse(YoutubeClient.ValidatePlaylistId(id));
         }
 
@@ -95,10 +95,10 @@ namespace Tests
             "Validation_PlaylistUrls_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_TryParsePlaylistId_Valid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
-            string id = (string) TestContext.DataRow["Id"];
+            var url = (string) TestContext.DataRow["Url"];
+            var id = (string) TestContext.DataRow["Id"];
 
-            bool success = YoutubeClient.TryParsePlaylistId(url, out string actualId);
+            var success = YoutubeClient.TryParsePlaylistId(url, out string actualId);
             Assert.IsTrue(success);
             Assert.AreEqual(id, actualId);
         }
@@ -108,9 +108,9 @@ namespace Tests
             "Validation_PlaylistUrls_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_TryParsePlaylistId_Invalid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
+            var url = (string) TestContext.DataRow["Url"];
 
-            bool success = YoutubeClient.TryParsePlaylistId(url, out _);
+            var success = YoutubeClient.TryParsePlaylistId(url, out _);
             Assert.IsFalse(success);
         }
 
@@ -119,10 +119,10 @@ namespace Tests
             "Validation_PlaylistUrls_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ParsePlaylistId_Valid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
-            string id = (string) TestContext.DataRow["Id"];
+            var url = (string) TestContext.DataRow["Url"];
+            var id = (string) TestContext.DataRow["Id"];
 
-            string actualId = YoutubeClient.ParsePlaylistId(url);
+            var actualId = YoutubeClient.ParsePlaylistId(url);
             Assert.AreEqual(id, actualId);
         }
 
@@ -131,7 +131,7 @@ namespace Tests
             "Validation_PlaylistUrls_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ParsePlaylistId_Invalid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
+            var url = (string) TestContext.DataRow["Url"];
             Assert.ThrowsException<FormatException>(() => YoutubeClient.ParsePlaylistId(url));
         }
 
@@ -140,7 +140,7 @@ namespace Tests
             "Validation_ChannelIds_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ValidateChannelId_Valid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
             Assert.IsTrue(YoutubeClient.ValidateChannelId(id));
         }
 
@@ -149,7 +149,7 @@ namespace Tests
             "Validation_ChannelIds_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ValidateChannelId_Invalid_Test()
         {
-            string id = (string) TestContext.DataRow["Id"];
+            var id = (string) TestContext.DataRow["Id"];
             Assert.IsFalse(YoutubeClient.ValidateChannelId(id));
         }
 
@@ -158,10 +158,10 @@ namespace Tests
             "Validation_ChannelUrls_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_TryParseChannelId_Valid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
-            string id = (string) TestContext.DataRow["Id"];
+            var url = (string) TestContext.DataRow["Url"];
+            var id = (string) TestContext.DataRow["Id"];
 
-            bool success = YoutubeClient.TryParseChannelId(url, out string actualId);
+            var success = YoutubeClient.TryParseChannelId(url, out string actualId);
             Assert.IsTrue(success);
             Assert.AreEqual(id, actualId);
         }
@@ -171,9 +171,9 @@ namespace Tests
             "Validation_ChannelUrls_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_TryParseChannelId_Invalid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
+            var url = (string) TestContext.DataRow["Url"];
 
-            bool success = YoutubeClient.TryParseChannelId(url, out _);
+            var success = YoutubeClient.TryParseChannelId(url, out _);
             Assert.IsFalse(success);
         }
 
@@ -182,10 +182,10 @@ namespace Tests
             "Validation_ChannelUrls_Valid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ParseChannelId_Valid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
-            string id = (string) TestContext.DataRow["Id"];
+            var url = (string) TestContext.DataRow["Url"];
+            var id = (string) TestContext.DataRow["Id"];
 
-            string actualId = YoutubeClient.ParseChannelId(url);
+            var actualId = YoutubeClient.ParseChannelId(url);
             Assert.AreEqual(id, actualId);
         }
 
@@ -194,7 +194,7 @@ namespace Tests
             "Validation_ChannelUrls_Invalid#csv", DataAccessMethod.Sequential)]
         public void YoutubeClient_ParseChannelId_Invalid_Test()
         {
-            string url = (string) TestContext.DataRow["Url"];
+            var url = (string) TestContext.DataRow["Url"];
             Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseChannelId(url));
         }
     }

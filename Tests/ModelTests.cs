@@ -51,7 +51,7 @@ namespace Tests
 
             foreach (var value in possibleValues)
             {
-                string result = value.GetFileExtension();
+                var result = value.GetFileExtension();
 
                 Assert.That.IsNotBlank(result);
             }

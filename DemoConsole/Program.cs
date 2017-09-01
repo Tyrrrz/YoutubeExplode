@@ -28,7 +28,7 @@ namespace DemoConsole
         {
             string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
             double size = fileSize;
-            int unit = 0;
+            var unit = 0;
 
             while (size >= 1024)
             {
@@ -46,7 +46,7 @@ namespace DemoConsole
 
             // Get the video ID
             Console.Write("Enter Youtube video ID or URL: ");
-            string id = Console.ReadLine();
+            var id = Console.ReadLine();
             id = NormalizeId(id);
 
             // Get the video info
@@ -62,12 +62,12 @@ namespace DemoConsole
             var streamInfo = videoInfo.MixedStreams
                 .OrderBy(s => s.VideoQuality)
                 .Last();
-            string normalizedFileSize = NormalizeFileSize(streamInfo.ContentLength);
+            var normalizedFileSize = NormalizeFileSize(streamInfo.ContentLength);
             Console.WriteLine($"Quality: {streamInfo.VideoQualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata
-            string fileExtension = streamInfo.Container.GetFileExtension();
-            string fileName = $"{videoInfo.Title}.{fileExtension}";
+            var fileExtension = streamInfo.Container.GetFileExtension();
+            var fileName = $"{videoInfo.Title}.{fileExtension}";
 
             // Remove illegal characters from file name
             fileName = fileName.Except(Path.GetInvalidFileNameChars());

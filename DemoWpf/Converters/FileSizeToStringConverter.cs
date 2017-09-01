@@ -15,7 +15,7 @@ namespace DemoWpf.Converters
                 throw new ArgumentNullException(nameof(value));
 
             double size = (long) value;
-            int unit = 0;
+            var unit = 0;
 
             while (size >= 1024)
             {

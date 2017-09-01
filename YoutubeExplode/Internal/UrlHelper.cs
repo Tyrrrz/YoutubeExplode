@@ -30,10 +30,10 @@ namespace YoutubeExplode.Internal
             else
             {
                 // See if there are other parameters
-                bool hasOtherParams = url.IndexOf('?') >= 0;
+                var hasOtherParams = url.IndexOf('?') >= 0;
 
                 // Prepend either & or ? depending on that
-                char separator = hasOtherParams ? '&' : '?';
+                var separator = hasOtherParams ? '&' : '?';
 
                 // Assemble new query string
                 return url + separator + key + '=' + value;
@@ -72,18 +72,18 @@ namespace YoutubeExplode.Internal
         {
             var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var keyValuePairsRaw = urlEncoded.Split("&");
-            foreach (string keyValuePairRaw in keyValuePairsRaw)
+            foreach (var keyValuePairRaw in keyValuePairsRaw)
             {
-                string keyValuePairRawDecoded = keyValuePairRaw.UrlDecode();
+                var keyValuePairRawDecoded = keyValuePairRaw.UrlDecode();
 
                 // Look for the equals sign
-                int equalsPos = keyValuePairRawDecoded.IndexOf('=');
+                var equalsPos = keyValuePairRawDecoded.IndexOf('=');
                 if (equalsPos <= 0)
                     continue;
 
                 // Get the key and value
-                string key = keyValuePairRawDecoded.Substring(0, equalsPos);
-                string value = equalsPos < keyValuePairRawDecoded.Length
+                var key = keyValuePairRawDecoded.Substring(0, equalsPos);
+                var value = equalsPos < keyValuePairRawDecoded.Length
                     ? keyValuePairRawDecoded.Substring(equalsPos + 1)
                     : string.Empty;
 
