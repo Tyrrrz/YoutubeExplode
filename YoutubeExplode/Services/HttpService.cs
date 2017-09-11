@@ -10,14 +10,17 @@ namespace YoutubeExplode.Services
     /// </summary>
     public partial class HttpService : IHttpService, IDisposable
     {
-        private readonly HttpClient _httpClient;
+        /// <summary>
+        /// Internal instance of <see cref="HttpClient"/>
+        /// </summary>
+        protected HttpClient Client { get; }
 
         /// <summary>
         /// Creates an instance of <see cref="HttpService"/> with a custom <see cref="HttpClient"/>
         /// </summary>
         public HttpService(HttpClient client)
         {
-            _httpClient = client ?? throw new ArgumentNullException(nameof(client));
+            Client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <summary>
@@ -30,8 +33,8 @@ namespace YoutubeExplode.Services
                 httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             httpClientHandler.UseCookies = false;
 
-            _httpClient = new HttpClient(httpClientHandler);
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
+            Client = new HttpClient(httpClientHandler);
+            Client.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
         }
 
         /// <inheritdoc />
@@ -41,9 +44,9 @@ namespace YoutubeExplode.Services
         }
 
         /// <inheritdoc />
-        public async Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request)
+        public virtual async Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request)
         {
-            return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            return await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,7 +56,7 @@ namespace YoutubeExplode.Services
         {
             if (disposing)
             {
-                _httpClient.Dispose();
+                Client.Dispose();
             }
         }
 
@@ -70,7 +73,7 @@ namespace YoutubeExplode.Services
         private static HttpService _instance;
 
         /// <summary>
-        /// Returns a reusable instance of HttpService
+        /// Singleton instance of <see cref="HttpService"/>
         /// </summary>
         public static HttpService Instance => _instance ?? (_instance = new HttpService());
     }

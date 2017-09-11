@@ -10,7 +10,7 @@ namespace YoutubeExplode.Models.MediaStreams
     public abstract partial class MediaStreamInfo
     {
         /// <summary>
-        /// Unique tag that identifies the properties of the stream
+        /// Unique tag that identifies the properties of this stream
         /// </summary>
         public int Itag { get; }
 

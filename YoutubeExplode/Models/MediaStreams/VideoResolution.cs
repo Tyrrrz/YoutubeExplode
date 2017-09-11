@@ -27,11 +27,8 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (obj is VideoResolution)
-            {
-                var other = (VideoResolution) obj;
+            if (obj is VideoResolution other)
                 return Equals(other);
-            }
             return false;
         }
 

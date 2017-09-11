@@ -18,7 +18,7 @@ namespace YoutubeExplode.Models
         public string Url => $"https://www.youtube.com/channel/{Id}";
 
         /// <summary>
-        /// Actual username
+        /// Name
         /// </summary>
         public string Name { get; }
 

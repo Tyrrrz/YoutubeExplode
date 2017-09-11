@@ -13,12 +13,12 @@ namespace YoutubeExplode.Models.ClosedCaptions
         public string Text { get; }
 
         /// <summary>
-        /// When the caption is shown, relative to video's timeline
+        /// When this caption is displayed, relative to video's timeline
         /// </summary>
         public TimeSpan Offset { get; }
 
         /// <summary>
-        /// Duration of this caption
+        /// How long this caption is displayed
         /// </summary>
         public TimeSpan Duration { get; }
 

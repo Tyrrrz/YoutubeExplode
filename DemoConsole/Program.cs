@@ -51,15 +51,15 @@ namespace DemoConsole
 
             // Get the video info
             Console.WriteLine("Loading...");
-            var videoInfo = await client.GetVideoInfoAsync(id);
+            var video = await client.GetVideoInfoAsync(id);
             Console.WriteLine('-'.Repeat(100));
 
             // Print metadata
-            Console.WriteLine($"Id: {videoInfo.Id} | Title: {videoInfo.Title} | Author: {videoInfo.Author.Title}");
+            Console.WriteLine($"Id: {video.Id} | Title: {video.Title} | Author: {video.Author.Title}");
 
             // Get the most preferable stream
             Console.WriteLine("Looking for the best mixed stream...");
-            var streamInfo = videoInfo.MixedStreams
+            var streamInfo = video.MixedStreams
                 .OrderBy(s => s.VideoQuality)
                 .Last();
             var normalizedFileSize = NormalizeFileSize(streamInfo.ContentLength);
@@ -67,7 +67,7 @@ namespace DemoConsole
 
             // Compose file name, based on metadata
             var fileExtension = streamInfo.Container.GetFileExtension();
-            var fileName = $"{videoInfo.Title}.{fileExtension}";
+            var fileName = $"{video.Title}.{fileExtension}";
 
             // Remove illegal characters from file name
             fileName = fileName.Except(Path.GetInvalidFileNameChars());

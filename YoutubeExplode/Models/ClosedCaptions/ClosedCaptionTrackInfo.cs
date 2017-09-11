@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -14,7 +13,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
         public string Url { get; }
 
         /// <summary>
-        /// Text culture
+        /// Text language
         /// </summary>
         public Language Language { get; }
 

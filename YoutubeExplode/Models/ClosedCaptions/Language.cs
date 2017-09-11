@@ -8,12 +8,12 @@ namespace YoutubeExplode.Models.ClosedCaptions
     public class Language
     {
         /// <summary>
-        /// The ISO 639-1 Code of that language
+        /// The ISO 639-1 Code of this language
         /// </summary>
         public string Code { get; }
 
         /// <summary>
-        /// The full english name of that language
+        /// The full english name of this language
         /// </summary>
         public string Name { get; }
 
