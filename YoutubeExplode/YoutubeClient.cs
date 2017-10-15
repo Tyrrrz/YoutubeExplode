@@ -539,7 +539,8 @@ namespace YoutubeExplode
             var title = playlistInfoXml.ElementStrict("title").Value;
             var author = playlistInfoXml.Element("author")?.Value ?? "";
             var description = playlistInfoXml.ElementStrict("description").Value;
-            var viewCount = (long) playlistInfoXml.ElementStrict("views");
+            //Some playlists like WatchLater (WL) does not contain the views element.
+            var viewCount = playlistInfoXml.Element("views")?.Value.ParseLong() ?? 0L;
 
             return new PlaylistInfo(playlistId, title, author, description, viewCount, videos);
         }
