@@ -14,7 +14,7 @@ YoutubeExplode is a library that provides an interface to query metadata of Yout
 ## Download
 
 - Using nuget: `Install-Package YoutubeExplode`
-- Demo: [go to release page](https://github.com/Tyrrrz/YoutubeExplode/releases)
+- [Continuous integration](https://ci.appveyor.com/project/Tyrrrz/DiscordChatExporter)
 
 ## Features
 
