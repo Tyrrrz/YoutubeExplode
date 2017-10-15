@@ -1,7 +1,7 @@
 # YoutubeExplode
 
-[![Build status](https://img.shields.io/appveyor/ci/Tyrrrz/YoutubeExplode.svg)](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode)
-[![Test status](https://img.shields.io/appveyor/tests/Tyrrrz/YoutubeExplode.svg)](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode/build/tests)
+[![Build](https://img.shields.io/appveyor/ci/Tyrrrz/YoutubeExplode/master.svg)](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode)
+[![Tests](https://img.shields.io/appveyor/tests/Tyrrrz/YoutubeExplode/master.svg)](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode)
 [![NuGet](https://img.shields.io/nuget/v/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![NuGet](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 
