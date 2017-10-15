@@ -539,7 +539,7 @@ namespace YoutubeExplode
             var title = playlistInfoXml.ElementStrict("title").Value;
             var author = playlistInfoXml.Element("author")?.Value ?? "";
             var description = playlistInfoXml.ElementStrict("description").Value;
-            var viewCount = (long) playlistInfoXml.ElementStrict("views");
+            var viewCount = (long?) playlistInfoXml.Element("views") ?? 0;
 
             return new PlaylistInfo(playlistId, title, author, description, viewCount, videos);
         }
