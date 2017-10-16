@@ -6,7 +6,7 @@ using YoutubeExplode.Internal;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Services;
 
-#if NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -42,7 +42,7 @@ namespace YoutubeExplode
             return new ClosedCaptionTrack(info, captions);
         }
 
-#if NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
         /// <summary>
         /// Downloads a closed caption track to file

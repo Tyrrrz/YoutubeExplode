@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.MediaStreams;
 using YoutubeExplode.Services;
 
-#if NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
+using System;
 using System.IO;
 using System.Threading;
 #endif
@@ -26,7 +26,7 @@ namespace YoutubeExplode
             return new MediaStream(info, stream);
         }
 
-#if NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
         /// <summary>
         /// Downloads a media stream to file
