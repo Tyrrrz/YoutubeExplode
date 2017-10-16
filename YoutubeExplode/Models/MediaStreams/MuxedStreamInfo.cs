@@ -1,9 +1,9 @@
 ﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Mixed (video and audio) stream info
+    /// Multiplexed (video and audio) stream info
     /// </summary>
-    public class MixedStreamInfo : MediaStreamInfo
+    public class MuxedStreamInfo : MediaStreamInfo
     {
         /// <summary>
         /// Audio encoding
@@ -25,14 +25,14 @@
         /// </summary>
         public string VideoQualityLabel { get; }
 
-        /// <inheritdoc />
-        public MixedStreamInfo(int itag, string url, long contentLength)
-            : base(itag, url, contentLength)
+        /// <summary />
+        public MuxedStreamInfo(int itag, string url, long size)
+            : base(itag, url, size)
         {
             AudioEncoding = GetAudioEncoding(itag);
             VideoEncoding = GetVideoEncoding(itag);
             VideoQuality = GetVideoQuality(itag);
-            VideoQualityLabel = GetVideoQualityLabel(VideoQuality);
+            VideoQualityLabel = VideoQuality.GetVideoQualityLabel();
         }
     }
 }

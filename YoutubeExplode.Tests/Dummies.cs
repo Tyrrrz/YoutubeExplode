@@ -1,7 +1,7 @@
 ﻿using System;
 using YoutubeExplode.Models.ClosedCaptions;
 
-namespace Tests
+namespace YoutubeExplode.Tests
 {
     public static class Dummies
     {

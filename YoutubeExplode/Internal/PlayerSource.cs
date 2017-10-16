@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using YoutubeExplode.Internal.CipherOperations;
 
 namespace YoutubeExplode.Internal
@@ -8,9 +7,9 @@ namespace YoutubeExplode.Internal
     {
         public IReadOnlyList<ICipherOperation> CipherOperations { get; }
 
-        public PlayerSource(IEnumerable<ICipherOperation> cipherOperations)
+        public PlayerSource(IReadOnlyList<ICipherOperation> cipherOperations)
         {
-            CipherOperations = cipherOperations.ToArray();
+            CipherOperations = cipherOperations;
         }
 
         public string Decipher(string input)

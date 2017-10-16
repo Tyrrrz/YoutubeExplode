@@ -25,17 +25,17 @@ namespace YoutubeExplode.Models.MediaStreams
         public Container Container { get; }
 
         /// <summary>
-        /// Stream content size (bytes)
+        /// Stream content length (bytes)
         /// </summary>
-        public long ContentLength { get; }
+        public long Size { get; }
 
-        /// <inheritdoc />
-        protected MediaStreamInfo(int itag, string url, long contentLength)
+        /// <summary />
+        protected MediaStreamInfo(int itag, string url, long size)
         {
             Itag = itag;
-            Url = url ?? throw new ArgumentNullException(nameof(url));
+            Url = url.EnsureNotNull(nameof(url));
             Container = GetContainer(itag);
-            ContentLength = contentLength >= 0 ? contentLength : throw new ArgumentOutOfRangeException(nameof(contentLength));
+            Size = size.EnsureNotNegative(nameof(size));
         }
     }
 
@@ -43,7 +43,7 @@ namespace YoutubeExplode.Models.MediaStreams
     {
         private static readonly Dictionary<int, ItagDescriptor> ItagMap = new Dictionary<int, ItagDescriptor>
         {
-            // Mixed
+            // Muxed
             {5, new ItagDescriptor(Container.Flv, AudioEncoding.Mp3, VideoEncoding.H263, VideoQuality.Low144)},
             {6, new ItagDescriptor(Container.Flv, AudioEncoding.Mp3, VideoEncoding.H263, VideoQuality.Low240)},
             {13, new ItagDescriptor(Container.Tgpp, AudioEncoding.Aac, VideoEncoding.Mp4V, VideoQuality.Low144)},
@@ -130,7 +130,7 @@ namespace YoutubeExplode.Models.MediaStreams
             // Audio-only (mp4)
             {139, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
             {140, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
-            {141, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},	
+            {141, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
             {256, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
             {258, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
             {325, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
@@ -194,52 +194,6 @@ namespace YoutubeExplode.Models.MediaStreams
                 throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
 
             return result.Value;
-        }
-
-        /// <summary>
-        /// Compose video quality label from video quality and framerate
-        /// </summary>
-        protected static string GetVideoQualityLabel(VideoQuality videoQuality, double framerate = 0)
-        {
-            // Video quality
-            string qualityPart;
-            if (videoQuality == VideoQuality.Low144)
-                qualityPart = "144p";
-
-            else if (videoQuality == VideoQuality.Low240)
-                qualityPart = "240p";
-
-            else if (videoQuality == VideoQuality.Medium360)
-                qualityPart = "360p";
-
-            else if (videoQuality == VideoQuality.Medium480)
-                qualityPart = "480p";
-
-            else if (videoQuality == VideoQuality.High720)
-                qualityPart = "720p";
-
-            else if (videoQuality == VideoQuality.High1080)
-                qualityPart = "1080p";
-
-            else if (videoQuality == VideoQuality.High1440)
-                qualityPart = "1440p";
-
-            else if (videoQuality == VideoQuality.High2160)
-                qualityPart = "2160p";
-
-            else if (videoQuality == VideoQuality.High3072)
-                qualityPart = "3072p";
-
-            else if (videoQuality == VideoQuality.High4320)
-                qualityPart = "4320p";
-
-            else
-                throw new ArgumentOutOfRangeException(nameof(videoQuality), $"Unexpected video quality [{videoQuality}]");
-
-            // Framerate
-            var frameratePart = framerate > 30 ? framerate.ToString("N0") : string.Empty;
-
-            return qualityPart + frameratePart;
         }
 
         /// <summary>

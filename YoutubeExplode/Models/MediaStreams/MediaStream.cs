@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -25,7 +25,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public override bool CanWrite => false;
 
         /// <inheritdoc />
-        public override long Length => Info.ContentLength;
+        public override long Length => Info.Size;
 
         /// <inheritdoc />
         public override long Position
@@ -34,14 +34,14 @@ namespace YoutubeExplode.Models.MediaStreams
             set => _innerStream.Position = value;
         }
 
-        /// <inheritdoc />
+        /// <summary />
         public MediaStream(MediaStreamInfo mediaStreamInfo, Stream innerStream)
         {
-            Info = mediaStreamInfo ?? throw new ArgumentNullException(nameof(mediaStreamInfo));
-            _innerStream = innerStream ?? throw new ArgumentNullException(nameof(innerStream));
+            Info = mediaStreamInfo.EnsureNotNull(nameof(mediaStreamInfo));
+            _innerStream = innerStream.EnsureNotNull(nameof(innerStream));
         }
 
-        /// <inheritdoc />
+        /// <summary />
         ~MediaStream()
         {
             Dispose(false);

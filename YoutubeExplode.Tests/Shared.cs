@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Tests
+namespace YoutubeExplode.Tests
 {
     public static class Shared
     {

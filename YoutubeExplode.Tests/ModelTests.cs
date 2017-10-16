@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace Tests
+namespace YoutubeExplode.Tests
 {
     [TestClass]
     public class ModelTests
@@ -45,15 +44,26 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Extensions_GetFileExtension_Test()
+        public void Extensions_Container_GetFileExtension_Test()
         {
             var possibleValues = Enum.GetValues(typeof(Container)).Cast<Container>();
 
             foreach (var value in possibleValues)
             {
                 var result = value.GetFileExtension();
+                Assert.IsNotNull(result);
+            }
+        }
 
-                Assert.That.IsNotBlank(result);
+        [TestMethod]
+        public void Extensions_VideoQuality_GetVideoQualityLabel_Test()
+        {
+            var possibleValues = Enum.GetValues(typeof(VideoQuality)).Cast<VideoQuality>();
+
+            foreach (var value in possibleValues)
+            {
+                var result = value.GetVideoQualityLabel();
+                Assert.IsNotNull(result);
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tyrrrz.Extensions;
 using YoutubeExplode;
-using YoutubeExplode.Models;
+using YoutubeExplode.Models.MediaStreams;
 
 namespace DemoConsole
 {
@@ -51,18 +51,18 @@ namespace DemoConsole
 
             // Get the video info
             Console.WriteLine("Loading...");
-            var video = await client.GetVideoInfoAsync(id);
+            var video = await client.GetVideoAsync(id);
             Console.WriteLine('-'.Repeat(100));
 
             // Print metadata
             Console.WriteLine($"Id: {video.Id} | Title: {video.Title} | Author: {video.Author.Title}");
 
             // Get the most preferable stream
-            Console.WriteLine("Looking for the best mixed stream...");
-            var streamInfo = video.MixedStreams
+            Console.WriteLine("Looking for the best muxed stream...");
+            var streamInfo = video.MuxedStreamInfos
                 .OrderBy(s => s.VideoQuality)
                 .Last();
-            var normalizedFileSize = NormalizeFileSize(streamInfo.ContentLength);
+            var normalizedFileSize = NormalizeFileSize(streamInfo.Size);
             Console.WriteLine($"Quality: {streamInfo.VideoQualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
 
             // Compose file name, based on metadata

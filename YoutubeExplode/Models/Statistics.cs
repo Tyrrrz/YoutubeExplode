@@ -1,0 +1,38 @@
+﻿using YoutubeExplode.Internal;
+
+namespace YoutubeExplode.Models
+{
+    /// <summary>
+    /// User activity statistics
+    /// </summary>
+    public class Statistics
+    {
+        /// <summary>
+        /// View count
+        /// </summary>
+        public long ViewCount { get; }
+
+        /// <summary>
+        /// Like count
+        /// </summary>
+        public long LikeCount { get; }
+
+        /// <summary>
+        /// Dislike count
+        /// </summary>
+        public long DislikeCount { get; }
+
+        /// <summary>
+        /// Average user rating in stars (1 star to 5 stars)
+        /// </summary>
+        public double AverageRating => 1 + 4.0 * LikeCount / (LikeCount + DislikeCount);
+
+        /// <summary />
+        public Statistics(long viewCount, long likeCount, long dislikeCount)
+        {
+            ViewCount = viewCount.EnsureNotNegative(nameof(viewCount));
+            LikeCount = likeCount.EnsureNotNegative(nameof(likeCount));
+            DislikeCount = dislikeCount.EnsureNotNegative(nameof(dislikeCount));
+        }
+    }
+}

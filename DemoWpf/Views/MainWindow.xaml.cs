@@ -13,7 +13,7 @@ namespace DemoWpf.Views
         private void tbVideoId_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            ((MainViewModel) DataContext).GetVideoInfoCommand.Execute(null);
+            ((MainViewModel) DataContext).GetVideoCommand.Execute(null);
         }
     }
 }

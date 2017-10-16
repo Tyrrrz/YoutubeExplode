@@ -10,7 +10,7 @@ namespace YoutubeExplode.Services
     public static class Extensions
     {
         /// <summary>
-        /// Send a GET request and return content as a string
+        /// Sends a GET request and returns content as a string
         /// </summary>
         public static async Task<string> GetStringAsync(this IHttpService httpService, string url)
         {

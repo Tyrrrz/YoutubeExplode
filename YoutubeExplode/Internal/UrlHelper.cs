@@ -68,23 +68,23 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static IDictionary<string, string> GetDictionaryFromUrlQuery(string urlEncoded)
+        public static IDictionary<string, string> GetDictionaryFromUrlQuery(string query)
         {
             var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var keyValuePairsRaw = urlEncoded.Split("&");
-            foreach (var keyValuePairRaw in keyValuePairsRaw)
+            var rawParams = query.Split("&");
+            foreach (var rawParam in rawParams)
             {
-                var keyValuePairRawDecoded = keyValuePairRaw.UrlDecode();
+                var param = rawParam.UrlDecode();
 
                 // Look for the equals sign
-                var equalsPos = keyValuePairRawDecoded.IndexOf('=');
+                var equalsPos = param.IndexOf('=');
                 if (equalsPos <= 0)
                     continue;
 
                 // Get the key and value
-                var key = keyValuePairRawDecoded.Substring(0, equalsPos);
-                var value = equalsPos < keyValuePairRawDecoded.Length
-                    ? keyValuePairRawDecoded.Substring(equalsPos + 1)
+                var key = param.Substring(0, equalsPos);
+                var value = equalsPos < param.Length
+                    ? param.Substring(equalsPos + 1)
                     : string.Empty;
 
                 // Add to dictionary

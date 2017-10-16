@@ -1,4 +1,4 @@
-﻿using System;
+﻿using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -17,11 +17,11 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// </summary>
         public string Name { get; }
 
-        /// <inheritdoc />
+        /// <summary />
         public Language(string code, string name)
         {
-            Code = code ?? throw new ArgumentNullException(nameof(code));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Code = code.EnsureNotNull(nameof(code)).ToUpperInvariant();
+            Name = name.EnsureNotNull(nameof(name));
         }
     }
 }

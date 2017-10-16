@@ -53,7 +53,7 @@
                             Grid.Column="1"
                             Margin="5"
                             Padding="4"
-                            Command="{Binding GetVideoInfoCommand}"
+                            Command="{Binding GetVideoCommand}"
                             Style="{DynamicResource MaterialDesignFlatButton}">
                             <materialDesign:PackIcon
                                 Width="24"
@@ -76,11 +76,11 @@
             Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding IsVideoInfoAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{Binding IsVideoAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel Orientation="Vertical">
                 <!--  Image  -->
                 <Border HorizontalAlignment="Stretch" Background="Black">
-                    <Image Height="180" Source="{Binding VideoInfo.ImageMediumResUrl}" />
+                    <Image Height="180" Source="{Binding Video.Thumbnails.MediumResUrl}" />
                 </Border>
 
                 <!--  Basic metadata  -->
@@ -91,7 +91,7 @@
                             Margin="5"
                             FontSize="18"
                             Foreground="{DynamicResource PrimaryTextBrush}"
-                            Text="{Binding VideoInfo.Title}"
+                            Text="{Binding Video.Title}"
                             TextTrimming="CharacterEllipsis" />
 
                         <Grid HorizontalAlignment="Stretch">
@@ -107,7 +107,7 @@
                                 Height="50"
                                 Margin="5"
                                 VerticalAlignment="Top"
-                                Source="{Binding VideoInfo.Author.LogoUrl}" />
+                                Source="{Binding Video.Author.LogoUrl}" />
 
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>
@@ -128,7 +128,7 @@
                                     VerticalAlignment="Bottom"
                                     FontSize="14"
                                     Foreground="{DynamicResource PrimaryTextBrush}"
-                                    Text="{Binding VideoInfo.Author.Title}" />
+                                    Text="{Binding Video.Author.Title}" />
 
                                 <!--  Views  -->
                                 <TextBlock
@@ -137,7 +137,7 @@
                                     Margin="5,5,5,2"
                                     HorizontalAlignment="Right"
                                     FontSize="16">
-                                    <Run Text="{Binding VideoInfo.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                    <Run Text="{Binding Video.Statistics.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
                                     <Run Text="views" />
                                 </TextBlock>
 
@@ -159,14 +159,14 @@
                                     HorizontalAlignment="Stretch"
                                     Maximum="5"
                                     Minimum="1"
-                                    Value="{Binding VideoInfo.AverageRating, Mode=OneWay}" />
+                                    Value="{Binding Video.Statistics.AverageRating, Mode=OneWay}" />
 
                                 <!--  Video length  -->
                                 <TextBlock
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     Margin="5"
-                                    Text="{Binding VideoInfo.Duration}" />
+                                    Text="{Binding Video.Duration}" />
 
                                 <!--  Likes and dislikes  -->
                                 <StackPanel
@@ -182,7 +182,7 @@
                                     <TextBlock
                                         Margin="3,0,0,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding VideoInfo.LikeCount, StringFormat=\{0:N0\}}" />
+                                        Text="{Binding Video.Statistics.LikeCount, StringFormat=\{0:N0\}}" />
                                     <materialDesign:PackIcon
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
@@ -191,7 +191,7 @@
                                     <TextBlock
                                         Margin="3,0,0,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding VideoInfo.DislikeCount, StringFormat=\{0:N0\}}" />
+                                        Text="{Binding Video.Statistics.DislikeCount, StringFormat=\{0:N0\}}" />
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -218,7 +218,7 @@
                         <TextBlock
                             Margin="10"
                             Foreground="{DynamicResource PrimaryTextBrush}"
-                            Text="{Binding VideoInfo.Description}"
+                            Text="{Binding Video.Description}"
                             TextWrapping="Wrap" />
                     </Expander>
                 </materialDesign:Card>
@@ -243,7 +243,7 @@
                         <TextBlock
                             Margin="10"
                             Foreground="{DynamicResource PrimaryTextBrush}"
-                            Text="{Binding VideoInfo.Keywords, Converter={StaticResource ArrayToStringConverter}}"
+                            Text="{Binding Video.Keywords, Converter={StaticResource ArrayToStringConverter}}"
                             TextWrapping="Wrap" />
                     </Expander>
                 </materialDesign:Card>
@@ -269,8 +269,8 @@
                             <TextBlock
                                 Margin="10,5,5,5"
                                 FontSize="14"
-                                Text="Mixed streams:" />
-                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding VideoInfo.MixedStreams}">
+                                Text="Muxed streams:" />
+                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding Video.MuxedStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -299,7 +299,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" /><Run Text="/" /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -310,7 +310,7 @@
                                 Margin="10,5,5,5"
                                 FontSize="14"
                                 Text="Video-only streams:" />
-                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding VideoInfo.VideoStreams}">
+                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding Video.VideoStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -339,7 +339,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -350,7 +350,7 @@
                                 Margin="10,5,5,5"
                                 FontSize="14"
                                 Text="Audio-only streams:" />
-                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding VideoInfo.AudioStreams}">
+                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding Video.AudioStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -376,7 +376,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -403,7 +403,7 @@
                                     Text="Closed captions" />
                             </StackPanel>
                         </Expander.Header>
-                        <ItemsControl Margin="5" ItemsSource="{Binding VideoInfo.ClosedCaptionTracks}">
+                        <ItemsControl Margin="5" ItemsSource="{Binding Video.ClosedCaptionTrackInfos}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">

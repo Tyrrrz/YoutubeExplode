@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -19,17 +20,16 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// </summary>
         public IReadOnlyList<ClosedCaption> Captions { get; }
 
-        /// <inheritdoc />
-        public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IEnumerable<ClosedCaption> captions)
+        /// <summary />
+        public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IReadOnlyList<ClosedCaption> captions)
         {
-            Info = info ?? throw new ArgumentNullException(nameof(info));
-            Captions = captions?.ToArray() ?? throw new ArgumentNullException(nameof(captions));
+            Info = info.EnsureNotNull(nameof(info));
+            Captions = captions.EnsureNotNull(nameof(captions));
         }
 
         /// <summary>
-        /// Gets the caption displayed at the given point in time, relative to video's timeline
+        /// Gets the caption displayed at the given point in time, relative to video's timeline, or null if not found
         /// </summary>
-        /// <returns><see cref="ClosedCaption"/> or null if there's no caption shown at given offset</returns>
         public ClosedCaption GetByTime(TimeSpan time)
         {
             return Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);

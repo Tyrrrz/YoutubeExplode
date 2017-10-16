@@ -1,4 +1,4 @@
-﻿using System;
+﻿using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -25,28 +25,28 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Video resoution
         /// </summary>
-        public VideoResolution VideoResolution { get; }
+        public VideoResolution Resolution { get; }
 
         /// <summary>
         /// Video framerate (fps)
         /// </summary>
-        public double VideoFramerate { get; }
+        public int Framerate { get; }
 
         /// <summary>
         /// Video quality label as seen on Youtube
         /// </summary>
         public string VideoQualityLabel { get; }
 
-        /// <inheritdoc />
-        public VideoStreamInfo(int itag, string url, long contentLength, long bitrate, VideoResolution videoResolution, double videoFramerate) 
-            : base(itag, url, contentLength)
+        /// <summary />
+        public VideoStreamInfo(int itag, string url, long size, long bitrate, VideoResolution resolution, int framerate)
+            : base(itag, url, size)
         {
-            Bitrate = bitrate >= 0 ? bitrate : throw new ArgumentOutOfRangeException(nameof(bitrate));
+            Bitrate = bitrate.EnsureNotNegative(nameof(bitrate));
             VideoEncoding = GetVideoEncoding(itag);
             VideoQuality = GetVideoQuality(itag);
-            VideoResolution = videoResolution;
-            VideoFramerate = videoFramerate >= 0 ? videoFramerate : throw new ArgumentOutOfRangeException(nameof(videoFramerate));
-            VideoQualityLabel = GetVideoQualityLabel(VideoQuality, videoFramerate);
+            Resolution = resolution;
+            Framerate = framerate.EnsureNotNegative(nameof(framerate));
+            VideoQualityLabel = VideoQuality.GetVideoQualityLabel(framerate);
         }
     }
 }

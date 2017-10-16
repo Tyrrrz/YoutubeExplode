@@ -1,4 +1,5 @@
 ﻿using System;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -22,12 +23,12 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// </summary>
         public TimeSpan Duration { get; }
 
-        /// <inheritdoc />
+        /// <summary />
         public ClosedCaption(string text, TimeSpan offset, TimeSpan duration)
         {
-            Text = text ?? throw new ArgumentNullException(nameof(text));
-            Offset = offset >= TimeSpan.Zero ? offset : throw new ArgumentOutOfRangeException(nameof(offset));
-            Duration = duration >= TimeSpan.Zero ? duration : throw new ArgumentOutOfRangeException(nameof(duration));
+            Text = text.EnsureNotNull(nameof(text));
+            Offset = offset.EnsureNotNegative(nameof(offset));
+            Duration = duration.EnsureNotNegative(nameof(duration));
         }
     }
 }

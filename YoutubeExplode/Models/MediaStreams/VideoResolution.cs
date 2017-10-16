@@ -1,4 +1,5 @@
 ﻿using System;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -17,11 +18,11 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public int Height { get; }
 
-        /// <inheritdoc />
+        /// <summary />
         public VideoResolution(int width, int height)
         {
-            Width = width >= 0 ? width : throw new ArgumentOutOfRangeException(nameof(width));
-            Height = height >= 0 ? height : throw new ArgumentOutOfRangeException(nameof(height));
+            Width = width.EnsureNotNegative(nameof(width));
+            Height = height.EnsureNotNegative(nameof(height));
         }
 
         /// <inheritdoc />
@@ -29,6 +30,7 @@ namespace YoutubeExplode.Models.MediaStreams
         {
             if (obj is VideoResolution other)
                 return Equals(other);
+
             return false;
         }
 

@@ -9,12 +9,12 @@ namespace DemoWpf.ViewModels
     {
         bool IsBusy { get; }
         string VideoId { get; set; }
-        VideoInfo VideoInfo { get; }
-        bool IsVideoInfoAvailable { get; }
+        Video Video { get; }
+        bool IsVideoAvailable { get; }
         double Progress { get; }
         bool IsProgressIndeterminate { get; }
 
-        RelayCommand GetVideoInfoCommand { get; }
+        RelayCommand GetVideoCommand { get; }
         RelayCommand<MediaStreamInfo> DownloadMediaStreamCommand { get; }
         RelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
     }

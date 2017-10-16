@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Playlist info
+    /// Playlist
     /// </summary>
-    public partial class PlaylistInfo
+    public partial class Playlist
     {
         /// <summary>
         /// ID
@@ -25,48 +25,47 @@ namespace YoutubeExplode.Models
         public string Title { get; }
 
         /// <summary>
-        /// Author's display name
-        /// </summary>
-        public string Author { get; }
-
-        /// <summary>
         /// Description
         /// </summary>
         public string Description { get; }
 
         /// <summary>
-        /// View count
+        /// Author's display name
         /// </summary>
-        public long ViewCount { get; }
+        public string Author { get; }
+
+        /// <summary>
+        /// Statistics
+        /// </summary>
+        public Statistics Statistics { get; }
 
         /// <summary>
         /// Videos in the playlist
         /// </summary>
-        public IReadOnlyList<VideoInfoSnippet> Videos { get; }
+        public IReadOnlyList<PlaylistVideo> Videos { get; }
 
-        /// <inheritdoc />
-        public PlaylistInfo(string id, string title, string author, string description, long viewCount,
-            IEnumerable<VideoInfoSnippet> videos)
+        /// <summary />
+        public Playlist(string id, string title, string author, string description, Statistics statistics,
+            IReadOnlyList<PlaylistVideo> videos)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id.EnsureNotNull(nameof(id));
             Type = GetPlaylistType(id);
-            Title = title ?? throw new ArgumentNullException(nameof(title));
-            Author = author ?? throw new ArgumentNullException(nameof(author));
-            Description = description ?? throw new ArgumentNullException(nameof(description));
-            ViewCount = viewCount >= 0 ? viewCount : throw new ArgumentOutOfRangeException(nameof(viewCount));
-            Videos = videos?.ToArray() ?? throw new ArgumentNullException(nameof(videos));
+            Title = title.EnsureNotNull(nameof(title));
+            Author = author.EnsureNotNull(nameof(author));
+            Description = description.EnsureNotNull(nameof(description));
+            Statistics = statistics.EnsureNotNull(nameof(statistics));
+            Videos = videos.EnsureNotNull(nameof(videos));
         }
     }
 
-    public partial class PlaylistInfo
+    public partial class Playlist
     {
         /// <summary>
         /// Get playlist type from playlist id
         /// </summary>
         protected static PlaylistType GetPlaylistType(string id)
         {
-            if (id == null)
-                throw new ArgumentNullException(nameof(id));
+            id.EnsureNotNull(nameof(id));
 
             if (id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.Normal;

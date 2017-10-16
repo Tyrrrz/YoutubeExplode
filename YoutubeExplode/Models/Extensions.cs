@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using YoutubeExplode.Internal;
 using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Models
@@ -9,25 +10,18 @@ namespace YoutubeExplode.Models
     public static class Extensions
     {
         /// <summary>
-        /// Get file extension based on container type
+        /// Gets a sequence of all available types of <see cref="MediaStreamInfo" /> in a <see cref="Video" />
         /// </summary>
-        public static string GetFileExtension(this Container container)
+        public static IEnumerable<MediaStreamInfo> GetAllMediaStreamInfos(this Video video)
         {
-            switch (container)
-            {
-                case Container.Mp4:
-                    return "mp4";
-                case Container.M4A:
-                    return "m4a";
-                case Container.WebM:
-                    return "webm";
-                case Container.Tgpp:
-                    return "3gpp";
-                case Container.Flv:
-                    return "flv";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(container), "Unknown container type");
-            }
+            video.EnsureNotNull(nameof(video));
+
+            foreach (var streamInfo in video.MuxedStreamInfos)
+                yield return streamInfo;
+            foreach (var streamInfo in video.AudioStreamInfos)
+                yield return streamInfo;
+            foreach (var streamInfo in video.VideoStreamInfos)
+                yield return streamInfo;
         }
     }
 }

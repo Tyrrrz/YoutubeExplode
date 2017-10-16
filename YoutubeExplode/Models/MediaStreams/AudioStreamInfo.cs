@@ -1,4 +1,4 @@
-﻿using System;
+﻿using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -17,11 +17,11 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public AudioEncoding AudioEncoding { get; }
 
-        /// <inheritdoc />
-        public AudioStreamInfo(int itag, string url, long contentLength, long bitrate)
-            : base(itag, url, contentLength)
+        /// <summary />
+        public AudioStreamInfo(int itag, string url, long size, long bitrate)
+            : base(itag, url, size)
         {
-            Bitrate = bitrate >= 0 ? bitrate : throw new ArgumentOutOfRangeException(nameof(bitrate));
+            Bitrate = bitrate.EnsureNotNegative(nameof(bitrate));
             AudioEncoding = GetAudioEncoding(itag);
         }
     }

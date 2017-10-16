@@ -3,10 +3,15 @@
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when Youtube's frontend returns an error when getting video info
+    /// Thrown when video is not available
     /// </summary>
     public class VideoNotAvailableException : Exception
     {
+        /// <summary>
+        /// ID of the video
+        /// </summary>
+        public string VideoId { get; }
+
         /// <summary>
         /// Error code
         /// </summary>
@@ -17,10 +22,11 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public string Reason { get; }
 
-        /// <inheritdoc />
-        public VideoNotAvailableException(int code, string reason)
-            : base("The video is not available")
+        /// <summary />
+        public VideoNotAvailableException(string videoId, int code, string reason)
+            : base("The video is not available and cannot be processed")
         {
+            VideoId = videoId;
             Code = code;
             Reason = reason;
         }

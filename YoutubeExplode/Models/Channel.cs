@@ -1,11 +1,11 @@
-﻿using System;
+﻿using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models
 {
     /// <summary>
     /// Channel info
     /// </summary>
-    public class ChannelInfo
+    public class Channel
     {
         /// <summary>
         /// ID
@@ -42,15 +42,15 @@ namespace YoutubeExplode.Models
         /// </summary>
         public string BannerUrl { get; }
 
-        /// <inheritdoc />
-        public ChannelInfo(string id, string name, string title, bool isPaid, string logoUrl, string bannerUrl)
+        /// <summary />
+        public Channel(string id, string name, string title, bool isPaid, string logoUrl, string bannerUrl)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Title = title ?? throw new ArgumentNullException(nameof(title));
+            Id = id.EnsureNotNull(nameof(id));
+            Name = name.EnsureNotNull(nameof(name));
+            Title = title.EnsureNotNull(nameof(title));
             IsPaid = isPaid;
-            LogoUrl = logoUrl ?? throw new ArgumentNullException(nameof(logoUrl));
-            BannerUrl = bannerUrl ?? throw new ArgumentNullException(nameof(bannerUrl));
+            LogoUrl = logoUrl.EnsureNotNull(nameof(logoUrl));
+            BannerUrl = bannerUrl.EnsureNotNull(nameof(bannerUrl));
         }
     }
 }

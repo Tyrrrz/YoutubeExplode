@@ -20,7 +20,7 @@ YoutubeExplode is a library that provides an interface to query metadata of Yout
 
 - Retrieves information about channels, videos, playlists, media streams and closed caption tracks
 - Handles normal, legacy, signed, restricted, non-embeddable and unlisted videos
-- Works with media streams of all types - mixed, embedded adaptive, dash adaptive
+- Works with media streams of all types - muxed, embedded adaptive, dash adaptive
 - Downloads videos by exposing their media content as a stream
 - Parses and downloads closed caption tracks
 - Uses strong types and enums for all metadata
