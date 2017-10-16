@@ -56,5 +56,8 @@ namespace YoutubeExplode.Models
             Keywords = keywords.GuardNotNull(nameof(keywords));
             Statistics = statistics.GuardNotNull(nameof(statistics));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => Title;
     }
 }

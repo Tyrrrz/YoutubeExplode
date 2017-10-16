@@ -52,5 +52,8 @@ namespace YoutubeExplode.Models
             LogoUrl = logoUrl.GuardNotNull(nameof(logoUrl));
             BannerUrl = bannerUrl.GuardNotNull(nameof(bannerUrl));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => Title;
     }
 }

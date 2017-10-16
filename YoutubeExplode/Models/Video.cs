@@ -96,5 +96,8 @@ namespace YoutubeExplode.Models
             VideoStreamInfos = videoStreamInfos.GuardNotNull(nameof(videoStreamInfos));
             ClosedCaptionTrackInfos = closedCaptionTrackInfos.GuardNotNull(nameof(closedCaptionTrackInfos));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => Title;
     }
 }

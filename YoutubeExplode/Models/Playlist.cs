@@ -56,6 +56,9 @@ namespace YoutubeExplode.Models
             Statistics = statistics.GuardNotNull(nameof(statistics));
             Videos = videos.GuardNotNull(nameof(videos));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => Title;
     }
 
     public partial class Playlist

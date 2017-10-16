@@ -20,8 +20,11 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary />
         public Language(string code, string name)
         {
-            Code = code.GuardNotNull(nameof(code)).ToUpperInvariant();
+            Code = code.GuardNotNull(nameof(code));
             Name = name.GuardNotNull(nameof(name));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => Code;
     }
 }

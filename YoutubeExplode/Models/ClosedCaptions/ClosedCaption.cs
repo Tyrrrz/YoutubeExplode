@@ -30,5 +30,8 @@ namespace YoutubeExplode.Models.ClosedCaptions
             Offset = offset.GuardNotNegative(nameof(offset));
             Duration = duration.GuardNotNegative(nameof(duration));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => Text;
     }
 }
