@@ -324,7 +324,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<bool> CheckVideoExistsAsync(string videoId)
         {
-            videoId.EnsureNotNull(nameof(videoId));
+            videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
@@ -348,7 +348,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<Video> GetVideoAsync(string videoId)
         {
-            videoId.EnsureNotNull(nameof(videoId));
+            videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 

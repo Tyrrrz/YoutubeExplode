@@ -21,7 +21,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public AudioStreamInfo(int itag, string url, long size, long bitrate)
             : base(itag, url, size)
         {
-            Bitrate = bitrate.EnsureNotNegative(nameof(bitrate));
+            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
             AudioEncoding = GetAudioEncoding(itag);
         }
     }

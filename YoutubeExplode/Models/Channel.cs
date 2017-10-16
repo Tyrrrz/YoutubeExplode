@@ -45,12 +45,12 @@ namespace YoutubeExplode.Models
         /// <summary />
         public Channel(string id, string name, string title, bool isPaid, string logoUrl, string bannerUrl)
         {
-            Id = id.EnsureNotNull(nameof(id));
-            Name = name.EnsureNotNull(nameof(name));
-            Title = title.EnsureNotNull(nameof(title));
+            Id = id.GuardNotNull(nameof(id));
+            Name = name.GuardNotNull(nameof(name));
+            Title = title.GuardNotNull(nameof(title));
             IsPaid = isPaid;
-            LogoUrl = logoUrl.EnsureNotNull(nameof(logoUrl));
-            BannerUrl = bannerUrl.EnsureNotNull(nameof(bannerUrl));
+            LogoUrl = logoUrl.GuardNotNull(nameof(logoUrl));
+            BannerUrl = bannerUrl.GuardNotNull(nameof(bannerUrl));
         }
     }
 }

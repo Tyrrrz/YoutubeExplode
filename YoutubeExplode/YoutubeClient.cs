@@ -18,7 +18,7 @@ namespace YoutubeExplode
         /// </summary>
         public YoutubeClient(IHttpService httpService)
         {
-            _httpService = httpService.EnsureNotNull(nameof(httpService));
+            _httpService = httpService.GuardNotNull(nameof(httpService));
             _playerSourceCache = new Dictionary<string, PlayerSource>();
         }
 

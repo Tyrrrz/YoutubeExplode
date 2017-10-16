@@ -17,8 +17,8 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
         {
-            playlistId.EnsureNotNull(nameof(playlistId));
-            maxPages.EnsurePositive(nameof(maxPages));
+            playlistId.GuardNotNull(nameof(playlistId));
+            maxPages.GuardPositive(nameof(maxPages));
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException("Invalid Youtube playlist ID", nameof(playlistId));
 

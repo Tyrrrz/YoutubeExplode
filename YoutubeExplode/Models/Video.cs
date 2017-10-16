@@ -82,19 +82,19 @@ namespace YoutubeExplode.Models
             IReadOnlyList<MuxedStreamInfo> muxedStreamInfos, IReadOnlyList<AudioStreamInfo> audioStreamInfos,
             IReadOnlyList<VideoStreamInfo> videoStreamInfos, IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos)
         {
-            Id = id.EnsureNotNull(nameof(id));
-            Author = author.EnsureNotNull(nameof(author));
-            Title = title.EnsureNotNull(nameof(title));
-            Description = description.EnsureNotNull(nameof(description));
-            Thumbnails = thumbnails.EnsureNotNull(nameof(thumbnails));
-            Duration = duration.EnsureNotNegative(nameof(duration));
-            Keywords = keywords.EnsureNotNull(nameof(keywords));
-            Status = status.EnsureNotNull(nameof(status));
-            Statistics = statistics.EnsureNotNull(nameof(statistics));
-            MuxedStreamInfos = muxedStreamInfos.EnsureNotNull(nameof(muxedStreamInfos));
-            AudioStreamInfos = audioStreamInfos.EnsureNotNull(nameof(audioStreamInfos));
-            VideoStreamInfos = videoStreamInfos.EnsureNotNull(nameof(videoStreamInfos));
-            ClosedCaptionTrackInfos = closedCaptionTrackInfos.EnsureNotNull(nameof(closedCaptionTrackInfos));
+            Id = id.GuardNotNull(nameof(id));
+            Author = author.GuardNotNull(nameof(author));
+            Title = title.GuardNotNull(nameof(title));
+            Description = description.GuardNotNull(nameof(description));
+            Thumbnails = thumbnails.GuardNotNull(nameof(thumbnails));
+            Duration = duration.GuardNotNegative(nameof(duration));
+            Keywords = keywords.GuardNotNull(nameof(keywords));
+            Status = status.GuardNotNull(nameof(status));
+            Statistics = statistics.GuardNotNull(nameof(statistics));
+            MuxedStreamInfos = muxedStreamInfos.GuardNotNull(nameof(muxedStreamInfos));
+            AudioStreamInfos = audioStreamInfos.GuardNotNull(nameof(audioStreamInfos));
+            VideoStreamInfos = videoStreamInfos.GuardNotNull(nameof(videoStreamInfos));
+            ClosedCaptionTrackInfos = closedCaptionTrackInfos.GuardNotNull(nameof(closedCaptionTrackInfos));
         }
     }
 }

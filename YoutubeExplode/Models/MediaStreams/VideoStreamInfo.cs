@@ -41,11 +41,11 @@ namespace YoutubeExplode.Models.MediaStreams
         public VideoStreamInfo(int itag, string url, long size, long bitrate, VideoResolution resolution, int framerate)
             : base(itag, url, size)
         {
-            Bitrate = bitrate.EnsureNotNegative(nameof(bitrate));
+            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
             VideoEncoding = GetVideoEncoding(itag);
             VideoQuality = GetVideoQuality(itag);
             Resolution = resolution;
-            Framerate = framerate.EnsureNotNegative(nameof(framerate));
+            Framerate = framerate.GuardNotNegative(nameof(framerate));
             VideoQualityLabel = VideoQuality.GetVideoQualityLabel(framerate);
         }
     }

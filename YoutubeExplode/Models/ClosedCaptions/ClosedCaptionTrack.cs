@@ -23,8 +23,8 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary />
         public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IReadOnlyList<ClosedCaption> captions)
         {
-            Info = info.EnsureNotNull(nameof(info));
-            Captions = captions.EnsureNotNull(nameof(captions));
+            Info = info.GuardNotNull(nameof(info));
+            Captions = captions.GuardNotNull(nameof(captions));
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo info)
         {
-            info.EnsureNotNull(nameof(info));
+            info.GuardNotNull(nameof(info));
 
             // Get stream
             var stream = await _httpService.GetStreamAsync(info.Url).ConfigureAwait(false);
@@ -34,8 +34,8 @@ namespace YoutubeExplode
         public async Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath,
             IProgress<double> progress, CancellationToken cancellationToken)
         {
-            info.EnsureNotNull(nameof(info));
-            filePath.EnsureNotNull(nameof(filePath));
+            info.GuardNotNull(nameof(info));
+            filePath.GuardNotNull(nameof(filePath));
 
             // Save to file
             using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))

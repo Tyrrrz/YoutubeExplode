@@ -21,7 +21,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo info)
         {
-            info.EnsureNotNull(nameof(info));
+            info.GuardNotNull(nameof(info));
 
             // Get manifest
             var response = await _httpService.GetStringAsync(info.Url).ConfigureAwait(false);
@@ -50,8 +50,8 @@ namespace YoutubeExplode
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
             IProgress<double> progress, CancellationToken cancellationToken)
         {
-            info.EnsureNotNull(nameof(info));
-            filePath.EnsureNotNull(nameof(filePath));
+            info.GuardNotNull(nameof(info));
+            filePath.GuardNotNull(nameof(filePath));
 
             // Get the track
             var track = await GetClosedCaptionTrackAsync(info).ConfigureAwait(false);

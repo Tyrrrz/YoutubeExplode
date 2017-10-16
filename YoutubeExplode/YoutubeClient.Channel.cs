@@ -15,7 +15,7 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<Channel> GetChannelAsync(string channelId)
         {
-            channelId.EnsureNotNull(nameof(channelId));
+            channelId.GuardNotNull(nameof(channelId));
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
 
@@ -40,8 +40,8 @@ namespace YoutubeExplode
         /// </summary>
         public async Task<IReadOnlyList<PlaylistVideo>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
-            channelId.EnsureNotNull(nameof(channelId));
-            maxPages.EnsurePositive(nameof(maxPages));
+            channelId.GuardNotNull(nameof(channelId));
+            maxPages.GuardPositive(nameof(maxPages));
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
 

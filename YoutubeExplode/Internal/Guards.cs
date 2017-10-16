@@ -4,7 +4,7 @@ namespace YoutubeExplode.Internal
 {
     internal static class Guards
     {
-        public static T EnsureNotNull<T>(this T o, string argName = null) where T : class
+        public static T GuardNotNull<T>(this T o, string argName = null) where T : class
         {
             if (o == null)
                 throw new ArgumentNullException(argName);
@@ -12,7 +12,7 @@ namespace YoutubeExplode.Internal
             return o;
         }
 
-        public static TimeSpan EnsureNotNegative(this TimeSpan t, string argName = null)
+        public static TimeSpan GuardNotNegative(this TimeSpan t, string argName = null)
         {
             if (t < TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException(argName, t, "Cannot be negative");
@@ -20,7 +20,7 @@ namespace YoutubeExplode.Internal
             return t;
         }
 
-        public static int EnsureNotNegative(this int i, string argName = null)
+        public static int GuardNotNegative(this int i, string argName = null)
         {
             if (i < 0)
                 throw new ArgumentOutOfRangeException(argName, i, "Cannot be negative");
@@ -28,7 +28,7 @@ namespace YoutubeExplode.Internal
             return i;
         }
 
-        public static long EnsureNotNegative(this long i, string argName = null)
+        public static long GuardNotNegative(this long i, string argName = null)
         {
             if (i < 0)
                 throw new ArgumentOutOfRangeException(argName, i, "Cannot be negative");
@@ -36,7 +36,7 @@ namespace YoutubeExplode.Internal
             return i;
         }
 
-        public static int EnsurePositive(this int i, string argName = null)
+        public static int GuardPositive(this int i, string argName = null)
         {
             if (i <= 0)
                 throw new ArgumentOutOfRangeException(argName, i, "Cannot be negative or zero");

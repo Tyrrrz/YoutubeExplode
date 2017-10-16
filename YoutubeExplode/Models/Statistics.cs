@@ -30,9 +30,9 @@ namespace YoutubeExplode.Models
         /// <summary />
         public Statistics(long viewCount, long likeCount, long dislikeCount)
         {
-            ViewCount = viewCount.EnsureNotNegative(nameof(viewCount));
-            LikeCount = likeCount.EnsureNotNegative(nameof(likeCount));
-            DislikeCount = dislikeCount.EnsureNotNegative(nameof(dislikeCount));
+            ViewCount = viewCount.GuardNotNegative(nameof(viewCount));
+            LikeCount = likeCount.GuardNotNegative(nameof(likeCount));
+            DislikeCount = dislikeCount.GuardNotNegative(nameof(dislikeCount));
         }
     }
 }

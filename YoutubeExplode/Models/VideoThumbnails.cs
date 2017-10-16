@@ -39,7 +39,7 @@ namespace YoutubeExplode.Models
         /// <summary />
         public VideoThumbnails(string videoId)
         {
-            _videoId = videoId.EnsureNotNull(nameof(videoId));
+            _videoId = videoId.GuardNotNull(nameof(videoId));
         }
     }
 }

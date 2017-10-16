@@ -37,8 +37,8 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary />
         public MediaStream(MediaStreamInfo mediaStreamInfo, Stream innerStream)
         {
-            Info = mediaStreamInfo.EnsureNotNull(nameof(mediaStreamInfo));
-            _innerStream = innerStream.EnsureNotNull(nameof(innerStream));
+            Info = mediaStreamInfo.GuardNotNull(nameof(mediaStreamInfo));
+            _innerStream = innerStream.GuardNotNull(nameof(innerStream));
         }
 
         /// <summary />

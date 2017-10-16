@@ -33,9 +33,9 @@ namespace YoutubeExplode.Models.MediaStreams
         protected MediaStreamInfo(int itag, string url, long size)
         {
             Itag = itag;
-            Url = url.EnsureNotNull(nameof(url));
+            Url = url.GuardNotNull(nameof(url));
             Container = GetContainer(itag);
-            Size = size.EnsureNotNegative(nameof(size));
+            Size = size.GuardNotNegative(nameof(size));
         }
     }
 

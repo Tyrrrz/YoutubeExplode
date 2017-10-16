@@ -48,13 +48,13 @@ namespace YoutubeExplode.Models
         public Playlist(string id, string title, string author, string description, Statistics statistics,
             IReadOnlyList<PlaylistVideo> videos)
         {
-            Id = id.EnsureNotNull(nameof(id));
+            Id = id.GuardNotNull(nameof(id));
             Type = GetPlaylistType(id);
-            Title = title.EnsureNotNull(nameof(title));
-            Author = author.EnsureNotNull(nameof(author));
-            Description = description.EnsureNotNull(nameof(description));
-            Statistics = statistics.EnsureNotNull(nameof(statistics));
-            Videos = videos.EnsureNotNull(nameof(videos));
+            Title = title.GuardNotNull(nameof(title));
+            Author = author.GuardNotNull(nameof(author));
+            Description = description.GuardNotNull(nameof(description));
+            Statistics = statistics.GuardNotNull(nameof(statistics));
+            Videos = videos.GuardNotNull(nameof(videos));
         }
     }
 
@@ -65,7 +65,7 @@ namespace YoutubeExplode.Models
         /// </summary>
         protected static PlaylistType GetPlaylistType(string id)
         {
-            id.EnsureNotNull(nameof(id));
+            id.GuardNotNull(nameof(id));
 
             if (id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
                 return PlaylistType.Normal;

@@ -26,9 +26,9 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary />
         public ClosedCaption(string text, TimeSpan offset, TimeSpan duration)
         {
-            Text = text.EnsureNotNull(nameof(text));
-            Offset = offset.EnsureNotNegative(nameof(offset));
-            Duration = duration.EnsureNotNegative(nameof(duration));
+            Text = text.GuardNotNull(nameof(text));
+            Offset = offset.GuardNotNegative(nameof(offset));
+            Duration = duration.GuardNotNegative(nameof(duration));
         }
     }
 }

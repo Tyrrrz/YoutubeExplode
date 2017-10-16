@@ -14,7 +14,7 @@ namespace YoutubeExplode.Models
         /// </summary>
         public static IEnumerable<MediaStreamInfo> GetAllMediaStreamInfos(this Video video)
         {
-            video.EnsureNotNull(nameof(video));
+            video.GuardNotNull(nameof(video));
 
             foreach (var streamInfo in video.MuxedStreamInfos)
                 yield return streamInfo;

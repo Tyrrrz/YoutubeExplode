@@ -21,8 +21,8 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary />
         public VideoResolution(int width, int height)
         {
-            Width = width.EnsureNotNegative(nameof(width));
-            Height = height.EnsureNotNegative(nameof(height));
+            Width = width.GuardNotNegative(nameof(width));
+            Height = height.GuardNotNegative(nameof(height));
         }
 
         /// <inheritdoc />
