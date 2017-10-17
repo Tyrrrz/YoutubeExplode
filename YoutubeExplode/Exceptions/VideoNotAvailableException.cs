@@ -1,4 +1,5 @@
 ﻿using System;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Exceptions
 {
@@ -26,9 +27,9 @@ namespace YoutubeExplode.Exceptions
         public VideoNotAvailableException(string videoId, int code, string reason)
             : base("The video is not available and cannot be processed")
         {
-            VideoId = videoId;
+            VideoId = videoId.GuardNotNull(nameof(videoId));
             Code = code;
-            Reason = reason;
+            Reason = reason.GuardNotNull(nameof(reason));
         }
     }
 }

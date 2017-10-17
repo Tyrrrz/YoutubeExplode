@@ -1,4 +1,5 @@
 ﻿using System;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Exceptions
 {
@@ -21,8 +22,8 @@ namespace YoutubeExplode.Exceptions
         public VideoRequiresPurchaseException(string videoId, string previewVideoId)
             : base("The video is a paid Youtube Red video and cannot be processed")
         {
-            VideoId = videoId;
-            PreviewVideoId = previewVideoId;
+            VideoId = videoId.GuardNotNull(nameof(videoId));
+            PreviewVideoId = previewVideoId.GuardNotNull(nameof(previewVideoId));
         }
     }
 }
