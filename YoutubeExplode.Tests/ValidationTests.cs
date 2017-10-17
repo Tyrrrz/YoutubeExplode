@@ -1,200 +1,168 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace YoutubeExplode.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class ValidationTests
     {
-        public TestContext TestContext { get; set; }
-
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_VideoIds_Valid.csv",
-            "Validation_VideoIds_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ValidateVideoId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoIds_Valid))]
+        public void YoutubeClient_ValidateVideoId_Valid_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            Assert.IsTrue(YoutubeClient.ValidateVideoId(id));
+            var isValid = YoutubeClient.ValidateVideoId(videoId);
+
+            Assert.That(isValid, Is.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_VideoIds_Invalid.csv",
-            "Validation_VideoIds_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ValidateVideoId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoIds_Invalid))]
+        public void YoutubeClient_ValidateVideoId_Invalid_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            Assert.IsFalse(YoutubeClient.ValidateVideoId(id));
+            var isValid = YoutubeClient.ValidateVideoId(videoId);
+
+            Assert.That(isValid, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_VideoUrls_Valid.csv",
-            "Validation_VideoUrls_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_TryParseVideoId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Valid))]
+        public void YoutubeClient_TryParseVideoId_Valid_Test(string videoUrl, string expectedVideoId)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            var id = (string) TestContext.DataRow["Id"];
+            var success = YoutubeClient.TryParseVideoId(videoUrl, out string videoId);
 
-            var success = YoutubeClient.TryParseVideoId(url, out string actualId);
-            Assert.IsTrue(success);
-            Assert.AreEqual(id, actualId);
+            Assert.That(success, Is.True);
+            Assert.That(videoId, Is.EqualTo(expectedVideoId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_VideoUrls_Invalid.csv",
-            "Validation_VideoUrls_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_TryParseVideoId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Invalid))]
+        public void YoutubeClient_TryParseVideoId_Invalid_Test(string videoUrl)
         {
-            var url = (string) TestContext.DataRow["Url"];
+            var success = YoutubeClient.TryParseVideoId(videoUrl, out _);
 
-            var success = YoutubeClient.TryParseVideoId(url, out _);
-            Assert.IsFalse(success);
+            Assert.That(success, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_VideoUrls_Valid.csv",
-            "Validation_VideoUrls_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ParseVideoId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Valid))]
+        public void YoutubeClient_ParseVideoId_Valid_Test(string videoUrl, string expectedVideoId)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            var id = (string) TestContext.DataRow["Id"];
+            var videoId = YoutubeClient.ParseVideoId(videoUrl);
 
-            var actualId = YoutubeClient.ParseVideoId(url);
-            Assert.AreEqual(id, actualId);
+            Assert.That(videoId, Is.EqualTo(expectedVideoId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_VideoUrls_Invalid.csv",
-            "Validation_VideoUrls_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ParseVideoId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Invalid))]
+        public void YoutubeClient_ParseVideoId_Invalid_Test(string videoUrl)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseVideoId(url));
+            Assert.Throws<FormatException>(() => YoutubeClient.ParseVideoId(videoUrl));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_PlaylistIds_Valid.csv",
-            "Validation_PlaylistIds_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ValidatePlaylistId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistIds_Valid))]
+        public void YoutubeClient_ValidatePlaylistId_Valid_Test(string playlistId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            Assert.IsTrue(YoutubeClient.ValidatePlaylistId(id));
+            var isValid = YoutubeClient.ValidatePlaylistId(playlistId);
+
+            Assert.That(isValid, Is.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_PlaylistIds_Invalid.csv",
-            "Validation_PlaylistIds_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ValidatePlaylistId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistIds_Invalid))]
+        public void YoutubeClient_ValidatePlaylistId_Invalid_Test(string playlistId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            Assert.IsFalse(YoutubeClient.ValidatePlaylistId(id));
+            var isValid = YoutubeClient.ValidatePlaylistId(playlistId);
+
+            Assert.That(isValid, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_PlaylistUrls_Valid.csv",
-            "Validation_PlaylistUrls_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_TryParsePlaylistId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Valid))]
+        public void YoutubeClient_TryParsePlaylistId_Valid_Test(string playlistUrl, string expectedPlaylistId)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            var id = (string) TestContext.DataRow["Id"];
+            var success = YoutubeClient.TryParsePlaylistId(playlistUrl, out string playlistId);
 
-            var success = YoutubeClient.TryParsePlaylistId(url, out string actualId);
-            Assert.IsTrue(success);
-            Assert.AreEqual(id, actualId);
+            Assert.That(success, Is.True);
+            Assert.That(playlistId, Is.EqualTo(expectedPlaylistId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_PlaylistUrls_Invalid.csv",
-            "Validation_PlaylistUrls_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_TryParsePlaylistId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Invalid))]
+        public void YoutubeClient_TryParsePlaylistId_Invalid_Test(string playlistUrl)
         {
-            var url = (string) TestContext.DataRow["Url"];
+            var success = YoutubeClient.TryParsePlaylistId(playlistUrl, out _);
 
-            var success = YoutubeClient.TryParsePlaylistId(url, out _);
-            Assert.IsFalse(success);
+            Assert.That(success, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_PlaylistUrls_Valid.csv",
-            "Validation_PlaylistUrls_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ParsePlaylistId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Valid))]
+        public void YoutubeClient_ParsePlaylistId_Valid_Test(string playlistUrl, string expectedPlaylistId)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            var id = (string) TestContext.DataRow["Id"];
+            var playlistId = YoutubeClient.ParsePlaylistId(playlistUrl);
 
-            var actualId = YoutubeClient.ParsePlaylistId(url);
-            Assert.AreEqual(id, actualId);
+            Assert.That(playlistId, Is.EqualTo(expectedPlaylistId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_PlaylistUrls_Invalid.csv",
-            "Validation_PlaylistUrls_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ParsePlaylistId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Invalid))]
+        public void YoutubeClient_ParsePlaylistId_Invalid_Test(string playlistUrl)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            Assert.ThrowsException<FormatException>(() => YoutubeClient.ParsePlaylistId(url));
+            Assert.Throws<FormatException>(() => YoutubeClient.ParsePlaylistId(playlistUrl));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_ChannelIds_Valid.csv",
-            "Validation_ChannelIds_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ValidateChannelId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelIds_Valid))]
+        public void YoutubeClient_ValidateChannelId_Valid_Test(string channelId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            Assert.IsTrue(YoutubeClient.ValidateChannelId(id));
+            var isValid = YoutubeClient.ValidateChannelId(channelId);
+
+            Assert.That(isValid, Is.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_ChannelIds_Invalid.csv",
-            "Validation_ChannelIds_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ValidateChannelId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelIds_Invalid))]
+        public void YoutubeClient_ValidateChannelId_Invalid_Test(string channelId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            Assert.IsFalse(YoutubeClient.ValidateChannelId(id));
+            var isValid = YoutubeClient.ValidateChannelId(channelId);
+
+            Assert.That(isValid, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_ChannelUrls_Valid.csv",
-            "Validation_ChannelUrls_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_TryParseChannelId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Valid))]
+        public void YoutubeClient_TryParseChannelId_Valid_Test(string channelUrl, string expectedChannelId)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            var id = (string) TestContext.DataRow["Id"];
+            var success = YoutubeClient.TryParseChannelId(channelUrl, out string channelId);
 
-            var success = YoutubeClient.TryParseChannelId(url, out string actualId);
-            Assert.IsTrue(success);
-            Assert.AreEqual(id, actualId);
+            Assert.That(success, Is.True);
+            Assert.That(channelId, Is.EqualTo(expectedChannelId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_ChannelUrls_Invalid.csv",
-            "Validation_ChannelUrls_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_TryParseChannelId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Invalid))]
+        public void YoutubeClient_TryParseChannelId_Invalid_Test(string channelUrl)
         {
-            var url = (string) TestContext.DataRow["Url"];
+            var success = YoutubeClient.TryParseChannelId(channelUrl, out _);
 
-            var success = YoutubeClient.TryParseChannelId(url, out _);
-            Assert.IsFalse(success);
+            Assert.That(success, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_ChannelUrls_Valid.csv",
-            "Validation_ChannelUrls_Valid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ParseChannelId_Valid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Valid))]
+        public void YoutubeClient_ParseChannelId_Valid_Test(string channelUrl, string expectedChannelId)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            var id = (string) TestContext.DataRow["Id"];
+            var channelId = YoutubeClient.ParseChannelId(channelUrl);
 
-            var actualId = YoutubeClient.ParseChannelId(url);
-            Assert.AreEqual(id, actualId);
+            Assert.That(channelId, Is.EqualTo(expectedChannelId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Validation_ChannelUrls_Invalid.csv",
-            "Validation_ChannelUrls_Invalid#csv", DataAccessMethod.Sequential)]
-        public void YoutubeClient_ParseChannelId_Invalid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Invalid))]
+        public void YoutubeClient_ParseChannelId_Invalid_Test(string channelUrl)
         {
-            var url = (string) TestContext.DataRow["Url"];
-            Assert.ThrowsException<FormatException>(() => YoutubeClient.ParseChannelId(url));
+            Assert.Throws<FormatException>(() => YoutubeClient.ParseChannelId(channelUrl));
         }
     }
 }

@@ -1,70 +1,61 @@
 ﻿using System;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class ModelTests
     {
-        [TestMethod]
+        [Test]
         public void ClosedCaptionTrack_GetByTime_Test()
         {
             var captionTrack = Dummies.GetClosedCaptionTrack();
+
             var caption = captionTrack.GetByTime(TimeSpan.FromSeconds(0.5));
 
-            Assert.IsNotNull(caption);
-            Assert.AreEqual("Hello", caption.Text);
+            Assert.That(caption, Is.Not.Null);
+            Assert.That(caption.Text, Is.EqualTo("Hello"));
         }
 
-        [TestMethod]
+        [Test]
         public void ClosedCaptionTrack_GetByTime_NonExisting_Test()
         {
             var captionTrack = Dummies.GetClosedCaptionTrack();
+
             var caption = captionTrack.GetByTime(TimeSpan.FromSeconds(5));
 
-            Assert.IsNull(caption);
+            Assert.That(caption, Is.Null);
         }
 
-        [TestMethod]
+        [Test]
         public void VideoResolution_Equality_Test()
         {
             var vr1 = new VideoResolution(800, 600);
             var vr2 = new VideoResolution(800, 600);
             var vr3 = new VideoResolution(640, 480);
 
-            Assert.IsTrue(vr1 == vr2);
-            Assert.IsFalse(vr2 == vr3);
-            Assert.IsTrue(vr2 != vr3);
-            Assert.AreEqual(vr1, vr2);
-            Assert.AreNotEqual(vr2, vr3);
-            Assert.AreEqual(vr1.GetHashCode(), vr2.GetHashCode());
-            Assert.AreNotEqual(vr2.GetHashCode(), vr3.GetHashCode());
+            Assert.That(vr1, Is.EqualTo(vr2));
+            Assert.That(vr2, Is.Not.EqualTo(vr3));
+            Assert.That(vr1.GetHashCode(), Is.EqualTo(vr2.GetHashCode()));
+            Assert.That(vr2.GetHashCode(), Is.Not.EqualTo(vr3.GetHashCode()));
         }
 
-        [TestMethod]
-        public void Extensions_Container_GetFileExtension_Test()
+        [Theory]
+        public void Extensions_Container_GetFileExtension_Test(Container container)
         {
-            var possibleValues = Enum.GetValues(typeof(Container)).Cast<Container>();
+            var ext = container.GetFileExtension();
 
-            foreach (var value in possibleValues)
-            {
-                var result = value.GetFileExtension();
-                Assert.IsNotNull(result);
-            }
+            Assert.That(ext, Is.Not.Null.Or.Empty);
         }
 
-        [TestMethod]
-        public void Extensions_VideoQuality_GetVideoQualityLabel_Test()
+        [Theory]
+        public void Extensions_VideoQuality_GetVideoQualityLabel_Test(VideoQuality quality,
+            [Values(24, 30, 60)] int framerate)
         {
-            var possibleValues = Enum.GetValues(typeof(VideoQuality)).Cast<VideoQuality>();
+            var label = quality.GetVideoQualityLabel(framerate);
 
-            foreach (var value in possibleValues)
-            {
-                var result = value.GetVideoQualityLabel();
-                Assert.IsNotNull(result);
-            }
+            Assert.That(label, Is.Not.Null.Or.Empty);
         }
     }
 }

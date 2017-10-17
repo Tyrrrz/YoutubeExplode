@@ -2,149 +2,94 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode.Tests
 {
-    [TestClass]
-    public partial class IntegrationTests
+    [TestFixture]
+    public class IntegrationTests
     {
-        public TestContext TestContext { get; set; }
+        private readonly string _tempDirPath;
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds.csv",
-            "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_CheckVideoExistsAsync_Existing_Test()
+        public IntegrationTests()
         {
-            var id = (string) TestContext.DataRow["Id"];
-
-            var client = new YoutubeClient();
-            var exists = await client.CheckVideoExistsAsync(id);
-
-            Assert.IsTrue(exists);
+            var testDirPath = TestContext.CurrentContext.TestDirectory;
+            _tempDirPath = Path.Combine(testDirPath, "Temp");
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds_NonExisting.csv",
-            "Integration_VideoIds_NonExisting#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_CheckVideoExistsAsync_NonExisting_Test()
+        [OneTimeTearDown]
+        public void Cleanup()
         {
-            var id = (string) TestContext.DataRow["Id"];
-
-            var client = new YoutubeClient();
-            var exists = await client.CheckVideoExistsAsync(id);
-
-            Assert.IsFalse(exists);
+            if (Directory.Exists(_tempDirPath))
+                Directory.Delete(_tempDirPath, true);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds.csv",
-            "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetVideoAsync_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds))]
+        public async Task YoutubeClient_CheckVideoExistsAsync_Existing_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-
             var client = new YoutubeClient();
-            var video = await client.GetVideoAsync(id);
 
-            Assert.AreEqual(id, video.Id);
+            var exists = await client.CheckVideoExistsAsync(videoId);
+
+            Assert.That(exists, Is.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds_NonExisting.csv",
-            "Integration_VideoIds_NonExisting#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetVideoAsync_NonExisting_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds_NonExisting))]
+        public async Task YoutubeClient_CheckVideoExistsAsync_NonExisting_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-
             var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<VideoNotAvailableException>(() => client.GetVideoAsync(id));
+
+            var exists = await client.CheckVideoExistsAsync(videoId);
+
+            Assert.That(exists, Is.Not.True);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds_Paid.csv",
-            "Integration_VideoIds_Paid#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetVideoAsync_Paid_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds))]
+        public async Task YoutubeClient_GetVideoAsync_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-
             var client = new YoutubeClient();
-            await Assert.ThrowsExceptionAsync<VideoRequiresPurchaseException>(() => client.GetVideoAsync(id));
+
+            var video = await client.GetVideoAsync(videoId);
+
+            Assert.That(video.Id, Is.EqualTo(videoId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_PlaylistIds.csv",
-            "Integration_PlaylistIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetPlaylistAsync_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds_NonExisting))]
+        public void YoutubeClient_GetVideoAsync_NonExisting_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            var minVideoCount = (int) TestContext.DataRow["MinVideoCount"];
-
             var client = new YoutubeClient();
-            var playlist = await client.GetPlaylistAsync(id);
 
-            Assert.AreEqual(id, playlist.Id);
-            Assert.IsTrue(minVideoCount <= playlist.Videos.Count);
+            Assert.ThrowsAsync<VideoNotAvailableException>(() => client.GetVideoAsync(videoId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_PlaylistIds.csv",
-            "Integration_PlaylistIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetPlaylistAsync_Truncated_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds_Paid))]
+        public void YoutubeClient_GetVideoAsync_Paid_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-            var pageLimit = 1;
-
             var client = new YoutubeClient();
-            var playlist = await client.GetPlaylistAsync(id, pageLimit);
 
-            Assert.AreEqual(id, playlist.Id);
-            Assert.IsTrue(200 * pageLimit >= playlist.Videos.Count);
+            Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => client.GetVideoAsync(videoId));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_ChannelIds.csv",
-            "Integration_ChannelIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetChannelAsync_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds))]
+        public async Task YoutubeClient_GetMediaStreamAsync_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-
             var client = new YoutubeClient();
-            var channel = await client.GetChannelAsync(id);
 
-            Assert.IsNotNull(channel);
-        }
-
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_ChannelIds.csv",
-            "Integration_ChannelIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetChannelUploadsAsync_Test()
-        {
-            var id = (string)TestContext.DataRow["Id"];
-
-            var client = new YoutubeClient();
-            var videos = await client.GetChannelUploadsAsync(id);
-
-            Assert.IsNotNull(videos);
-        }
-
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds.csv",
-            "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetMediaStreamAsync_Test()
-        {
-            var id = (string) TestContext.DataRow["Id"];
-
-            var client = new YoutubeClient();
-            var video = await client.GetVideoAsync(id);
+            var video = await client.GetVideoAsync(videoId);
 
             foreach (var streamInfo in video.GetAllMediaStreamInfos())
             {
                 using (var stream = await client.GetMediaStreamAsync(streamInfo))
                 {
-                    Assert.IsNotNull(stream);
+                    Assert.That(stream, Is.Not.Null);
 
                     var buffer = new byte[100];
                     await stream.ReadAsync(buffer, 0, buffer.Length);
@@ -152,70 +97,99 @@ namespace YoutubeExplode.Tests
             }
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds_HasCC.csv",
-            "Integration_VideoIds_HasCC#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_GetClosedCaptionTrackAsync_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds_WithCC))]
+        public async Task YoutubeClient_GetClosedCaptionTrackAsync_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-
             var client = new YoutubeClient();
-            var video = await client.GetVideoAsync(id);
 
+            var video = await client.GetVideoAsync(videoId);
             var trackInfo = video.ClosedCaptionTrackInfos.First();
             var track = await client.GetClosedCaptionTrackAsync(trackInfo);
 
-            Assert.IsNotNull(track);
+            Assert.That(track, Is.Not.Null);
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds.csv",
-            "Integration_VideoIds#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_DownloadMediaStreamAsync_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds))]
+        public async Task YoutubeClient_DownloadMediaStreamAsync_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
-
             var client = new YoutubeClient();
-            var video = await client.GetVideoAsync(id);
 
+            var video = await client.GetVideoAsync(videoId);
             var streamInfo = video.AudioStreamInfos.OrderBy(s => s.Size).First();
-            var outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
-            Directory.CreateDirectory(Shared.TempDirectoryPath);
+            var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_tempDirPath);
             await client.DownloadMediaStreamAsync(streamInfo, outputFilePath);
-
             var fileInfo = new FileInfo(outputFilePath);
-            Assert.IsTrue(fileInfo.Exists);
-            Assert.IsTrue(0 < fileInfo.Length);
+
+            Assert.That(fileInfo.Exists, Is.True);
+            Assert.That(fileInfo.Length, Is.GreaterThan(0));
         }
 
-        [TestMethod]
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Data\\Integration_VideoIds_HasCC.csv",
-            "Integration_VideoIds_HasCC#csv", DataAccessMethod.Sequential)]
-        public async Task YoutubeClient_DownloadClosedCaptionTrackAsync_Test()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetVideoIds_WithCC))]
+        public async Task YoutubeClient_DownloadClosedCaptionTrackAsync_Test(string videoId)
         {
-            var id = (string) TestContext.DataRow["Id"];
+            var client = new YoutubeClient();
+
+            var video = await client.GetVideoAsync(videoId);
+            var streamInfo = video.ClosedCaptionTrackInfos.First();
+            var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_tempDirPath);
+            await client.DownloadClosedCaptionTrackAsync(streamInfo, outputFilePath);
+            var fileInfo = new FileInfo(outputFilePath);
+
+            Assert.That(fileInfo.Exists, Is.True);
+            Assert.That(fileInfo.Length, Is.GreaterThan(0));
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetPlaylistIds))]
+        public async Task YoutubeClient_GetPlaylistAsync_Test(string playlistId)
+        {
+            // TODO: this should somehow verify video count
 
             var client = new YoutubeClient();
-            var video = await client.GetVideoAsync(id);
 
-            var streamInfo = video.ClosedCaptionTrackInfos.First();
-            var outputFilePath = Path.Combine(Shared.TempDirectoryPath, Guid.NewGuid().ToString());
-            Directory.CreateDirectory(Shared.TempDirectoryPath);
-            await client.DownloadClosedCaptionTrackAsync(streamInfo, outputFilePath);
+            var playlist = await client.GetPlaylistAsync(playlistId);
 
-            var fileInfo = new FileInfo(outputFilePath);
-            Assert.IsTrue(fileInfo.Exists);
-            Assert.IsTrue(0 < fileInfo.Length);
+            Assert.That(playlist.Id, Is.EqualTo(playlistId));
         }
-    }
 
-    public partial class IntegrationTests
-    {
-        [ClassCleanup]
-        public static void ClassCleanup()
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetPlaylistIds))]
+        public async Task YoutubeClient_GetPlaylistAsync_Truncated_Test(string playlistId)
         {
-            if (Directory.Exists(Shared.TempDirectoryPath))
-                Directory.Delete(Shared.TempDirectoryPath, true);
+            const int pageLimit = 1;
+            var client = new YoutubeClient();
+
+            var playlist = await client.GetPlaylistAsync(playlistId, pageLimit);
+
+            Assert.That(playlist.Id, Is.EqualTo(playlistId));
+            Assert.That(playlist.Videos.Count, Is.LessThanOrEqualTo(200*pageLimit));
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetChannelIds))]
+        public async Task YoutubeClient_GetChannelAsync_Test(string channelId)
+        {
+            var client = new YoutubeClient();
+
+            var channel = await client.GetChannelAsync(channelId);
+
+            Assert.That(channel, Is.Not.Null);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.Integration_GetChannelIds))]
+        public async Task YoutubeClient_GetChannelUploadsAsync_Test(string channelId)
+        {
+            var client = new YoutubeClient();
+
+            var videos = await client.GetChannelUploadsAsync(channelId);
+
+            Assert.That(videos, Is.Not.Null);
         }
     }
 }
