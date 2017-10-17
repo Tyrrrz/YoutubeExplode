@@ -110,7 +110,7 @@ namespace DemoWpf.ViewModels
             // Create dialog
             var fileExtension = info.Container.GetFileExtension();
             var defaultFileName = $"{Video.Title}.{fileExtension}";
-            defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
+            defaultFileName = defaultFileName.Replace(Path.GetInvalidFileNameChars(), '_');
             var fileFilter =
                 $"{info.Container} Files|*.{fileExtension}|" +
                 "All Files|*.*";
@@ -141,7 +141,7 @@ namespace DemoWpf.ViewModels
         {
             // Create dialog
             var defaultFileName = $"{Video.Title}.{info.Language.Name}.srt";
-            defaultFileName = defaultFileName.Except(Path.GetInvalidFileNameChars());
+            defaultFileName = defaultFileName.Replace(Path.GetInvalidFileNameChars(), '_');
             var fileFilter =
                 "SRT Files|*.srt|" +
                 "All Files|*.*";

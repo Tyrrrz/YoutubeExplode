@@ -69,8 +69,8 @@ namespace DemoConsole
             var fileExtension = streamInfo.Container.GetFileExtension();
             var fileName = $"{video.Title}.{fileExtension}";
 
-            // Remove illegal characters from file name
-            fileName = fileName.Except(Path.GetInvalidFileNameChars());
+            // Replace illegal characters from file name
+            fileName = fileName.Replace(Path.GetInvalidFileNameChars(), '_');
 
             // Download video
             Console.WriteLine($"Downloading to [{fileName}]...");
