@@ -33,7 +33,7 @@ namespace YoutubeExplode.Services
                 httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             httpClientHandler.UseCookies = false;
 
-            Client = new HttpClient(httpClientHandler);
+            Client = new HttpClient(httpClientHandler, true);
             Client.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
         }
 
