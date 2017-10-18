@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Services
 {
@@ -20,7 +21,7 @@ namespace YoutubeExplode.Services
         /// </summary>
         public HttpService(HttpClient client)
         {
-            Client = client ?? throw new ArgumentNullException(nameof(client));
+            Client = client.GuardNotNull(nameof(client));
         }
 
         /// <summary>
