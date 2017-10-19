@@ -4,7 +4,7 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Width and height of a video stream
+    /// Width and height of a video
     /// </summary>
     public partial struct VideoResolution : IEquatable<VideoResolution>
     {

@@ -13,7 +13,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
         public string Code { get; }
 
         /// <summary>
-        /// The full english name of this language
+        /// The full English name of this language
         /// </summary>
         public string Name { get; }
 

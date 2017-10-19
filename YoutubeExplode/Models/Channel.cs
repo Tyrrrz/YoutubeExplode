@@ -3,7 +3,7 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Channel info
+    /// Channel
     /// </summary>
     public class Channel
     {

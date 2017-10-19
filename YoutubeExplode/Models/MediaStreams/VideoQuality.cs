@@ -1,57 +1,57 @@
 ﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Video stream quality
+    /// Video quality
     /// </summary>
     public enum VideoQuality
     {
         /// <summary>
-        /// 144p low-quality video stream
+        /// Low quality (144p)
         /// </summary>
         Low144,
 
         /// <summary>
-        /// 240p low-quality video stream
+        /// Low quality (240p)
         /// </summary>
         Low240,
 
         /// <summary>
-        /// 360p medium-quality video stream
+        /// Medium quality (360p)
         /// </summary>
         Medium360,
 
         /// <summary>
-        /// 480p medium-quality video stream
+        /// Medium quality (480p)
         /// </summary>
         Medium480,
 
         /// <summary>
-        /// 720p HD video stream
+        /// High quality (720p)
         /// </summary>
         High720,
 
         /// <summary>
-        /// 1080p HD video stream
+        /// High quality (1080p)
         /// </summary>
         High1080,
 
         /// <summary>
-        /// 1440p HD video stream
+        /// High quality (1440p)
         /// </summary>
         High1440,
 
         /// <summary>
-        /// 2160p HD video stream
+        /// High quality (2160p)
         /// </summary>
         High2160,
 
         /// <summary>
-        /// 3072p HD video stream
+        /// High quality (3072p)
         /// </summary>
         High3072,
 
         /// <summary>
-        /// 4320p HD video stream
+        /// High quality (4320p)
         /// </summary>
         High4320
     }

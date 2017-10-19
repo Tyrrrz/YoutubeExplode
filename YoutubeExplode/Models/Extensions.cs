@@ -10,7 +10,7 @@ namespace YoutubeExplode.Models
     public static class Extensions
     {
         /// <summary>
-        /// Gets a sequence of all available types of <see cref="MediaStreamInfo" /> in a <see cref="Video" />
+        /// Gets sequence of all available <see cref="MediaStreamInfo" />s in a <see cref="Video" />
         /// </summary>
         public static IEnumerable<MediaStreamInfo> GetAllMediaStreamInfos(this Video video)
         {
