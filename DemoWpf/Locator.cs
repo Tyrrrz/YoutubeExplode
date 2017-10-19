@@ -1,7 +1,6 @@
 ﻿using DemoWpf.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
-using YoutubeExplode;
 
 namespace DemoWpf
 {
@@ -10,8 +9,6 @@ namespace DemoWpf
         public static void Init()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
-            SimpleIoc.Default.Register(() => new YoutubeClient());
 
             SimpleIoc.Default.Register<IMainViewModel, MainViewModel>();
         }

@@ -16,7 +16,7 @@ namespace DemoWpf.ViewModels
         private readonly YoutubeClient _client;
 
         private bool _isBusy;
-        private string _videoId;
+        private string _query;
         private Video _video;
         private double _progress;
         private bool _isProgressIndeterminate;
@@ -32,12 +32,12 @@ namespace DemoWpf.ViewModels
             }
         }
 
-        public string VideoId
+        public string Query
         {
-            get => _videoId;
+            get => _query;
             set
             {
-                Set(ref _videoId, value);
+                Set(ref _query, value);
                 GetVideoCommand.RaiseCanExecuteChanged();
             }
         }
@@ -71,23 +71,21 @@ namespace DemoWpf.ViewModels
         public RelayCommand<MediaStreamInfo> DownloadMediaStreamCommand { get; }
         public RelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
 
-        public MainViewModel(YoutubeClient client)
+        public MainViewModel()
         {
-            _client = client;
+            _client = new YoutubeClient();
 
             // Commands
-            GetVideoCommand = new RelayCommand(GetVideo, () => !IsBusy && VideoId.IsNotBlank());
-            DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStream, vse => !IsBusy);
+            GetVideoCommand = new RelayCommand(GetVideo,
+                () => !IsBusy && Query.IsNotBlank());
+            DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStream,
+                _ => !IsBusy);
             DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(
-                DownloadClosedCaptionTrack, vse => !IsBusy);
+                DownloadClosedCaptionTrack, _ => !IsBusy);
         }
 
         private async void GetVideo()
         {
-            // Check params
-            if (VideoId.IsBlank())
-                return;
-
             IsBusy = true;
             IsProgressIndeterminate = true;
 
@@ -95,11 +93,11 @@ namespace DemoWpf.ViewModels
             Video = null;
 
             // Parse URL if necessary
-            if (!YoutubeClient.TryParseVideoId(VideoId, out string id))
-                id = VideoId;
+            if (!YoutubeClient.TryParseVideoId(Query, out string videoId))
+                videoId = Query;
 
             // Perform the request
-            Video = await _client.GetVideoAsync(id);
+            Video = await _client.GetVideoAsync(videoId);
 
             IsBusy = false;
             IsProgressIndeterminate = false;
@@ -108,25 +106,24 @@ namespace DemoWpf.ViewModels
         private async void DownloadMediaStream(MediaStreamInfo info)
         {
             // Create dialog
-            var fileExtension = info.Container.GetFileExtension();
-            var defaultFileName = $"{Video.Title}.{fileExtension}";
-            defaultFileName = defaultFileName.Replace(Path.GetInvalidFileNameChars(), '_');
-            var fileFilter =
-                $"{info.Container} Files|*.{fileExtension}|" +
-                "All Files|*.*";
+            var fileExt = info.Container.GetFileExtension();
+            var defaultFileName = $"{Video.Title}.{fileExt}"
+                .Replace(Path.GetInvalidFileNameChars(), '_');
             var sfd = new SaveFileDialog
             {
                 AddExtension = true,
-                DefaultExt = fileExtension,
+                DefaultExt = fileExt,
                 FileName = defaultFileName,
-                Filter = fileFilter
+                Filter = $"{info.Container} Files|*.{fileExt}|All Files|*.*"
             };
 
-            // Select destination
-            if (sfd.ShowDialog() != true) return;
+            // Select file path
+            if (sfd.ShowDialog() != true)
+                return;
+
             var filePath = sfd.FileName;
 
-            // Download and save to file
+            // Download to file
             IsBusy = true;
             Progress = 0;
 
@@ -140,23 +137,24 @@ namespace DemoWpf.ViewModels
         private async void DownloadClosedCaptionTrack(ClosedCaptionTrackInfo info)
         {
             // Create dialog
-            var defaultFileName = $"{Video.Title}.{info.Language.Name}.srt";
-            defaultFileName = defaultFileName.Replace(Path.GetInvalidFileNameChars(), '_');
-            var fileFilter =
-                "SRT Files|*.srt|" +
-                "All Files|*.*";
+            var fileExt = $"{Video.Title}.{info.Language.Name}.srt"
+                .Replace(Path.GetInvalidFileNameChars(), '_');
+            var filter = "SRT Files|*.srt|All Files|*.*";
             var sfd = new SaveFileDialog
             {
                 AddExtension = true,
                 DefaultExt = "srt",
-                FileName = defaultFileName,
-                Filter = fileFilter
+                FileName = fileExt,
+                Filter = filter
             };
-            // Select destination
-            if (sfd.ShowDialog() != true) return;
+
+            // Select file path
+            if (sfd.ShowDialog() != true)
+                return;
+
             var filePath = sfd.FileName;
 
-            // Download
+            // Download to file
             IsBusy = true;
             Progress = 0;
 

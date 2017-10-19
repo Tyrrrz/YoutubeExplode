@@ -8,7 +8,7 @@
     Height="610"
     Background="{DynamicResource MaterialDesignPaper}"
     DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
-    FocusManager.FocusedElement="{Binding ElementName=VideoIdTextBox}"
+    FocusManager.FocusedElement="{Binding ElementName=QueryTextBox}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="/DemoWpf;component/favicon.ico"
     SnapsToDevicePixels="True"
@@ -19,20 +19,15 @@
     TextOptions.TextRenderingMode="Auto"
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
+    <DockPanel>
         <!--  Toolbar  -->
         <Border
-            Grid.Row="0"
             Background="{DynamicResource PrimaryHueMidBrush}"
+            DockPanel.Dock="Top"
             TextElement.Foreground="{DynamicResource SecondaryInverseTextBrush}">
             <StackPanel Orientation="Vertical">
                 <!--  Query  -->
-                <materialDesign:Card Margin="5">
+                <materialDesign:Card Margin="6">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -40,20 +35,20 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBox
-                            x:Name="VideoIdTextBox"
+                            x:Name="QueryTextBox"
                             Grid.Column="0"
-                            Margin="5"
+                            Margin="6"
                             materialDesign:HintAssist.Hint="Youtube video URL or ID"
+                            materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                             BorderThickness="0"
                             FontSize="16"
-                            KeyDown="tbVideoId_KeyDown"
-                            Text="{Binding VideoId, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" />
                         <Button
-                            x:Name="GetDataButton"
                             Grid.Column="1"
-                            Margin="5"
+                            Margin="0,6,6,6"
                             Padding="4"
                             Command="{Binding GetVideoCommand}"
+                            IsDefault="True"
                             Style="{DynamicResource MaterialDesignFlatButton}">
                             <materialDesign:PackIcon
                                 Width="24"
@@ -73,7 +68,6 @@
 
         <!--  Video info  -->
         <ScrollViewer
-            Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto"
             Visibility="{Binding IsVideoAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -84,32 +78,27 @@
                 </Border>
 
                 <!--  Basic metadata  -->
-                <materialDesign:Card Margin="3,3,3,3">
+                <materialDesign:Card Margin="4">
                     <StackPanel Orientation="Vertical">
                         <!--  Title  -->
                         <TextBlock
-                            Margin="5"
+                            Margin="8"
                             FontSize="18"
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             Text="{Binding Video.Title}"
                             TextTrimming="CharacterEllipsis" />
 
-                        <Grid HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
+                        <DockPanel HorizontalAlignment="Stretch">
                             <!--  Author image  -->
                             <Image
-                                Grid.Column="0"
                                 Width="50"
                                 Height="50"
-                                Margin="5"
+                                Margin="6,6,0,6"
                                 VerticalAlignment="Top"
+                                DockPanel.Dock="Left"
                                 Source="{Binding Video.Author.LogoUrl}" />
 
-                            <Grid Grid.Column="1">
+                            <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -124,7 +113,7 @@
                                 <TextBlock
                                     Grid.Row="0"
                                     Grid.Column="0"
-                                    Margin="5,5,5,2"
+                                    Margin="6,6,6,4"
                                     VerticalAlignment="Bottom"
                                     FontSize="14"
                                     Foreground="{DynamicResource PrimaryTextBrush}"
@@ -134,7 +123,7 @@
                                 <TextBlock
                                     Grid.Row="0"
                                     Grid.Column="1"
-                                    Margin="5,5,5,2"
+                                    Margin="6,6,6,4"
                                     HorizontalAlignment="Right"
                                     FontSize="16">
                                     <Run Text="{Binding Video.Statistics.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
@@ -146,7 +135,7 @@
                                     Grid.Row="1"
                                     Grid.Column="0"
                                     Height="2"
-                                    Margin="5,0,0,0"
+                                    Margin="6,0,0,0"
                                     HorizontalAlignment="Stretch"
                                     Background="{DynamicResource MaterialDesignDivider}" />
 
@@ -155,7 +144,7 @@
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     MinWidth="150"
-                                    Margin="0,0,5,0"
+                                    Margin="0,0,6,0"
                                     HorizontalAlignment="Stretch"
                                     Maximum="5"
                                     Minimum="1"
@@ -165,14 +154,14 @@
                                 <TextBlock
                                     Grid.Row="2"
                                     Grid.Column="0"
-                                    Margin="5"
+                                    Margin="6,4,6,6"
                                     Text="{Binding Video.Duration}" />
 
                                 <!--  Likes and dislikes  -->
                                 <StackPanel
                                     Grid.Row="2"
                                     Grid.Column="1"
-                                    Margin="5"
+                                    Margin="6,4,6,6"
                                     HorizontalAlignment="Right"
                                     Orientation="Horizontal">
                                     <materialDesign:PackIcon
@@ -184,7 +173,7 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Video.Statistics.LikeCount, StringFormat=\{0:N0\}}" />
                                     <materialDesign:PackIcon
-                                        Margin="10,0,0,0"
+                                        Margin="8,0,0,0"
                                         VerticalAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Kind="ThumbDown" />
@@ -194,12 +183,12 @@
                                         Text="{Binding Video.Statistics.DislikeCount, StringFormat=\{0:N0\}}" />
                                 </StackPanel>
                             </Grid>
-                        </Grid>
+                        </DockPanel>
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  Description  -->
-                <materialDesign:Card Margin="3,0,3,3">
+                <materialDesign:Card Margin="4,0,4,4">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
@@ -209,14 +198,14 @@
                                     VerticalAlignment="Center"
                                     Kind="CommentTextOutline" />
                                 <TextBlock
-                                    Margin="5,0,0,0"
+                                    Margin="6,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="15"
                                     Text="Description" />
                             </StackPanel>
                         </Expander.Header>
                         <TextBlock
-                            Margin="10"
+                            Margin="16,0,16,8"
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             Text="{Binding Video.Description}"
                             TextWrapping="Wrap" />
@@ -224,7 +213,7 @@
                 </materialDesign:Card>
 
                 <!--  Keywords  -->
-                <materialDesign:Card Margin="3,0,3,3">
+                <materialDesign:Card Margin="4,0,4,4">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
@@ -234,14 +223,14 @@
                                     VerticalAlignment="Center"
                                     Kind="Magnify" />
                                 <TextBlock
-                                    Margin="5,0,0,0"
+                                    Margin="6,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="15"
                                     Text="Keywords" />
                             </StackPanel>
                         </Expander.Header>
                         <TextBlock
-                            Margin="10"
+                            Margin="16,0,16,8"
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             Text="{Binding Video.Keywords, Converter={StaticResource ArrayToStringConverter}}"
                             TextWrapping="Wrap" />
@@ -249,7 +238,7 @@
                 </materialDesign:Card>
 
                 <!--  Media streams  -->
-                <materialDesign:Card Margin="3,0,3,3">
+                <materialDesign:Card Margin="4,0,4,4">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
@@ -259,18 +248,19 @@
                                     VerticalAlignment="Center"
                                     Kind="PlayCircleOutline" />
                                 <TextBlock
-                                    Margin="5,0,0,0"
+                                    Margin="6,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="15"
                                     Text="Media streams" />
                             </StackPanel>
                         </Expander.Header>
                         <StackPanel Orientation="Vertical">
+                            <!--  Muxed  -->
                             <TextBlock
-                                Margin="10,5,5,5"
+                                Margin="16,0,16,8"
                                 FontSize="14"
                                 Text="Muxed streams:" />
-                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding Video.MuxedStreamInfos}">
+                            <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding Video.MuxedStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -288,7 +278,7 @@
                                             </Button>
 
                                             <!--  Stream info  -->
-                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
                                                 <Run />
@@ -306,11 +296,12 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
+                            <!--  Video-nly  -->
                             <TextBlock
-                                Margin="10,5,5,5"
+                                Margin="16,8,16,8"
                                 FontSize="14"
                                 Text="Video-only streams:" />
-                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding Video.VideoStreamInfos}">
+                            <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding Video.VideoStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -328,7 +319,7 @@
                                             </Button>
 
                                             <!--  Stream info  -->
-                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
                                                 <Run />
@@ -346,11 +337,12 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
+                            <!--  Audio-only  -->
                             <TextBlock
-                                Margin="10,5,5,5"
+                                Margin="16,8,16,8"
                                 FontSize="14"
                                 Text="Audio-only streams:" />
-                            <ItemsControl Margin="5,0,5,0" ItemsSource="{Binding Video.AudioStreamInfos}">
+                            <ItemsControl Margin="16,0,6,8" ItemsSource="{Binding Video.AudioStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -368,7 +360,7 @@
                                             </Button>
 
                                             <!--  Stream info  -->
-                                            <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
@@ -387,7 +379,7 @@
                 </materialDesign:Card>
 
                 <!--  Closed captions  -->
-                <materialDesign:Card Margin="3,0,3,3">
+                <materialDesign:Card Margin="4,0,4,4">
                     <Expander Background="{DynamicResource MaterialDesignCardBackground}">
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal">
@@ -397,13 +389,13 @@
                                     VerticalAlignment="Center"
                                     Kind="ClosedCaption" />
                                 <TextBlock
-                                    Margin="5,0,0,0"
+                                    Margin="6,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="15"
                                     Text="Closed captions" />
                             </StackPanel>
                         </Expander.Header>
-                        <ItemsControl Margin="5" ItemsSource="{Binding Video.ClosedCaptionTrackInfos}">
+                        <ItemsControl Margin="16,0,6,8" ItemsSource="{Binding Video.ClosedCaptionTrackInfos}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -421,7 +413,7 @@
                                         </Button>
 
                                         <!--  Closed caption track info  -->
-                                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                             <Run Text="Language:" />
                                             <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Language.Name, Mode=OneWay}" />
                                             <Run />
@@ -436,5 +428,5 @@
                 </materialDesign:Card>
             </StackPanel>
         </ScrollViewer>
-    </Grid>
+    </DockPanel>
 </Window>

@@ -8,9 +8,11 @@ namespace DemoWpf.ViewModels
     public interface IMainViewModel
     {
         bool IsBusy { get; }
-        string VideoId { get; set; }
+        string Query { get; set; }
+
         Video Video { get; }
         bool IsVideoAvailable { get; }
+
         double Progress { get; }
         bool IsProgressIndeterminate { get; }
 
