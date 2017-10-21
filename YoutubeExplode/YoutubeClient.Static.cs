@@ -65,8 +65,7 @@ namespace YoutubeExplode
         /// </summary>
         public static string ParseVideoId(string videoUrl)
         {
-            if (videoUrl == null)
-                throw new ArgumentNullException(nameof(videoUrl));
+            videoUrl.GuardNotNull(nameof(videoUrl));
 
             var success = TryParseVideoId(videoUrl, out string result);
             if (success)
@@ -148,8 +147,7 @@ namespace YoutubeExplode
         /// </summary>
         public static string ParsePlaylistId(string playlistUrl)
         {
-            if (playlistUrl == null)
-                throw new ArgumentNullException(nameof(playlistUrl));
+            playlistUrl.GuardNotNull(nameof(playlistUrl));
 
             var success = TryParsePlaylistId(playlistUrl, out string result);
             if (success)
@@ -202,8 +200,7 @@ namespace YoutubeExplode
         /// </summary>
         public static string ParseChannelId(string channelUrl)
         {
-            if (channelUrl == null)
-                throw new ArgumentNullException(nameof(channelUrl));
+            channelUrl.GuardNotNull(nameof(channelUrl));
 
             var success = TryParseChannelId(channelUrl, out string result);
             if (success)
