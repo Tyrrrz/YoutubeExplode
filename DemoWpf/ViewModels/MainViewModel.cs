@@ -93,7 +93,7 @@ namespace DemoWpf.ViewModels
             Video = null;
 
             // Parse URL if necessary
-            if (!YoutubeClient.TryParseVideoId(Query, out string videoId))
+            if (!YoutubeClient.TryParseVideoId(Query, out var videoId))
                 videoId = Query;
 
             // Perform the request

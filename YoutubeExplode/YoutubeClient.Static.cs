@@ -67,7 +67,7 @@ namespace YoutubeExplode
         {
             videoUrl.GuardNotNull(nameof(videoUrl));
 
-            var success = TryParseVideoId(videoUrl, out string result);
+            var success = TryParseVideoId(videoUrl, out var result);
             if (success)
                 return result;
 
@@ -149,7 +149,7 @@ namespace YoutubeExplode
         {
             playlistUrl.GuardNotNull(nameof(playlistUrl));
 
-            var success = TryParsePlaylistId(playlistUrl, out string result);
+            var success = TryParsePlaylistId(playlistUrl, out var result);
             if (success)
                 return result;
 
@@ -202,7 +202,7 @@ namespace YoutubeExplode
         {
             channelUrl.GuardNotNull(nameof(channelUrl));
 
-            var success = TryParseChannelId(channelUrl, out string result);
+            var success = TryParseChannelId(channelUrl, out var result);
             if (success)
                 return result;
 

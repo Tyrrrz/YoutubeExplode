@@ -28,7 +28,7 @@ namespace YoutubeExplode.Tests
         [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Valid))]
         public void YoutubeClient_TryParseVideoId_Valid_Test(string videoUrl, string expectedVideoId)
         {
-            var success = YoutubeClient.TryParseVideoId(videoUrl, out string videoId);
+            var success = YoutubeClient.TryParseVideoId(videoUrl, out var videoId);
 
             Assert.That(success, Is.True);
             Assert.That(videoId, Is.EqualTo(expectedVideoId));
@@ -81,7 +81,7 @@ namespace YoutubeExplode.Tests
         [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Valid))]
         public void YoutubeClient_TryParsePlaylistId_Valid_Test(string playlistUrl, string expectedPlaylistId)
         {
-            var success = YoutubeClient.TryParsePlaylistId(playlistUrl, out string playlistId);
+            var success = YoutubeClient.TryParsePlaylistId(playlistUrl, out var playlistId);
 
             Assert.That(success, Is.True);
             Assert.That(playlistId, Is.EqualTo(expectedPlaylistId));
@@ -134,7 +134,7 @@ namespace YoutubeExplode.Tests
         [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Valid))]
         public void YoutubeClient_TryParseChannelId_Valid_Test(string channelUrl, string expectedChannelId)
         {
-            var success = YoutubeClient.TryParseChannelId(channelUrl, out string channelId);
+            var success = YoutubeClient.TryParseChannelId(channelUrl, out var channelId);
 
             Assert.That(success, Is.True);
             Assert.That(channelId, Is.EqualTo(expectedChannelId));

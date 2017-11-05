@@ -16,7 +16,7 @@ namespace DemoConsole
         /// </summary>
         private static string NormalizeId(string input)
         {
-            if (!YoutubeClient.TryParseVideoId(input, out string id))
+            if (!YoutubeClient.TryParseVideoId(input, out var id))
                 id = input;
             return id;
         }
