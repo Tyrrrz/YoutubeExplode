@@ -75,7 +75,7 @@ namespace YoutubeExplode.Models
         /// Closed caption tracks available for this video
         /// </summary>
         public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTrackInfos { get; }
-        
+
         /// <summary />
         public Video(string id, Channel author, string title, string description, VideoThumbnails thumbnails,
             TimeSpan duration, IReadOnlyList<string> keywords, VideoStatus status, Statistics statistics,
