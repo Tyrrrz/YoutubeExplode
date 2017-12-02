@@ -90,14 +90,14 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
+        public static TValue Get<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key)
         {
             if (dic.TryGetValue(key, out var result))
                 return result;
             throw new KeyNotFoundException($"Could not find key [{key}]");
         }
 
-        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key,
+        public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key,
             TValue defaultValue = default(TValue))
         {
             if (dic.TryGetValue(key, out var result))

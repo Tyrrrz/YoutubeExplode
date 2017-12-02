@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Models.ClosedCaptions;
-using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Models
 {
@@ -56,31 +54,9 @@ namespace YoutubeExplode.Models
         /// </summary>
         public Statistics Statistics { get; }
 
-        /// <summary>
-        /// Muxed streams available for this video
-        /// </summary>
-        public IReadOnlyList<MuxedStreamInfo> MuxedStreamInfos { get; }
-
-        /// <summary>
-        /// Audio-only streams available for this video
-        /// </summary>
-        public IReadOnlyList<AudioStreamInfo> AudioStreamInfos { get; }
-
-        /// <summary>
-        /// Video-only streams available for this video
-        /// </summary>
-        public IReadOnlyList<VideoStreamInfo> VideoStreamInfos { get; }
-
-        /// <summary>
-        /// Closed caption tracks available for this video
-        /// </summary>
-        public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTrackInfos { get; }
-
         /// <summary />
         public Video(string id, Channel author, string title, string description, VideoThumbnails thumbnails,
-            TimeSpan duration, IReadOnlyList<string> keywords, VideoStatus status, Statistics statistics,
-            IReadOnlyList<MuxedStreamInfo> muxedStreamInfos, IReadOnlyList<AudioStreamInfo> audioStreamInfos,
-            IReadOnlyList<VideoStreamInfo> videoStreamInfos, IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos)
+            TimeSpan duration, IReadOnlyList<string> keywords, VideoStatus status, Statistics statistics)
         {
             Id = id.GuardNotNull(nameof(id));
             Author = author.GuardNotNull(nameof(author));
@@ -91,10 +67,6 @@ namespace YoutubeExplode.Models
             Keywords = keywords.GuardNotNull(nameof(keywords));
             Status = status.GuardNotNull(nameof(status));
             Statistics = statistics.GuardNotNull(nameof(statistics));
-            MuxedStreamInfos = muxedStreamInfos.GuardNotNull(nameof(muxedStreamInfos));
-            AudioStreamInfos = audioStreamInfos.GuardNotNull(nameof(audioStreamInfos));
-            VideoStreamInfos = videoStreamInfos.GuardNotNull(nameof(videoStreamInfos));
-            ClosedCaptionTrackInfos = closedCaptionTrackInfos.GuardNotNull(nameof(closedCaptionTrackInfos));
         }
 
         /// <inheritdoc />

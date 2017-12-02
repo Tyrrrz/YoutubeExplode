@@ -68,7 +68,7 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static IDictionary<string, string> GetDictionaryFromUrlQuery(string query)
+        public static Dictionary<string, string> GetDictionaryFromUrlQuery(string query)
         {
             var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var rawParams = query.Split("&");
