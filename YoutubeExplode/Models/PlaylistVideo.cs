@@ -43,40 +43,7 @@ namespace YoutubeExplode.Models
         /// Statistics
         /// </summary>
         public Statistics Statistics { get; }
-
-        /// <summary>
-        /// Regular url of the YouTube watch page for this video
-        /// </summary>
-        public string RegularUrl {
-            get {
-                return Id != null ?
-                    $"https://www.youtube.com/watch?v={Id}" :
-                    null;
-            }
-        }
-
-        /// <summary>
-        /// Short url of the YouTube watch page for this video
-        /// </summary>
-        public string ShortUrl {
-            get {
-                return Id != null ?
-                    $"https://youtu.be/{Id}" :
-                    null;
-            }
-        }
-
-        /// <summary>
-        /// Url of the embedded YouTube watch page for this video
-        /// </summary>
-        public string EmbedUrl {
-            get {
-                return Id != null ?
-                    $"https://www.youtube.com/embed/{Id}" :
-                    null;
-            }
-        }
-
+        
         /// <summary />
         public PlaylistVideo(string id, string title, string description, VideoThumbnails thumbnails, TimeSpan duration,
             IReadOnlyList<string> keywords, Statistics statistics)

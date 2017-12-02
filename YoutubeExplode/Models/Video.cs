@@ -75,40 +75,7 @@ namespace YoutubeExplode.Models
         /// Closed caption tracks available for this video
         /// </summary>
         public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTrackInfos { get; }
-
-        /// <summary>
-        /// Regular url of the YouTube watch page for this video
-        /// </summary>
-        public string RegularUrl
-        {
-            get
-            {
-                return $"https://www.youtube.com/watch?v={Id}";
-            }
-        }
-
-        /// <summary>
-        /// Short url of the YouTube watch page for this video
-        /// </summary>
-        public string ShortUrl
-        {
-            get
-            {
-                return $"https://youtu.be/{Id}";
-            }
-        }
-
-        /// <summary>
-        /// Url of the embedded YouTube watch page for this video
-        /// </summary>
-        public string EmbedUrl
-        {
-            get
-            {
-                return $"https://www.youtube.com/embed/{Id}";
-            }
-        }
-
+        
         /// <summary />
         public Video(string id, Channel author, string title, string description, VideoThumbnails thumbnails,
             TimeSpan duration, IReadOnlyList<string> keywords, VideoStatus status, Statistics statistics,
