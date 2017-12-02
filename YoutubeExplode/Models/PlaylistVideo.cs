@@ -43,7 +43,7 @@ namespace YoutubeExplode.Models
         /// Statistics
         /// </summary>
         public Statistics Statistics { get; }
-        
+
         /// <summary />
         public PlaylistVideo(string id, string title, string description, VideoThumbnails thumbnails, TimeSpan duration,
             IReadOnlyList<string> keywords, Statistics statistics)
