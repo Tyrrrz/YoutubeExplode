@@ -19,7 +19,18 @@ namespace YoutubeExplode
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
 
-            throw new NotImplementedException();
+            // This is a hack
+
+            // Get channel uploads
+            var uploads = await GetChannelUploadsAsync(channelId, 1).ConfigureAwait(false);
+
+            // Get first video
+            var video = uploads.FirstOrDefault();
+            if (video == null)
+                throw new ParseException("Channel does not have any videos");
+
+            // Get video channel
+            return await GetVideoChannelAsync(video.Id).ConfigureAwait(false);
         }
 
         /// <summary>

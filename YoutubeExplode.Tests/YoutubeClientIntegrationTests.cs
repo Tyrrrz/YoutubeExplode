@@ -34,6 +34,7 @@ namespace YoutubeExplode.Tests
 
             var video = await client.GetVideoAsync(videoId);
 
+            Assert.That(video, Is.Not.Null);
             Assert.That(video.Id, Is.EqualTo(videoId));
         }
 
@@ -137,6 +138,7 @@ namespace YoutubeExplode.Tests
 
             var playlist = await client.GetPlaylistAsync(playlistId);
 
+            Assert.That(playlist, Is.Not.Null);
             Assert.That(playlist.Id, Is.EqualTo(playlistId));
         }
 
@@ -149,7 +151,9 @@ namespace YoutubeExplode.Tests
 
             var playlist = await client.GetPlaylistAsync(playlistId, pageLimit);
 
+            Assert.That(playlist, Is.Not.Null);
             Assert.That(playlist.Id, Is.EqualTo(playlistId));
+            Assert.That(playlist.Videos, Is.Not.Null);
             Assert.That(playlist.Videos.Count, Is.LessThanOrEqualTo(200*pageLimit));
         }
 
@@ -162,6 +166,7 @@ namespace YoutubeExplode.Tests
             var channel = await client.GetChannelAsync(channelId);
 
             Assert.That(channel, Is.Not.Null);
+            Assert.That(channel.Id, Is.EqualTo(channelId));
         }
 
         [Test]

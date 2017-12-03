@@ -174,6 +174,64 @@ namespace YoutubeExplode
             }
         }
 
+        /// <summary>
+        /// Gets video by ID
+        /// </summary>
+        public async Task<Video> GetVideoAsync(string videoId)
+        {
+            videoId.GuardNotNull(nameof(videoId));
+            if (!ValidateVideoId(videoId))
+                throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
+
+            // Get video info
+            var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
+            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
+
+            // Parse metadata
+            var title = videoInfo.Get("title");
+            var author = videoInfo.Get("author");
+            var duration = TimeSpan.FromSeconds(videoInfo.Get("length_seconds").ParseDouble());
+            var viewCount = videoInfo.Get("view_count").ParseLong();
+            var keywords = videoInfo.Get("keywords").Split(",");
+            var isListed = videoInfo.GetOrDefault("is_listed") == "1";
+            var isRatingAllowed = videoInfo.GetOrDefault("allow_ratings") == "1";
+            var isMuted = videoInfo.GetOrDefault("muted") == "1";
+            var isEmbeddingAllowed = videoInfo.GetOrDefault("allow_embed") == "1";
+
+            // HAC: temp
+            var description = "DUMMY";
+            var likeCount = 666;
+            var dislikeCount = 666;
+
+            // Concat metadata
+            var thumbnails = new VideoThumbnails(videoId);
+            var status = new VideoStatus(isListed, isRatingAllowed, isMuted, isEmbeddingAllowed);
+            var statistics = new Statistics(viewCount, likeCount, dislikeCount);
+
+            return new Video(videoId, author, title, description, thumbnails, duration, keywords, status, statistics);
+        }
+
+        public async Task<Channel> GetVideoChannelAsync(string videoId)
+        {
+            videoId.GuardNotNull(nameof(videoId));
+            if (!ValidateVideoId(videoId))
+                throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
+
+            // Get the embed video page
+            var request = $"{YoutubeHost}/embed/{videoId}";
+            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+
+            // Parse metadata
+            var channelPath = Regex.Match(response, @"""channel_path""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
+            var id = channelPath.SubstringAfter("channel/");
+            var title = Regex.Match(response, @"""author""\s*:\s*""(.*?)""").Groups[1].Value;
+            var logoUrl = Regex.Match(response, @"""profile_picture""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
+            var bannerUrl = "DUMMY";
+
+            return new Channel(id, title, logoUrl, bannerUrl);
+        }
+
         public async Task<MediaStreamInfoSet> GetMediaStreamInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
@@ -327,9 +385,9 @@ namespace YoutubeExplode
                 // Parse streams
                 foreach (var streamXml in streamsXml)
                 {
-                    var itag = (int) streamXml.AttributeStrict("id");
+                    var itag = (int)streamXml.AttributeStrict("id");
                     var url = streamXml.ElementStrict("BaseURL").Value;
-                    var bitrate = (long) streamXml.AttributeStrict("bandwidth");
+                    var bitrate = (long)streamXml.AttributeStrict("bandwidth");
 
 #if RELEASE
                     if (!MediaStreamInfo.IsKnown(itag))
@@ -357,10 +415,10 @@ namespace YoutubeExplode
                     else
                     {
                         // Parse additional data
-                        var width = (int) streamXml.AttributeStrict("width");
-                        var height = (int) streamXml.AttributeStrict("height");
+                        var width = (int)streamXml.AttributeStrict("width");
+                        var height = (int)streamXml.AttributeStrict("height");
                         var resolution = new VideoResolution(width, height);
-                        var framerate = (int) streamXml.AttributeStrict("frameRate");
+                        var framerate = (int)streamXml.AttributeStrict("frameRate");
 
                         var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
                         videoStreamInfos.Add(streamInfo);
@@ -420,44 +478,6 @@ namespace YoutubeExplode
             }
 
             return closedCaptionTrackInfos;
-        }
-
-        /// <summary>
-        /// Gets video by ID
-        /// </summary>
-        public async Task<Video> GetVideoAsync(string videoId)
-        {
-            videoId.GuardNotNull(nameof(videoId));
-            if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
-
-            // Get video info
-            var videoInfo = await GetVideoInfoAsync(videoId);
-            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
-
-            // Parse metadata
-            var title = videoInfo.Get("title");
-            var author = videoInfo.Get("author");
-            var duration = TimeSpan.FromSeconds(videoInfo.Get("length_seconds").ParseDouble());
-            var viewCount = videoInfo.Get("view_count").ParseLong();
-            var keywords = videoInfo.Get("keywords").Split(",");
-            var isListed = videoInfo.GetOrDefault("is_listed") == "1";
-            var isRatingAllowed = videoInfo.GetOrDefault("allow_ratings") == "1";
-            var isMuted = videoInfo.GetOrDefault("muted") == "1";
-            var isEmbeddingAllowed = videoInfo.GetOrDefault("allow_embed") == "1";
-
-            // HAC: temp
-            var description = "DUMMY";
-            var likeCount = 666;
-            var dislikeCount = 666;
-
-            // Concat metadata
-            var thumbnails = new VideoThumbnails(videoId);
-            var status = new VideoStatus(isListed, isRatingAllowed, isMuted, isEmbeddingAllowed);
-            var statistics = new Statistics(viewCount, likeCount, dislikeCount);
-
-            return new Video(videoId, author, title, description, thumbnails, duration, keywords, status, statistics);
         }
     }
 }
