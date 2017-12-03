@@ -438,6 +438,7 @@ namespace YoutubeExplode
 
             // Parse metadata
             var title = videoInfo.Get("title");
+            var author = videoInfo.Get("author");
             var duration = TimeSpan.FromSeconds(videoInfo.Get("length_seconds").ParseDouble());
             var viewCount = videoInfo.Get("view_count").ParseLong();
             var keywords = videoInfo.Get("keywords").Split(",");
@@ -446,26 +447,12 @@ namespace YoutubeExplode
             var isMuted = videoInfo.GetOrDefault("muted") == "1";
             var isEmbeddingAllowed = videoInfo.GetOrDefault("allow_embed") == "1";
 
-            // Get metadata extension
-            var request = $"{YoutubeHost}/get_video_metadata?video_id={videoId}";
-            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-            var videoXml = XElement.Parse(response).StripNamespaces().ElementStrict("html_content");
-
-            // Parse metadata extension
-            var description = videoXml.ElementStrict("video_info").ElementStrict("description").Value;
-            var likeCount = (long) videoXml.ElementStrict("video_info").ElementStrict("likes_count_unformatted");
-            var dislikeCount = (long) videoXml.ElementStrict("video_info").ElementStrict("dislikes_count_unformatted");
-
-            // Parse author info
-            var authorId = videoXml.ElementStrict("user_info").ElementStrict("channel_external_id").Value;
-            var authorName = videoXml.ElementStrict("user_info").ElementStrict("username").Value;
-            var authorTitle = videoXml.ElementStrict("user_info").ElementStrict("channel_title").Value;
-            var authorIsPaid = videoXml.ElementStrict("user_info").ElementStrict("channel_paid").Value == "1";
-            var authorLogoUrl = videoXml.ElementStrict("user_info").ElementStrict("channel_logo_url").Value;
-            var authorBannerUrl = videoXml.ElementStrict("user_info").ElementStrict("channel_banner_url").Value;
+            // HAC: temp
+            var description = "DUMMY";
+            var likeCount = 666;
+            var dislikeCount = 666;
 
             // Concat metadata
-            var author = new Channel(authorId, authorName, authorTitle, authorIsPaid, authorLogoUrl, authorBannerUrl);
             var thumbnails = new VideoThumbnails(videoId);
             var status = new VideoStatus(isListed, isRatingAllowed, isMuted, isEmbeddingAllowed);
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);

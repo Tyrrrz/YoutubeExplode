@@ -17,7 +17,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Author channel
         /// </summary>
-        public Channel Author { get; }
+        public string Author { get; }
 
         /// <summary>
         /// Title
@@ -55,7 +55,7 @@ namespace YoutubeExplode.Models
         public Statistics Statistics { get; }
 
         /// <summary />
-        public Video(string id, Channel author, string title, string description, VideoThumbnails thumbnails,
+        public Video(string id, string author, string title, string description, VideoThumbnails thumbnails,
             TimeSpan duration, IReadOnlyList<string> keywords, VideoStatus status, Statistics statistics)
         {
             Id = id.GuardNotNull(nameof(id));
