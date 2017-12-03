@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -74,6 +75,16 @@ namespace YoutubeExplode.Models.MediaStreams
             var frameratePart = framerate > 30 ? framerate.ToString() : string.Empty;
 
             return qualityPart + frameratePart;
+        }
+
+        public static IEnumerable<MediaStreamInfo> EnumerateAll(this MediaStreamInfoSet mediaStreamInfoSet)
+        {
+            foreach (var streamInfo in mediaStreamInfoSet.Muxed)
+                yield return streamInfo;
+            foreach (var streamInfo in mediaStreamInfoSet.Audio)
+                yield return streamInfo;
+            foreach (var streamInfo in mediaStreamInfoSet.Video)
+                yield return streamInfo;
         }
     }
 }

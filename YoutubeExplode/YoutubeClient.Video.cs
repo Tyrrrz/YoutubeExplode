@@ -127,7 +127,8 @@ namespace YoutubeExplode
             return _playerSourceCache[sourceUrl] = new PlayerSource(operations);
         }
 
-        private async Task<VideoInfo> GetVideoInfoAsync(string videoId, string sts = "", bool retry = true)
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "",
+            bool retry = true)
         {
             // If retry is enabled - query with different values of "el"
             var els = retry
@@ -135,16 +136,16 @@ namespace YoutubeExplode
                 : new[] {"info"};
 
             // Get best video info
-            VideoInfo videoInfo = null;
+            IReadOnlyDictionary<string, string> videoInfo = null;
             foreach (var el in els)
             {
                 // Get video info
                 var request = $"{YoutubeHost}/get_video_info?video_id={videoId}&el={el}&sts={sts}";
                 var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-                videoInfo = new VideoInfo(videoId, UrlHelper.GetDictionaryFromUrlQuery(response));
+                videoInfo = UrlHelper.GetDictionaryFromUrlQuery(response);
 
                 // Check error code
-                if (!videoInfo.Contains("errorcode"))
+                if (!videoInfo.ContainsKey("errorcode"))
                     break;
             }
 
@@ -152,7 +153,30 @@ namespace YoutubeExplode
             return videoInfo;
         }
 
-        public async Task<MediaStreamInfoSet> GetMediaStreamInfoSetAsync(string videoId)
+        private void ThrowIfVideoInfoUnavailable(IReadOnlyDictionary<string, string> videoInfo)
+        {
+            if (videoInfo.ContainsKey("errorcode"))
+            {
+                var videoId = videoInfo.Get("video_id");
+                var errorCode = videoInfo.Get("errorcode").ParseInt();
+                var errorReason = videoInfo.Get("reason");
+
+                throw new VideoNotAvailableException(videoId, errorCode, errorReason);
+            }
+        }
+
+        private void ThrowIfVideoInfoRequiresPurchase(IReadOnlyDictionary<string, string> videoInfo)
+        {
+            if (videoInfo.GetOrDefault("requires_purchase") == "1")
+            {
+                var videoId = videoInfo.Get("video_id");
+                var previewVideoId = videoInfo.Get("ypc_vid");
+
+                throw new VideoRequiresPurchaseException(videoId, previewVideoId);
+            }
+        }
+
+        public async Task<MediaStreamInfoSet> GetMediaStreamInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
@@ -163,8 +187,8 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId, playerContext.Sts).ConfigureAwait(false);
-            videoInfo.ThrowIfUnavailable();
-            videoInfo.ThrowIfRequiresPurchase();
+            ThrowIfVideoInfoUnavailable(videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoInfo);
 
             // Prepare stream info collections
             var muxedStreamInfos = new List<MuxedStreamInfo>();
@@ -351,11 +375,10 @@ namespace YoutubeExplode
             audioStreamInfos = audioStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.Bitrate).ToList();
             videoStreamInfos = videoStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.VideoQuality).ToList();
 
-            var result = new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos);
-            return result;
+            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos);
         }
 
-        public async Task<ClosedCaptionTrackInfoSet> GetClosedCaptionTrackInfoSetAsync(string videoId)
+        public async Task<IReadOnlyList<ClosedCaptionTrackInfo>> GetClosedCaptionTrackInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
@@ -363,8 +386,8 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
-            videoInfo.ThrowIfUnavailable();
-            videoInfo.ThrowIfRequiresPurchase();
+            ThrowIfVideoInfoUnavailable(videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoInfo);
 
             // Parse closed caption tracks
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
@@ -388,8 +411,7 @@ namespace YoutubeExplode
                 }
             }
 
-            var result = new ClosedCaptionTrackInfoSet(closedCaptionTrackInfos);
-            return result;
+            return closedCaptionTrackInfos;
         }
 
         /// <summary>
@@ -401,13 +423,10 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
-            // Get player context
-            var playerContext = await GetPlayerContextAsync(videoId).ConfigureAwait(false);
-
             // Get video info
-            var videoInfo = await GetVideoInfoAsync(videoId, playerContext.Sts);
-            videoInfo.ThrowIfUnavailable();
-            videoInfo.ThrowIfRequiresPurchase();
+            var videoInfo = await GetVideoInfoAsync(videoId);
+            ThrowIfVideoInfoUnavailable(videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoInfo);
 
             // Parse metadata
             var title = videoInfo.Get("title");

@@ -28,15 +28,5 @@ namespace YoutubeExplode.Models.MediaStreams
             Audio = audio.GuardNotNull(nameof(audio));
             Video = video.GuardNotNull(nameof(video));
         }
-
-        public IEnumerable<MediaStreamInfo> EnumerateAll()
-        {
-            foreach (var streamInfo in Muxed)
-                yield return streamInfo;
-            foreach (var streamInfo in Audio)
-                yield return streamInfo;
-            foreach (var streamInfo in Video)
-                yield return streamInfo;
-        }
     }
 }

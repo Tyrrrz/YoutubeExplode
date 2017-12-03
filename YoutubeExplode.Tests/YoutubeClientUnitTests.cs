@@ -4,11 +4,11 @@ using NUnit.Framework;
 namespace YoutubeExplode.Tests
 {
     [TestFixture]
-    public class ValidationTests
+    public class YoutubeClientUnitTests
     {
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoIds_Valid))]
-        public void YoutubeClient_ValidateVideoId_Valid_Test(string videoId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        public void YoutubeClient_ValidateVideoId_Test(string videoId)
         {
             var isValid = YoutubeClient.ValidateVideoId(videoId);
 
@@ -16,7 +16,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoIds_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Invalid))]
         public void YoutubeClient_ValidateVideoId_Invalid_Test(string videoId)
         {
             var isValid = YoutubeClient.ValidateVideoId(videoId);
@@ -25,8 +25,8 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Valid))]
-        public void YoutubeClient_TryParseVideoId_Valid_Test(string videoUrl, string expectedVideoId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoUrls))]
+        public void YoutubeClient_TryParseVideoId_Test(string videoUrl, string expectedVideoId)
         {
             var success = YoutubeClient.TryParseVideoId(videoUrl, out var videoId);
 
@@ -35,7 +35,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoUrls_Invalid))]
         public void YoutubeClient_TryParseVideoId_Invalid_Test(string videoUrl)
         {
             var success = YoutubeClient.TryParseVideoId(videoUrl, out _);
@@ -44,8 +44,8 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Valid))]
-        public void YoutubeClient_ParseVideoId_Valid_Test(string videoUrl, string expectedVideoId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoUrls))]
+        public void YoutubeClient_ParseVideoId_Test(string videoUrl, string expectedVideoId)
         {
             var videoId = YoutubeClient.ParseVideoId(videoUrl);
 
@@ -53,15 +53,15 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetVideoUrls_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoUrls_Invalid))]
         public void YoutubeClient_ParseVideoId_Invalid_Test(string videoUrl)
         {
             Assert.Throws<FormatException>(() => YoutubeClient.ParseVideoId(videoUrl));
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistIds_Valid))]
-        public void YoutubeClient_ValidatePlaylistId_Valid_Test(string playlistId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistIds))]
+        public void YoutubeClient_ValidatePlaylistId_Test(string playlistId)
         {
             var isValid = YoutubeClient.ValidatePlaylistId(playlistId);
 
@@ -69,7 +69,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistIds_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistIds_Invalid))]
         public void YoutubeClient_ValidatePlaylistId_Invalid_Test(string playlistId)
         {
             var isValid = YoutubeClient.ValidatePlaylistId(playlistId);
@@ -78,8 +78,8 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Valid))]
-        public void YoutubeClient_TryParsePlaylistId_Valid_Test(string playlistUrl, string expectedPlaylistId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistUrls))]
+        public void YoutubeClient_TryParsePlaylistId_Test(string playlistUrl, string expectedPlaylistId)
         {
             var success = YoutubeClient.TryParsePlaylistId(playlistUrl, out var playlistId);
 
@@ -88,7 +88,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistUrls_Invalid))]
         public void YoutubeClient_TryParsePlaylistId_Invalid_Test(string playlistUrl)
         {
             var success = YoutubeClient.TryParsePlaylistId(playlistUrl, out _);
@@ -97,8 +97,8 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Valid))]
-        public void YoutubeClient_ParsePlaylistId_Valid_Test(string playlistUrl, string expectedPlaylistId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistUrls))]
+        public void YoutubeClient_ParsePlaylistId_Test(string playlistUrl, string expectedPlaylistId)
         {
             var playlistId = YoutubeClient.ParsePlaylistId(playlistUrl);
 
@@ -106,15 +106,15 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetPlaylistUrls_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistUrls_Invalid))]
         public void YoutubeClient_ParsePlaylistId_Invalid_Test(string playlistUrl)
         {
             Assert.Throws<FormatException>(() => YoutubeClient.ParsePlaylistId(playlistUrl));
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelIds_Valid))]
-        public void YoutubeClient_ValidateChannelId_Valid_Test(string channelId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetChannelIds))]
+        public void YoutubeClient_ValidateChannelId_Test(string channelId)
         {
             var isValid = YoutubeClient.ValidateChannelId(channelId);
 
@@ -122,7 +122,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelIds_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetChannelIds_Invalid))]
         public void YoutubeClient_ValidateChannelId_Invalid_Test(string channelId)
         {
             var isValid = YoutubeClient.ValidateChannelId(channelId);
@@ -131,8 +131,8 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Valid))]
-        public void YoutubeClient_TryParseChannelId_Valid_Test(string channelUrl, string expectedChannelId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetChannelUrls))]
+        public void YoutubeClient_TryParseChannelId_Test(string channelUrl, string expectedChannelId)
         {
             var success = YoutubeClient.TryParseChannelId(channelUrl, out var channelId);
 
@@ -141,7 +141,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetChannelUrls_Invalid))]
         public void YoutubeClient_TryParseChannelId_Invalid_Test(string channelUrl)
         {
             var success = YoutubeClient.TryParseChannelId(channelUrl, out _);
@@ -150,8 +150,8 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Valid))]
-        public void YoutubeClient_ParseChannelId_Valid_Test(string channelUrl, string expectedChannelId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetChannelUrls))]
+        public void YoutubeClient_ParseChannelId_Test(string channelUrl, string expectedChannelId)
         {
             var channelId = YoutubeClient.ParseChannelId(channelUrl);
 
@@ -159,7 +159,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.Validation_GetChannelUrls_Invalid))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetChannelUrls_Invalid))]
         public void YoutubeClient_ParseChannelId_Invalid_Test(string channelUrl)
         {
             Assert.Throws<FormatException>(() => YoutubeClient.ParseChannelId(channelUrl));
