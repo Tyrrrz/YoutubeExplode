@@ -153,11 +153,10 @@ namespace YoutubeExplode
             return videoInfo;
         }
 
-        private void ThrowIfVideoInfoUnavailable(IReadOnlyDictionary<string, string> videoInfo)
+        private void ThrowIfVideoInfoUnavailable(string videoId, IReadOnlyDictionary<string, string> videoInfo)
         {
             if (videoInfo.ContainsKey("errorcode"))
             {
-                var videoId = videoInfo.Get("video_id");
                 var errorCode = videoInfo.Get("errorcode").ParseInt();
                 var errorReason = videoInfo.Get("reason");
 
@@ -165,11 +164,10 @@ namespace YoutubeExplode
             }
         }
 
-        private void ThrowIfVideoInfoRequiresPurchase(IReadOnlyDictionary<string, string> videoInfo)
+        private void ThrowIfVideoInfoRequiresPurchase(string videoId, IReadOnlyDictionary<string, string> videoInfo)
         {
-            if (videoInfo.GetOrDefault("requires_purchase") == "1")
+            if (videoInfo.ContainsKey("ypc_vid"))
             {
-                var videoId = videoInfo.Get("video_id");
                 var previewVideoId = videoInfo.Get("ypc_vid");
 
                 throw new VideoRequiresPurchaseException(videoId, previewVideoId);
@@ -187,8 +185,8 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId, playerContext.Sts).ConfigureAwait(false);
-            ThrowIfVideoInfoUnavailable(videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoInfo);
+            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Prepare stream info collections
             var muxedStreamInfos = new List<MuxedStreamInfo>();
@@ -386,8 +384,8 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
-            ThrowIfVideoInfoUnavailable(videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoInfo);
+            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Get player response metadata
             var playerResponseJson = videoInfo.GetOrDefault("player_response") ?? "";
@@ -435,8 +433,8 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId);
-            ThrowIfVideoInfoUnavailable(videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoInfo);
+            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
+            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Parse metadata
             var title = videoInfo.Get("title");
