@@ -132,15 +132,15 @@ namespace YoutubeExplode
         {
             // If retry is enabled - query with different values of "el"
             var els = retry
-                ? new[] {"info", "embedded", "adunit"}
-                : new[] {"info"};
+                ? new[] {"embedded", "adunit"}
+                : new[] {"embedded"};
 
             // Get best video info
             IReadOnlyDictionary<string, string> videoInfo = null;
             foreach (var el in els)
             {
                 // Get video info
-                var request = $"{YoutubeHost}/get_video_info?video_id={videoId}&el={el}&sts={sts}";
+                var request = $"{YoutubeHost}/get_video_info?video_id={videoId}&el={el}&sts={sts}&hl=en";
                 var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
                 videoInfo = UrlHelper.GetDictionaryFromUrlQuery(response);
 
@@ -161,7 +161,7 @@ namespace YoutubeExplode
                 var errorCode = videoInfo.Get("errorcode").ParseInt();
                 var errorReason = videoInfo.Get("reason");
 
-                throw new VideoNotAvailableException(videoId, errorCode, errorReason);
+                throw new VideoUnavailableException(videoId, errorCode, errorReason);
             }
         }
 
@@ -389,26 +389,36 @@ namespace YoutubeExplode
             ThrowIfVideoInfoUnavailable(videoInfo);
             ThrowIfVideoInfoRequiresPurchase(videoInfo);
 
+            // Get player response metadata
+            var playerResponseJson = videoInfo.GetOrDefault("player_response") ?? "";
+            var captionsJson = playerResponseJson.SubstringAfter("\"captions\"").SubstringUntil("\"audioTracks\"");
+
+            // Get all available languages
+            var codes = Regex.Matches(captionsJson, @"lang=([a-zA-Z\-]*)")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .Where(s => s.IsNotBlank())
+                .Distinct()
+                .ToArray();
+            var names = Regex.Matches(captionsJson, @"""simpleText""\s*:\s*""(.*?)""")
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value)
+                .Where(s => s.IsNotBlank())
+                .Distinct()
+                .ToArray();
+
             // Parse closed caption tracks
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
-            var closedCaptionTrackInfosEncoded = videoInfo.GetOrDefault("caption_tracks");
-            if (closedCaptionTrackInfosEncoded.IsNotBlank())
+            for (var i = 0; i < codes.Length; i++)
             {
-                foreach (var captionEncoded in closedCaptionTrackInfosEncoded.Split(","))
-                {
-                    var captionInfoDic = UrlHelper.GetDictionaryFromUrlQuery(captionEncoded);
+                var code = codes[i];
+                var name = names[i];
+                var language = new Language(code, name);
 
-                    var url = captionInfoDic.Get("u");
+                var url = $"{YoutubeHost}/api/timedtext?v={videoId}&lang={code}";
 
-                    var code = captionInfoDic.Get("lc");
-                    var name = captionInfoDic.Get("n");
-                    var language = new Language(code, name);
-
-                    var isAuto = captionInfoDic.Get("v").Contains("a.");
-
-                    var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAuto);
-                    closedCaptionTrackInfos.Add(closedCaptionTrackInfo);
-                }
+                var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language);
+                closedCaptionTrackInfos.Add(closedCaptionTrackInfo);
             }
 
             return closedCaptionTrackInfos;

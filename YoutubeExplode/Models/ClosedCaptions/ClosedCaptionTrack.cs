@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
@@ -25,14 +23,6 @@ namespace YoutubeExplode.Models.ClosedCaptions
         {
             Info = info.GuardNotNull(nameof(info));
             Captions = captions.GuardNotNull(nameof(captions));
-        }
-
-        /// <summary>
-        /// Gets the caption displayed at the given point in time, relative to video's timeline, or null if not found
-        /// </summary>
-        public ClosedCaption GetByTime(TimeSpan time)
-        {
-            return Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
         }
     }
 }

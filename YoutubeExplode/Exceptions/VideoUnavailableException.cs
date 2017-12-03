@@ -6,7 +6,7 @@ namespace YoutubeExplode.Exceptions
     /// <summary>
     /// Thrown when video is not available
     /// </summary>
-    public class VideoNotAvailableException : Exception
+    public class VideoUnavailableException : Exception
     {
         /// <summary>
         /// ID of the video
@@ -31,7 +31,7 @@ namespace YoutubeExplode.Exceptions
                                           $"Error reason: {Reason}";
 
         /// <summary />
-        public VideoNotAvailableException(string videoId, int code, string reason)
+        public VideoUnavailableException(string videoId, int code, string reason)
         {
             VideoId = videoId.GuardNotNull(nameof(videoId));
             Code = code;

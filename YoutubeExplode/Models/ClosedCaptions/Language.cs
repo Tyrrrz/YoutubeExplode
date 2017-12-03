@@ -25,6 +25,6 @@ namespace YoutubeExplode.Models.ClosedCaptions
         }
 
         /// <inheritdoc />
-        public override string ToString() => Code;
+        public override string ToString() => $"{Code} ({Name})";
     }
 }

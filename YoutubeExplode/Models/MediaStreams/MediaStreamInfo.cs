@@ -37,6 +37,9 @@ namespace YoutubeExplode.Models.MediaStreams
             Container = GetContainer(itag);
             Size = size.GuardNotNegative(nameof(size));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{Itag} ({Container})";
     }
 
     public abstract partial class MediaStreamInfo

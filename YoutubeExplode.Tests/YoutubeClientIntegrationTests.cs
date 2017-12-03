@@ -43,7 +43,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoNotAvailableException>(() => client.GetVideoAsync(videoId));
+            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoAsync(videoId));
         }
 
         [Test]
