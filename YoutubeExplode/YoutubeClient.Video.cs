@@ -227,9 +227,8 @@ namespace YoutubeExplode
             var id = channelPath.SubstringAfter("channel/");
             var title = Regex.Match(response, @"""author""\s*:\s*""(.*?)""").Groups[1].Value;
             var logoUrl = Regex.Match(response, @"""profile_picture""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
-            var bannerUrl = "DUMMY";
 
-            return new Channel(id, title, logoUrl, bannerUrl);
+            return new Channel(id, title, logoUrl);
         }
 
         public async Task<MediaStreamInfoSet> GetMediaStreamInfosAsync(string videoId)

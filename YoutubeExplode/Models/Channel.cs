@@ -27,18 +27,12 @@ namespace YoutubeExplode.Models
         /// </summary>
         public string LogoUrl { get; }
 
-        /// <summary>
-        /// Banner image URL
-        /// </summary>
-        public string BannerUrl { get; }
-
         /// <summary />
-        public Channel(string id, string title, string logoUrl, string bannerUrl)
+        public Channel(string id, string title, string logoUrl)
         {
             Id = id.GuardNotNull(nameof(id));
             Title = title.GuardNotNull(nameof(title));
             LogoUrl = logoUrl.GuardNotNull(nameof(logoUrl));
-            BannerUrl = bannerUrl.GuardNotNull(nameof(bannerUrl));
         }
 
         /// <inheritdoc />
