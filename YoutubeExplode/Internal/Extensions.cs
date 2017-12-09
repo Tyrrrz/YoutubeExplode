@@ -79,6 +79,11 @@ namespace YoutubeExplode.Internal
             return input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable ?? Enumerable.Empty<T>();
+        }
+
         public static IEnumerable<TSource> Distinct<TSource, TKey>(this IEnumerable<TSource> enumerable,
             Func<TSource, TKey> selector)
         {

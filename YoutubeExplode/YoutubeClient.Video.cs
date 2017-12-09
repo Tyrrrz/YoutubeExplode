@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.CipherOperations;
@@ -18,15 +19,28 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<PlayerContext> GetPlayerContextAsync(string videoId)
+        private async Task<JToken> GetEmbedPageConfigAsync(string videoId)
         {
             // Get the embed video page
             var request = $"{YoutubeHost}/embed/{videoId}";
             var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
+            // Find and parse config
+            var configRaw = response
+                .SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ")
+                .SubstringUntil(",'EXPERIMENT_FLAGS'");
+
+            return JToken.Parse(configRaw);
+        }
+
+        private async Task<PlayerContext> GetPlayerContextAsync(string videoId)
+        {
+            // Get config
+            var configJson = await GetEmbedPageConfigAsync(videoId).ConfigureAwait(false);
+
             // Extract values
-            var sourceUrl = Regex.Match(response, @"""js""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
-            var sts = Regex.Match(response, @"""sts""\s*:\s*(\d+)").Groups[1].Value;
+            var sourceUrl = configJson["assets"].Value<string>("js");
+            var sts = configJson.Value<string>("sts");
 
             // Check if successful
             if (sourceUrl.IsBlank() || sts.IsBlank())
@@ -218,15 +232,14 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
-            // Get the embed video page
-            var request = $"{YoutubeHost}/embed/{videoId}";
-            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            // Get the embed config
+            var configJson = await GetEmbedPageConfigAsync(videoId).ConfigureAwait(false);
 
             // Parse metadata
-            var channelPath = Regex.Match(response, @"""channel_path""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
+            var channelPath = configJson["args"].Value<string>("channel_path");
             var id = channelPath.SubstringAfter("channel/");
-            var title = Regex.Match(response, @"""author""\s*:\s*""(.*?)""").Groups[1].Value;
-            var logoUrl = Regex.Match(response, @"""profile_picture""\s*:\s*""(.*?)""").Groups[1].Value.Replace("\\", "");
+            var title = configJson["args"].Value<string>("author");
+            var logoUrl = configJson["args"].Value<string>("profile_picture");
 
             return new Channel(id, title, logoUrl);
         }
@@ -444,35 +457,22 @@ namespace YoutubeExplode
             ThrowIfVideoInfoUnavailable(videoId, videoInfo);
             ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
-            // Get player response metadata
-            var playerResponseJson = videoInfo.GetOrDefault("player_response") ?? "";
-            var captionsJson = playerResponseJson.SubstringAfter("\"captions\"").SubstringUntil("\"audioTracks\"");
-
-            // Get all available languages
-            var codes = Regex.Matches(captionsJson, @"lang=([a-zA-Z\-]*)")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .Where(s => s.IsNotBlank())
-                .Distinct()
-                .ToArray();
-            var names = Regex.Matches(captionsJson, @"""simpleText""\s*:\s*""(.*?)""")
-                .Cast<Match>()
-                .Select(m => m.Groups[1].Value)
-                .Where(s => s.IsNotBlank())
-                .Distinct()
-                .ToArray();
+            // Get captions
+            var playerResponseRaw = videoInfo.GetOrDefault("player_response") ?? "";
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
+            var captionsJson = playerResponseJson["captions"]["playerCaptionsTracklistRenderer"]["captionTracks"];
 
             // Parse closed caption tracks
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
-            for (var i = 0; i < codes.Length; i++)
+            foreach (var captionJson in captionsJson.EmptyIfNull())
             {
-                var code = codes[i];
-                var name = names[i];
+                var code = captionJson.Value<string>("languageCode");
+                var name = captionJson["name"].Value<string>("simpleText");
+                var url = captionJson.Value<string>("baseUrl");
+
                 var language = new Language(code, name);
-
-                var url = $"{YoutubeHost}/api/timedtext?v={videoId}&lang={code}";
-
                 var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language);
+
                 closedCaptionTrackInfos.Add(closedCaptionTrackInfo);
             }
 
