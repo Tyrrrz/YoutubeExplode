@@ -458,9 +458,9 @@ namespace YoutubeExplode
             ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Get captions
-            var playerResponseRaw = videoInfo.GetOrDefault("player_response") ?? "";
+            var playerResponseRaw = videoInfo.GetOrDefault("player_response", "");
             var playerResponseJson = JToken.Parse(playerResponseRaw);
-            var captionsJson = playerResponseJson["captions"]["playerCaptionsTracklistRenderer"]["captionTracks"];
+            var captionsJson = playerResponseJson.SelectToken("$..captionTracks");
 
             // Parse closed caption tracks
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
@@ -469,9 +469,10 @@ namespace YoutubeExplode
                 var code = captionJson.Value<string>("languageCode");
                 var name = captionJson["name"].Value<string>("simpleText");
                 var url = captionJson.Value<string>("baseUrl");
+                var isAuto = captionJson.Value<string>("vssId").StartsWith("a.");
 
                 var language = new Language(code, name);
-                var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language);
+                var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAuto);
 
                 closedCaptionTrackInfos.Add(closedCaptionTrackInfo);
             }
