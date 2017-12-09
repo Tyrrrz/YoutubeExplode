@@ -58,12 +58,9 @@ namespace YoutubeExplode
 
                     // Statistics
                     // The inner text is already formatted so we have to parse it manually
-                    var videoViewCount =
-                        Regex.Replace(videoXml.ElementStrict("views").Value, @"\D", "").ParseLong();
-                    var videoLikeCount =
-                        Regex.Replace(videoXml.ElementStrict("likes").Value, @"\D", "").ParseLong();
-                    var videoDislikeCount =
-                        Regex.Replace(videoXml.ElementStrict("dislikes").Value, @"\D", "").ParseLong();
+                    var videoViewCount = videoXml.ElementStrict("views").Value.StripNonDigit().ParseLong();
+                    var videoLikeCount = videoXml.ElementStrict("likes").Value.StripNonDigit().ParseLong();
+                    var videoDislikeCount = videoXml.ElementStrict("dislikes").Value.StripNonDigit().ParseLong();
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Video

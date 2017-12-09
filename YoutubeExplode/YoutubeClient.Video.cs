@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AngleSharp.Extensions;
+using AngleSharp.Parser.Html;
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -22,13 +24,27 @@ namespace YoutubeExplode
         private async Task<JToken> GetEmbedPageConfigAsync(string videoId)
         {
             // Get the embed video page
-            var request = $"{YoutubeHost}/embed/{videoId}";
+            var request = $"{YoutubeHost}/embed/{videoId}?disable_polymer=true&hl=en";
             var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
 
             // Find and parse config
             var configRaw = response
                 .SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ")
                 .SubstringUntil(",'EXPERIMENT_FLAGS'");
+
+            return JToken.Parse(configRaw);
+        }
+
+        private async Task<JToken> GetWatchPageConfigAsync(string videoId)
+        {
+            // Get the embed video page
+            var request = $"{YoutubeHost}/watch?v={videoId}&disable_polymer=true&hl=en";
+            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+
+            // Find and parse config
+            var configRaw = response
+                .SubstringAfter("window[\"ytInitialData\"] = ")
+                .SubstringUntil(";");
 
             return JToken.Parse(configRaw);
         }
@@ -208,22 +224,23 @@ namespace YoutubeExplode
             var duration = TimeSpan.FromSeconds(videoInfo.Get("length_seconds").ParseDouble());
             var viewCount = videoInfo.Get("view_count").ParseLong();
             var keywords = videoInfo.Get("keywords").Split(",");
-            var isListed = videoInfo.GetOrDefault("is_listed") == "1";
-            var isRatingAllowed = videoInfo.GetOrDefault("allow_ratings") == "1";
-            var isMuted = videoInfo.GetOrDefault("muted") == "1";
-            var isEmbeddingAllowed = videoInfo.GetOrDefault("allow_embed") == "1";
 
-            // HAC: temp
-            var description = "DUMMY";
-            var likeCount = 666;
-            var dislikeCount = 666;
+            // More metadata
+            // Get the embed video page
+            var request = $"{YoutubeHost}/watch?v={videoId}&disable_polymer=true&hl=en";
+            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+
+            var html = await new HtmlParser().ParseAsync(response);
+            
+            var description = html.QuerySelector("p#eow-description").TextEx();
+            var likeCount = html.QuerySelector("button.like-button-renderer-like-button").Text().StripNonDigit().ParseLong();
+            var dislikeCount = html.QuerySelector("button.like-button-renderer-dislike-button").Text().StripNonDigit().ParseLong();
 
             // Concat metadata
             var thumbnails = new VideoThumbnails(videoId);
-            var status = new VideoStatus(isListed, isRatingAllowed, isMuted, isEmbeddingAllowed);
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
 
-            return new Video(videoId, author, title, description, thumbnails, duration, keywords, status, statistics);
+            return new Video(videoId, author, title, description, thumbnails, duration, keywords, statistics);
         }
 
         public async Task<Channel> GetVideoChannelAsync(string videoId)
@@ -458,12 +475,14 @@ namespace YoutubeExplode
             ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Get captions
-            var playerResponseRaw = videoInfo.GetOrDefault("player_response", "");
-            var playerResponseJson = JToken.Parse(playerResponseRaw);
-            var captionsJson = playerResponseJson.SelectToken("$..captionTracks");
+            var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
+            var playerResponseRaw = videoInfo.GetOrDefault("player_response");
+            if (playerResponseRaw.IsBlank())
+                return closedCaptionTrackInfos;
 
             // Parse closed caption tracks
-            var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
+            var captionsJson = playerResponseJson.SelectToken("$..captionTracks");
             foreach (var captionJson in captionsJson.EmptyIfNull())
             {
                 var code = captionJson.Value<string>("languageCode");

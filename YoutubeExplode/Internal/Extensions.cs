@@ -4,7 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using AngleSharp.Dom;
 
 namespace YoutubeExplode.Internal
 {
@@ -34,6 +36,11 @@ namespace YoutubeExplode.Internal
             var index = str.IndexOf(sub, comparison);
             if (index < 0) return string.Empty;
             return str.Substring(index + sub.Length, str.Length - index - sub.Length);
+        }
+
+        public static string StripNonDigit(this string str)
+        {
+            return Regex.Replace(str, "\\D", "");
         }
 
         public static double ParseDouble(this string str)
@@ -141,6 +148,22 @@ namespace YoutubeExplode.Internal
         public static XAttribute AttributeStrict(this XElement element, XName name)
         {
             return element.Attribute(name) ?? throw new KeyNotFoundException($"Could not find attribute [{name}]");
+        }
+
+        public static string TextEx(this INode node)
+        {
+            if (node.NodeType == NodeType.Text)
+                return node.TextContent;
+
+            var sb = new StringBuilder();
+
+            foreach (var child in node.ChildNodes)
+                sb.Append(child.TextEx());
+
+            if (node.NodeName == "BR")
+                sb.AppendLine();
+
+            return sb.ToString();
         }
     }
 }
