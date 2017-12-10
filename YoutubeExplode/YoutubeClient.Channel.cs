@@ -17,7 +17,7 @@ namespace YoutubeExplode
         {
             channelId.GuardNotNull(nameof(channelId));
             if (!ValidateChannelId(channelId))
-                throw new ArgumentException("Invalid YouTube channel ID.", nameof(channelId));
+                throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
             // This is a hack, it gets uploads and then gets uploader info of first video
 
@@ -42,7 +42,7 @@ namespace YoutubeExplode
             channelId.GuardNotNull(nameof(channelId));
             maxPages.GuardPositive(nameof(maxPages));
             if (!ValidateChannelId(channelId))
-                throw new ArgumentException("Invalid YouTube channel ID.", nameof(channelId));
+                throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
             // Compose a playlist ID
             var playlistId = "UU" + channelId.SubstringAfter("UC");

@@ -198,7 +198,7 @@ namespace YoutubeExplode
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Invalid YouTube video ID.", nameof(videoId));
+                throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
@@ -232,7 +232,7 @@ namespace YoutubeExplode
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Invalid YouTube video ID.", nameof(videoId));
+                throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get embed page config
             var configJson = await GetVideoEmbedPageConfigAsync(videoId).ConfigureAwait(false);
@@ -253,7 +253,7 @@ namespace YoutubeExplode
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Invalid YouTube video ID.", nameof(videoId));
+                throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get player context
             var playerContext = await GetVideoPlayerContextAsync(videoId).ConfigureAwait(false);
@@ -468,7 +468,7 @@ namespace YoutubeExplode
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
-                throw new ArgumentException("Invalid YouTube video ID.", nameof(videoId));
+                throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);

@@ -29,7 +29,8 @@ namespace YoutubeExplode.Models.MediaStreams
                 case Container.Flv:
                     return "flv";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(container), "Unexpected container type.");
+                    throw new ArgumentOutOfRangeException(nameof(container),
+                        $"Unexpected container type [{container}].");
             }
         }
 
@@ -74,7 +75,7 @@ namespace YoutubeExplode.Models.MediaStreams
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(videoQuality),
-                        $"Unexpected video quality [{videoQuality}]");
+                        $"Unexpected video quality [{videoQuality}].");
             }
 
             // Framerate

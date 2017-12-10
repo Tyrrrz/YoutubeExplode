@@ -33,7 +33,7 @@ namespace YoutubeExplode
             playlistId.GuardNotNull(nameof(playlistId));
             maxPages.GuardPositive(nameof(maxPages));
             if (!ValidatePlaylistId(playlistId))
-                throw new ArgumentException("Invalid YouTube playlist ID.", nameof(playlistId));
+                throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
             // Get all videos across pages
             var pagesDone = 0;
