@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -18,6 +19,9 @@ namespace DemoWpf.ViewModels
         private bool _isBusy;
         private string _query;
         private Video _video;
+        private Channel _channel;
+        private MediaStreamInfoSet _mediaStreamInfos;
+        private IReadOnlyList<ClosedCaptionTrackInfo> _closedCaptionTrackInfos;
         private double _progress;
         private bool _isProgressIndeterminate;
 
@@ -27,7 +31,7 @@ namespace DemoWpf.ViewModels
             private set
             {
                 Set(ref _isBusy, value);
-                GetVideoCommand.RaiseCanExecuteChanged();
+                GetDataCommand.RaiseCanExecuteChanged();
                 DownloadMediaStreamCommand.RaiseCanExecuteChanged();
             }
         }
@@ -38,7 +42,7 @@ namespace DemoWpf.ViewModels
             set
             {
                 Set(ref _query, value);
-                GetVideoCommand.RaiseCanExecuteChanged();
+                GetDataCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -48,11 +52,42 @@ namespace DemoWpf.ViewModels
             private set
             {
                 Set(ref _video, value);
-                RaisePropertyChanged(() => IsVideoAvailable);
+                RaisePropertyChanged(() => IsDataAvailable);
             }
         }
 
-        public bool IsVideoAvailable => Video != null;
+        public Channel Channel
+        {
+            get => _channel;
+            private set
+            {
+                Set(ref _channel, value);
+                RaisePropertyChanged(() => IsDataAvailable);
+            }
+        }
+
+        public MediaStreamInfoSet MediaStreamInfos
+        {
+            get => _mediaStreamInfos;
+            private set
+            {
+                Set(ref _mediaStreamInfos, value);
+                RaisePropertyChanged(() => IsDataAvailable);
+            }
+        }
+
+        public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTrackInfos
+        {
+            get => _closedCaptionTrackInfos;
+            private set
+            {
+                Set(ref _closedCaptionTrackInfos, value);
+                RaisePropertyChanged(() => IsDataAvailable);
+            }
+        }
+
+        public bool IsDataAvailable => Video != null && Channel != null
+                                       && MediaStreamInfos != null && ClosedCaptionTrackInfos != null;
 
         public double Progress
         {
@@ -67,7 +102,7 @@ namespace DemoWpf.ViewModels
         }
 
         // Commands
-        public RelayCommand GetVideoCommand { get; }
+        public RelayCommand GetDataCommand { get; }
         public RelayCommand<MediaStreamInfo> DownloadMediaStreamCommand { get; }
         public RelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
 
@@ -76,7 +111,7 @@ namespace DemoWpf.ViewModels
             _client = new YoutubeClient();
 
             // Commands
-            GetVideoCommand = new RelayCommand(GetVideo,
+            GetDataCommand = new RelayCommand(GetData,
                 () => !IsBusy && Query.IsNotBlank());
             DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStream,
                 _ => !IsBusy);
@@ -84,20 +119,26 @@ namespace DemoWpf.ViewModels
                 DownloadClosedCaptionTrack, _ => !IsBusy);
         }
 
-        private async void GetVideo()
+        private async void GetData()
         {
             IsBusy = true;
             IsProgressIndeterminate = true;
 
             // Reset data
             Video = null;
+            Channel = null;
+            MediaStreamInfos = null;
+            ClosedCaptionTrackInfos = null;
 
             // Parse URL if necessary
             if (!YoutubeClient.TryParseVideoId(Query, out var videoId))
                 videoId = Query;
 
-            // Perform the request
+            // Get data
             Video = await _client.GetVideoAsync(videoId);
+            Channel = await _client.GetVideoAuthorChannelAsync(videoId);
+            MediaStreamInfos = await _client.GetVideoMediaStreamInfosAsync(videoId);
+            ClosedCaptionTrackInfos = await _client.GetVideoClosedCaptionTrackInfosAsync(videoId);
 
             IsBusy = false;
             IsProgressIndeterminate = false;
