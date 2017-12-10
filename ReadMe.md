@@ -5,7 +5,7 @@
 [![NuGet](https://img.shields.io/nuget/v/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![NuGet](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 
-YoutubeExplode is a library that provides an interface to query metadata of Youtube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks. Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered AJAX requests to retrieve information. As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
+YoutubeExplode is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks. Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered AJAX requests to retrieve information. As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
 
 ## Screenshots
 
@@ -13,7 +13,7 @@ YoutubeExplode is a library that provides an interface to query metadata of Yout
 
 ## Download
 
-- Using nuget: `Install-Package YoutubeExplode`
+- Using NuGet: `Install-Package YoutubeExplode`
 - [Continuous integration](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode)
 
 ## Features
@@ -27,7 +27,6 @@ YoutubeExplode is a library that provides an interface to query metadata of Yout
 - Provides methods to validate IDs and to parse IDs from URLs
 - Fully asynchronous API
 - Targets .NET Framework 4.5+, .NET Core 1.0+ and .NET Standard 1.1+
-- No external dependencies
 - No need for an API key and no usage quotas
 
 ## Usage
@@ -38,6 +37,8 @@ You can also use the demo projects as a reference point.
 
 ## Libraries used
 
+- [AngleSharp](https://github.com/AngleSharp/AngleSharp)
+- [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
