@@ -53,6 +53,7 @@ namespace YoutubeExplode
                 {
                     // Basic info
                     var videoId = videoXml.ElementStrict("encrypted_id").Value;
+                    var videoAuthor = videoXml.ElementStrict("author").Value;
                     var videoTitle = videoXml.ElementStrict("title").Value;
                     var videoDuration = TimeSpan.FromSeconds((double) videoXml.ElementStrict("length_seconds"));
                     var videoDescription = videoXml.ElementStrict("description").Value;
@@ -74,8 +75,8 @@ namespace YoutubeExplode
 
                     // Video
                     var videoThumbnails = new VideoThumbnails(videoId);
-                    var video = new PlaylistVideo(videoId, videoTitle, videoDescription, videoThumbnails, videoDuration,
-                        videoKeywords, videoStatistics);
+                    var video = new PlaylistVideo(videoId, videoAuthor, videoTitle, videoDescription, videoThumbnails,
+                        videoDuration, videoKeywords, videoStatistics);
 
                     // Add to list if not already there
                     if (videoIds.Add(video.Id))
