@@ -48,12 +48,72 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_RequiresPurchase))]
-        public void YoutubeClient_GetVideoAsync_RequiresPurchase_Test(string videoId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        public async Task YoutubeClient_GetVideoAuthorChannelAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => client.GetVideoAsync(videoId));
+            var channel = await client.GetVideoAuthorChannelAsync(videoId);
+
+            Assert.That(channel, Is.Not.Null);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        public void YoutubeClient_GetVideoAuthorChannelAsync_Unavailable_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoAuthorChannelAsync(videoId));
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        public async Task YoutubeClient_GetVideoMediaStreamInfosAsync_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
+
+            Assert.That(streamInfoSet, Is.Not.Null);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        public void YoutubeClient_GetVideoMediaStreamInfosAsync_Unavailable_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_RequiresPurchase))]
+        public void YoutubeClient_GetVideoMediaStreamInfosAsync_RequiresPurchase_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        public async Task YoutubeClient_GetVideoClosedCaptionTrackInfosAsync_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            var trackInfos = await client.GetVideoClosedCaptionTrackInfosAsync(videoId);
+
+            Assert.That(trackInfos, Is.Not.Null);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        public void YoutubeClient_GetVideoClosedCaptionTrackInfosAsync_Unavailable_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoClosedCaptionTrackInfosAsync(videoId));
         }
 
         [Test]
@@ -77,20 +137,6 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_HasClosedCaptions))]
-        public async Task YoutubeClient_GetClosedCaptionTrackAsync_Test(string videoId)
-        {
-            var client = new YoutubeClient();
-
-            var closedCaptionTrackInfos = await client.GetVideoClosedCaptionTrackInfosAsync(videoId);
-
-            var trackInfo = closedCaptionTrackInfos.First();
-            var track = await client.GetClosedCaptionTrackAsync(trackInfo);
-
-            Assert.That(track, Is.Not.Null);
-        }
-
-        [Test]
         [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
         public async Task YoutubeClient_DownloadMediaStreamAsync_Test(string videoId)
         {
@@ -107,6 +153,20 @@ namespace YoutubeExplode.Tests
 
             Assert.That(fileInfo.Exists, Is.True);
             Assert.That(fileInfo.Length, Is.GreaterThan(0));
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_HasClosedCaptions))]
+        public async Task YoutubeClient_GetClosedCaptionTrackAsync_Test(string videoId)
+        {
+            var client = new YoutubeClient();
+
+            var closedCaptionTrackInfos = await client.GetVideoClosedCaptionTrackInfosAsync(videoId);
+
+            var trackInfo = closedCaptionTrackInfos.First();
+            var track = await client.GetClosedCaptionTrackAsync(trackInfo);
+
+            Assert.That(track, Is.Not.Null);
         }
 
         [Test]
