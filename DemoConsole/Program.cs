@@ -10,7 +10,7 @@ namespace DemoConsole
     public static class Program
     {
         /// <summary>
-        /// If given a youtube url, parses video id from it.
+        /// If given a YouTube URL, parses video id from it.
         /// Otherwise returns the same string.
         /// </summary>
         private static string NormalizeId(string input)
@@ -44,7 +44,7 @@ namespace DemoConsole
             var client = new YoutubeClient();
 
             // Get the video ID
-            Console.Write("Enter Youtube video ID or URL: ");
+            Console.Write("Enter YouTube video ID or URL: ");
             var id = Console.ReadLine();
             id = NormalizeId(id);
 

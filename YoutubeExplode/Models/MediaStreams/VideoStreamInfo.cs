@@ -23,7 +23,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public VideoQuality VideoQuality { get; }
 
         /// <summary>
-        /// Video resoution of the associated stream.
+        /// Video resolution of the associated stream.
         /// </summary>
         public VideoResolution Resolution { get; }
 
