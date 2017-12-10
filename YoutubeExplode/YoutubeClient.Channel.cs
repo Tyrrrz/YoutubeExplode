@@ -30,7 +30,7 @@ namespace YoutubeExplode
                 throw new ParseException("Channel does not have any videos.");
 
             // Get video channel
-            return await GetVideoUploaderAsync(video.Id).ConfigureAwait(false);
+            return await GetVideoAuthorChannelAsync(video.Id).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -226,9 +226,9 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets uploader <see cref="Channel"/> for given video.
+        /// Gets author <see cref="Channel"/> for given video.
         /// </summary>
-        public async Task<Channel> GetVideoUploaderAsync(string videoId)
+        public async Task<Channel> GetVideoAuthorChannelAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
             if (!ValidateVideoId(videoId))
