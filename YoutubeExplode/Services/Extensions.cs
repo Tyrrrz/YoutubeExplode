@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 namespace YoutubeExplode.Services
 {
     /// <summary>
-    /// Service extensions
+    /// Extensions for <see cref="Services"/>.
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        /// Sends a GET request and returns content as a string
+        /// Sends a GET request and returns content as a string.
         /// </summary>
         public static async Task<string> GetStringAsync(this IHttpService httpService, string url)
         {
@@ -23,7 +23,7 @@ namespace YoutubeExplode.Services
         }
 
         /// <summary>
-        /// Send a GET request and return content as a stream
+        /// Send a GET request and return content as a stream.
         /// </summary>
         public static async Task<Stream> GetStreamAsync(this IHttpService httpService, string url)
         {

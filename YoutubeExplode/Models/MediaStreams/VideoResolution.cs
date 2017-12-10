@@ -4,17 +4,17 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Width and height of a video
+    /// Width and height of a video.
     /// </summary>
     public partial struct VideoResolution : IEquatable<VideoResolution>
     {
         /// <summary>
-        /// Width
+        /// Width.
         /// </summary>
         public int Width { get; }
 
         /// <summary>
-        /// Height
+        /// Height.
         /// </summary>
         public int Height { get; }
 
@@ -55,10 +55,10 @@ namespace YoutubeExplode.Models.MediaStreams
 
     public partial struct VideoResolution
     {
-        /// <inheritdoc />
+        /// <summary />
         public static bool operator ==(VideoResolution r1, VideoResolution r2) => r1.Equals(r2);
 
-        /// <inheritdoc />
+        /// <summary />
         public static bool operator !=(VideoResolution r1, VideoResolution r2) => !(r1 == r2);
     }
 }

@@ -26,16 +26,14 @@ namespace YoutubeExplode.Internal
             StringComparison comparison = StringComparison.Ordinal)
         {
             var index = str.IndexOf(sub, comparison);
-            if (index < 0) return str;
-            return str.Substring(0, index);
+            return index < 0 ? str : str.Substring(0, index);
         }
 
         public static string SubstringAfter(this string str, string sub,
             StringComparison comparison = StringComparison.Ordinal)
         {
             var index = str.IndexOf(sub, comparison);
-            if (index < 0) return string.Empty;
-            return str.Substring(index + sub.Length, str.Length - index - sub.Length);
+            return index < 0 ? string.Empty : str.Substring(index + sub.Length, str.Length - index - sub.Length);
         }
 
         public static string StripNonDigit(this string str)
@@ -100,8 +98,10 @@ namespace YoutubeExplode.Internal
         public static string Reverse(this string str)
         {
             var sb = new StringBuilder(str.Length);
+
             for (var i = str.Length - 1; i >= 0; i--)
                 sb.Append(str[i]);
+
             return sb.ToString();
         }
 
@@ -134,6 +134,7 @@ namespace YoutubeExplode.Internal
             Func<TSource, TKey> selector)
         {
             var existing = new HashSet<TKey>();
+
             foreach (var element in enumerable)
             {
                 if (existing.Add(selector(element)))
@@ -143,17 +144,15 @@ namespace YoutubeExplode.Internal
 
         public static TValue Get<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key)
         {
-            if (dic.TryGetValue(key, out var result))
-                return result;
-            throw new KeyNotFoundException($"Could not find key [{key}]");
+            return dic.TryGetValue(key, out var result)
+                ? result
+                : throw new KeyNotFoundException($"Could not find key [{key}].");
         }
 
         public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key,
             TValue defaultValue = default(TValue))
         {
-            if (dic.TryGetValue(key, out var result))
-                return result;
-            return defaultValue;
+            return dic.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         public static XElement StripNamespaces(this XElement element)
@@ -181,12 +180,12 @@ namespace YoutubeExplode.Internal
 
         public static XElement ElementStrict(this XElement element, XName name)
         {
-            return element.Element(name) ?? throw new KeyNotFoundException($"Could not find element [{name}]");
+            return element.Element(name) ?? throw new KeyNotFoundException($"Could not find element [{name}].");
         }
 
         public static XAttribute AttributeStrict(this XElement element, XName name)
         {
-            return element.Attribute(name) ?? throw new KeyNotFoundException($"Could not find attribute [{name}]");
+            return element.Attribute(name) ?? throw new KeyNotFoundException($"Could not find attribute [{name}].");
         }
 
         public static string TextEx(this INode node)

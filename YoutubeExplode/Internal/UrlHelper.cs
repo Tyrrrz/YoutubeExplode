@@ -40,7 +40,7 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static string SetUrlPathParameter(string url, string key, string value)
+        public static string SetUrlRouteParameter(string url, string key, string value)
         {
             value = value ?? string.Empty;
 

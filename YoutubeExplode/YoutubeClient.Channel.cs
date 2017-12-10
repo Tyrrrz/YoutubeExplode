@@ -11,15 +11,15 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         /// <summary>
-        /// Gets channel by ID
+        /// Gets <see cref="Channel"/> by ID.
         /// </summary>
         public async Task<Channel> GetChannelAsync(string channelId)
         {
             channelId.GuardNotNull(nameof(channelId));
             if (!ValidateChannelId(channelId))
-                throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
+                throw new ArgumentException("Invalid YouTube channel ID.", nameof(channelId));
 
-            // This is a hack
+            // This is a hack, it gets uploads and then gets uploader info of first video
 
             // Get channel uploads
             var uploads = await GetChannelUploadsAsync(channelId, 1).ConfigureAwait(false);
@@ -27,21 +27,22 @@ namespace YoutubeExplode
             // Get first video
             var video = uploads.FirstOrDefault();
             if (video == null)
-                throw new ParseException("Channel does not have any videos");
+                throw new ParseException("Channel does not have any videos.");
 
             // Get video channel
-            return await GetVideoChannelAsync(video.Id).ConfigureAwait(false);
+            return await GetVideoUploaderAsync(video.Id).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Gets videos uploaded to a channel with given ID, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
+        /// Gets <see cref="PlaylistVideo"/>s uploaded by channel with given ID.
+        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
         /// </summary>
         public async Task<IReadOnlyList<PlaylistVideo>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
             channelId.GuardNotNull(nameof(channelId));
             maxPages.GuardPositive(nameof(maxPages));
             if (!ValidateChannelId(channelId))
-                throw new ArgumentException("Invalid Youtube channel ID", nameof(channelId));
+                throw new ArgumentException("Invalid YouTube channel ID.", nameof(channelId));
 
             // Compose a playlist ID
             var playlistId = "UU" + channelId.SubstringAfter("UC");
@@ -53,7 +54,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets videos uploaded to a channel with given ID
+        /// Gets <see cref="PlaylistVideo"/>s uploaded by channel with given ID.
         /// </summary>
         public Task<IReadOnlyList<PlaylistVideo>> GetChannelUploadsAsync(string channelId)
             => GetChannelUploadsAsync(channelId, int.MaxValue);

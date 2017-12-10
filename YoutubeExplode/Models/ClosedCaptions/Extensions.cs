@@ -4,12 +4,13 @@ using System.Linq;
 namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
-    /// Model extensions
+    /// Extensions for <see cref="ClosedCaptions"/>.
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        /// Gets the caption displayed at the given point in time, relative to video's timeline, or null if not found
+        /// Gets <see cref="ClosedCaption"/> displayed at the given point in time.
+        /// Returns null if not found.
         /// </summary>
         public static ClosedCaption GetByTime(this ClosedCaptionTrack track, TimeSpan time)
         {

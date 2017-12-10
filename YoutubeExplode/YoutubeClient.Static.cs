@@ -7,7 +7,7 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         /// <summary>
-        /// Verifies that the given string is syntactically a valid Youtube video ID
+        /// Verifies that the given string is syntactically a valid YouTube video ID.
         /// </summary>
         public static bool ValidateVideoId(string videoId)
         {
@@ -21,7 +21,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Tries to parse video ID from a Youtube video URL
+        /// Tries to parse video ID from a YouTube video URL.
         /// </summary>
         public static bool TryParseVideoId(string videoUrl, out string videoId)
         {
@@ -61,29 +61,38 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Parses video ID from a Youtube video URL
+        /// Parses video ID from a YouTube video URL.
         /// </summary>
         public static string ParseVideoId(string videoUrl)
         {
             videoUrl.GuardNotNull(nameof(videoUrl));
 
-            var success = TryParseVideoId(videoUrl, out var result);
-            if (success)
-                return result;
-
-            throw new FormatException($"Could not parse video ID from given string [{videoUrl}]");
+            return TryParseVideoId(videoUrl, out var result)
+                ? result
+                : throw new FormatException($"Could not parse video ID from given string [{videoUrl}].");
         }
 
         /// <summary>
-        /// Verifies that the given string is syntactically a valid Youtube playlist ID
+        /// Verifies that the given string is syntactically a valid YouTube playlist ID.
         /// </summary>
         public static bool ValidatePlaylistId(string playlistId)
         {
             if (playlistId.IsBlank())
                 return false;
 
-            if (playlistId.Length != 2 &&
-                playlistId.Length != 13 &&
+            if (playlistId == "WL")
+                return true;
+
+            if (!playlistId.StartsWith("PL") &&
+                !playlistId.StartsWith("RD") &&
+                !playlistId.StartsWith("UL") &&
+                !playlistId.StartsWith("UU") &&
+                !playlistId.StartsWith("PU") &&
+                !playlistId.StartsWith("LL") &&
+                !playlistId.StartsWith("FL"))
+                return false;
+
+            if (playlistId.Length != 13 &&
                 playlistId.Length != 18 &&
                 playlistId.Length != 24 &&
                 playlistId.Length != 26 &&
@@ -94,7 +103,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Tries to parse playlist ID from a Youtube playlist URL
+        /// Tries to parse playlist ID from a YouTube playlist URL.
         /// </summary>
         public static bool TryParsePlaylistId(string playlistUrl, out string playlistId)
         {
@@ -143,21 +152,19 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Parses playlist ID from a Youtube playlist URL
+        /// Parses playlist ID from a YouTube playlist URL.
         /// </summary>
         public static string ParsePlaylistId(string playlistUrl)
         {
             playlistUrl.GuardNotNull(nameof(playlistUrl));
 
-            var success = TryParsePlaylistId(playlistUrl, out var result);
-            if (success)
-                return result;
-
-            throw new FormatException($"Could not parse playlist ID from given string [{playlistUrl}]");
+            return TryParsePlaylistId(playlistUrl, out var result)
+                ? result
+                : throw new FormatException($"Could not parse playlist ID from given string [{playlistUrl}].");
         }
 
         /// <summary>
-        /// Verifies that the given string is syntactically a valid Youtube channel ID
+        /// Verifies that the given string is syntactically a valid YouTube channel ID.
         /// </summary>
         public static bool ValidateChannelId(string channelId)
         {
@@ -174,7 +181,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Tries to parse channel ID from a Youtube channel URL
+        /// Tries to parse channel ID from a YouTube channel URL.
         /// </summary>
         public static bool TryParseChannelId(string channelUrl, out string channelId)
         {
@@ -196,17 +203,15 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Parses channel ID from a Youtube channel URL
+        /// Parses channel ID from a YouTube channel URL.
         /// </summary>
         public static string ParseChannelId(string channelUrl)
         {
             channelUrl.GuardNotNull(nameof(channelUrl));
 
-            var success = TryParseChannelId(channelUrl, out var result);
-            if (success)
-                return result;
-
-            throw new FormatException($"Could not parse channel ID from given string [{channelUrl}]");
+            return TryParseChannelId(channelUrl, out var result)
+                ? result
+                : throw new FormatException($"Could not parse channel ID from given string [{channelUrl}].");
         }
     }
 }

@@ -5,42 +5,42 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Playlist video
+    /// Information about a YouTube playlist video.
     /// </summary>
     public class PlaylistVideo
     {
         /// <summary>
-        /// ID
+        /// ID of this video.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// Title
+        /// Title of this video.
         /// </summary>
         public string Title { get; }
 
         /// <summary>
-        /// Description
+        /// Description of this video.
         /// </summary>
         public string Description { get; }
 
         /// <summary>
-        /// Thumbnails
+        /// Thumbnails of this video.
         /// </summary>
         public VideoThumbnails Thumbnails { get; }
 
         /// <summary>
-        /// Duration
+        /// Duration of this video.
         /// </summary>
         public TimeSpan Duration { get; }
 
         /// <summary>
-        /// Search keywords
+        /// Search keywords of this video.
         /// </summary>
         public IReadOnlyList<string> Keywords { get; }
 
         /// <summary>
-        /// Statistics
+        /// Statistics of this video.
         /// </summary>
         public Statistics Statistics { get; }
 

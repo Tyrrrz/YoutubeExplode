@@ -1,32 +1,32 @@
 ﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Video stream encoding
+    /// Video encoding.
     /// </summary>
     public enum VideoEncoding
     {
         /// <summary>
-        /// MPEG-4 Visual
+        /// MPEG-4 Visual.
         /// </summary>
         Mp4V,
 
         /// <summary>
-        /// MPEG-4 Part 10, Advanced Video Coding
+        /// MPEG-4 Part 10, Advanced Video Coding.
         /// </summary>
         H263,
 
         /// <summary>
-        /// MPEG-4 Part 10, Advanced Video Coding
+        /// MPEG-4 Part 10, Advanced Video Coding.
         /// </summary>
         H264,
 
         /// <summary>
-        /// VP8
+        /// VP8.
         /// </summary>
         Vp8,
 
         /// <summary>
-        /// VP9
+        /// VP9.
         /// </summary>
         Vp9
     }

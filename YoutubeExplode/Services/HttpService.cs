@@ -7,17 +7,17 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Services
 {
     /// <summary>
-    /// Simple HTTP service that uses <see cref="HttpClient"/> for handling requests
+    /// Simple HTTP service that uses <see cref="HttpClient"/> for handling requests.
     /// </summary>
     public partial class HttpService : IHttpService, IDisposable
     {
         /// <summary>
-        /// Internal instance of <see cref="HttpClient"/>
+        /// Internal instance of <see cref="HttpClient"/>.
         /// </summary>
         protected HttpClient Client { get; }
 
         /// <summary>
-        /// Creates an instance of <see cref="HttpService"/> with a custom <see cref="HttpClient"/>
+        /// Creates an instance of <see cref="HttpService"/> with a custom <see cref="HttpClient"/>.
         /// </summary>
         public HttpService(HttpClient client)
         {
@@ -25,7 +25,7 @@ namespace YoutubeExplode.Services
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="HttpService"/>
+        /// Creates an instance of <see cref="HttpService"/>.
         /// </summary>
         public HttpService()
         {
@@ -44,7 +44,9 @@ namespace YoutubeExplode.Services
             return Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Disposes resources.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -66,7 +68,7 @@ namespace YoutubeExplode.Services
         private static HttpService _instance;
 
         /// <summary>
-        /// Singleton instance of <see cref="HttpService"/>
+        /// Singleton instance of <see cref="HttpService"/>.
         /// </summary>
         public static HttpService Instance => _instance ?? (_instance = new HttpService());
     }

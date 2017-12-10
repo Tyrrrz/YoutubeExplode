@@ -4,17 +4,17 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when the video requires purchase
+    /// Thrown when the video requires purchase and cannot be processed.
     /// </summary>
     public class VideoRequiresPurchaseException : Exception
     {
         /// <summary>
-        /// ID of the video
+        /// ID of the video.
         /// </summary>
         public string VideoId { get; }
 
         /// <summary>
-        /// ID of the free preview video
+        /// ID of a preview video that you can watch for free.
         /// </summary>
         public string PreviewVideoId { get; }
 

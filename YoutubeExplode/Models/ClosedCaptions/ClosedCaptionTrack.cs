@@ -4,17 +4,17 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
-    /// Closed caption track
+    /// Set of captions that get displayed during video playback.
     /// </summary>
     public class ClosedCaptionTrack
     {
         /// <summary>
-        /// Metadata associated with this caption track
+        /// Metadata associated with this track.
         /// </summary>
         public ClosedCaptionTrackInfo Info { get; }
 
         /// <summary>
-        /// Closed captions contained inside this track
+        /// Collection of <see cref="ClosedCaption"/>s that belong to this track.
         /// </summary>
         public IReadOnlyList<ClosedCaption> Captions { get; }
 

@@ -62,9 +62,9 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            var mediaStreamInfoSet = await client.GetMediaStreamInfosAsync(videoId);
+            var mediaStreamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
 
-            foreach (var streamInfo in mediaStreamInfoSet.EnumerateAll())
+            foreach (var streamInfo in mediaStreamInfoSet.GetAll())
             {
                 using (var stream = await client.GetMediaStreamAsync(streamInfo))
                 {
@@ -82,7 +82,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            var closedCaptionTrackInfos = await client.GetClosedCaptionTrackInfosAsync(videoId);
+            var closedCaptionTrackInfos = await client.GetVideoClosedCaptionTrackInfosAsync(videoId);
 
             var trackInfo = closedCaptionTrackInfos.First();
             var track = await client.GetClosedCaptionTrackAsync(trackInfo);
@@ -96,7 +96,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            var mediaStreamInfoSet = await client.GetMediaStreamInfosAsync(videoId);
+            var mediaStreamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
 
             var streamInfo = mediaStreamInfoSet.Audio.OrderBy(s => s.Size).First();
             var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());
@@ -115,7 +115,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            var closedCaptionTrackInfos = await client.GetClosedCaptionTrackInfosAsync(videoId);
+            var closedCaptionTrackInfos = await client.GetVideoClosedCaptionTrackInfosAsync(videoId);
 
             var trackInfo = closedCaptionTrackInfos.First();
             var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());

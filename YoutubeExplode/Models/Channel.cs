@@ -3,27 +3,22 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Channel
+    /// Information about a YouTube channel.
     /// </summary>
     public class Channel
     {
         /// <summary>
-        /// ID
+        /// ID of this channel.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// URL
-        /// </summary>
-        public string Url => $"https://www.youtube.com/channel/{Id}";
-
-        /// <summary>
-        /// Title
+        /// Title of this channel.
         /// </summary>
         public string Title { get; }
 
         /// <summary>
-        /// Logo image URL
+        /// Logo image URL of this channel.
         /// </summary>
         public string LogoUrl { get; }
 

@@ -3,17 +3,17 @@
 namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
-    /// Language information
+    /// Language information.
     /// </summary>
     public class Language
     {
         /// <summary>
-        /// The ISO 639-1 Code of this language
+        /// ISO 639-1 code of this language.
         /// </summary>
         public string Code { get; }
 
         /// <summary>
-        /// The full English name of this language
+        /// Full English name of this language.
         /// </summary>
         public string Name { get; }
 

@@ -3,23 +3,27 @@ using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
+    /// <summary>
+    /// Set of all available <see cref="MediaStreamInfo"/>s.
+    /// </summary>
     public class MediaStreamInfoSet
     {
         /// <summary>
-        /// Muxed streams
+        /// Muxed streams.
         /// </summary>
         public IReadOnlyList<MuxedStreamInfo> Muxed { get; }
 
         /// <summary>
-        /// Audio-only streams
+        /// Audio-only streams.
         /// </summary>
         public IReadOnlyList<AudioStreamInfo> Audio { get; }
 
         /// <summary>
-        /// Video-only streams
+        /// Video-only streams.
         /// </summary>
         public IReadOnlyList<VideoStreamInfo> Video { get; }
 
+        /// <summary />
         public MediaStreamInfoSet(IReadOnlyList<MuxedStreamInfo> muxed,
             IReadOnlyList<AudioStreamInfo> audio,
             IReadOnlyList<VideoStreamInfo> video)

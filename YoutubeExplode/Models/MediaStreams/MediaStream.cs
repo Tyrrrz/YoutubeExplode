@@ -4,14 +4,14 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Media stream
+    /// <see cref="Stream"/> that contains raw media data.
     /// </summary>
     public class MediaStream : Stream
     {
         private readonly Stream _innerStream;
 
         /// <summary>
-        /// Metadata associated with this media stream
+        /// Metadata associated with this stream.
         /// </summary>
         public MediaStreamInfo Info { get; }
 
@@ -62,7 +62,9 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <inheritdoc />
         public override void Write(byte[] buffer, int offset, int count) => _innerStream.Write(buffer, offset, count);
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Disposes resources.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
