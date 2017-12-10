@@ -11,6 +11,7 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("9bZkp7q19f0"); // very popular
             yield return new TestCaseData("SkRSXFQerZs"); // age restricted
             yield return new TestCaseData("_kmeFXjjGfk"); // embed not allowed
+            yield return new TestCaseData("5VGm0dczmHc"); // rating not allowed
             yield return new TestCaseData("ZGdLIwrGHG8"); // unlisted
         }
 

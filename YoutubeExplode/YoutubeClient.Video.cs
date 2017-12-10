@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
 using Newtonsoft.Json.Linq;
@@ -21,38 +22,65 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<JToken> GetEmbedPageConfigAsync(string videoId)
+        private async Task<string> GetVideoEmbedPageRawAsync(string videoId)
         {
-            // Get the embed video page
-            var request = $"{YoutubeHost}/embed/{videoId}?disable_polymer=true&hl=en";
-            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-
-            // Find and parse config
-            var configRaw = response
-                .SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ")
-                .SubstringUntil(",'EXPERIMENT_FLAGS'");
-
-            return JToken.Parse(configRaw);
+            var url = $"{YoutubeHost}/embed/{videoId}?disable_polymer=true&hl=en";
+            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
         }
 
-        private async Task<JToken> GetWatchPageConfigAsync(string videoId)
+        private async Task<JToken> GetVideoEmbedPageConfigAsync(string videoId)
         {
-            // Get the embed video page
-            var request = $"{YoutubeHost}/watch?v={videoId}&disable_polymer=true&hl=en";
-            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            var source = await GetVideoEmbedPageRawAsync(videoId).ConfigureAwait(false);
+            var part = source.SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ").SubstringUntil(",'");
+            return JToken.Parse(part);
+        }
 
-            // Find and parse config
-            var configRaw = response
-                .SubstringAfter("window[\"ytInitialData\"] = ")
-                .SubstringUntil(";");
+        private async Task<string> GetVideoWatchPageRawAsync(string videoId)
+        {
+            var url = $"{YoutubeHost}/watch?v={videoId}&disable_polymer=true&hl=en";
+            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+        }
 
-            return JToken.Parse(configRaw);
+        private async Task<IHtmlDocument> GetVideoWatchPageAsync(string videoId)
+        {
+            var source = await GetVideoWatchPageRawAsync(videoId).ConfigureAwait(false);
+            return await new HtmlParser().ParseAsync(source).ConfigureAwait(false);
+        }
+
+        private async Task<string> GetVideoInfoRawAsync(string videoId, string el = "", string sts = "")
+        {
+            var url = $"{YoutubeHost}/get_video_info?video_id={videoId}&el={el}&sts={sts}&hl=en";
+            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+        }
+
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "")
+        {
+            // Get video info
+            var videoInfoRaw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
+            var videoInfo = UrlHelper.GetDictionaryFromUrlQuery(videoInfoRaw);
+
+            // If can't be embedded - try adunit
+            if (videoInfo.ContainsKey("errorcode"))
+            {
+                videoInfoRaw = await GetVideoInfoRawAsync(videoId, "adunit", sts).ConfigureAwait(false);
+                videoInfo = UrlHelper.GetDictionaryFromUrlQuery(videoInfoRaw);
+            }
+
+            // Check error
+            if (videoInfo.ContainsKey("errorcode"))
+            {
+                var errorCode = videoInfo.Get("errorcode").ParseInt();
+                var errorReason = videoInfo.Get("reason");
+                throw new VideoUnavailableException(videoId, errorCode, errorReason);
+            }
+
+            return videoInfo;
         }
 
         private async Task<PlayerContext> GetPlayerContextAsync(string videoId)
         {
-            // Get config
-            var configJson = await GetEmbedPageConfigAsync(videoId).ConfigureAwait(false);
+            // Get embed page config
+            var configJson = await GetVideoEmbedPageConfigAsync(videoId).ConfigureAwait(false);
 
             // Extract values
             var sourceUrl = configJson["assets"].Value<string>("js");
@@ -78,16 +106,16 @@ namespace YoutubeExplode
                 return playerSource;
 
             // Get player source code
-            var response = await _httpService.GetStringAsync(sourceUrl).ConfigureAwait(false);
+            var sourceRaw = await _httpService.GetStringAsync(sourceUrl).ConfigureAwait(false);
 
             // Find the name of the function that handles deciphering
-            var entryPoint = Regex.Match(response, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
+            var entryPoint = Regex.Match(sourceRaw, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
             if (entryPoint.IsBlank())
                 throw new ParseException("Could not find the entry function for signature deciphering");
 
             // Find the body of the function
             var entryPointPattern = @"(?!h\.)" + Regex.Escape(entryPoint) + @"=function\(\w+\)\{(.*?)\}";
-            var entryPointBody = Regex.Match(response, entryPointPattern, RegexOptions.Singleline).Groups[1].Value;
+            var entryPointBody = Regex.Match(sourceRaw, entryPointPattern, RegexOptions.Singleline).Groups[1].Value;
             if (entryPointBody.IsBlank())
                 throw new ParseException("Could not find the signature decipherer function body");
             var entryPointLines = entryPointBody.Split(";").ToArray();
@@ -111,16 +139,16 @@ namespace YoutubeExplode
                     continue;
 
                 // Find cipher function names
-                if (Regex.IsMatch(response, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
+                if (Regex.IsMatch(sourceRaw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
                 {
                     reverseFuncName = calledFuncName;
                 }
-                else if (Regex.IsMatch(response,
+                else if (Regex.IsMatch(sourceRaw,
                     $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
                 {
                     sliceFuncName = calledFuncName;
                 }
-                else if (Regex.IsMatch(response,
+                else if (Regex.IsMatch(sourceRaw,
                     $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
                 {
                     charSwapFuncName = calledFuncName;
@@ -157,53 +185,6 @@ namespace YoutubeExplode
             return _playerSourceCache[sourceUrl] = new PlayerSource(operations);
         }
 
-        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "",
-            bool retry = true)
-        {
-            // If retry is enabled - query with different values of "el"
-            var els = retry
-                ? new[] {"embedded", "adunit"}
-                : new[] {"embedded"};
-
-            // Get best video info
-            IReadOnlyDictionary<string, string> videoInfo = null;
-            foreach (var el in els)
-            {
-                // Get video info
-                var request = $"{YoutubeHost}/get_video_info?video_id={videoId}&el={el}&sts={sts}&hl=en";
-                var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-                videoInfo = UrlHelper.GetDictionaryFromUrlQuery(response);
-
-                // Check error code
-                if (!videoInfo.ContainsKey("errorcode"))
-                    break;
-            }
-
-            // This will never return null by implementation
-            return videoInfo;
-        }
-
-        private void ThrowIfVideoInfoUnavailable(string videoId, IReadOnlyDictionary<string, string> videoInfo)
-        {
-            if (videoInfo.ContainsKey("errorcode"))
-            {
-                var errorCode = videoInfo.Get("errorcode").ParseInt();
-                var errorReason = videoInfo.Get("reason");
-
-                throw new VideoUnavailableException(videoId, errorCode, errorReason);
-            }
-        }
-
-        private void ThrowIfVideoInfoRequiresPurchase(string videoId, IReadOnlyDictionary<string, string> videoInfo)
-        {
-            if (videoInfo.ContainsKey("ypc_vid"))
-            {
-                var previewVideoId = videoInfo.Get("ypc_vid");
-
-                throw new VideoRequiresPurchaseException(videoId, previewVideoId);
-            }
-        }
-
         /// <summary>
         /// Gets video by ID
         /// </summary>
@@ -215,8 +196,6 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
-            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Parse metadata
             var title = videoInfo.Get("title");
@@ -225,16 +204,15 @@ namespace YoutubeExplode
             var viewCount = videoInfo.Get("view_count").ParseLong();
             var keywords = videoInfo.Get("keywords").Split(",");
 
-            // More metadata
-            // Get the embed video page
-            var request = $"{YoutubeHost}/watch?v={videoId}&disable_polymer=true&hl=en";
-            var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
+            // Get video watch page
+            var watchPage = await GetVideoWatchPageAsync(videoId).ConfigureAwait(false);
 
-            var html = await new HtmlParser().ParseAsync(response);
-            
-            var description = html.QuerySelector("p#eow-description").TextEx();
-            var likeCount = html.QuerySelector("button.like-button-renderer-like-button").Text().StripNonDigit().ParseLong();
-            var dislikeCount = html.QuerySelector("button.like-button-renderer-dislike-button").Text().StripNonDigit().ParseLong();
+            // Parse metadata
+            var description = watchPage.QuerySelector("p#eow-description").TextEx();
+            var likeCount = watchPage.QuerySelector("button.like-button-renderer-like-button").Text()
+                .StripNonDigit().ParseLongOrDefault();
+            var dislikeCount = watchPage.QuerySelector("button.like-button-renderer-dislike-button").Text()
+                .StripNonDigit().ParseLongOrDefault();
 
             // Concat metadata
             var thumbnails = new VideoThumbnails(videoId);
@@ -249,8 +227,8 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException("Invalid Youtube video ID", nameof(videoId));
 
-            // Get the embed config
-            var configJson = await GetEmbedPageConfigAsync(videoId).ConfigureAwait(false);
+            // Get embed page config
+            var configJson = await GetVideoEmbedPageConfigAsync(videoId).ConfigureAwait(false);
 
             // Parse metadata
             var channelPath = configJson["args"].Value<string>("channel_path");
@@ -272,8 +250,13 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId, playerContext.Sts).ConfigureAwait(false);
-            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
+
+            // Check if requires purchase
+            if (videoInfo.ContainsKey("ypc_vid"))
+            {
+                var previewVideoId = videoInfo.Get("ypc_vid");
+                throw new VideoRequiresPurchaseException(videoId, previewVideoId);
+            }
 
             // Prepare stream info collections
             var muxedStreamInfos = new List<MuxedStreamInfo>();
@@ -471,8 +454,6 @@ namespace YoutubeExplode
 
             // Get video info
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
-            ThrowIfVideoInfoUnavailable(videoId, videoInfo);
-            ThrowIfVideoInfoRequiresPurchase(videoId, videoInfo);
 
             // Get captions
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();

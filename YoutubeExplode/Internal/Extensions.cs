@@ -45,17 +45,56 @@ namespace YoutubeExplode.Internal
 
         public static double ParseDouble(this string str)
         {
-            return double.Parse(str, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
+            const NumberStyles styles = NumberStyles.Float | NumberStyles.AllowThousands;
+            var format = NumberFormatInfo.InvariantInfo;
+
+            return double.Parse(str, styles, format);
+        }
+
+        public static double ParseDoubleOrDefault(this string str, double defaultValue = default(double))
+        {
+            const NumberStyles styles = NumberStyles.Float | NumberStyles.AllowThousands;
+            var format = NumberFormatInfo.InvariantInfo;
+
+            return double.TryParse(str, styles, format, out var result)
+                ? result
+                : defaultValue;
         }
 
         public static int ParseInt(this string str)
         {
-            return int.Parse(str, NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
+            const NumberStyles styles = NumberStyles.AllowThousands;
+            var format = NumberFormatInfo.InvariantInfo;
+
+            return int.Parse(str, styles, format);
+        }
+
+        public static int ParseIntOrDefault(this string str, int defaultValue = default(int))
+        {
+            const NumberStyles styles = NumberStyles.AllowThousands;
+            var format = NumberFormatInfo.InvariantInfo;
+
+            return int.TryParse(str, styles, format, out var result)
+                ? result
+                : defaultValue;
         }
 
         public static long ParseLong(this string str)
         {
-            return long.Parse(str, NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
+            const NumberStyles styles = NumberStyles.AllowThousands;
+            var format = NumberFormatInfo.InvariantInfo;
+
+            return long.Parse(str, styles, format);
+        }
+
+        public static long ParseLongOrDefault(this string str, long defaultValue = default(long))
+        {
+            const NumberStyles styles = NumberStyles.AllowThousands;
+            var format = NumberFormatInfo.InvariantInfo;
+
+            return long.TryParse(str, styles, format, out var result)
+                ? result
+                : defaultValue;
         }
 
         public static string Reverse(this string str)
