@@ -234,6 +234,9 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
+            // Get video info just to check error code
+            await GetVideoInfoAsync(videoId).ConfigureAwait(false);
+
             // Get embed page config
             var configJson = await GetVideoEmbedPageConfigAsync(videoId).ConfigureAwait(false);
 
