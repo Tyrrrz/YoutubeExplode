@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using YoutubeExplode.Internal;
 
@@ -85,7 +84,7 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <summary>
-        /// Gets all available <see cref="MediaStreamInfo"/> in a <see cref="MediaStreamInfoSet"/>.
+        /// Gets all available media stream infos in a <see cref="MediaStreamInfoSet"/>.
         /// </summary>
         public static IEnumerable<MediaStreamInfo> GetAll(this MediaStreamInfoSet streamInfoSet)
         {
@@ -100,7 +99,7 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <summary>
-        /// Gets all <see cref="VideoQuality"/>s available in a <see cref="MediaStreamInfoSet"/>.
+        /// Gets all video qualities available in a <see cref="MediaStreamInfoSet"/>.
         /// </summary>
         public static IEnumerable<VideoQuality> GetAllVideoQualities(this MediaStreamInfoSet streamInfoSet)
         {
@@ -117,42 +116,38 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <summary>
-        /// Gets the <see cref="MuxedStreamInfo"/> with highest <see cref="VideoQuality"/>.
+        /// Gets the muxed stream with highest video quality.
         /// </summary>
         public static MuxedStreamInfo WithHighestVideoQuality(this IEnumerable<MuxedStreamInfo> streamInfos)
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
-
             return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
         }
 
         /// <summary>
-        /// Gets the <see cref="VideoStreamInfo"/> with highest <see cref="VideoQuality"/>.
+        /// Gets the video stream with highest video quality.
         /// </summary>
         public static VideoStreamInfo WithHighestVideoQuality(this IEnumerable<VideoStreamInfo> streamInfos)
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
-
             return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
         }
 
         /// <summary>
-        /// Gets the <see cref="AudioStreamInfo"/> with highest bitrate.
+        /// Gets the audio stream with highest bitrate.
         /// </summary>
         public static AudioStreamInfo WithHighestBitrate(this IEnumerable<AudioStreamInfo> streamInfos)
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
-
             return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
         }
 
         /// <summary>
-        /// Gets the <see cref="VideoStreamInfo"/> with highest bitrate.
+        /// Gets the video stream with highest bitrate.
         /// </summary>
         public static VideoStreamInfo WithHighestBitrate(this IEnumerable<VideoStreamInfo> streamInfos)
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
-
             return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
         }
     }

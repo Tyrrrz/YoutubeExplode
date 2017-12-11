@@ -4,7 +4,7 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// <see cref="Stream"/> that contains raw media data.
+    /// Stream that contains raw media data.
     /// </summary>
     public class MediaStream : Stream
     {

@@ -14,7 +14,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
         public ClosedCaptionTrackInfo Info { get; }
 
         /// <summary>
-        /// Collection of <see cref="ClosedCaption"/>s that belong to this track.
+        /// Collection of closed captions that belong to this track.
         /// </summary>
         public IReadOnlyList<ClosedCaption> Captions { get; }
 

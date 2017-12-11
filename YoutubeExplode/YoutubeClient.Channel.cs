@@ -11,7 +11,7 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         /// <summary>
-        /// Gets <see cref="Channel"/> by ID.
+        /// Gets channel information by ID.
         /// </summary>
         public async Task<Channel> GetChannelAsync(string channelId)
         {
@@ -34,10 +34,10 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets <see cref="PlaylistVideo"/>s uploaded by channel with given ID.
+        /// Gets videos uploaded by channel with given ID.
         /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
         /// </summary>
-        public async Task<IReadOnlyList<PlaylistVideo>> GetChannelUploadsAsync(string channelId, int maxPages)
+        public async Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
             channelId.GuardNotNull(nameof(channelId));
             maxPages.GuardPositive(nameof(maxPages));
@@ -54,9 +54,9 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets <see cref="PlaylistVideo"/>s uploaded by channel with given ID.
+        /// Gets videos uploaded by channel with given ID.
         /// </summary>
-        public Task<IReadOnlyList<PlaylistVideo>> GetChannelUploadsAsync(string channelId)
+        public Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId)
             => GetChannelUploadsAsync(channelId, int.MaxValue);
     }
 }

@@ -4,7 +4,7 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Set of all available <see cref="MediaStreamInfo"/>s.
+    /// Set of all available media stream infos.
     /// </summary>
     public class MediaStreamInfoSet
     {

@@ -17,7 +17,7 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         /// <summary>
-        /// Gets the actual <see cref="ClosedCaptionTrack"/> represented by given <see cref="ClosedCaptionTrackInfo"/>.
+        /// Gets the actual closed caption track associated with given metadata.
         /// </summary>
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo info)
         {
@@ -45,7 +45,7 @@ namespace YoutubeExplode
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
         /// <summary>
-        /// Gets the actual <see cref="ClosedCaptionTrack"/> represented by given <see cref="ClosedCaptionTrackInfo"/>
+        /// Gets the actual closed caption track associated with given metadata
         /// and downloads it as SRT file.
         /// </summary>
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
@@ -90,7 +90,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets the actual <see cref="ClosedCaptionTrack"/> represented by given <see cref="ClosedCaptionTrackInfo"/>
+        /// Gets the actual closed caption track associated with given metadata
         /// and downloads it as SRT file.
         /// </summary>
         public Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
@@ -98,7 +98,7 @@ namespace YoutubeExplode
             => DownloadClosedCaptionTrackAsync(info, filePath, progress, CancellationToken.None);
 
         /// <summary>
-        /// Gets the actual <see cref="ClosedCaptionTrack"/> represented by given <see cref="ClosedCaptionTrackInfo"/>
+        /// Gets the actual closed caption track associated with given metadata
         /// and downloads it as SRT file.
         /// </summary>
         public Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath)

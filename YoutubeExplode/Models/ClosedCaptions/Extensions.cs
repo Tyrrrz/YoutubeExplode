@@ -9,7 +9,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
     public static class Extensions
     {
         /// <summary>
-        /// Gets <see cref="ClosedCaption"/> displayed at the given point in time.
+        /// Gets caption displayed at the given point in time.
         /// Returns null if not found.
         /// </summary>
         public static ClosedCaption GetByTime(this ClosedCaptionTrack track, TimeSpan time)

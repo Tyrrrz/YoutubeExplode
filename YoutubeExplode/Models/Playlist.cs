@@ -40,13 +40,13 @@ namespace YoutubeExplode.Models
         public Statistics Statistics { get; }
 
         /// <summary>
-        /// Collection of <see cref="PlaylistVideo"/>s contained in this playlist.
+        /// Collection of videos contained in this playlist.
         /// </summary>
-        public IReadOnlyList<PlaylistVideo> Videos { get; }
+        public IReadOnlyList<Video> Videos { get; }
 
         /// <summary />
         public Playlist(string id, string author, string title, string description, Statistics statistics,
-            IReadOnlyList<PlaylistVideo> videos)
+            IReadOnlyList<Video> videos)
         {
             Id = id.GuardNotNull(nameof(id));
             Type = GetPlaylistType(id);

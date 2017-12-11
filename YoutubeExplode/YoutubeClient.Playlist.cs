@@ -25,7 +25,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets <see cref="Playlist"/> by ID.
+        /// Gets playlist information by ID.
         /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
         /// </summary>
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
@@ -40,7 +40,7 @@ namespace YoutubeExplode
             var offset = 0;
             XElement playlistXml;
             var videoIds = new HashSet<string>();
-            var videos = new List<PlaylistVideo>();
+            var videos = new List<Video>();
             do
             {
                 // Get playlist info
@@ -75,7 +75,7 @@ namespace YoutubeExplode
 
                     // Video
                     var videoThumbnails = new VideoThumbnails(videoId);
-                    var video = new PlaylistVideo(videoId, videoAuthor, videoTitle, videoDescription, videoThumbnails,
+                    var video = new Video(videoId, videoAuthor, videoTitle, videoDescription, videoThumbnails,
                         videoDuration, videoKeywords, videoStatistics);
 
                     // Add to list if not already there
@@ -111,7 +111,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets <see cref="Playlist"/> by ID.
+        /// Gets playlist information by ID.
         /// </summary>
         public Task<Playlist> GetPlaylistAsync(string playlistId)
             => GetPlaylistAsync(playlistId, int.MaxValue);

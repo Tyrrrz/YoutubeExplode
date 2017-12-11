@@ -9,7 +9,7 @@ namespace YoutubeExplode.Models
     public static class Extensions
     {
         /// <summary>
-        /// Gets the regular URL of a <see cref="Video"/>.
+        /// Gets the regular URL of a video.
         /// </summary>
         public static string GetRegularUrl(this Video video)
         {
@@ -18,7 +18,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the short URL of a <see cref="Video"/>.
+        /// Gets the short URL of a video.
         /// </summary>
         public static string GetShortUrl(this Video video)
         {
@@ -27,7 +27,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the embed URL of a <see cref="Video"/>.
+        /// Gets the embed URL of a video.
         /// </summary>
         public static string GetEmbedUrl(this Video video)
         {
@@ -36,34 +36,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the regular URL of a <see cref="PlaylistVideo"/>.
-        /// </summary>
-        public static string GetRegularUrl(this PlaylistVideo playlistVideo)
-        {
-            playlistVideo.GuardNotNull(nameof(playlistVideo));
-            return $"https://www.youtube.com/watch?v={playlistVideo.Id}";
-        }
-
-        /// <summary>
-        /// Gets the short URL of a <see cref="PlaylistVideo"/>.
-        /// </summary>
-        public static string GetShortUrl(this PlaylistVideo playlistVideo)
-        {
-            playlistVideo.GuardNotNull(nameof(playlistVideo));
-            return $"https://youtu.be/{playlistVideo.Id}";
-        }
-
-        /// <summary>
-        /// Gets the embed URL of a <see cref="PlaylistVideo"/>.
-        /// </summary>
-        public static string GetEmbedUrl(this PlaylistVideo playlistVideo)
-        {
-            playlistVideo.GuardNotNull(nameof(playlistVideo));
-            return $"https://www.youtube.com/embed/{playlistVideo.Id}";
-        }
-
-        /// <summary>
-        /// Gets the regular URL of a <see cref="Playlist"/>.
+        /// Gets the regular URL of a playlist.
         /// </summary>
         public static string GetRegularUrl(this Playlist playlist)
         {
@@ -72,7 +45,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the watch URL of a <see cref="Playlist"/> set to play the first video.
+        /// Gets the watch URL of a playlist set to play the first video.
         /// </summary>
         public static string GetWatchUrl(this Playlist playlist)
         {
@@ -82,7 +55,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the short URL of a <see cref="Playlist"/> set to play the first video.
+        /// Gets the short URL of a playlist set to play the first video.
         /// </summary>
         public static string GetShortUrl(this Playlist playlist)
         {
@@ -92,7 +65,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the embed URL of a <see cref="Playlist"/> set to play the first video.
+        /// Gets the embed URL of a playlist set to play the first video.
         /// </summary>
         public static string GetEmbedUrl(this Playlist playlist)
         {
@@ -102,7 +75,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Gets the URL of a <see cref="Channel"/>.
+        /// Gets the URL of a channel.
         /// </summary>
         public static string GetUrl(this Channel channel)
         {

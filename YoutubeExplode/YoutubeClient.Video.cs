@@ -192,7 +192,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets <see cref="Video"/> by ID.
+        /// Gets video information by ID.
         /// </summary>
         public async Task<Video> GetVideoAsync(string videoId)
         {
@@ -226,7 +226,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets author <see cref="Channel"/> for given video.
+        /// Gets author channel information for given video.
         /// </summary>
         public async Task<Channel> GetVideoAuthorChannelAsync(string videoId)
         {
@@ -250,7 +250,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets a set of all available <see cref="MediaStreamInfo"/>s for given video.
+        /// Gets a set of all available media stream infos for given video.
         /// </summary>
         public async Task<MediaStreamInfoSet> GetVideoMediaStreamInfosAsync(string videoId)
         {
@@ -465,7 +465,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Gets all available <see cref="ClosedCaptionTrackInfo"/>s for given video.
+        /// Gets all available closed caption track infos for given video.
         /// </summary>
         public async Task<IReadOnlyList<ClosedCaptionTrackInfo>> GetVideoClosedCaptionTrackInfosAsync(string videoId)
         {
