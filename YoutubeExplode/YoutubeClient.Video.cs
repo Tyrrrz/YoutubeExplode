@@ -488,7 +488,7 @@ namespace YoutubeExplode
                 var code = captionJson.Value<string>("languageCode");
                 var name = captionJson["name"].Value<string>("simpleText");
                 var url = captionJson.Value<string>("baseUrl");
-                var isAuto = captionJson.Value<string>("vssId").StartsWith("a.");
+                var isAuto = captionJson.Value<string>("vssId").StartsWith("a.", StringComparison.OrdinalIgnoreCase);
 
                 var language = new Language(code, name);
                 var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAuto);
