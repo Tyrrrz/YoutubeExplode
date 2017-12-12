@@ -74,7 +74,7 @@ namespace YoutubeExplode
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Video
-                    var videoThumbnails = new VideoThumbnails(videoId);
+                    var videoThumbnails = new ThumbnailSet(videoId);
                     var video = new Video(videoId, videoAuthor, videoTitle, videoDescription, videoThumbnails,
                         videoDuration, videoKeywords, videoStatistics);
 

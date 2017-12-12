@@ -5,7 +5,7 @@ namespace YoutubeExplode.Models
     /// <summary>
     /// Set of thumbnails for a video.
     /// </summary>
-    public class VideoThumbnails
+    public class ThumbnailSet
     {
         private readonly string _videoId;
 
@@ -37,7 +37,7 @@ namespace YoutubeExplode.Models
         public string MaxResUrl => $"https://img.youtube.com/vi/{_videoId}/maxresdefault.jpg";
 
         /// <summary />
-        public VideoThumbnails(string videoId)
+        public ThumbnailSet(string videoId)
         {
             _videoId = videoId.GuardNotNull(nameof(videoId));
         }

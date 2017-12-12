@@ -221,7 +221,7 @@ namespace YoutubeExplode
                 .StripNonDigit().ParseLongOrDefault();
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
 
-            var thumbnails = new VideoThumbnails(videoId);
+            var thumbnails = new ThumbnailSet(videoId);
             return new Video(videoId, author, title, description, thumbnails, duration, keywords, statistics);
         }
 

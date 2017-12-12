@@ -32,7 +32,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Thumbnails of this video.
         /// </summary>
-        public VideoThumbnails Thumbnails { get; }
+        public ThumbnailSet Thumbnails { get; }
 
         /// <summary>
         /// Duration of this video.
@@ -50,7 +50,7 @@ namespace YoutubeExplode.Models
         public Statistics Statistics { get; }
 
         /// <summary />
-        public Video(string id, string author, string title, string description, VideoThumbnails thumbnails,
+        public Video(string id, string author, string title, string description, ThumbnailSet thumbnails,
             TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
         {
             Id = id.GuardNotNull(nameof(id));
