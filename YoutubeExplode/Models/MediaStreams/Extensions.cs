@@ -117,6 +117,7 @@ namespace YoutubeExplode.Models.MediaStreams
 
         /// <summary>
         /// Gets the muxed stream with highest video quality.
+        /// Returns null if sequence is empty.
         /// </summary>
         public static MuxedStreamInfo WithHighestVideoQuality(this IEnumerable<MuxedStreamInfo> streamInfos)
         {
@@ -126,6 +127,7 @@ namespace YoutubeExplode.Models.MediaStreams
 
         /// <summary>
         /// Gets the video stream with highest video quality.
+        /// Returns null if sequence is empty.
         /// </summary>
         public static VideoStreamInfo WithHighestVideoQuality(this IEnumerable<VideoStreamInfo> streamInfos)
         {
@@ -135,6 +137,7 @@ namespace YoutubeExplode.Models.MediaStreams
 
         /// <summary>
         /// Gets the audio stream with highest bitrate.
+        /// Returns null if sequence is empty.
         /// </summary>
         public static AudioStreamInfo WithHighestBitrate(this IEnumerable<AudioStreamInfo> streamInfos)
         {
@@ -144,6 +147,7 @@ namespace YoutubeExplode.Models.MediaStreams
 
         /// <summary>
         /// Gets the video stream with highest bitrate.
+        /// Returns null if sequence is empty.
         /// </summary>
         public static VideoStreamInfo WithHighestBitrate(this IEnumerable<VideoStreamInfo> streamInfos)
         {
