@@ -456,12 +456,15 @@ namespace YoutubeExplode
                 }
             }
 
+            // Get the raw HLS stream playlist (*.m3u8)
+            var hlsLiveStreamUrl = videoInfo.GetOrDefault("hlsvp");
+
             // Finalize stream info collections
             muxedStreamInfos = muxedStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.VideoQuality).ToList();
             audioStreamInfos = audioStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.Bitrate).ToList();
             videoStreamInfos = videoStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.VideoQuality).ToList();
 
-            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos);
+            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsLiveStreamUrl);
         }
 
         /// <summary>
