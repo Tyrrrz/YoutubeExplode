@@ -32,7 +32,8 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary />
         public MediaStreamInfoSet(IReadOnlyList<MuxedStreamInfo> muxed,
             IReadOnlyList<AudioStreamInfo> audio,
-            IReadOnlyList<VideoStreamInfo> video, string hlsLiveStreamUrl)
+            IReadOnlyList<VideoStreamInfo> video, 
+            string hlsLiveStreamUrl)
         {
             Muxed = muxed.GuardNotNull(nameof(muxed));
             Audio = audio.GuardNotNull(nameof(audio));
