@@ -31,9 +31,9 @@ namespace YoutubeExplode
             var captions = new List<ClosedCaption>();
             foreach (var captionXml in trackXml.Descendants("text"))
             {
-                var text = captionXml.Value;
-                var offset = TimeSpan.FromSeconds((double) captionXml.AttributeStrict("start"));
-                var duration = TimeSpan.FromSeconds((double) captionXml.AttributeStrict("dur"));
+                var text = (string) captionXml;
+                var offset = TimeSpan.FromSeconds((double) captionXml.Attribute("start"));
+                var duration = TimeSpan.FromSeconds((double) captionXml.Attribute("dur"));
 
                 var caption = new ClosedCaption(text, offset, duration);
                 captions.Add(caption);
@@ -44,10 +44,10 @@ namespace YoutubeExplode
 
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
-        /// <summary>
-        /// Gets the actual closed caption track associated with given metadata
-        /// and downloads it as SRT file.
-        /// </summary>
+/// <summary>
+/// Gets the actual closed caption track associated with given metadata
+/// and downloads it as SRT file.
+/// </summary>
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
             IProgress<double> progress, CancellationToken cancellationToken)
         {

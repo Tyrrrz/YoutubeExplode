@@ -142,13 +142,6 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static TValue Get<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key)
-        {
-            return dic.TryGetValue(key, out var result)
-                ? result
-                : throw new KeyNotFoundException($"Could not find key [{key}].");
-        }
-
         public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key,
             TValue defaultValue = default(TValue))
         {
@@ -171,21 +164,6 @@ namespace YoutubeExplode.Internal
             }
 
             return result;
-        }
-
-        public static XElement Descendant(this XElement element, XName name)
-        {
-            return element.Descendants(name).FirstOrDefault();
-        }
-
-        public static XElement ElementStrict(this XElement element, XName name)
-        {
-            return element.Element(name) ?? throw new KeyNotFoundException($"Could not find element [{name}].");
-        }
-
-        public static XAttribute AttributeStrict(this XElement element, XName name)
-        {
-            return element.Attribute(name) ?? throw new KeyNotFoundException($"Could not find attribute [{name}].");
         }
 
         public static string TextEx(this INode node)

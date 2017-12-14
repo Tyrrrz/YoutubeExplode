@@ -52,14 +52,14 @@ namespace YoutubeExplode
                 foreach (var videoXml in playlistXml.Elements("video"))
                 {
                     // Basic info
-                    var videoId = videoXml.ElementStrict("encrypted_id").Value;
-                    var videoAuthor = videoXml.ElementStrict("author").Value;
-                    var videoTitle = videoXml.ElementStrict("title").Value;
-                    var videoDuration = TimeSpan.FromSeconds((double) videoXml.ElementStrict("length_seconds"));
-                    var videoDescription = videoXml.ElementStrict("description").Value;
+                    var videoId = (string) videoXml.Element("encrypted_id");
+                    var videoAuthor = (string) videoXml.Element("author");
+                    var videoTitle = (string) videoXml.Element("title");
+                    var videoDuration = TimeSpan.FromSeconds((double) videoXml.Element("length_seconds"));
+                    var videoDescription = (string) videoXml.Element("description");
 
                     // Keywords
-                    var videoKeywordsJoined = videoXml.ElementStrict("keywords").Value;
+                    var videoKeywordsJoined = (string) videoXml.Element("keywords");
                     var videoKeywords = Regex
                         .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                         .Cast<Match>()
@@ -68,9 +68,9 @@ namespace YoutubeExplode
                         .ToArray();
 
                     // Statistics
-                    var videoViewCount = videoXml.ElementStrict("views").Value.StripNonDigit().ParseLong();
-                    var videoLikeCount = videoXml.ElementStrict("likes").Value.StripNonDigit().ParseLong();
-                    var videoDislikeCount = videoXml.ElementStrict("dislikes").Value.StripNonDigit().ParseLong();
+                    var videoViewCount = ((string) videoXml.Element("views")).StripNonDigit().ParseLong();
+                    var videoLikeCount = ((string) videoXml.Element("likes")).StripNonDigit().ParseLong();
+                    var videoDislikeCount = ((string) videoXml.Element("dislikes")).StripNonDigit().ParseLong();
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Video
@@ -97,9 +97,9 @@ namespace YoutubeExplode
             } while (pagesDone < maxPages);
 
             // Extract playlist info
-            var title = playlistXml.ElementStrict("title").Value;
-            var author = playlistXml.Element("author")?.Value ?? ""; // system playlists don't have an author
-            var description = playlistXml.ElementStrict("description").Value;
+            var title = (string) playlistXml.Element("title");
+            var author = (string) playlistXml.Element("author") ?? ""; // system playlists don't have an author
+            var description = (string) playlistXml.Element("description");
 
             // Statistics
             var viewCount = (long?) playlistXml.Element("views") ?? 0; // watchlater does not have views

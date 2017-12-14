@@ -75,8 +75,8 @@ namespace YoutubeExplode
             // Check error
             if (videoInfo.ContainsKey("errorcode"))
             {
-                var errorCode = videoInfo.Get("errorcode").ParseInt();
-                var errorReason = videoInfo.Get("reason");
+                var errorCode = videoInfo["errorcode"].ParseInt();
+                var errorReason = videoInfo["reason"];
                 throw new VideoUnavailableException(videoId, errorCode, errorReason);
             }
 
@@ -204,11 +204,11 @@ namespace YoutubeExplode
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
 
             // Extract values
-            var title = videoInfo.Get("title");
-            var author = videoInfo.Get("author");
-            var duration = TimeSpan.FromSeconds(videoInfo.Get("length_seconds").ParseDouble());
-            var viewCount = videoInfo.Get("view_count").ParseLong();
-            var keywords = videoInfo.Get("keywords").Split(",");
+            var title = videoInfo["title"];
+            var author = videoInfo["author"];
+            var duration = TimeSpan.FromSeconds(videoInfo["length_seconds"].ParseDouble());
+            var viewCount = videoInfo["view_count"].ParseLong();
+            var keywords = videoInfo["keywords"].Split(",");
 
             // Get video watch page
             var watchPage = await GetVideoWatchPageAsync(videoId).ConfigureAwait(false);
@@ -267,7 +267,7 @@ namespace YoutubeExplode
             // Check if requires purchase
             if (videoInfo.ContainsKey("ypc_vid"))
             {
-                var previewVideoId = videoInfo.Get("ypc_vid");
+                var previewVideoId = videoInfo["ypc_vid"];
                 throw new VideoRequiresPurchaseException(videoId, previewVideoId);
             }
 
@@ -285,8 +285,8 @@ namespace YoutubeExplode
                     var streamInfoDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
 
                     // Extract values
-                    var itag = streamInfoDic.Get("itag").ParseInt();
-                    var url = streamInfoDic.Get("url");
+                    var itag = streamInfoDic["itag"].ParseInt();
+                    var url = streamInfoDic["url"];
                     var sig = streamInfoDic.GetOrDefault("s");
 
 #if RELEASE
@@ -338,11 +338,11 @@ namespace YoutubeExplode
                     var streamInfoDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
 
                     // Extract values
-                    var itag = streamInfoDic.Get("itag").ParseInt();
-                    var url = streamInfoDic.Get("url");
+                    var itag = streamInfoDic["itag"].ParseInt();
+                    var url = streamInfoDic["url"];
                     var sig = streamInfoDic.GetOrDefault("s");
-                    var contentLength = streamInfoDic.Get("clen").ParseLong();
-                    var bitrate = streamInfoDic.Get("bitrate").ParseLong();
+                    var contentLength = streamInfoDic["clen"].ParseLong();
+                    var bitrate = streamInfoDic["bitrate"].ParseLong();
 
 #if RELEASE
                     if (!MediaStreamInfo.IsKnown(itag))
@@ -362,7 +362,7 @@ namespace YoutubeExplode
                     url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
 
                     // Check if audio
-                    var isAudio = streamInfoDic.Get("type").Contains("audio/");
+                    var isAudio = streamInfoDic["type"].Contains("audio/");
 
                     // If audio stream
                     if (isAudio)
@@ -374,11 +374,11 @@ namespace YoutubeExplode
                     else
                     {
                         // Parse additional data
-                        var size = streamInfoDic.Get("size");
+                        var size = streamInfoDic["size"];
                         var width = size.SubstringUntil("x").ParseInt();
                         var height = size.SubstringAfter("x").ParseInt();
                         var resolution = new VideoResolution(width, height);
-                        var framerate = streamInfoDic.Get("fps").ParseInt();
+                        var framerate = streamInfoDic["fps"].ParseInt();
 
                         var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
                         videoStreamInfos.Add(streamInfo);
@@ -406,18 +406,18 @@ namespace YoutubeExplode
                 var dashManifestXml = XElement.Parse(response).StripNamespaces();
                 var streamsXml = dashManifestXml.Descendants("Representation");
 
-                // Filter out partial streams
-                streamsXml = streamsXml.Where(x => !(x.Descendant("Initialization")
-                                                         ?.Attribute("sourceURL")
-                                                         ?.Value.Contains("sq/") ?? false));
-
                 // Parse streams
                 foreach (var streamXml in streamsXml)
                 {
+                    // Skip partial streams
+                    if (streamXml.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value
+                            .Contains("sq/") == true)
+                        continue;
+
                     // Extract values
-                    var itag = (int) streamXml.AttributeStrict("id");
-                    var url = streamXml.ElementStrict("BaseURL").Value;
-                    var bitrate = (long) streamXml.AttributeStrict("bandwidth");
+                    var itag = (int) streamXml.Attribute("id");
+                    var url = (string) streamXml.Element("BaseURL");
+                    var bitrate = (long) streamXml.Attribute("bandwidth");
 
 #if RELEASE
                     if (!MediaStreamInfo.IsKnown(itag))
@@ -445,10 +445,10 @@ namespace YoutubeExplode
                     else
                     {
                         // Parse additional data
-                        var width = (int) streamXml.AttributeStrict("width");
-                        var height = (int) streamXml.AttributeStrict("height");
+                        var width = (int) streamXml.Attribute("width");
+                        var height = (int) streamXml.Attribute("height");
                         var resolution = new VideoResolution(width, height);
-                        var framerate = (int) streamXml.AttributeStrict("frameRate");
+                        var framerate = (int) streamXml.Attribute("frameRate");
 
                         var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
                         videoStreamInfos.Add(streamInfo);
@@ -477,7 +477,7 @@ namespace YoutubeExplode
             var videoInfo = await GetVideoInfoAsync(videoId).ConfigureAwait(false);
 
             // Extract captions metadata
-            var playerResponseRaw = videoInfo.Get("player_response");
+            var playerResponseRaw = videoInfo["player_response"];
             var playerResponseJson = JToken.Parse(playerResponseRaw);
             var captionsJson = playerResponseJson.SelectToken("$..captionTracks");
 
