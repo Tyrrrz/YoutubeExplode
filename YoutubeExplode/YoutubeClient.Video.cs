@@ -63,13 +63,15 @@ namespace YoutubeExplode
             var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
             var videoInfo = UrlHelper.SplitUrlQuery(raw);
 
-            // If can't be embedded - try adunit
+            // If can't be embedded - try el=adunit
             if (videoInfo.ContainsKey("errorcode"))
             {
-                // TODO: should only retry if the error was about embedding
-
-                raw = await GetVideoInfoRawAsync(videoId, "adunit", sts).ConfigureAwait(false);
-                videoInfo = UrlHelper.SplitUrlQuery(raw);
+                var errorReason = videoInfo["reason"];
+                if (errorReason.Contains("&feature=player_embedded"))
+                {
+                    raw = await GetVideoInfoRawAsync(videoId, "adunit", sts).ConfigureAwait(false);
+                    videoInfo = UrlHelper.SplitUrlQuery(raw);
+                }
             }
 
             // Check error
@@ -77,6 +79,7 @@ namespace YoutubeExplode
             {
                 var errorCode = videoInfo["errorcode"].ParseInt();
                 var errorReason = videoInfo["reason"];
+
                 throw new VideoUnavailableException(videoId, errorCode, errorReason);
             }
 
