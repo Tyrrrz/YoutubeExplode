@@ -61,7 +61,7 @@ namespace YoutubeExplode
         {
             // Get video info
             var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
-            var videoInfo = UrlHelper.GetDictionaryFromUrlQuery(raw);
+            var videoInfo = UrlHelper.SplitUrlQuery(raw);
 
             // If can't be embedded - try adunit
             if (videoInfo.ContainsKey("errorcode"))
@@ -69,7 +69,7 @@ namespace YoutubeExplode
                 // TODO: should only retry if the error was about embedding
 
                 raw = await GetVideoInfoRawAsync(videoId, "adunit", sts).ConfigureAwait(false);
-                videoInfo = UrlHelper.GetDictionaryFromUrlQuery(raw);
+                videoInfo = UrlHelper.SplitUrlQuery(raw);
             }
 
             // Check error
@@ -282,7 +282,7 @@ namespace YoutubeExplode
             {
                 foreach (var streamEncoded in muxedStreamInfosEncoded.Split(","))
                 {
-                    var streamInfoDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
+                    var streamInfoDic = UrlHelper.SplitUrlQuery(streamEncoded);
 
                     // Extract values
                     var itag = streamInfoDic["itag"].ParseInt();
@@ -335,7 +335,7 @@ namespace YoutubeExplode
             {
                 foreach (var streamEncoded in adaptiveStreamInfosEncoded.Split(","))
                 {
-                    var streamInfoDic = UrlHelper.GetDictionaryFromUrlQuery(streamEncoded);
+                    var streamInfoDic = UrlHelper.SplitUrlQuery(streamEncoded);
 
                     // Extract values
                     var itag = streamInfoDic["itag"].ParseInt();
