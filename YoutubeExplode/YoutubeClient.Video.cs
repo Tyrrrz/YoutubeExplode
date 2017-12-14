@@ -485,12 +485,16 @@ namespace YoutubeExplode
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
             foreach (var captionJson in captionsJson.EmptyIfNull())
             {
+                // Extract values
                 var code = captionJson.Value<string>("languageCode");
                 var name = captionJson["name"].Value<string>("simpleText");
-                var url = captionJson.Value<string>("baseUrl");
-                var isAuto = captionJson.Value<string>("vssId").StartsWith("a.", StringComparison.OrdinalIgnoreCase);
-
                 var language = new Language(code, name);
+                var isAuto = captionJson.Value<string>("vssId").StartsWith("a.", StringComparison.OrdinalIgnoreCase);
+                var url = captionJson.Value<string>("baseUrl");
+
+                // Enforce format
+                url = UrlHelper.SetUrlQueryParameter(url, "format", "1");
+
                 var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAuto);
                 closedCaptionTrackInfos.Add(closedCaptionTrackInfo);
             }
