@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 namespace YoutubeExplode.Services
 {
     /// <summary>
-    /// Performs HTTP requests
+    /// Provider for executing HTTP requests.
     /// </summary>
     public interface IHttpService
     {
         /// <summary>
-        /// Performs a generic HTTP request
+        /// Executes a generic HTTP request.
         /// </summary>
         Task<HttpResponseMessage> PerformRequestAsync(HttpRequestMessage request);
     }

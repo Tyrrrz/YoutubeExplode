@@ -14,7 +14,7 @@ namespace YoutubeExplode
     public partial class YoutubeClient
     {
         /// <summary>
-        /// Gets the actual media stream represented by given metadata
+        /// Gets the actual media stream associated with given metadata.
         /// </summary>
         public async Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo info)
         {
@@ -29,7 +29,8 @@ namespace YoutubeExplode
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
         /// <summary>
-        /// Downloads a media stream to file
+        /// Gets the actual media stream associated with given metadata
+        /// and downloads it to a file.
         /// </summary>
         public async Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath,
             IProgress<double> progress, CancellationToken cancellationToken)
@@ -60,13 +61,15 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Downloads a media stream to file
+        /// Gets the actual media stream associated with given metadata
+        /// and downloads it to a file.
         /// </summary>
         public Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath, IProgress<double> progress)
             => DownloadMediaStreamAsync(info, filePath, progress, CancellationToken.None);
 
         /// <summary>
-        /// Downloads a media stream to file
+        /// Gets the actual media stream associated with given metadata
+        /// and downloads it to a file.
         /// </summary>
         public Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath)
             => DownloadMediaStreamAsync(info, filePath, null);

@@ -3,7 +3,7 @@
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when there was an error parsing a response
+    /// Thrown when there was an error parsing some data.
     /// </summary>
     public class ParseException : Exception
     {

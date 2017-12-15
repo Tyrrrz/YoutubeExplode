@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard2.0;net45;netcoreapp1.0</TargetFrameworks>
-    <Version>3.3</Version>
+    <Version>4.0</Version>
     <Company>Tyrrrz</Company>
     <Authors>$(Company)</Authors>
     <Copyright>Copyright (C) 2016-2017 Alexey Golub</Copyright>
-    <Description>Parses public metadata on Youtube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
+    <Description>The ultimate dirty YouTube library. Parses public metadata on YouTube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/License.txt</PackageLicenseUrl>
@@ -20,6 +20,11 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
 </Project>

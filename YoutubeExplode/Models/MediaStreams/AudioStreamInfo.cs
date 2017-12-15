@@ -3,17 +3,17 @@
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Audio stream info
+    /// Metadata associated with a certain <see cref="MediaStream"/> that contains only audio.
     /// </summary>
     public class AudioStreamInfo : MediaStreamInfo
     {
         /// <summary>
-        /// Bitrate (bit/s)
+        /// Bitrate (bit/s) of the associated stream.
         /// </summary>
         public long Bitrate { get; }
 
         /// <summary>
-        /// Audio encoding
+        /// Audio encoding of the associated stream.
         /// </summary>
         public AudioEncoding AudioEncoding { get; }
 

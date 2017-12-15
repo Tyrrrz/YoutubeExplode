@@ -4,22 +4,22 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.ClosedCaptions
 {
     /// <summary>
-    /// Closed caption
+    /// Text that gets displayed at specific time during video playback, as part of a <see cref="ClosedCaptionTrack"/>.
     /// </summary>
     public class ClosedCaption
     {
         /// <summary>
-        /// Text displayed by this caption
+        /// Text displayed by this caption.
         /// </summary>
         public string Text { get; }
 
         /// <summary>
-        /// When this caption is displayed, relative to video's timeline
+        /// Time at which this caption starts being displayed.
         /// </summary>
         public TimeSpan Offset { get; }
 
         /// <summary>
-        /// How long this caption is displayed
+        /// Duration this caption is displayed.
         /// </summary>
         public TimeSpan Duration { get; }
 

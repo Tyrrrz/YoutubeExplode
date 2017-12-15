@@ -5,53 +5,53 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Playlist
+    /// Information about a YouTube playlist.
     /// </summary>
     public partial class Playlist
     {
         /// <summary>
-        /// ID
+        /// ID of this playlist.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// Type
+        /// Type of this playlist.
         /// </summary>
         public PlaylistType Type { get; }
 
         /// <summary>
-        /// Title
-        /// </summary>
-        public string Title { get; }
-
-        /// <summary>
-        /// Description
-        /// </summary>
-        public string Description { get; }
-
-        /// <summary>
-        /// Author's display name
+        /// Author of this playlist.
         /// </summary>
         public string Author { get; }
 
         /// <summary>
-        /// Statistics
+        /// Title of this playlist.
+        /// </summary>
+        public string Title { get; }
+
+        /// <summary>
+        /// Description of this playlist.
+        /// </summary>
+        public string Description { get; }
+
+        /// <summary>
+        /// Statistics of this playlist.
         /// </summary>
         public Statistics Statistics { get; }
 
         /// <summary>
-        /// Videos in the playlist
+        /// Collection of videos contained in this playlist.
         /// </summary>
-        public IReadOnlyList<PlaylistVideo> Videos { get; }
+        public IReadOnlyList<Video> Videos { get; }
 
         /// <summary />
-        public Playlist(string id, string title, string author, string description, Statistics statistics,
-            IReadOnlyList<PlaylistVideo> videos)
+        public Playlist(string id, string author, string title, string description, Statistics statistics,
+            IReadOnlyList<Video> videos)
         {
             Id = id.GuardNotNull(nameof(id));
             Type = GetPlaylistType(id);
-            Title = title.GuardNotNull(nameof(title));
             Author = author.GuardNotNull(nameof(author));
+            Title = title.GuardNotNull(nameof(title));
             Description = description.GuardNotNull(nameof(description));
             Statistics = statistics.GuardNotNull(nameof(statistics));
             Videos = videos.GuardNotNull(nameof(videos));
@@ -64,37 +64,37 @@ namespace YoutubeExplode.Models
     public partial class Playlist
     {
         /// <summary>
-        /// Get playlist type from playlist id
+        /// Get playlist type by ID.
         /// </summary>
         protected static PlaylistType GetPlaylistType(string id)
         {
             id.GuardNotNull(nameof(id));
 
-            if (id.StartsWith("PL", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("PL"))
                 return PlaylistType.Normal;
 
-            if (id.StartsWith("RD", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("RD"))
                 return PlaylistType.VideoMix;
 
-            if (id.StartsWith("UL", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("UL"))
                 return PlaylistType.ChannelVideoMix;
 
-            if (id.StartsWith("UU", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("UU"))
                 return PlaylistType.ChannelVideos;
 
-            if (id.StartsWith("PU", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("PU"))
                 return PlaylistType.PopularChannelVideos;
 
-            if (id.StartsWith("LL", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("LL"))
                 return PlaylistType.LikedVideos;
 
-            if (id.StartsWith("FL", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("FL"))
                 return PlaylistType.Favorites;
 
-            if (id.StartsWith("WL", StringComparison.OrdinalIgnoreCase))
+            if (id.StartsWith("WL"))
                 return PlaylistType.WatchLater;
 
-            throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}]");
+            throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}].");
         }
     }
 }

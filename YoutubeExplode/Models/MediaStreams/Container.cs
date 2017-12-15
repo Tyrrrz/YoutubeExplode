@@ -1,32 +1,32 @@
 ﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Media stream container type
+    /// Media stream container type.
     /// </summary>
     public enum Container
     {
         /// <summary>
-        /// MPEG-4 Part 14 (.mp4)
+        /// MPEG-4 Part 14 (.mp4).
         /// </summary>
         Mp4,
 
         /// <summary>
-        /// MPEG-4 Part 14 audio-only (.m4a)
+        /// MPEG-4 Part 14 audio-only (.m4a).
         /// </summary>
         M4A,
 
         /// <summary>
-        /// Web Media (.webm)
+        /// Web Media (.webm).
         /// </summary>
         WebM,
 
         /// <summary>
-        /// 3rd Generation Partnership Project (.3gpp)
+        /// 3rd Generation Partnership Project (.3gpp).
         /// </summary>
         Tgpp,
 
         /// <summary>
-        /// Flash Video (.flv)
+        /// Flash Video (.flv).
         /// </summary>
         Flv
     }

@@ -4,22 +4,22 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when video is not available
+    /// Thrown when video is not available and cannot be processed.
     /// </summary>
-    public class VideoNotAvailableException : Exception
+    public class VideoUnavailableException : Exception
     {
         /// <summary>
-        /// ID of the video
+        /// ID of the video.
         /// </summary>
         public string VideoId { get; }
 
         /// <summary>
-        /// Error code
+        /// Error code reported by YouTube.
         /// </summary>
         public int Code { get; }
 
         /// <summary>
-        /// Error reason
+        /// Error reason reported by YouTube.
         /// </summary>
         public string Reason { get; }
 
@@ -31,7 +31,7 @@ namespace YoutubeExplode.Exceptions
                                           $"Error reason: {Reason}";
 
         /// <summary />
-        public VideoNotAvailableException(string videoId, int code, string reason)
+        public VideoUnavailableException(string videoId, int code, string reason)
         {
             VideoId = videoId.GuardNotNull(nameof(videoId));
             Code = code;

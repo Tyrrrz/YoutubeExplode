@@ -3,37 +3,37 @@
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Video stream info
+    /// Metadata associated with a certain <see cref="MediaStream"/> that contains only video.
     /// </summary>
     public class VideoStreamInfo : MediaStreamInfo
     {
         /// <summary>
-        /// Video bitrate (bits/s)
+        /// Video bitrate (bits/s) of the associated stream.
         /// </summary>
         public long Bitrate { get; }
 
         /// <summary>
-        /// Video encoding
+        /// Video encoding of the associated stream.
         /// </summary>
         public VideoEncoding VideoEncoding { get; }
 
         /// <summary>
-        /// Video quality
+        /// Video quality of the associated stream.
         /// </summary>
         public VideoQuality VideoQuality { get; }
 
         /// <summary>
-        /// Video resoution
+        /// Video resolution of the associated stream.
         /// </summary>
         public VideoResolution Resolution { get; }
 
         /// <summary>
-        /// Video framerate (fps)
+        /// Video framerate (FPS) of the associated stream.
         /// </summary>
         public int Framerate { get; }
 
         /// <summary>
-        /// Video quality label as seen on Youtube
+        /// Video quality label of the associated stream.
         /// </summary>
         public string VideoQualityLabel { get; }
 

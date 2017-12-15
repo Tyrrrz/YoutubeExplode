@@ -5,27 +5,27 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Base media stream info
+    /// Metadata associated with a certain <see cref="MediaStream"/>.
     /// </summary>
     public abstract partial class MediaStreamInfo
     {
         /// <summary>
-        /// Unique tag that identifies the properties of this stream
+        /// Unique tag that identifies the properties of the associated stream.
         /// </summary>
         public int Itag { get; }
 
         /// <summary>
-        /// Media stream URL
+        /// URL of the endpoint that serves the associated stream.
         /// </summary>
         public string Url { get; }
 
         /// <summary>
-        /// Container type
+        /// Container type of the associated stream.
         /// </summary>
         public Container Container { get; }
 
         /// <summary>
-        /// Stream content length (bytes)
+        /// Content length (bytes) of the associated stream.
         /// </summary>
         public long Size { get; }
 
@@ -37,6 +37,9 @@ namespace YoutubeExplode.Models.MediaStreams
             Container = GetContainer(itag);
             Size = size.GuardNotNegative(nameof(size));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{Itag} ({Container})";
     }
 
     public abstract partial class MediaStreamInfo
@@ -145,59 +148,59 @@ namespace YoutubeExplode.Models.MediaStreams
         };
 
         /// <summary>
-        /// Get container type for the given itag
+        /// Gets container type for the given itag.
         /// </summary>
         protected static Container GetContainer(int itag)
         {
             var result = ItagMap.GetOrDefault(itag)?.Container;
 
             if (!result.HasValue)
-                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}].");
 
             return result.Value;
         }
 
         /// <summary>
-        /// Get encoding for the given itag
+        /// Gets audio encoding for the given itag.
         /// </summary>
         protected static AudioEncoding GetAudioEncoding(int itag)
         {
             var result = ItagMap.GetOrDefault(itag)?.AudioEncoding;
 
             if (!result.HasValue)
-                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}].");
 
             return result.Value;
         }
 
         /// <summary>
-        /// Get encoding for the given itag
+        /// Gets video encoding for the given itag.
         /// </summary>
         protected static VideoEncoding GetVideoEncoding(int itag)
         {
             var result = ItagMap.GetOrDefault(itag)?.VideoEncoding;
 
             if (!result.HasValue)
-                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}].");
 
             return result.Value;
         }
 
         /// <summary>
-        /// Get video quality for the given itag
+        /// Gets video quality for the given itag.
         /// </summary>
         protected static VideoQuality GetVideoQuality(int itag)
         {
             var result = ItagMap.GetOrDefault(itag)?.VideoQuality;
 
             if (!result.HasValue)
-                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}]");
+                throw new ArgumentOutOfRangeException(nameof(itag), $"Unexpected itag [{itag}].");
 
             return result.Value;
         }
 
         /// <summary>
-        /// Check if the given itag is known
+        /// Checks if the given itag is known.
         /// </summary>
         public static bool IsKnown(int itag)
         {

@@ -1,27 +1,27 @@
 ﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Multiplexed (video and audio) stream info
+    /// Metadata associated with a certain <see cref="MediaStream"/> that contains both audio and video.
     /// </summary>
     public class MuxedStreamInfo : MediaStreamInfo
     {
         /// <summary>
-        /// Audio encoding
+        /// Audio encoding of the associated stream.
         /// </summary>
         public AudioEncoding AudioEncoding { get; }
 
         /// <summary>
-        /// Video encoding
+        /// Video encoding of the associated stream.
         /// </summary>
         public VideoEncoding VideoEncoding { get; }
 
         /// <summary>
-        /// Video quality
+        /// Video quality of the associated stream.
         /// </summary>
         public VideoQuality VideoQuality { get; }
 
         /// <summary>
-        /// Video quality label as seen on Youtube
+        /// Video quality label of the associated stream.
         /// </summary>
         public string VideoQualityLabel { get; }
 

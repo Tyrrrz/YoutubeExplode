@@ -3,24 +3,24 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Set of video thumbnails
+    /// Set of thumbnails for a video.
     /// </summary>
-    public class VideoThumbnails
+    public class ThumbnailSet
     {
         private readonly string _videoId;
 
         /// <summary>
-        /// Low resolution thumbnail URL
+        /// Low resolution thumbnail URL.
         /// </summary>
         public string LowResUrl => $"https://img.youtube.com/vi/{_videoId}/default.jpg";
 
         /// <summary>
-        /// Medium resolution thumbnail URL
+        /// Medium resolution thumbnail URL.
         /// </summary>
         public string MediumResUrl => $"https://img.youtube.com/vi/{_videoId}/mqdefault.jpg";
 
         /// <summary>
-        /// High resolution thumbnail URL
+        /// High resolution thumbnail URL.
         /// </summary>
         public string HighResUrl => $"https://img.youtube.com/vi/{_videoId}/hqdefault.jpg";
 
@@ -37,7 +37,7 @@ namespace YoutubeExplode.Models
         public string MaxResUrl => $"https://img.youtube.com/vi/{_videoId}/maxresdefault.jpg";
 
         /// <summary />
-        public VideoThumbnails(string videoId)
+        public ThumbnailSet(string videoId)
         {
             _videoId = videoId.GuardNotNull(nameof(videoId));
         }
