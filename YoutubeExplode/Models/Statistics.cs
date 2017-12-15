@@ -29,7 +29,7 @@ namespace YoutubeExplode.Models
         {
             get
             {
-                if (LikeCount + DislikeCount == 0) return 2.5;
+                if (LikeCount + DislikeCount == 0) return 0;
                 return 1 + 4.0 * LikeCount / (LikeCount + DislikeCount);
             }
         }
