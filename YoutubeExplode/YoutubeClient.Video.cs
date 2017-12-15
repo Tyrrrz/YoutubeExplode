@@ -63,13 +63,13 @@ namespace YoutubeExplode
             var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
             var videoInfo = UrlHelper.SplitUrlQuery(raw);
 
-            // If can't be embedded - try el=adunit
+            // If can't be embedded - try another value of el
             if (videoInfo.ContainsKey("errorcode"))
             {
                 var errorReason = videoInfo["reason"];
                 if (errorReason.Contains("&feature=player_embedded"))
                 {
-                    raw = await GetVideoInfoRawAsync(videoId, "adunit", sts).ConfigureAwait(false);
+                    raw = await GetVideoInfoRawAsync(videoId, "detailpage", sts).ConfigureAwait(false);
                     videoInfo = UrlHelper.SplitUrlQuery(raw);
                 }
             }
