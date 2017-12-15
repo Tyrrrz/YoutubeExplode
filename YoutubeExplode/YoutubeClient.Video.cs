@@ -496,7 +496,7 @@ namespace YoutubeExplode
                 var url = captionJson.Value<string>("baseUrl");
 
                 // Enforce format
-                url = UrlHelper.SetUrlQueryParameter(url, "format", "1");
+                url = UrlHelper.SetUrlQueryParameter(url, "format", "3");
 
                 var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAuto);
                 closedCaptionTrackInfos.Add(closedCaptionTrackInfo);

@@ -29,11 +29,11 @@ namespace YoutubeExplode
 
             // Parse captions
             var captions = new List<ClosedCaption>();
-            foreach (var captionXml in trackXml.Descendants("text"))
+            foreach (var captionXml in trackXml.Descendants("p"))
             {
                 var text = (string) captionXml;
-                var offset = TimeSpan.FromSeconds((double) captionXml.Attribute("start"));
-                var duration = TimeSpan.FromSeconds((double) captionXml.Attribute("dur"));
+                var offset = TimeSpan.FromMilliseconds((double) captionXml.Attribute("t"));
+                var duration = TimeSpan.FromMilliseconds((double) captionXml.Attribute("d"));
 
                 var caption = new ClosedCaption(text, offset, duration);
                 captions.Add(caption);
