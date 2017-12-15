@@ -13,7 +13,8 @@ namespace YoutubeExplode.Internal
         public VideoQuality? VideoQuality { get; }
 
         public ItagDescriptor(Container container,
-            AudioEncoding? audioEncoding, VideoEncoding? videoEncoding,
+            AudioEncoding? audioEncoding,
+            VideoEncoding? videoEncoding,
             VideoQuality? videoQuality)
         {
             Container = container;

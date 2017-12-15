@@ -9,12 +9,12 @@ namespace YoutubeExplode.Models.MediaStreams
     public partial struct VideoResolution : IEquatable<VideoResolution>
     {
         /// <summary>
-        /// Width.
+        /// Viewport width.
         /// </summary>
         public int Width { get; }
 
         /// <summary>
-        /// Height.
+        /// Viewport height.
         /// </summary>
         public int Height { get; }
 

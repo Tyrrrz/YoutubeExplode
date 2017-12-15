@@ -14,7 +14,7 @@ namespace YoutubeExplode.Exceptions
         public string VideoId { get; }
 
         /// <summary>
-        /// ID of a preview video that you can watch for free.
+        /// ID of a preview video that can be watched for free.
         /// </summary>
         public string PreviewVideoId { get; }
 

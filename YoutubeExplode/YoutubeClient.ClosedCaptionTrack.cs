@@ -44,10 +44,10 @@ namespace YoutubeExplode
 
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
-/// <summary>
-/// Gets the actual closed caption track associated with given metadata
-/// and downloads it as SRT file.
-/// </summary>
+        /// <summary>
+        /// Gets the actual closed caption track associated with given metadata
+        /// and downloads it as SRT file.
+        /// </summary>
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
             IProgress<double> progress, CancellationToken cancellationToken)
         {
