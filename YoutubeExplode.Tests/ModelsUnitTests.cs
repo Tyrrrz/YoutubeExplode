@@ -1,16 +1,28 @@
 ﻿using System;
 using NUnit.Framework;
+using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Tests
 {
     [TestFixture]
-    public class ModelTests
+    public class ModelsUnitTests
     {
+        private ClosedCaptionTrack GetClosedCaptionTrack()
+        {
+            var info = new ClosedCaptionTrackInfo("test", new Language("en", "English (auto-generated)"), true);
+            return new ClosedCaptionTrack(info,
+                new[]
+                {
+                    new ClosedCaption("Hello", TimeSpan.Zero, TimeSpan.FromSeconds(1)),
+                    new ClosedCaption("world", TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(1))
+                });
+        }
+
         [Test]
         public void ClosedCaptionTrack_GetByTime_Test()
         {
-            var captionTrack = Dummies.GetClosedCaptionTrack();
+            var captionTrack = GetClosedCaptionTrack();
 
             var caption = captionTrack.GetByTime(TimeSpan.FromSeconds(0.5));
 
@@ -21,7 +33,7 @@ namespace YoutubeExplode.Tests
         [Test]
         public void ClosedCaptionTrack_GetByTime_NonExisting_Test()
         {
-            var captionTrack = Dummies.GetClosedCaptionTrack();
+            var captionTrack = GetClosedCaptionTrack();
 
             var caption = captionTrack.GetByTime(TimeSpan.FromSeconds(5));
 

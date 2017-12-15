@@ -3,54 +3,31 @@
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Channel
+    /// Information about a YouTube channel.
     /// </summary>
     public class Channel
     {
         /// <summary>
-        /// ID
+        /// ID of this channel.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// URL
-        /// </summary>
-        public string Url => $"https://www.youtube.com/channel/{Id}";
-
-        /// <summary>
-        /// Name
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Title
+        /// Title of this channel.
         /// </summary>
         public string Title { get; }
 
         /// <summary>
-        /// Whether this channel is paid
-        /// </summary>
-        public bool IsPaid { get; }
-
-        /// <summary>
-        /// Logo image URL
+        /// Logo image URL of this channel.
         /// </summary>
         public string LogoUrl { get; }
 
-        /// <summary>
-        /// Banner image URL
-        /// </summary>
-        public string BannerUrl { get; }
-
         /// <summary />
-        public Channel(string id, string name, string title, bool isPaid, string logoUrl, string bannerUrl)
+        public Channel(string id, string title, string logoUrl)
         {
             Id = id.GuardNotNull(nameof(id));
-            Name = name.GuardNotNull(nameof(name));
             Title = title.GuardNotNull(nameof(title));
-            IsPaid = isPaid;
             LogoUrl = logoUrl.GuardNotNull(nameof(logoUrl));
-            BannerUrl = bannerUrl.GuardNotNull(nameof(bannerUrl));
         }
 
         /// <inheritdoc />

@@ -1,31 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Model extensions
+    /// Extensions for <see cref="Models"/>.
     /// </summary>
     public static class Extensions
     {
         /// <summary>
-        /// Gets sequence of all available <see cref="MediaStreamInfo" />s in a <see cref="Video" />
-        /// </summary>
-        public static IEnumerable<MediaStreamInfo> GetAllMediaStreamInfos(this Video video)
-        {
-            video.GuardNotNull(nameof(video));
-
-            foreach (var streamInfo in video.MuxedStreamInfos)
-                yield return streamInfo;
-            foreach (var streamInfo in video.AudioStreamInfos)
-                yield return streamInfo;
-            foreach (var streamInfo in video.VideoStreamInfos)
-                yield return streamInfo;
-        }
-
-        /// <summary>
-        /// Generates the regular url of the YouTube watch page for this video
+        /// Gets the regular URL of a video.
         /// </summary>
         public static string GetRegularUrl(this Video video)
         {
@@ -34,7 +18,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Generates the short url of the YouTube watch page for this video
+        /// Gets the short URL of a video.
         /// </summary>
         public static string GetShortUrl(this Video video)
         {
@@ -43,7 +27,7 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Generates the url of the embedded YouTube watch page for this video
+        /// Gets the embed URL of a video.
         /// </summary>
         public static string GetEmbedUrl(this Video video)
         {
@@ -52,30 +36,51 @@ namespace YoutubeExplode.Models
         }
 
         /// <summary>
-        /// Generates the regular url of the YouTube watch page for this video
+        /// Gets the regular URL of a playlist.
         /// </summary>
-        public static string GetRegularUrl(this PlaylistVideo playlistVideo)
+        public static string GetRegularUrl(this Playlist playlist)
         {
-            playlistVideo.GuardNotNull(nameof(playlistVideo));
-            return $"https://www.youtube.com/watch?v={playlistVideo.Id}";
+            playlist.GuardNotNull(nameof(playlist));
+            return $"https://www.youtube.com/playlist?list={playlist.Id}";
         }
 
         /// <summary>
-        /// Generates the short url of the YouTube watch page for this video
+        /// Gets the watch URL of a playlist set to play the first video.
         /// </summary>
-        public static string GetShortUrl(this PlaylistVideo playlistVideo)
+        public static string GetWatchUrl(this Playlist playlist)
         {
-            playlistVideo.GuardNotNull(nameof(playlistVideo));
-            return $"https://youtu.be/{playlistVideo.Id}";
+            playlist.GuardNotNull(nameof(playlist));
+            var firstVideo = playlist.Videos.First();
+            return $"https://www.youtube.com/watch?v={firstVideo.Id}&list={playlist.Id}";
         }
 
         /// <summary>
-        /// Generates the url of the embedded YouTube watch page for this video
+        /// Gets the short URL of a playlist set to play the first video.
         /// </summary>
-        public static string GetEmbedUrl(this PlaylistVideo playlistVideo)
+        public static string GetShortUrl(this Playlist playlist)
         {
-            playlistVideo.GuardNotNull(nameof(playlistVideo));
-            return $"https://www.youtube.com/embed/{playlistVideo.Id}";
+            playlist.GuardNotNull(nameof(playlist));
+            var firstVideo = playlist.Videos.First();
+            return $"https://www.youtu.be/{firstVideo.Id}/?list={playlist.Id}";
+        }
+
+        /// <summary>
+        /// Gets the embed URL of a playlist set to play the first video.
+        /// </summary>
+        public static string GetEmbedUrl(this Playlist playlist)
+        {
+            playlist.GuardNotNull(nameof(playlist));
+            var firstVideo = playlist.Videos.First();
+            return $"https://www.youtube.com/embed/{firstVideo.Id}/?list={playlist.Id}";
+        }
+
+        /// <summary>
+        /// Gets the URL of a channel.
+        /// </summary>
+        public static string GetUrl(this Channel channel)
+        {
+            channel.GuardNotNull(nameof(channel));
+            return $"https://www.youtube.com/channel/{channel.Id}";
         }
     }
 }

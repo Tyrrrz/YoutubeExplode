@@ -1,86 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Models.ClosedCaptions;
-using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Models
 {
     /// <summary>
-    /// Video
+    /// Information about a YouTube video.
     /// </summary>
     public class Video
     {
         /// <summary>
-        /// ID
+        /// ID of this video.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// Author channel
+        /// Author of this video.
         /// </summary>
-        public Channel Author { get; }
+        public string Author { get; }
 
         /// <summary>
-        /// Title
+        /// Title of this video.
         /// </summary>
         public string Title { get; }
 
         /// <summary>
-        /// Description
+        /// Description of this video.
         /// </summary>
         public string Description { get; }
 
         /// <summary>
-        /// Thumbnails
+        /// Thumbnails of this video.
         /// </summary>
-        public VideoThumbnails Thumbnails { get; }
+        public ThumbnailSet Thumbnails { get; }
 
         /// <summary>
-        /// Duration
+        /// Duration of this video.
         /// </summary>
         public TimeSpan Duration { get; }
 
         /// <summary>
-        /// Search keywords
+        /// Search keywords of this video.
         /// </summary>
         public IReadOnlyList<string> Keywords { get; }
 
         /// <summary>
-        /// Status
-        /// </summary>
-        public VideoStatus Status { get; }
-
-        /// <summary>
-        /// Statistics
+        /// Statistics of this video.
         /// </summary>
         public Statistics Statistics { get; }
 
-        /// <summary>
-        /// Muxed streams available for this video
-        /// </summary>
-        public IReadOnlyList<MuxedStreamInfo> MuxedStreamInfos { get; }
-
-        /// <summary>
-        /// Audio-only streams available for this video
-        /// </summary>
-        public IReadOnlyList<AudioStreamInfo> AudioStreamInfos { get; }
-
-        /// <summary>
-        /// Video-only streams available for this video
-        /// </summary>
-        public IReadOnlyList<VideoStreamInfo> VideoStreamInfos { get; }
-
-        /// <summary>
-        /// Closed caption tracks available for this video
-        /// </summary>
-        public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTrackInfos { get; }
-
         /// <summary />
-        public Video(string id, Channel author, string title, string description, VideoThumbnails thumbnails,
-            TimeSpan duration, IReadOnlyList<string> keywords, VideoStatus status, Statistics statistics,
-            IReadOnlyList<MuxedStreamInfo> muxedStreamInfos, IReadOnlyList<AudioStreamInfo> audioStreamInfos,
-            IReadOnlyList<VideoStreamInfo> videoStreamInfos, IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos)
+        public Video(string id, string author, string title, string description, ThumbnailSet thumbnails,
+            TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
         {
             Id = id.GuardNotNull(nameof(id));
             Author = author.GuardNotNull(nameof(author));
@@ -89,12 +60,7 @@ namespace YoutubeExplode.Models
             Thumbnails = thumbnails.GuardNotNull(nameof(thumbnails));
             Duration = duration.GuardNotNegative(nameof(duration));
             Keywords = keywords.GuardNotNull(nameof(keywords));
-            Status = status.GuardNotNull(nameof(status));
             Statistics = statistics.GuardNotNull(nameof(statistics));
-            MuxedStreamInfos = muxedStreamInfos.GuardNotNull(nameof(muxedStreamInfos));
-            AudioStreamInfos = audioStreamInfos.GuardNotNull(nameof(audioStreamInfos));
-            VideoStreamInfos = videoStreamInfos.GuardNotNull(nameof(videoStreamInfos));
-            ClosedCaptionTrackInfos = closedCaptionTrackInfos.GuardNotNull(nameof(closedCaptionTrackInfos));
         }
 
         /// <inheritdoc />

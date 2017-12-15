@@ -5,16 +5,15 @@ using YoutubeExplode.Services;
 namespace YoutubeExplode
 {
     /// <summary>
-    /// YoutubeClient
+    /// The entry point for <see cref="YoutubeExplode"/>.
     /// </summary>
     public partial class YoutubeClient
     {
-        private const string YoutubeHost = "https://www.youtube.com";
         private readonly IHttpService _httpService;
         private readonly Dictionary<string, PlayerSource> _playerSourceCache;
 
         /// <summary>
-        /// Creates an instance of <see cref="YoutubeClient"/> with custom services
+        /// Creates an instance of <see cref="YoutubeClient"/> with custom services.
         /// </summary>
         public YoutubeClient(IHttpService httpService)
         {
@@ -23,7 +22,7 @@ namespace YoutubeExplode
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="YoutubeClient" /> with default services
+        /// Creates an instance of <see cref="YoutubeClient"/> with default services.
         /// </summary>
         public YoutubeClient()
             : this(HttpService.Instance)

@@ -12,28 +12,39 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private async Task<string> GetPlaylistInfoRawAsync(string playlistId, int index = 0)
+        {
+            var url = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={index}";
+            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+        }
+
+        private async Task<XElement> GetPlaylistInfoAsync(string playlistId, int index = 0)
+        {
+            var raw = await GetPlaylistInfoRawAsync(playlistId, index).ConfigureAwait(false);
+            return XElement.Parse(raw).StripNamespaces();
+        }
+
         /// <summary>
-        /// Gets playlist by ID, truncating resulting video list at given number of pages (1 page ≤ 200 videos)
+        /// Gets playlist information by ID.
+        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
         /// </summary>
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
         {
             playlistId.GuardNotNull(nameof(playlistId));
             maxPages.GuardPositive(nameof(maxPages));
             if (!ValidatePlaylistId(playlistId))
-                throw new ArgumentException("Invalid Youtube playlist ID", nameof(playlistId));
+                throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
             // Get all videos across pages
             var pagesDone = 0;
             var offset = 0;
             XElement playlistXml;
             var videoIds = new HashSet<string>();
-            var videos = new List<PlaylistVideo>();
+            var videos = new List<Video>();
             do
             {
-                // Get manifest
-                var request = $"{YoutubeHost}/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={offset}";
-                var response = await _httpService.GetStringAsync(request).ConfigureAwait(false);
-                playlistXml = XElement.Parse(response).StripNamespaces();
+                // Get playlist info
+                playlistXml = await GetPlaylistInfoAsync(playlistId, offset).ConfigureAwait(false);
 
                 // Parse videos
                 var total = 0;
@@ -41,14 +52,14 @@ namespace YoutubeExplode
                 foreach (var videoXml in playlistXml.Elements("video"))
                 {
                     // Basic info
-                    var videoId = videoXml.ElementStrict("encrypted_id").Value;
-                    var videoTitle = videoXml.ElementStrict("title").Value;
-                    var videoThumbnails = new VideoThumbnails(videoId);
-                    var videoDuration = TimeSpan.FromSeconds((double) videoXml.ElementStrict("length_seconds"));
-                    var videoDescription = videoXml.ElementStrict("description").Value;
+                    var videoId = (string) videoXml.Element("encrypted_id");
+                    var videoAuthor = (string) videoXml.Element("author");
+                    var videoTitle = (string) videoXml.Element("title");
+                    var videoDuration = TimeSpan.FromSeconds((double) videoXml.Element("length_seconds"));
+                    var videoDescription = (string) videoXml.Element("description");
 
                     // Keywords
-                    var videoKeywordsJoined = videoXml.ElementStrict("keywords").Value;
+                    var videoKeywordsJoined = (string) videoXml.Element("keywords");
                     var videoKeywords = Regex
                         .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                         .Cast<Match>()
@@ -57,18 +68,15 @@ namespace YoutubeExplode
                         .ToArray();
 
                     // Statistics
-                    // The inner text is already formatted so we have to parse it manually
-                    var videoViewCount =
-                        Regex.Replace(videoXml.ElementStrict("views").Value, @"\D", "").ParseLong();
-                    var videoLikeCount =
-                        Regex.Replace(videoXml.ElementStrict("likes").Value, @"\D", "").ParseLong();
-                    var videoDislikeCount =
-                        Regex.Replace(videoXml.ElementStrict("dislikes").Value, @"\D", "").ParseLong();
+                    var videoViewCount = ((string) videoXml.Element("views")).StripNonDigit().ParseLong();
+                    var videoLikeCount = ((string) videoXml.Element("likes")).StripNonDigit().ParseLong();
+                    var videoDislikeCount = ((string) videoXml.Element("dislikes")).StripNonDigit().ParseLong();
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Video
-                    var video = new PlaylistVideo(videoId, videoTitle, videoDescription, videoThumbnails, videoDuration,
-                        videoKeywords, videoStatistics);
+                    var videoThumbnails = new ThumbnailSet(videoId);
+                    var video = new Video(videoId, videoAuthor, videoTitle, videoDescription, videoThumbnails,
+                        videoDuration, videoKeywords, videoStatistics);
 
                     // Add to list if not already there
                     if (videoIds.Add(video.Id))
@@ -88,10 +96,10 @@ namespace YoutubeExplode
                 offset += total;
             } while (pagesDone < maxPages);
 
-            // Basic info
-            var title = playlistXml.ElementStrict("title").Value;
-            var author = playlistXml.Element("author")?.Value ?? ""; // system playlists don't have an author
-            var description = playlistXml.ElementStrict("description").Value;
+            // Extract playlist info
+            var title = (string) playlistXml.Element("title");
+            var author = (string) playlistXml.Element("author") ?? ""; // system playlists don't have an author
+            var description = (string) playlistXml.Element("description");
 
             // Statistics
             var viewCount = (long?) playlistXml.Element("views") ?? 0; // watchlater does not have views
@@ -99,11 +107,11 @@ namespace YoutubeExplode
             var dislikeCount = (long?) playlistXml.Element("dislikes") ?? 0; // system playlists don't have dislikes
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
 
-            return new Playlist(playlistId, title, author, description, statistics, videos);
+            return new Playlist(playlistId, author, title, description, statistics, videos);
         }
 
         /// <summary>
-        /// Gets playlist by ID
+        /// Gets playlist information by ID.
         /// </summary>
         public Task<Playlist> GetPlaylistAsync(string playlistId)
             => GetPlaylistAsync(playlistId, int.MaxValue);
