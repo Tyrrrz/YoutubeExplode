@@ -24,8 +24,8 @@ namespace YoutubeExplode.Models.MediaStreams
         public IReadOnlyList<VideoStreamInfo> Video { get; }
 
        /// <summary>
-       /// Raw HTTP Live Streaming (HLS) url to the m3u8 playlist.
-       /// Will be null if not a live stream.
+       /// Raw HTTP Live Streaming (HLS) URL to the m3u8 playlist.
+       /// Null if not a live stream.
        /// </summary>
        public string HlsLiveStreamUrl { get; }
 

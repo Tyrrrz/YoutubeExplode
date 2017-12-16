@@ -73,7 +73,7 @@ var client = new YoutubeClient();
 var trackInfos = await client.GetVideoClosedCaptionTrackInfosAsync("_QdPW8JrYzQ");
 
 var trackInfo = trackInfos.First(t => t.Language.Code == "en");
-var track = await client.GetClosedCaptionTrackAsync();
+var track = await client.GetClosedCaptionTrackAsync(trackInfo);
 
 var caption = track.GetByTime(TimeSpan.FromSeconds(61));
 var text = caption.Text; // "And the game was afoot."
