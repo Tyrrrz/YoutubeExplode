@@ -92,8 +92,8 @@ namespace YoutubeExplode
             var configJson = await GetVideoEmbedPageConfigAsync(videoId).ConfigureAwait(false);
 
             // Extract values
-            var sourceUrl = configJson["assets"].Value<string>("js");
-            var sts = configJson.Value<string>("sts");
+            var sourceUrl = configJson["assets"]["js"].Value<string>();
+            var sts = configJson["sts"].Value<string>();
 
             // Check if successful
             if (sourceUrl.IsBlank() || sts.IsBlank())
@@ -244,10 +244,10 @@ namespace YoutubeExplode
             var configJson = await GetVideoEmbedPageConfigAsync(videoId).ConfigureAwait(false);
 
             // Extract values
-            var channelPath = configJson["args"].Value<string>("channel_path");
+            var channelPath = configJson["args"]["channel_path"].Value<string>();
             var id = channelPath.SubstringAfter("channel/");
-            var title = configJson["args"].Value<string>("author");
-            var logoUrl = configJson["args"].Value<string>("profile_picture");
+            var title = configJson["args"]["author"].Value<string>();
+            var logoUrl = configJson["args"]["profile_picture"].Value<string>();
 
             return new Channel(id, title, logoUrl);
         }
@@ -492,11 +492,11 @@ namespace YoutubeExplode
             foreach (var captionJson in captionsJson.EmptyIfNull())
             {
                 // Extract values
-                var code = captionJson.Value<string>("languageCode");
-                var name = captionJson["name"].Value<string>("simpleText");
+                var code = captionJson["languageCode"].Value<string>();
+                var name = captionJson["name"]["simpleText"].Value<string>();
                 var language = new Language(code, name);
-                var isAuto = captionJson.Value<string>("vssId").StartsWith("a.");
-                var url = captionJson.Value<string>("baseUrl");
+                var isAuto = captionJson["vssId"].Value<string>().StartsWith("a.");
+                var url = captionJson["baseUrl"].Value<string>();
 
                 // Enforce format
                 url = UrlHelper.SetUrlQueryParameter(url, "format", "3");
