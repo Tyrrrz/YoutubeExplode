@@ -95,6 +95,16 @@ namespace YoutubeExplode.Internal
                 : defaultValue;
         }
 
+        public static DateTime ParseDateTime(this string str)
+        {
+            return DateTime.Parse(str, DateTimeFormatInfo.InvariantInfo);
+        }
+
+        public static DateTime ParseDateTime(this string str, string format)
+        {
+            return DateTime.ParseExact(str, format, DateTimeFormatInfo.InvariantInfo);
+        }
+
         public static string Reverse(this string str)
         {
             var sb = new StringBuilder(str.Length);

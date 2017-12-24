@@ -72,10 +72,20 @@
             VerticalScrollBarVisibility="Auto"
             Visibility="{Binding IsDataAvailable, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel Orientation="Vertical">
-                <!--  Image  -->
-                <Border HorizontalAlignment="Stretch" Background="Black">
+                <Grid HorizontalAlignment="Stretch" Background="Black">
+                    <!--  Thumbnail  -->
                     <Image Height="180" Source="{Binding Video.Thumbnails.MediumResUrl}" />
-                </Border>
+
+                    <!--  Duration  -->
+                    <TextBlock
+                        Margin="0,0,8,6"
+                        Padding="2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Background="Black"
+                        Foreground="{DynamicResource SecondaryInverseTextBrush}"
+                        Text="{Binding Video.Duration}" />
+                </Grid>
 
                 <!--  Basic metadata  -->
                 <materialDesign:Card Margin="4">
@@ -150,12 +160,12 @@
                                     Minimum="1"
                                     Value="{Binding Video.Statistics.AverageRating, Mode=OneWay}" />
 
-                                <!--  Video length  -->
+                                <!--  Upload date  -->
                                 <TextBlock
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     Margin="6,4,6,6"
-                                    Text="{Binding Video.Duration}" />
+                                    Text="{Binding Video.UploadDate, StringFormat=\{0:MMM d\, yyyy\}}" />
 
                                 <!--  Likes and dislikes  -->
                                 <StackPanel

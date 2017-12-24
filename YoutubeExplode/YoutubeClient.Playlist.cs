@@ -14,7 +14,8 @@ namespace YoutubeExplode
     {
         private async Task<string> GetPlaylistInfoRawAsync(string playlistId, int index = 0)
         {
-            var url = $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={index}";
+            var url =
+                $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={index}&hl=en";
             return await _httpService.GetStringAsync(url).ConfigureAwait(false);
         }
 
@@ -54,6 +55,7 @@ namespace YoutubeExplode
                     // Basic info
                     var videoId = (string) videoXml.Element("encrypted_id");
                     var videoAuthor = (string) videoXml.Element("author");
+                    var videoUploadDate = (DateTime) videoXml.Element("added");
                     var videoTitle = (string) videoXml.Element("title");
                     var videoDuration = TimeSpan.FromSeconds((double) videoXml.Element("length_seconds"));
                     var videoDescription = (string) videoXml.Element("description");
@@ -75,8 +77,8 @@ namespace YoutubeExplode
 
                     // Video
                     var videoThumbnails = new ThumbnailSet(videoId);
-                    var video = new Video(videoId, videoAuthor, videoTitle, videoDescription, videoThumbnails,
-                        videoDuration, videoKeywords, videoStatistics);
+                    var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
+                        videoThumbnails, videoDuration, videoKeywords, videoStatistics);
 
                     // Add to list if not already there
                     if (videoIds.Add(video.Id))

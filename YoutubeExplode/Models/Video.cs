@@ -20,6 +20,11 @@ namespace YoutubeExplode.Models
         public string Author { get; }
 
         /// <summary>
+        /// Upload date of this video.
+        /// </summary>
+        public DateTime UploadDate { get; }
+
+        /// <summary>
         /// Title of this video.
         /// </summary>
         public string Title { get; }
@@ -50,11 +55,12 @@ namespace YoutubeExplode.Models
         public Statistics Statistics { get; }
 
         /// <summary />
-        public Video(string id, string author, string title, string description, ThumbnailSet thumbnails,
-            TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
+        public Video(string id, string author, DateTime uploadDate, string title, string description,
+            ThumbnailSet thumbnails, TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
         {
             Id = id.GuardNotNull(nameof(id));
             Author = author.GuardNotNull(nameof(author));
+            UploadDate = uploadDate;
             Title = title.GuardNotNull(nameof(title));
             Description = description.GuardNotNull(nameof(description));
             Thumbnails = thumbnails.GuardNotNull(nameof(thumbnails));

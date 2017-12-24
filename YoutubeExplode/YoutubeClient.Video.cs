@@ -217,6 +217,8 @@ namespace YoutubeExplode
             var watchPage = await GetVideoWatchPageAsync(videoId).ConfigureAwait(false);
 
             // Extract values
+            var uploadDate = watchPage.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content")
+                .ParseDateTime("yyyy-MM-dd");
             var description = watchPage.QuerySelector("p#eow-description").TextEx();
             var likeCount = watchPage.QuerySelector("button.like-button-renderer-like-button").Text()
                 .StripNonDigit().ParseLongOrDefault();
@@ -225,7 +227,8 @@ namespace YoutubeExplode
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
 
             var thumbnails = new ThumbnailSet(videoId);
-            return new Video(videoId, author, title, description, thumbnails, duration, keywords, statistics);
+            return new Video(videoId, author, uploadDate, title, description, thumbnails, duration, keywords,
+                statistics);
         }
 
         /// <summary>
