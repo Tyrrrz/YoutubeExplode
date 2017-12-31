@@ -1,6 +1,5 @@
  YoutubeExplode
- Copyright (C) 2016-2017 Alexey Golub
- and contributors (https://github.com/Tyrrrz/YoutubeExplode/graphs/contributors)
+ Copyright (C) 2016-2018 Alexey Golub
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
