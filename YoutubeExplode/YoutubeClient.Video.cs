@@ -516,19 +516,19 @@ namespace YoutubeExplode
 
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
         /// <summary>
-        /// Gets the highest available video and audio and mixing them together and save the mixed video under the given path
+        /// Gets the highest available video and audio and muxing them together and save the muxed video under the given path
         /// </summary>
         public async Task DownloadHighestQualityAsync(string videoId, string filePath, string ffmpegPath)
             => await DownloadHighestQualityAsync(videoId, filePath, ffmpegPath, null).ConfigureAwait(false);
 
         /// <summary>
-        /// Gets the highest available video and audio and mixing them together and save the mixed video under the given path
+        /// Gets the highest available video and audio and muxing them together and save the muxed video under the given path
         /// </summary>
         public async Task DownloadHighestQualityAsync(string videoId, string filePath, string ffmpegPath, IProgress<double> progress)
             => await DownloadHighestQualityAsync(videoId, filePath, ffmpegPath, progress, CancellationToken.None);
 
         /// <summary>
-        /// Gets the highest available video and audio and mixing them together and save the mixed video under the given path
+        /// Gets the highest available video and audio and muxing them together and save the muxed video under the given path
         /// </summary>
         public async Task DownloadHighestQualityAsync(string videoId, string filePath, string ffmpegPath, IProgress<double> progress, CancellationToken cancellationToken)
         {
