@@ -94,7 +94,7 @@ namespace DemoConsole
             id = NormalizeId(id);
 
             var progress = new Progress<double>(p => Console.Title = $"YoutubeExplode Demo [{p:P0}]");
-            await client.DownloadHighestQualityAsync(id, "", @"D:\Entwicklung\Programme\ffmpeg\bin\ffmpeg.exe", progress);
+            await client.DownloadHighestQualityAsync(id, "", @"YOURPATH\ffmpeg.exe", progress);
 
             Console.WriteLine("Download complete!");
             Console.ReadKey();
