@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -190,6 +191,13 @@ namespace YoutubeExplode.Internal
                 sb.AppendLine();
 
             return sb.ToString();
+        }
+
+        public static string GetValidFileName(this string fileName)
+        {
+            // Orginal code credit: https://stackoverflow.com/a/7393722
+            return Path.GetInvalidFileNameChars()
+                .Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
         }
     }
 }
