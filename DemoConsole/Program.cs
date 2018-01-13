@@ -83,6 +83,23 @@ namespace DemoConsole
             Console.ReadKey();
         }
 
+        private static async Task DownloadHighestQualityDemo()
+        {
+            // Client
+            var client = new YoutubeClient();
+
+            // Get the video ID
+            Console.Write("Enter YouTube video ID or URL: ");
+            var id = Console.ReadLine();
+            id = NormalizeId(id);
+
+            var progress = new Progress<double>(p => Console.Title = $"YoutubeExplode Demo [{p:P0}]");
+            await client.DownloadHighestQualityAsync(id, "", @"D:\Entwicklung\Programme\ffmpeg\bin\ffmpeg.exe", progress);
+
+            Console.WriteLine("Download complete!");
+            Console.ReadKey();
+        }
+
         public static void Main(string[] args)
         {
             // This demo prompts for video ID, gets video info and downloads one media stream
@@ -93,6 +110,9 @@ namespace DemoConsole
 
             // Main method in consoles cannot be asynchronous so we run everything synchronously
             MainAsync().GetAwaiter().GetResult();
+
+            // Demo for downloading highest available video and not capping at 720p
+            //DownloadHighestQualityDemo().GetAwaiter().GetResult();
         }
     }
 }

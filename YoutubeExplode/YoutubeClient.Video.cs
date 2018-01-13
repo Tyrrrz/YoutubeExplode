@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AngleSharp.Dom.Html;
@@ -13,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.CipherOperations;
+using YoutubeExplode.Internal.ffmpeg;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
@@ -421,9 +424,9 @@ namespace YoutubeExplode
                         continue;
 
                     // Extract values
-                    var itag = (int) streamXml.Attribute("id");
-                    var url = (string) streamXml.Element("BaseURL");
-                    var bitrate = (long) streamXml.Attribute("bandwidth");
+                    var itag = (int)streamXml.Attribute("id");
+                    var url = (string)streamXml.Element("BaseURL");
+                    var bitrate = (long)streamXml.Attribute("bandwidth");
 
 #if RELEASE
                     if (!MediaStreamInfo.IsKnown(itag))
@@ -451,10 +454,10 @@ namespace YoutubeExplode
                     else
                     {
                         // Parse additional data
-                        var width = (int) streamXml.Attribute("width");
-                        var height = (int) streamXml.Attribute("height");
+                        var width = (int)streamXml.Attribute("width");
+                        var height = (int)streamXml.Attribute("height");
                         var resolution = new VideoResolution(width, height);
-                        var framerate = (int) streamXml.Attribute("frameRate");
+                        var framerate = (int)streamXml.Attribute("frameRate");
 
                         var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
                         videoStreamInfos.Add(streamInfo);
@@ -510,5 +513,116 @@ namespace YoutubeExplode
 
             return closedCaptionTrackInfos;
         }
+
+#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
+        /// <summary>
+        /// Gets the highest available video and audio and mixing them together and save the mixed video under the given path
+        /// </summary>
+        public async Task DownloadHighestQualityAsync(string videoId, string filePath, string ffmpegPath)
+            => await DownloadHighestQualityAsync(videoId, filePath, ffmpegPath, null).ConfigureAwait(false);
+
+        /// <summary>
+        /// Gets the highest available video and audio and mixing them together and save the mixed video under the given path
+        /// </summary>
+        public async Task DownloadHighestQualityAsync(string videoId, string filePath, string ffmpegPath, IProgress<double> progress)
+            => await DownloadHighestQualityAsync(videoId, filePath, ffmpegPath, progress, CancellationToken.None);
+
+        /// <summary>
+        /// Gets the highest available video and audio and mixing them together and save the mixed video under the given path
+        /// </summary>
+        public async Task DownloadHighestQualityAsync(string videoId, string filePath, string ffmpegPath, IProgress<double> progress, CancellationToken cancellationToken)
+        {
+            // TODO: Output Title/Videoinfo and complete downloadsize
+
+            videoId.GuardNotNull(nameof(videoId));
+            filePath.GuardNotNull(nameof(filePath));
+            ffmpegPath.GuardNotNull(nameof(ffmpegPath));
+
+            if (!ValidateVideoId(videoId))
+                throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
+
+            if (!File.Exists(ffmpegPath))
+                throw new FileNotFoundException("Couldn't find FFmpeg.exe");
+
+            // Get mediastreams
+            var mediaStreamInfos = await GetVideoMediaStreamInfosAsync(videoId).ConfigureAwait(false);
+
+            // Get videostream
+            var videoStreamInfo = mediaStreamInfos.Video.WithHighestVideoQuality();
+
+            // Get audiostream that is compatible with the video container and has the highest bitrate
+            AudioStreamInfo audioStreamInfo = null;
+            switch (videoStreamInfo?.Container)
+            {
+                case Container.WebM:
+                    audioStreamInfo = mediaStreamInfos.Audio
+                        .OrderByDescending(x => x.Bitrate)
+                        .FirstOrDefault(x => x.AudioEncoding == AudioEncoding.Opus || x.AudioEncoding == AudioEncoding.Vorbis);
+                    break;
+
+                case Container.Mp4:
+                case Container.Flv:
+                    audioStreamInfo = mediaStreamInfos.Audio
+                        .OrderByDescending(x => x.Bitrate)
+                        .FirstOrDefault(x => x.AudioEncoding == AudioEncoding.Aac || x.AudioEncoding == AudioEncoding.Mp3);
+                    break;
+
+                case Container.M4A:
+                case Container.Tgpp:
+                    audioStreamInfo = mediaStreamInfos.Audio
+                        .OrderByDescending(x => x.Bitrate)
+                        .FirstOrDefault(x => x.AudioEncoding == AudioEncoding.Aac);
+                    break;
+
+                default:
+                    throw new NotImplementedException("Can't find compatible audio for the video");
+            }
+
+            var videoInfo = await GetVideoInfoAsync(videoId);
+            var videoTitle = videoInfo["title"].GetValidFileName();
+
+            var tmpAudioFileName = Path.Combine(Path.GetTempPath(), $"{videoTitle}_audio");
+            var tmpVideoFileName = Path.Combine(Path.GetTempPath(), $"{videoTitle}_video");
+
+            // Calculate the percentage for the audio and video download to get to 100% when download is completed
+            double audioDownloadProgress = 0;
+            double videoDownloadProgress = 0;
+            var totalFileSize = audioStreamInfo.Size + videoStreamInfo.Size;
+            var audioWeight = (double)Math.Round((1.0 / totalFileSize) * audioStreamInfo.Size, 4);
+            var videoWeight = (double)Math.Round((1.0 / totalFileSize) * videoStreamInfo.Size, 4);
+
+            var audioProgress = new Progress<double>(x =>
+            {
+                audioDownloadProgress = (audioWeight * x);
+                progress?.Report(audioDownloadProgress + videoDownloadProgress);
+            });
+
+            var videoProgress = new Progress<double>(x =>
+            {
+                videoDownloadProgress = (videoWeight * x);
+                progress?.Report(audioDownloadProgress + videoDownloadProgress);
+            });
+
+            try
+            {
+                // Downloading audio and video
+                await DownloadMediaStreamAsync(audioStreamInfo, tmpAudioFileName, audioProgress, cancellationToken);
+                await DownloadMediaStreamAsync(videoStreamInfo, tmpVideoFileName, videoProgress, cancellationToken);
+
+                // Muxing both files together
+                using (var muxer = new Muxer(ffmpegPath, true))
+                    muxer.Mux(tmpAudioFileName, tmpVideoFileName, Path.Combine(filePath, $"{videoTitle}.{videoStreamInfo.Container.GetFileExtension()}"), LogLevel.error);
+            }
+            // Ensure to delete tmp files
+            finally
+            {
+                if (File.Exists(tmpAudioFileName))
+                    File.Delete(tmpAudioFileName);
+
+                if (File.Exists(tmpVideoFileName))
+                    File.Delete(tmpVideoFileName);
+            }
+        }
+#endif
     }
 }
