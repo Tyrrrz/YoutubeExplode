@@ -23,6 +23,8 @@ namespace YoutubeExplode.Models.MediaStreams
                     return "m4a";
                 case Container.WebM:
                     return "webm";
+                case Container.WebA:
+                    return "weba";
                 case Container.Tgpp:
                     return "3gpp";
                 case Container.Flv:
