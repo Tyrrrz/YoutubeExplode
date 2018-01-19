@@ -12,45 +12,39 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<string> GetPlaylistInfoRawAsync(string playlistId, int index = 0)
+        private async Task<string> GetSearchResultsRawAsync(string query, int page = 1)
         {
-            var url =
-                $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
+            query = query.UrlEncode();
+            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
             return await _httpService.GetStringAsync(url).ConfigureAwait(false);
         }
 
-        private async Task<JToken> GetPlaylistInfoAsync(string playlistId, int index = 0)
+        private async Task<JToken> GetSearchResultsAsync(string query, int page = 1)
         {
-            var raw = await GetPlaylistInfoRawAsync(playlistId, index).ConfigureAwait(false);
+            var raw = await GetSearchResultsRawAsync(query, page).ConfigureAwait(false);
             return JToken.Parse(raw);
         }
 
         /// <summary>
-        /// Gets playlist information by ID.
-        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
+        /// Searches videos using given query.
+        /// The video list is truncated at given number of pages (1 page ≤ 20 videos).
         /// </summary>
-        public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
+        public async Task<IReadOnlyList<Video>> SearchVideosAsync(string query, int maxPages)
         {
-            playlistId.GuardNotNull(nameof(playlistId));
+            query.GuardNotNull(nameof(query));
             maxPages.GuardPositive(nameof(maxPages));
-            if (!ValidatePlaylistId(playlistId))
-                throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
             // Get all videos across pages
-            var pagesDone = 0;
-            var offset = 0;
-            JToken playlistJson;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
-            do
+            for (var page = 1; page <= maxPages; page++)
             {
-                // Get playlist info
-                playlistJson = await GetPlaylistInfoAsync(playlistId, offset).ConfigureAwait(false);
+                // Get search results
+                var searchResultsJson = await GetSearchResultsAsync(query, page).ConfigureAwait(false);
 
                 // Parse videos
-                var total = 0;
                 var delta = 0;
-                foreach (var videoJson in playlistJson["video"])
+                foreach (var videoJson in searchResultsJson["video"])
                 {
                     // Basic info
                     var videoId = videoJson["encrypted_id"].Value<string>();
@@ -86,36 +80,20 @@ namespace YoutubeExplode
                         videos.Add(video);
                         delta++;
                     }
-                    total++;
                 }
 
                 // Break if no distinct videos were added to the list
                 if (delta <= 0)
                     break;
+            }
 
-                // Prepare for next page
-                pagesDone++;
-                offset += total;
-            } while (pagesDone < maxPages);
-
-            // Extract playlist info
-            var title = playlistJson["title"].Value<string>();
-            var author = playlistJson["author"]?.Value<string>() ?? ""; // system playlists don't have an author
-            var description = playlistJson["description"]?.Value<string>() ?? ""; // system playlists don't have description
-
-            // Statistics
-            var viewCount = playlistJson["views"]?.Value<long>() ?? 0; // watchlater does not have views
-            var likeCount = playlistJson["likes"]?.Value<long>() ?? 0; // system playlists don't have likes
-            var dislikeCount = playlistJson["dislikes"]?.Value<long>() ?? 0; // system playlists don't have dislikes
-            var statistics = new Statistics(viewCount, likeCount, dislikeCount);
-
-            return new Playlist(playlistId, author, title, description, statistics, videos);
+            return videos;
         }
 
         /// <summary>
-        /// Gets playlist information by ID.
+        /// Searches videos using given query.
         /// </summary>
-        public Task<Playlist> GetPlaylistAsync(string playlistId)
-            => GetPlaylistAsync(playlistId, int.MaxValue);
+        public Task<IReadOnlyList<Video>> SearchVideosAsync(string query)
+            => SearchVideosAsync(query, int.MaxValue);
     }
 }

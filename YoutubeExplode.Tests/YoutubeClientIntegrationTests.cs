@@ -239,5 +239,16 @@ namespace YoutubeExplode.Tests
 
             Assert.That(videos, Is.Not.Null);
         }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoSearchQueries))]
+        public async Task YoutubeClient_SearchVideosAsync_Test(string query)
+        {
+            var client = new YoutubeClient();
+
+            var videos = await client.SearchVideosAsync(query, 3);
+
+            Assert.That(videos, Is.Not.Null);
+        }
     }
 }
