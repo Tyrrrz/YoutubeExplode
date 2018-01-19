@@ -21,11 +21,6 @@
         WebM,
 
         /// <summary>
-        /// Web Media audio-only (.weba).
-        /// </summary>
-        WebA,
-
-        /// <summary>
         /// 3rd Generation Partnership Project (.3gpp).
         /// </summary>
         Tgpp,

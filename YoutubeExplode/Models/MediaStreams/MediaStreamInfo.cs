@@ -140,11 +140,11 @@ namespace YoutubeExplode.Models.MediaStreams
             {328, new ItagDescriptor(Container.M4A, AudioEncoding.Aac, null, null)},
 
             // Audio-only (webm)
-            {171, new ItagDescriptor(Container.WebA, AudioEncoding.Vorbis, null, null)},
-            {172, new ItagDescriptor(Container.WebA, AudioEncoding.Vorbis, null, null)},
-            {249, new ItagDescriptor(Container.WebA, AudioEncoding.Opus, null, null)},
-            {250, new ItagDescriptor(Container.WebA, AudioEncoding.Opus, null, null)},
-            {251, new ItagDescriptor(Container.WebA, AudioEncoding.Opus, null, null)}
+            {171, new ItagDescriptor(Container.WebM, AudioEncoding.Vorbis, null, null)},
+            {172, new ItagDescriptor(Container.WebM, AudioEncoding.Vorbis, null, null)},
+            {249, new ItagDescriptor(Container.WebM, AudioEncoding.Opus, null, null)},
+            {250, new ItagDescriptor(Container.WebM, AudioEncoding.Opus, null, null)},
+            {251, new ItagDescriptor(Container.WebM, AudioEncoding.Opus, null, null)}
         };
 
         /// <summary>
