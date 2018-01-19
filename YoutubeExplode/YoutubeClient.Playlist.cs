@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
 using YoutubeExplode.Services;
@@ -15,14 +15,14 @@ namespace YoutubeExplode
         private async Task<string> GetPlaylistInfoRawAsync(string playlistId, int index = 0)
         {
             var url =
-                $"https://www.youtube.com/list_ajax?style=xml&action_get_list=1&list={playlistId}&index={index}&hl=en";
+                $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
             return await _httpService.GetStringAsync(url).ConfigureAwait(false);
         }
 
-        private async Task<XElement> GetPlaylistInfoAsync(string playlistId, int index = 0)
+        private async Task<JToken> GetPlaylistInfoAsync(string playlistId, int index = 0)
         {
             var raw = await GetPlaylistInfoRawAsync(playlistId, index).ConfigureAwait(false);
-            return XElement.Parse(raw).StripNamespaces();
+            return JToken.Parse(raw);
         }
 
         /// <summary>
@@ -39,29 +39,29 @@ namespace YoutubeExplode
             // Get all videos across pages
             var pagesDone = 0;
             var offset = 0;
-            XElement playlistXml;
+            JToken playlistJson;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             do
             {
                 // Get playlist info
-                playlistXml = await GetPlaylistInfoAsync(playlistId, offset).ConfigureAwait(false);
+                playlistJson = await GetPlaylistInfoAsync(playlistId, offset).ConfigureAwait(false);
 
                 // Parse videos
                 var total = 0;
                 var delta = 0;
-                foreach (var videoXml in playlistXml.Elements("video"))
+                foreach (var videoJson in playlistJson["video"])
                 {
                     // Basic info
-                    var videoId = (string) videoXml.Element("encrypted_id");
-                    var videoAuthor = (string) videoXml.Element("author");
-                    var videoUploadDate = (DateTime) videoXml.Element("added");
-                    var videoTitle = (string) videoXml.Element("title");
-                    var videoDuration = TimeSpan.FromSeconds((double) videoXml.Element("length_seconds"));
-                    var videoDescription = (string) videoXml.Element("description");
+                    var videoId = videoJson["encrypted_id"].Value<string>();
+                    var videoAuthor = videoJson["author"].Value<string>();
+                    var videoUploadDate = videoJson["added"].Value<DateTime>();
+                    var videoTitle = videoJson["title"].Value<string>();
+                    var videoDuration = TimeSpan.FromSeconds(videoJson["length_seconds"].Value<double>());
+                    var videoDescription = videoJson["description"].Value<string>();
 
                     // Keywords
-                    var videoKeywordsJoined = (string) videoXml.Element("keywords");
+                    var videoKeywordsJoined = videoJson["keywords"].Value<string>();
                     var videoKeywords = Regex
                         .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                         .Cast<Match>()
@@ -70,9 +70,9 @@ namespace YoutubeExplode
                         .ToArray();
 
                     // Statistics
-                    var videoViewCount = ((string) videoXml.Element("views")).StripNonDigit().ParseLong();
-                    var videoLikeCount = ((string) videoXml.Element("likes")).StripNonDigit().ParseLong();
-                    var videoDislikeCount = ((string) videoXml.Element("dislikes")).StripNonDigit().ParseLong();
+                    var videoViewCount = videoJson["views"].Value<string>().StripNonDigit().ParseLong();
+                    var videoLikeCount = videoJson["likes"].Value<long>();
+                    var videoDislikeCount = videoJson["dislikes"].Value<long>();
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
 
                     // Video
@@ -99,14 +99,14 @@ namespace YoutubeExplode
             } while (pagesDone < maxPages);
 
             // Extract playlist info
-            var title = (string) playlistXml.Element("title");
-            var author = (string) playlistXml.Element("author") ?? ""; // system playlists don't have an author
-            var description = (string) playlistXml.Element("description");
+            var title = playlistJson["title"].Value<string>();
+            var author = playlistJson["author"]?.Value<string>() ?? ""; // system playlists don't have an author
+            var description = playlistJson["description"]?.Value<string>() ?? ""; // system playlists don't have description
 
             // Statistics
-            var viewCount = (long?) playlistXml.Element("views") ?? 0; // watchlater does not have views
-            var likeCount = (long?) playlistXml.Element("likes") ?? 0; // system playlists don't have likes
-            var dislikeCount = (long?) playlistXml.Element("dislikes") ?? 0; // system playlists don't have dislikes
+            var viewCount = playlistJson["views"]?.Value<long>() ?? 0; // watchlater does not have views
+            var likeCount = playlistJson["likes"]?.Value<long>() ?? 0; // system playlists don't have likes
+            var dislikeCount = playlistJson["dislikes"]?.Value<long>() ?? 0; // system playlists don't have dislikes
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
 
             return new Playlist(playlistId, author, title, description, statistics, videos);
