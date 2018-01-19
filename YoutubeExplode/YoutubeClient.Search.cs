@@ -16,7 +16,7 @@ namespace YoutubeExplode
         {
             query = query.UrlEncode();
             var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+            return await _httpService.GetStringAsync(url, false).ConfigureAwait(false);
         }
 
         private async Task<JToken> GetSearchResultsAsync(string query, int page = 1)
@@ -35,16 +35,21 @@ namespace YoutubeExplode
             maxPages.GuardPositive(nameof(maxPages));
 
             // Get all videos across pages
-            var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
             {
                 // Get search results
                 var searchResultsJson = await GetSearchResultsAsync(query, page).ConfigureAwait(false);
 
+                // Get videos
+                var videosJson = searchResultsJson["video"].EmptyIfNull().ToArray();
+
+                // Break if there are no videos
+                if (!videosJson.Any())
+                    break;
+
                 // Parse videos
-                var delta = 0;
-                foreach (var videoJson in searchResultsJson["video"])
+                foreach (var videoJson in videosJson)
                 {
                     // Basic info
                     var videoId = videoJson["encrypted_id"].Value<string>();
@@ -74,17 +79,8 @@ namespace YoutubeExplode
                     var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics);
 
-                    // Add to list if not already there
-                    if (videoIds.Add(video.Id))
-                    {
-                        videos.Add(video);
-                        delta++;
-                    }
+                    videos.Add(video);
                 }
-
-                // Break if no distinct videos were added to the list
-                if (delta <= 0)
-                    break;
             }
 
             return videos;

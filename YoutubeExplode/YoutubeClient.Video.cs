@@ -488,11 +488,11 @@ namespace YoutubeExplode
             // Extract captions metadata
             var playerResponseRaw = videoInfo["player_response"];
             var playerResponseJson = JToken.Parse(playerResponseRaw);
-            var captionsJson = playerResponseJson.SelectToken("$..captionTracks");
+            var captionsJson = playerResponseJson.SelectToken("$..captionTracks").EmptyIfNull();
 
             // Parse closed caption tracks
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
-            foreach (var captionJson in captionsJson.EmptyIfNull())
+            foreach (var captionJson in captionsJson)
             {
                 // Extract values
                 var code = captionJson["languageCode"].Value<string>();

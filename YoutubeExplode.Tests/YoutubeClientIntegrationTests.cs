@@ -246,7 +246,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            var videos = await client.SearchVideosAsync(query, 3);
+            var videos = await client.SearchVideosAsync(query);
 
             Assert.That(videos, Is.Not.Null);
         }

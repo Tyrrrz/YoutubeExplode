@@ -125,9 +125,8 @@ namespace YoutubeExplode.Tests
 
         public static IEnumerable GetVideoSearchQueries()
         {
-            yield return new TestCaseData("cat");
-            yield return new TestCaseData("dog");
-            yield return new TestCaseData("fox");
+            yield return new TestCaseData("undead corporation megalomania");
+            yield return new TestCaseData("white siberian fox");
         }
     }
 }
