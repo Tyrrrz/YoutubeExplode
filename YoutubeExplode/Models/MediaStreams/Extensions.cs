@@ -77,8 +77,9 @@ namespace YoutubeExplode.Models.MediaStreams
                         $"Unexpected video quality [{videoQuality}].");
             }
 
-            // Framerate
-            var frameratePart = framerate > 30 ? framerate.ToString() : string.Empty;
+            // Append framerate if it's above 30
+            // (YouTube's framerate part is always 60, no matter what it actually is)
+            var frameratePart = framerate > 30 ? "60" : string.Empty;
 
             return qualityPart + frameratePart;
         }
