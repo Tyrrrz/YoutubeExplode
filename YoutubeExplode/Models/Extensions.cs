@@ -11,7 +11,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Gets the regular URL of a video.
         /// </summary>
-        public static string GetRegularUrl(this Video video)
+        public static string GetUrl(this Video video)
         {
             video.GuardNotNull(nameof(video));
             return $"https://www.youtube.com/watch?v={video.Id}";
@@ -38,7 +38,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Gets the regular URL of a playlist.
         /// </summary>
-        public static string GetRegularUrl(this Playlist playlist)
+        public static string GetUrl(this Playlist playlist)
         {
             playlist.GuardNotNull(nameof(playlist));
             return $"https://www.youtube.com/playlist?list={playlist.Id}";
