@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
+using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
 
@@ -8,6 +10,27 @@ namespace YoutubeExplode.Tests
     [TestFixture]
     public class ModelsUnitTests
     {
+        private Video GetVideo()
+        {
+            var thumbnails = new ThumbnailSet("-TEST-TEST-");
+            var statistics = new Statistics(1337, 13, 37);
+            return new Video("-TEST-TEST-", "Test Author", DateTime.Now, "Test Video", "test", thumbnails,
+                TimeSpan.FromMinutes(2), new string[0], statistics);
+        }
+
+        private Playlist GetPlaylist()
+        {
+            var videos = new[] {GetVideo()};
+            var statistics = new Statistics(1337, 13, 37);
+            return new Playlist("PLTESTTESTTESTTESTTESTTESTTESTTEST", "Test Author", "Test Playlist", "test",
+                statistics, videos);
+        }
+
+        private Channel GetChannel()
+        {
+            return new Channel("UCTESTTESTTESTTESTTESTTE", "Test Channel", "test");
+        }
+
         private ClosedCaptionTrack GetClosedCaptionTrack()
         {
             var info = new ClosedCaptionTrackInfo("test", new Language("en", "English (auto-generated)"), true);
@@ -68,6 +91,152 @@ namespace YoutubeExplode.Tests
             var label = quality.GetVideoQualityLabel(framerate);
 
             Assert.That(label, Is.Not.Null.Or.Empty);
+        }
+
+        [Test]
+        public void Extensions_GetUrl_Video_Test()
+        {
+            var video = GetVideo();
+            var url = video.GetUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParseVideoId(url), Is.EqualTo(video.Id));
+        }
+
+        [Test]
+        public void Extensions_GetEmbedUrl_Video_Test()
+        {
+            var video = GetVideo();
+            var url = video.GetEmbedUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParseVideoId(url), Is.EqualTo(video.Id));
+        }
+
+        [Test]
+        public void Extensions_GetShortUrl_Video_Test()
+        {
+            var video = GetVideo();
+            var url = video.GetShortUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParseVideoId(url), Is.EqualTo(video.Id));
+        }
+
+        [Test]
+        public void Extensions_GetUrl_Playlist_Test()
+        {
+            var playlist = GetPlaylist();
+            var url = playlist.GetUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParsePlaylistId(url), Is.EqualTo(playlist.Id));
+        }
+
+        [Test]
+        public void Extensions_GetWatchUrl_Playlist_Test()
+        {
+            var playlist = GetPlaylist();
+            var firstVideo = playlist.Videos.First();
+            var url = playlist.GetWatchUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParsePlaylistId(url), Is.EqualTo(playlist.Id));
+            Assert.That(YoutubeClient.ParseVideoId(url), Is.EqualTo(firstVideo.Id));
+        }
+
+        [Test]
+        public void Extensions_GetEmbedUrl_Playlist_Test()
+        {
+            var playlist = GetPlaylist();
+            var firstVideo = playlist.Videos.First();
+            var url = playlist.GetEmbedUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParsePlaylistId(url), Is.EqualTo(playlist.Id));
+            Assert.That(YoutubeClient.ParseVideoId(url), Is.EqualTo(firstVideo.Id));
+        }
+
+        [Test]
+        public void Extensions_GetShortUrl_Playlist_Test()
+        {
+            var playlist = GetPlaylist();
+            var firstVideo = playlist.Videos.First();
+            var url = playlist.GetShortUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParsePlaylistId(url), Is.EqualTo(playlist.Id));
+            Assert.That(YoutubeClient.ParseVideoId(url), Is.EqualTo(firstVideo.Id));
+        }
+
+        [Test]
+        public void Extensions_GetUrl_Channel_Test()
+        {
+            var channel = GetChannel();
+            var url = channel.GetUrl();
+
+            Assert.That(url, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ParseChannelId(url), Is.EqualTo(channel.Id));
+        }
+
+        [Test]
+        public void Extensions_GetVideoMixPlaylistId_Test()
+        {
+            var video = GetVideo();
+            var playlistId = video.GetVideoMixPlaylistId();
+
+            Assert.That(playlistId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidatePlaylistId(playlistId), Is.True);
+        }
+
+        [Test]
+        public void Extensions_GetChannelVideoMixPlaylistId_Test()
+        {
+            var video = GetVideo();
+            var playlistId = video.GetChannelVideoMixPlaylistId();
+
+            Assert.That(playlistId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidatePlaylistId(playlistId), Is.True);
+        }
+
+        [Test]
+        public void Extensions_GetChannelVideosPlaylistId_Test()
+        {
+            var channel = GetChannel();
+            var playlistId = channel.GetChannelVideosPlaylistId();
+
+            Assert.That(playlistId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidatePlaylistId(playlistId), Is.True);
+        }
+
+        [Test]
+        public void Extensions_GetPopularChannelVideosPlaylistId_Test()
+        {
+            var channel = GetChannel();
+            var playlistId = channel.GetPopularChannelVideosPlaylistId();
+
+            Assert.That(playlistId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidatePlaylistId(playlistId), Is.True);
+        }
+
+        [Test]
+        public void Extensions_GetLikedVideosPlaylistId_Test()
+        {
+            var channel = GetChannel();
+            var playlistId = channel.GetLikedVideosPlaylistId();
+
+            Assert.That(playlistId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidatePlaylistId(playlistId), Is.True);
+        }
+
+        [Test]
+        public void Extensions_GetFavoritesPlaylistId_Test()
+        {
+            var channel = GetChannel();
+            var playlistId = channel.GetFavoritesPlaylistId();
+
+            Assert.That(playlistId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidatePlaylistId(playlistId), Is.True);
         }
     }
 }
