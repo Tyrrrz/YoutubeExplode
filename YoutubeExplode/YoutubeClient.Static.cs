@@ -83,13 +83,13 @@ namespace YoutubeExplode
             if (playlistId == "WL")
                 return true;
 
-            if (!playlistId.StartsWith("PL") &&
-                !playlistId.StartsWith("RD") &&
-                !playlistId.StartsWith("UL") &&
-                !playlistId.StartsWith("UU") &&
-                !playlistId.StartsWith("PU") &&
-                !playlistId.StartsWith("LL") &&
-                !playlistId.StartsWith("FL"))
+            if (!playlistId.StartsWith("PL", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("RD", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("UL", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("UU", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("PU", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("LL", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("FL", StringComparison.Ordinal))
                 return false;
 
             if (playlistId.Length != 13 &&
@@ -174,7 +174,7 @@ namespace YoutubeExplode
             if (channelId.Length != 24)
                 return false;
 
-            if (!channelId.StartsWith("UC", StringComparison.OrdinalIgnoreCase))
+            if (!channelId.StartsWith("UC", StringComparison.Ordinal))
                 return false;
 
             return !Regex.IsMatch(channelId, @"[^0-9a-zA-Z_\-]");

@@ -70,28 +70,28 @@ namespace YoutubeExplode.Models
         {
             id.GuardNotNull(nameof(id));
 
-            if (id.StartsWith("PL"))
+            if (id.StartsWith("PL", StringComparison.Ordinal))
                 return PlaylistType.Normal;
 
-            if (id.StartsWith("RD"))
+            if (id.StartsWith("RD", StringComparison.Ordinal))
                 return PlaylistType.VideoMix;
 
-            if (id.StartsWith("UL"))
+            if (id.StartsWith("UL", StringComparison.Ordinal))
                 return PlaylistType.ChannelVideoMix;
 
-            if (id.StartsWith("UU"))
+            if (id.StartsWith("UU", StringComparison.Ordinal))
                 return PlaylistType.ChannelVideos;
 
-            if (id.StartsWith("PU"))
+            if (id.StartsWith("PU", StringComparison.Ordinal))
                 return PlaylistType.PopularChannelVideos;
 
-            if (id.StartsWith("LL"))
+            if (id.StartsWith("LL", StringComparison.Ordinal))
                 return PlaylistType.LikedVideos;
 
-            if (id.StartsWith("FL"))
+            if (id.StartsWith("FL", StringComparison.Ordinal))
                 return PlaylistType.Favorites;
 
-            if (id.StartsWith("WL"))
+            if (id.StartsWith("WL", StringComparison.Ordinal))
                 return PlaylistType.WatchLater;
 
             throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}].");
