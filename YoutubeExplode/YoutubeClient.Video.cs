@@ -278,9 +278,9 @@ namespace YoutubeExplode
             }
 
             // Prepare stream info collections
-            var muxedStreamInfos = new List<MuxedStreamInfo>();
-            var audioStreamInfos = new List<AudioStreamInfo>();
-            var videoStreamInfos = new List<VideoStreamInfo>();
+            var muxedStreamInfoMap = new Dictionary<int, MuxedStreamInfo>();
+            var audioStreamInfoMap = new Dictionary<int, AudioStreamInfo>();
+            var videoStreamInfoMap = new Dictionary<int, VideoStreamInfo>();
 
             // Resolve muxed streams
             var muxedStreamInfosEncoded = videoInfo.GetOrDefault("url_encoded_fmt_stream_map");
@@ -331,7 +331,7 @@ namespace YoutubeExplode
                     }
 
                     var streamInfo = new MuxedStreamInfo(itag, url, contentLength);
-                    muxedStreamInfos.Add(streamInfo);
+                    muxedStreamInfoMap[itag] = streamInfo;
                 }
             }
 
@@ -374,7 +374,7 @@ namespace YoutubeExplode
                     if (isAudio)
                     {
                         var streamInfo = new AudioStreamInfo(itag, url, contentLength, bitrate);
-                        audioStreamInfos.Add(streamInfo);
+                        audioStreamInfoMap[itag] = streamInfo;
                     }
                     // If video stream
                     else
@@ -387,7 +387,7 @@ namespace YoutubeExplode
                         var framerate = streamInfoDic["fps"].ParseInt();
 
                         var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
-                        videoStreamInfos.Add(streamInfo);
+                        videoStreamInfoMap[itag] = streamInfo;
                     }
                 }
             }
@@ -445,7 +445,7 @@ namespace YoutubeExplode
                     if (isAudio)
                     {
                         var streamInfo = new AudioStreamInfo(itag, url, contentLength, bitrate);
-                        audioStreamInfos.Add(streamInfo);
+                        audioStreamInfoMap[itag] = streamInfo;
                     }
                     // If video stream
                     else
@@ -457,7 +457,7 @@ namespace YoutubeExplode
                         var framerate = (int) streamXml.Attribute("frameRate");
 
                         var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
-                        videoStreamInfos.Add(streamInfo);
+                        videoStreamInfoMap[itag] = streamInfo;
                     }
                 }
             }
@@ -466,9 +466,9 @@ namespace YoutubeExplode
             var hlsLiveStreamUrl = videoInfo.GetOrDefault("hlsvp");
 
             // Finalize stream info collections
-            muxedStreamInfos = muxedStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.VideoQuality).ToList();
-            audioStreamInfos = audioStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.Bitrate).ToList();
-            videoStreamInfos = videoStreamInfos.Distinct(s => s.Itag).OrderByDescending(s => s.VideoQuality).ToList();
+            var muxedStreamInfos = muxedStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
+            var audioStreamInfos = audioStreamInfoMap.Values.OrderByDescending(s => s.Bitrate).ToArray();
+            var videoStreamInfos = videoStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
 
             return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsLiveStreamUrl);
         }
