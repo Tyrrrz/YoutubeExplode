@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using JetBrains.Annotations;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
@@ -13,6 +14,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Metadata associated with this stream.
         /// </summary>
+        [NotNull]
         public MediaStreamInfo Info { get; }
 
         /// <inheritdoc />

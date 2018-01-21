@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
@@ -11,6 +12,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary>
         /// Text displayed by this caption.
         /// </summary>
+        [NotNull]
         public string Text { get; }
 
         /// <summary>

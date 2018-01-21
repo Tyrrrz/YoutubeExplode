@@ -1,4 +1,5 @@
-﻿using YoutubeExplode.Internal;
+﻿using JetBrains.Annotations;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -10,11 +11,13 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary>
         /// ISO 639-1 code of this language.
         /// </summary>
+        [NotNull]
         public string Code { get; }
 
         /// <summary>
         /// Full English name of this language.
         /// </summary>
+        [NotNull]
         public string Name { get; }
 
         /// <summary />

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
@@ -11,28 +12,32 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Muxed streams.
         /// </summary>
+        [NotNull, ItemNotNull]
         public IReadOnlyList<MuxedStreamInfo> Muxed { get; }
 
         /// <summary>
         /// Audio-only streams.
         /// </summary>
+        [NotNull, ItemNotNull]
         public IReadOnlyList<AudioStreamInfo> Audio { get; }
 
         /// <summary>
         /// Video-only streams.
         /// </summary>
+        [NotNull, ItemNotNull]
         public IReadOnlyList<VideoStreamInfo> Video { get; }
 
-       /// <summary>
-       /// Raw HTTP Live Streaming (HLS) URL to the m3u8 playlist.
-       /// Null if not a live stream.
-       /// </summary>
-       public string HlsLiveStreamUrl { get; }
+        /// <summary>
+        /// Raw HTTP Live Streaming (HLS) URL to the m3u8 playlist.
+        /// Null if not a live stream.
+        /// </summary>
+        [CanBeNull]
+        public string HlsLiveStreamUrl { get; }
 
         /// <summary />
         public MediaStreamInfoSet(IReadOnlyList<MuxedStreamInfo> muxed,
             IReadOnlyList<AudioStreamInfo> audio,
-            IReadOnlyList<VideoStreamInfo> video, 
+            IReadOnlyList<VideoStreamInfo> video,
             string hlsLiveStreamUrl)
         {
             Muxed = muxed.GuardNotNull(nameof(muxed));

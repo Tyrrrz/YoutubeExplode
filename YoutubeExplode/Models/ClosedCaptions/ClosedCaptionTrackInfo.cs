@@ -1,4 +1,5 @@
-﻿using YoutubeExplode.Internal;
+﻿using JetBrains.Annotations;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -10,11 +11,13 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary>
         /// Manifest URL of the associated track.
         /// </summary>
+        [NotNull]
         public string Url { get; }
 
         /// <summary>
         /// Language of the associated track.
         /// </summary>
+        [NotNull]
         public Language Language { get; }
 
         /// <summary>

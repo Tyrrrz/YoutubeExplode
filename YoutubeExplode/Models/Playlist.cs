@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models
@@ -12,36 +13,42 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// ID of this playlist.
         /// </summary>
+        [NotNull]
         public string Id { get; }
 
-        /// <summary>
         /// Type of this playlist.
+        /// <summary>
         /// </summary>
         public PlaylistType Type { get; }
 
         /// <summary>
         /// Author of this playlist.
         /// </summary>
+        [NotNull]
         public string Author { get; }
 
         /// <summary>
         /// Title of this playlist.
         /// </summary>
+        [NotNull]
         public string Title { get; }
 
         /// <summary>
         /// Description of this playlist.
         /// </summary>
+        [NotNull]
         public string Description { get; }
 
         /// <summary>
         /// Statistics of this playlist.
         /// </summary>
+        [NotNull]
         public Statistics Statistics { get; }
 
         /// <summary>
         /// Collection of videos contained in this playlist.
         /// </summary>
+        [NotNull, ItemNotNull]
         public IReadOnlyList<Video> Videos { get; }
 
         /// <summary />

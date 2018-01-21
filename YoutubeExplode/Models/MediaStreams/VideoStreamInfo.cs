@@ -1,4 +1,5 @@
-﻿using YoutubeExplode.Internal;
+﻿using JetBrains.Annotations;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -35,6 +36,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Video quality label of the associated stream.
         /// </summary>
+        [NotNull]
         public string VideoQualityLabel { get; }
 
         /// <summary />

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
@@ -11,11 +12,13 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary>
         /// Metadata associated with this track.
         /// </summary>
+        [NotNull]
         public ClosedCaptionTrackInfo Info { get; }
 
         /// <summary>
         /// Collection of closed captions that belong to this track.
         /// </summary>
+        [NotNull, ItemNotNull]
         public IReadOnlyList<ClosedCaption> Captions { get; }
 
         /// <summary />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
@@ -17,6 +18,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// URL of the endpoint that serves the associated stream.
         /// </summary>
+        [NotNull]
         public string Url { get; }
 
         /// <summary>
