@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -57,7 +58,7 @@ namespace YoutubeExplode
                     var videoUploadDate = videoJson["added"].Value<DateTime>();
                     var videoTitle = videoJson["title"].Value<string>();
                     var videoDuration = TimeSpan.FromSeconds(videoJson["length_seconds"].Value<double>());
-                    var videoDescription = videoJson["description"].Value<string>();
+                    var videoDescription = videoJson["description"].Value<string>().HtmlDecode();
 
                     // Keywords
                     var videoKeywordsJoined = videoJson["keywords"].Value<string>();

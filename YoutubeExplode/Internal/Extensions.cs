@@ -125,6 +125,16 @@ namespace YoutubeExplode.Internal
             return WebUtility.UrlDecode(url);
         }
 
+        public static string HtmlEncode(this string url)
+        {
+            return WebUtility.HtmlEncode(url);
+        }
+
+        public static string HtmlDecode(this string url)
+        {
+            return WebUtility.HtmlDecode(url);
+        }
+
         public static string JoinToString<T>(this IEnumerable<T> enumerable, string separator)
         {
             return string.Join(separator, enumerable);
