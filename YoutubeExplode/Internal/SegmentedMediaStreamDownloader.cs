@@ -61,6 +61,7 @@ namespace YoutubeExplode.Internal
                 {
                     using (var asd = File.OpenRead(filePath + $"_p{i}"))
                         await asd.CopyToAsync(fs).ConfigureAwait(false);
+                    File.Delete(filePath + $"_p{i}");
                 }
             }
         }
