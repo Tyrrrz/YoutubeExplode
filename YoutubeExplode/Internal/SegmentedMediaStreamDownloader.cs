@@ -32,14 +32,7 @@ namespace YoutubeExplode.Internal
                 {
                     using (var request = new HttpRequestMessage(HttpMethod.Get, _mediaStreamInfo.Url))
                     {
-                        if (id == 0)
-                            request.Headers.Range = new RangeHeaderValue(0, segmentSize - 1);
-                        else if (id == segmentCount - 1)
-                            request.Headers.Range =
-                                new RangeHeaderValue(id * segmentSize, _mediaStreamInfo.Size - 1);
-                        else
-                            request.Headers.Range =
-                                new RangeHeaderValue(id * segmentSize, (id + 1) * segmentSize - 1);
+                        request.Headers.Range = new RangeHeaderValue(id * segmentSize, (id + 1) * segmentSize - 1);
                         using (var response = await _httpService.PerformRequestAsync(request).ConfigureAwait(false))
                         {
                             var partFilePath = filePath + $"_p{id}";
