@@ -39,25 +39,8 @@ namespace YoutubeExplode
             filePath.GuardNotNull(nameof(filePath));
 
             // Save to file
-            using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
-            using (var output = File.Create(filePath))
-            {
-                var buffer = new byte[4 * 1024];
-                int bytesRead;
-                long totalBytesRead = 0;
-                do
-                {
-                    // Read
-                    totalBytesRead += bytesRead =
-                        await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
-
-                    // Write
-                    await output.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
-
-                    // Report progress
-                    progress?.Report(1.0 * totalBytesRead / input.Length);
-                } while (bytesRead > 0);
-            }
+            var downloader = new SegmentedMediaStreamDownloader(_httpService, info);
+            await downloader.DownloadAsync(filePath).ConfigureAwait(false);
         }
 
         /// <summary>
