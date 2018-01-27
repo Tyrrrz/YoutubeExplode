@@ -26,7 +26,7 @@ namespace YoutubeExplode.Internal
             // Calculate stuff
             // TODO: there's probably a minimal size that YouTube serves without rate limiting, need to research
             _segmentCount = 10;
-            _segmentSize = (long)Math.Ceiling(1.0 * _mediaStreamInfo.Size / _segmentCount);
+            _segmentSize = (long) Math.Ceiling(1.0 * _mediaStreamInfo.Size / _segmentCount);
         }
 
         private void UnlockConnectionLimit()
@@ -72,11 +72,9 @@ namespace YoutubeExplode.Internal
                 {
                     using (var request = CreateSegmentedRequest(from, to))
                     using (var response = await _httpService.PerformRequestAsync(request).ConfigureAwait(false))
-                    {
-                        using (var input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                        using (var output = File.Create(segmentFilePath))
-                            await input.CopyToAsync(output).ConfigureAwait(false);
-                    }
+                    using (var input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var output = File.Create(segmentFilePath))
+                        await input.CopyToAsync(output).ConfigureAwait(false);
                 });
                 tasks.Add(task);
             }
