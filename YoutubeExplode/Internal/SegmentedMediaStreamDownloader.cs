@@ -15,9 +15,8 @@ namespace YoutubeExplode.Internal
     {
         private readonly IHttpService _httpService;
         private readonly MediaStreamInfo _mediaStreamInfo;
-
-        private int _segmentCount;
-        private long _segmentSize;
+        private readonly int _segmentCount;
+        private readonly long _segmentSize;
 
         public SegmentedMediaStreamDownloader(IHttpService httpService, MediaStreamInfo mediaStreamInfo)
         {
@@ -25,14 +24,9 @@ namespace YoutubeExplode.Internal
             _mediaStreamInfo = mediaStreamInfo;
 
             // Calculate stuff
-            CalculateSegmentCountAndSize();
-        }
-
-        private void CalculateSegmentCountAndSize()
-        {
             // TODO: there's probably a minimal size that YouTube serves without rate limiting, need to research
             _segmentCount = 10;
-            _segmentSize = (long) Math.Ceiling(1.0 * _mediaStreamInfo.Size / _segmentCount);
+            _segmentSize = (long)Math.Ceiling(1.0 * _mediaStreamInfo.Size / _segmentCount);
         }
 
         private void UnlockConnectionLimit()
