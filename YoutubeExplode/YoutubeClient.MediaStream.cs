@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.MediaStreams;
 using YoutubeExplode.Services;
@@ -38,18 +40,21 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
             filePath.GuardNotNull(nameof(filePath));
 
+            // Keep track of bytes copied for progress reporting
+            var totalBytesCopied = 0L;
+
             // Download muxed streams directly
             if (info is MuxedStreamInfo)
             {
                 using (var output = File.Create(filePath))
                 using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
                 {
-                    var totalBytesCopied = 0L;
                     int bytesCopied;
                     do
                     {
                         // Copy
-                        bytesCopied = await input.CopyChunkToAsync(output, cancellationToken).ConfigureAwait(false);
+                        bytesCopied = await input.CopyChunkToAsync(output, cancellationToken)
+                            .ConfigureAwait(false);
 
                         // Report progress
                         totalBytesCopied += bytesCopied;
@@ -57,11 +62,44 @@ namespace YoutubeExplode
                     } while (bytesCopied > 0);
                 }
             }
-            // Use segmented downloader for others
+            // Download adaptive streams in segments because of rate limiting
             else
             {
-                var downloader = new SegmentedMediaStreamDownloader(_httpService, info);
-                await downloader.DownloadAsync(filePath, progress, cancellationToken).ConfigureAwait(false);
+                // Determine segment size
+                const int segmentCount = 10;
+                var segmentSize = (long) Math.Ceiling(1.0 * info.Size / segmentCount);
+
+                using (var output = File.Create(filePath))
+                {
+                    for (var i = 0; i < segmentCount; i++)
+                    {
+                        // Determine segment range
+                        var from = i * segmentSize;
+                        var to = (i + 1) * segmentSize - 1;
+
+                        // Create request with range
+                        var request = new HttpRequestMessage(HttpMethod.Get, info.Url);
+                        request.Headers.Range = new RangeHeaderValue(from, to);
+
+                        // Download segment
+                        using (request)
+                        using (var response = await _httpService.PerformRequestAsync(request).ConfigureAwait(false))
+                        using (var input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                        {
+                            int bytesCopied;
+                            do
+                            {
+                                // Copy
+                                bytesCopied = await input.CopyChunkToAsync(output, cancellationToken)
+                                    .ConfigureAwait(false);
+
+                                // Report progress
+                                totalBytesCopied += bytesCopied;
+                                progress?.Report(1.0 * totalBytesCopied / info.Size);
+                            } while (bytesCopied > 0);
+                        }
+                    }
+                }
             }
         }
 
