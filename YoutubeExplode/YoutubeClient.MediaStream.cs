@@ -38,9 +38,31 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
             filePath.GuardNotNull(nameof(filePath));
 
-            // Save to file
-            var downloader = new SegmentedMediaStreamDownloader(_httpService, info);
-            await downloader.DownloadAsync(filePath, progress, cancellationToken).ConfigureAwait(false);
+            // Download muxed streams directly
+            if (info is MuxedStreamInfo)
+            {
+                using (var output = File.Create(filePath))
+                using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
+                {
+                    var totalBytesCopied = 0L;
+                    int bytesCopied;
+                    do
+                    {
+                        // Copy
+                        bytesCopied = await input.CopyChunkToAsync(output, cancellationToken).ConfigureAwait(false);
+
+                        // Report progress
+                        totalBytesCopied += bytesCopied;
+                        progress?.Report(1.0 * totalBytesCopied / info.Size);
+                    } while (bytesCopied > 0);
+                }
+            }
+            // Use segmented downloader for others
+            else
+            {
+                var downloader = new SegmentedMediaStreamDownloader(_httpService, info);
+                await downloader.DownloadAsync(filePath, progress, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
