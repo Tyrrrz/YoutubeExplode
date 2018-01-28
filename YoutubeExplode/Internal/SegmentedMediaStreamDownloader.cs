@@ -1,10 +1,9 @@
 ﻿#if NET45 || NETSTANDARD2_0 || NETCOREAPP1_0
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Models.MediaStreams;
 using YoutubeExplode.Services;
@@ -29,15 +28,6 @@ namespace YoutubeExplode.Internal
             _segmentSize = (long) Math.Ceiling(1.0 * _mediaStreamInfo.Size / _segmentCount);
         }
 
-        private void UnlockConnectionLimit()
-        {
-#if NET45 || NETSTANDARD2_0
-            // This only works on .net45 and .netstd20
-            // On other frameworks the download will be slower
-            ServicePointManager.FindServicePoint(new Uri(_mediaStreamInfo.Url)).ConnectionLimit = 999;
-#endif
-        }
-
         private HttpRequestMessage CreateSegmentedRequest(long from, long to)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, _mediaStreamInfo.Url);
@@ -46,55 +36,34 @@ namespace YoutubeExplode.Internal
             return request;
         }
 
-        private string GetSegmentFilePath(string filePath, int segmentIndex)
+        public async Task DownloadAsync(string filePath, IProgress<double> progress,
+            CancellationToken cancellationToken)
         {
-            return $"{filePath}.{segmentIndex}";
-        }
-
-        public async Task DownloadAsync(string filePath)
-        {
-            // TODO: missing progress reporting and cancellation
-
-            // Increase connection limit so multiple requests can be performed simultaneously
-            UnlockConnectionLimit();
-
-            // Create tasks that download segments
-            var tasks = new List<Task>();
-            for (var i = 0; i < _segmentCount; i++)
+            using (var output = File.Create(filePath))
             {
-                // Assemble segment info
-                var segmentFilePath = GetSegmentFilePath(filePath, i);
-                var from = i * _segmentSize;
-                var to = (i + 1) * _segmentSize - 1;
-
-                // Run a task to download segment
-                var task = Task.Run(async () =>
+                var totalBytesCopied = 0L;
+                for (var i = 0; i < _segmentCount; i++)
                 {
+                    // Determine range
+                    var from = i * _segmentSize;
+                    var to = (i + 1) * _segmentSize - 1;
+
+                    // Download
                     using (var request = CreateSegmentedRequest(from, to))
                     using (var response = await _httpService.PerformRequestAsync(request).ConfigureAwait(false))
                     using (var input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                    using (var output = File.Create(segmentFilePath))
-                        await input.CopyToAsync(output).ConfigureAwait(false);
-                });
-                tasks.Add(task);
-            }
+                    {
+                        int bytesCopied;
+                        do
+                        {
+                            // Copy
+                            bytesCopied = await input.CopyChunkToAsync(output, cancellationToken).ConfigureAwait(false);
 
-            // Await until all segments are downloaded
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-
-            // Combine all segments into one file
-            using (var output = File.Create(filePath))
-            {
-                for (var i = 0; i < _segmentCount; i++)
-                {
-                    var segmentFilePath = GetSegmentFilePath(filePath, i);
-
-                    // Append data to output file
-                    using (var input = File.OpenRead(segmentFilePath))
-                        await input.CopyToAsync(output).ConfigureAwait(false);
-
-                    // Delete segment
-                    File.Delete(segmentFilePath);
+                            // Report progress
+                            totalBytesCopied += bytesCopied;
+                            progress?.Report(1.0 * totalBytesCopied / _mediaStreamInfo.Size);
+                        } while (bytesCopied > 0);
+                    }
                 }
             }
         }

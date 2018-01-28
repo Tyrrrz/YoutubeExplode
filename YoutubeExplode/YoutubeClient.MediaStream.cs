@@ -40,7 +40,7 @@ namespace YoutubeExplode
 
             // Save to file
             var downloader = new SegmentedMediaStreamDownloader(_httpService, info);
-            await downloader.DownloadAsync(filePath).ConfigureAwait(false);
+            await downloader.DownloadAsync(filePath, progress, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
