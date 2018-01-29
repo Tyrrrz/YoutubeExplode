@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.MediaStreams;
@@ -43,27 +44,11 @@ namespace YoutubeExplode
             // Keep track of bytes copied for progress reporting
             var totalBytesCopied = 0L;
 
-            // Download muxed streams directly
-            if (info is MuxedStreamInfo)
-            {
-                using (var output = File.Create(filePath))
-                using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
-                {
-                    int bytesCopied;
-                    do
-                    {
-                        // Copy
-                        bytesCopied = await input.CopyChunkToAsync(output, cancellationToken)
-                            .ConfigureAwait(false);
+            // Determine if stream is rate-limited
+            var isRateLimited = !Regex.IsMatch(info.Url, @"ratebypass[=/]yes");
 
-                        // Report progress
-                        totalBytesCopied += bytesCopied;
-                        progress?.Report(1.0 * totalBytesCopied / info.Size);
-                    } while (bytesCopied > 0);
-                }
-            }
-            // Download adaptive streams in segments because of rate limiting
-            else
+            // Download rate-limited streams in segments
+            if (isRateLimited)
             {
                 // Determine segment size
                 const int segmentCount = 10;
@@ -99,6 +84,25 @@ namespace YoutubeExplode
                             } while (bytesCopied > 0);
                         }
                     }
+                }
+            }
+            // Download non-limited streams directly
+            else
+            {
+                using (var output = File.Create(filePath))
+                using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
+                {
+                    int bytesCopied;
+                    do
+                    {
+                        // Copy
+                        bytesCopied = await input.CopyChunkToAsync(output, cancellationToken)
+                            .ConfigureAwait(false);
+
+                        // Report progress
+                        totalBytesCopied += bytesCopied;
+                        progress?.Report(1.0 * totalBytesCopied / info.Size);
+                    } while (bytesCopied > 0);
                 }
             }
         }
