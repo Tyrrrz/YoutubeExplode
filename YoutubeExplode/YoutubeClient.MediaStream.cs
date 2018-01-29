@@ -50,9 +50,9 @@ namespace YoutubeExplode
             // Download rate-limited streams in segments
             if (isRateLimited)
             {
-                // Determine segment size
-                const int segmentCount = 10;
-                var segmentSize = (long) Math.Ceiling(1.0 * info.Size / segmentCount);
+                // Determine segment count
+                const long segmentSize = 9_898_989; // this number was carefully devised through research
+                var segmentCount = (int) Math.Ceiling(1.0 * info.Size / segmentSize);
 
                 using (var output = File.Create(filePath))
                 {
