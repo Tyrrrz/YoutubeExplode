@@ -37,10 +37,10 @@ namespace YoutubeExplode
 
             // Get all videos across pages
             var videos = new List<Video>();
-            for (var page = 1; page <= maxPages; page++)
+            for (var i = 1; i <= maxPages; i++)
             {
                 // Get search results
-                var searchResultsJson = await GetSearchResultsAsync(query, page).ConfigureAwait(false);
+                var searchResultsJson = await GetSearchResultsAsync(query, i).ConfigureAwait(false);
 
                 // Get videos
                 var videosJson = searchResultsJson["video"].EmptyIfNull().ToArray();

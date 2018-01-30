@@ -107,7 +107,9 @@ namespace YoutubeExplode
 
         private async Task<PlayerSource> GetVideoPlayerSourceAsync(string sourceUrl)
         {
-            // Original code credit: Decipherer class of https://github.com/flagbug/YoutubeExtractor
+            // Original code credit:
+            // https://github.com/flagbug/YoutubeExtractor/blob/3106efa1063994fd19c0e967793315f6962b2d3c/YoutubeExtractor/YoutubeExtractor/Decipherer.cs
+            // No copyright, MIT license
 
             // Try to resolve from cache first
             var playerSource = _playerSourceCache.GetOrDefault(sourceUrl);
