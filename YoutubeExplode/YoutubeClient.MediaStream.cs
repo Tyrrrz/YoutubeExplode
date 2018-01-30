@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.MediaStreams;
 using YoutubeExplode.Services;
@@ -38,25 +41,69 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
             filePath.GuardNotNull(nameof(filePath));
 
-            // Save to file
-            using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
-            using (var output = File.Create(filePath))
+            // Keep track of bytes copied for progress reporting
+            var totalBytesCopied = 0L;
+
+            // Determine if stream is rate-limited
+            var isRateLimited = !Regex.IsMatch(info.Url, @"ratebypass[=/]yes");
+
+            // Download rate-limited streams in segments
+            if (isRateLimited)
             {
-                var buffer = new byte[4 * 1024];
-                int bytesRead;
-                long totalBytesRead = 0;
-                do
+                // Determine segment count
+                const long segmentSize = 9_898_989; // this number was carefully devised through research
+                var segmentCount = (int) Math.Ceiling(1.0 * info.Size / segmentSize);
+
+                using (var output = File.Create(filePath))
                 {
-                    // Read
-                    totalBytesRead += bytesRead =
-                        await input.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+                    for (var i = 0; i < segmentCount; i++)
+                    {
+                        // Determine segment range
+                        var from = i * segmentSize;
+                        var to = (i + 1) * segmentSize - 1;
 
-                    // Write
-                    await output.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                        // Create request with range
+                        var request = new HttpRequestMessage(HttpMethod.Get, info.Url);
+                        request.Headers.Range = new RangeHeaderValue(from, to);
 
-                    // Report progress
-                    progress?.Report(1.0 * totalBytesRead / input.Length);
-                } while (bytesRead > 0);
+                        // Download segment
+                        using (request)
+                        using (var response = await _httpService.PerformRequestAsync(request).ConfigureAwait(false))
+                        using (var input = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                        {
+                            int bytesCopied;
+                            do
+                            {
+                                // Copy
+                                bytesCopied = await input.CopyChunkToAsync(output, cancellationToken)
+                                    .ConfigureAwait(false);
+
+                                // Report progress
+                                totalBytesCopied += bytesCopied;
+                                progress?.Report(1.0 * totalBytesCopied / info.Size);
+                            } while (bytesCopied > 0);
+                        }
+                    }
+                }
+            }
+            // Download non-limited streams directly
+            else
+            {
+                using (var output = File.Create(filePath))
+                using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
+                {
+                    int bytesCopied;
+                    do
+                    {
+                        // Copy
+                        bytesCopied = await input.CopyChunkToAsync(output, cancellationToken)
+                            .ConfigureAwait(false);
+
+                        // Report progress
+                        totalBytesCopied += bytesCopied;
+                        progress?.Report(1.0 * totalBytesCopied / info.Size);
+                    } while (bytesCopied > 0);
+                }
             }
         }
 

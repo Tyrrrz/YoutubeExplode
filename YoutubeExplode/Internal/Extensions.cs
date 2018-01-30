@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using AngleSharp.Dom;
 
@@ -200,6 +203,20 @@ namespace YoutubeExplode.Internal
                 sb.AppendLine();
 
             return sb.ToString();
+        }
+
+        public static async Task<int> CopyChunkToAsync(this Stream source, Stream destination,
+            CancellationToken cancellationToken, int bufferSize = 81920)
+        {
+            var buffer = new byte[bufferSize];
+
+            // Read
+            var bytesCopied = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+
+            // Write
+            await destination.WriteAsync(buffer, 0, bytesCopied, cancellationToken).ConfigureAwait(false);
+
+            return bytesCopied;
         }
     }
 }

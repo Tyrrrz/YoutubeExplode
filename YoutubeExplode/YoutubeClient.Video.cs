@@ -311,9 +311,6 @@ namespace YoutubeExplode
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
 
-                    // Set rate bypass
-                    url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
-
                     // Probe stream and get content length
                     long contentLength;
                     using (var request = new HttpRequestMessage(HttpMethod.Head, url))
@@ -365,9 +362,6 @@ namespace YoutubeExplode
                         sig = playerSource.Decipher(sig);
                         url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
                     }
-
-                    // Set rate bypass
-                    url = UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes");
 
                     // Check if audio
                     var isAudio = streamInfoDic["type"].Contains("audio/");
@@ -434,11 +428,6 @@ namespace YoutubeExplode
 
                     // Parse content length
                     var contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
-
-                    // Set rate bypass
-                    url = url.Contains("?")
-                        ? UrlHelper.SetUrlQueryParameter(url, "ratebypass", "yes")
-                        : UrlHelper.SetUrlRouteParameter(url, "ratebypass", "yes");
 
                     // Check if audio stream
                     var isAudio = streamXml.Element("AudioChannelConfiguration") != null;
