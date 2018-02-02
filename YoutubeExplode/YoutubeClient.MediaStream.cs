@@ -1,7 +1,4 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.MediaStreams;
 using YoutubeExplode.Services;
@@ -9,6 +6,9 @@ using YoutubeExplode.Services;
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading;
 #endif
 
