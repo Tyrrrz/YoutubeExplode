@@ -33,7 +33,8 @@ namespace YoutubeExplode
             {
                 var text = (string) captionXml;
                 var offset = TimeSpan.FromMilliseconds((double) captionXml.Attribute("t"));
-                var duration = TimeSpan.FromMilliseconds((double) captionXml.Attribute("d"));
+                var durationValue = captionXml.Attribute("d");
+                var duration = durationValue == null ? TimeSpan.Zero : TimeSpan.FromMilliseconds((double) durationValue);
 
                 var caption = new ClosedCaption(text, offset, duration);
                 captions.Add(caption);
