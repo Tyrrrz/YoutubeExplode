@@ -32,12 +32,14 @@ namespace YoutubeExplode
             foreach (var captionXml in trackXml.Descendants("p"))
             {
                 var text = (string) captionXml;
-                var offset = TimeSpan.FromMilliseconds((double) captionXml.Attribute("t"));
-                var durationValue = captionXml.Attribute("d");
-                var duration = durationValue == null ? TimeSpan.Zero : TimeSpan.FromMilliseconds((double) durationValue);
+                if (!String.IsNullOrEmpty(text))
+                {
+                    var offset = TimeSpan.FromMilliseconds((double) captionXml.Attribute("t"));
+                    var duration = TimeSpan.FromMilliseconds((double) captionXml.Attribute("d"));
 
-                var caption = new ClosedCaption(text, offset, duration);
-                captions.Add(caption);
+                    var caption = new ClosedCaption(text, offset, duration);
+                    captions.Add(caption);
+                }
             }
 
             return new ClosedCaptionTrack(info, captions);
