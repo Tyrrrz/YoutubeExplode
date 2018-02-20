@@ -15,73 +15,78 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public static string GetFileExtension(this Container container)
         {
-            switch (container)
-            {
-                case Container.Mp4:
-                    return "mp4";
-                case Container.M4A:
-                    return "m4a";
-                case Container.WebM:
-                    return "webm";
-                case Container.Tgpp:
-                    return "3gpp";
-                case Container.Flv:
-                    return "flv";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(container),
-                        $"Unexpected container type [{container}].");
-            }
+            if (container == Container.Mp4)
+                return "mp4";
+
+            if (container == Container.M4A)
+                return "m4a";
+
+            if (container == Container.WebM)
+                return "webm";
+
+            if (container == Container.Tgpp)
+                return "3gpp";
+
+            if (container == Container.Flv)
+                return "flv";
+
+            throw new ArgumentOutOfRangeException(nameof(container), $"Unexpected container type [{container}].");
+        }
+
+        /// <summary>
+        /// Gets label for given video quality , as displayed on YouTube.
+        /// </summary>
+        public static string GetVideoQualityLabel(this VideoQuality videoQuality)
+        {
+            if (videoQuality == VideoQuality.Low144)
+                return "144p";
+
+            if (videoQuality == VideoQuality.Low240)
+                return "240p";
+
+            if (videoQuality == VideoQuality.Medium360)
+                return "360p";
+
+            if (videoQuality == VideoQuality.Medium480)
+                return "480p";
+
+            if (videoQuality == VideoQuality.High720)
+                return "720p";
+
+            if (videoQuality == VideoQuality.High1080)
+                return "1080p";
+
+            if (videoQuality == VideoQuality.High1440)
+                return "1440p";
+
+            if (videoQuality == VideoQuality.High2160)
+                return "2160p";
+
+            if (videoQuality == VideoQuality.High2880)
+                return "2880p";
+
+            if (videoQuality == VideoQuality.High3072)
+                return "3072p";
+
+            if (videoQuality == VideoQuality.High4320)
+                return "4320p";
+
+            throw new ArgumentOutOfRangeException(nameof(videoQuality), $"Unexpected video quality [{videoQuality}].");
         }
 
         /// <summary>
         /// Gets label for given video quality and framerate, as displayed on YouTube.
         /// </summary>
-        public static string GetVideoQualityLabel(this VideoQuality videoQuality, int framerate = 30)
+        public static string GetVideoQualityLabel(this VideoQuality videoQuality, int framerate)
         {
-            // Video quality
-            string qualityPart;
-            switch (videoQuality)
-            {
-                case VideoQuality.Low144:
-                    qualityPart = "144p";
-                    break;
-                case VideoQuality.Low240:
-                    qualityPart = "240p";
-                    break;
-                case VideoQuality.Medium360:
-                    qualityPart = "360p";
-                    break;
-                case VideoQuality.Medium480:
-                    qualityPart = "480p";
-                    break;
-                case VideoQuality.High720:
-                    qualityPart = "720p";
-                    break;
-                case VideoQuality.High1080:
-                    qualityPart = "1080p";
-                    break;
-                case VideoQuality.High1440:
-                    qualityPart = "1440p";
-                    break;
-                case VideoQuality.High2160:
-                    qualityPart = "2160p";
-                    break;
-                case VideoQuality.High3072:
-                    qualityPart = "3072p";
-                    break;
-                case VideoQuality.High4320:
-                    qualityPart = "4320p";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(videoQuality),
-                        $"Unexpected video quality [{videoQuality}].");
-            }
+            framerate.GuardNotNegative(nameof(framerate));
 
-            // Append framerate if it's above 30
-            // (YouTube's framerate part is always 60, no matter what it actually is)
-            var frameratePart = framerate > 30 ? "60" : string.Empty;
+            // Framerate appears only if it's above 30
+            if (framerate <= 30)
+                return videoQuality.GetVideoQualityLabel();
 
-            return qualityPart + frameratePart;
+            // YouTube always shows framerate as 60, no matter what it is
+            return videoQuality.GetVideoQualityLabel() + "60";
         }
 
         /// <summary>

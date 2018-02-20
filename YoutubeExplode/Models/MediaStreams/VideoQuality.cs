@@ -46,6 +46,11 @@
         High2160,
 
         /// <summary>
+        /// High quality (2880p).
+        /// </summary>
+        High2880,
+
+        /// <summary>
         /// High quality (3072p).
         /// </summary>
         High3072,
