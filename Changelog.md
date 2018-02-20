@@ -1,3 +1,9 @@
+### v4.1.1 (20-Feb-2018)
+
+- Fixed an issue where `GetClosedCaptionTrackAsync` would throw on some malformed automatic captions.
+- Fixed an issue where some video qualities were not correctly identified due to itag inconsistency.
+- Added support for 2880p video quality.
+
 ### v4.1 (02-Feb-2018)
 
 - Implemented segmented downloading for rate-limited media streams. This fixes slow download speed of `DownloadMediaStreamAsync` caused by YouTube changes.
