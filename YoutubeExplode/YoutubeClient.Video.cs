@@ -381,8 +381,10 @@ namespace YoutubeExplode
                         var height = size.SubstringAfter("x").ParseInt();
                         var resolution = new VideoResolution(width, height);
                         var framerate = streamInfoDic["fps"].ParseInt();
+                        var qualityLabel = streamInfoDic["quality_label"];
 
-                        var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
+                        var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate,
+                            qualityLabel);
                         videoStreamInfoMap[itag] = streamInfo;
                     }
                 }
@@ -489,7 +491,7 @@ namespace YoutubeExplode
                 var code = captionJson["languageCode"].Value<string>();
                 var name = captionJson["name"]["simpleText"].Value<string>();
                 var language = new Language(code, name);
-                var isAuto = captionJson["vssId"].Value<string>().StartsWith("a.", StringComparison.Ordinal);
+                var isAuto = captionJson["vssId"].Value<string>().StartsWith("a.", StringComparison.OrdinalIgnoreCase);
                 var url = captionJson["baseUrl"].Value<string>();
 
                 // Enforce format

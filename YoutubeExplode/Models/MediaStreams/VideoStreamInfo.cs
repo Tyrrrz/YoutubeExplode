@@ -50,5 +50,18 @@ namespace YoutubeExplode.Models.MediaStreams
             Framerate = framerate.GuardNotNegative(nameof(framerate));
             VideoQualityLabel = VideoQuality.GetVideoQualityLabel(framerate);
         }
+
+        /// <summary />
+        public VideoStreamInfo(int itag, string url, long size, long bitrate, VideoResolution resolution, int framerate,
+            string videoQualityLabel)
+            : base(itag, url, size)
+        {
+            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
+            VideoEncoding = GetVideoEncoding(itag);
+            Resolution = resolution;
+            Framerate = framerate.GuardNotNegative(nameof(framerate));
+            VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
+            VideoQuality = GetVideoQuality(videoQualityLabel);
+        }
     }
 }
