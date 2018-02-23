@@ -97,7 +97,8 @@ var videoAuthor = video.Author; // "Igorrr Official"
 
 - [AngleSharp](https://github.com/AngleSharp/AngleSharp)
 - [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
-- [GalaSoft.MVVMLight](http://www.mvvmlight.net) (Only for demo)
-- [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit) (Only for demo)
-- [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions) (Only for demo)
-- [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions) (Only for demo)
+- [GalaSoft.MVVMLight](http://www.mvvmlight.net)
+- [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
+- [NUnit](https://github.com/nunit/nunit)
+- [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
+- [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions)
