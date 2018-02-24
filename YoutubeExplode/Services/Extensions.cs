@@ -12,7 +12,8 @@ namespace YoutubeExplode.Services
         /// <summary>
         /// Sends a GET request and returns content as a string.
         /// </summary>
-        public static async Task<string> GetStringAsync(this IHttpService httpService, string url, bool ensureSucess = true)
+        public static async Task<string> GetStringAsync(this IHttpService httpService, string url,
+            bool ensureSucess = true)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             using (var response = await httpService.PerformRequestAsync(request).ConfigureAwait(false))
@@ -25,9 +26,10 @@ namespace YoutubeExplode.Services
         }
 
         /// <summary>
-        /// Send a GET request and return content as a stream.
+        /// Sends a GET request and return content as a stream.
         /// </summary>
-        public static async Task<Stream> GetStreamAsync(this IHttpService httpService, string url, bool ensureSucess = true)
+        public static async Task<Stream> GetStreamAsync(this IHttpService httpService, string url,
+            bool ensureSucess = true)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
