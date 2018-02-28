@@ -4,6 +4,7 @@
 [![Tests](https://img.shields.io/appveyor/tests/Tyrrrz/YoutubeExplode/master.svg)](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode)
 [![NuGet](https://img.shields.io/nuget/v/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![NuGet](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FTyrrrz%2FYoutubeExplode.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FTyrrrz%2FYoutubeExplode?ref=badge_shield)
 
 YoutubeExplode is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks. Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered AJAX requests to retrieve information. As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
 
@@ -102,3 +103,6 @@ var videoAuthor = video.Author; // "Igorrr Official"
 - [NUnit](https://github.com/nunit/nunit)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 - [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions)
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FTyrrrz%2FYoutubeExplode.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FTyrrrz%2FYoutubeExplode?ref=badge_large)
