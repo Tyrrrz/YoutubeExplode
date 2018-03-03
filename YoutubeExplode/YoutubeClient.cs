@@ -7,7 +7,7 @@ namespace YoutubeExplode
     /// <summary>
     /// The entry point for <see cref="YoutubeExplode"/>.
     /// </summary>
-    public partial class YoutubeClient
+    public partial class YoutubeClient : IYoutubeClient
     {
         private readonly IHttpService _httpService;
         private readonly Dictionary<string, PlayerSource> _playerSourceCache;

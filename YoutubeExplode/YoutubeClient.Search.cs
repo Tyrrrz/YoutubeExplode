@@ -25,10 +25,7 @@ namespace YoutubeExplode
             return JToken.Parse(raw);
         }
 
-        /// <summary>
-        /// Searches videos using given query.
-        /// The video list is truncated at given number of pages (1 page ≤ 20 videos).
-        /// </summary>
+        /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> SearchVideosAsync(string query, int maxPages)
         {
             query.GuardNotNull(nameof(query));
@@ -86,9 +83,7 @@ namespace YoutubeExplode
             return videos;
         }
 
-        /// <summary>
-        /// Searches videos using given query.
-        /// </summary>
+        /// <inheritdoc />
         public Task<IReadOnlyList<Video>> SearchVideosAsync(string query)
             => SearchVideosAsync(query, int.MaxValue);
     }

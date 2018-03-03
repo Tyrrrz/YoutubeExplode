@@ -196,9 +196,7 @@ namespace YoutubeExplode
             return _playerSourceCache[sourceUrl] = new PlayerSource(operations);
         }
 
-        /// <summary>
-        /// Gets video information by ID.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<Video> GetVideoAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
@@ -233,9 +231,7 @@ namespace YoutubeExplode
                 statistics);
         }
 
-        /// <summary>
-        /// Gets author channel information for given video.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<Channel> GetVideoAuthorChannelAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
@@ -257,9 +253,7 @@ namespace YoutubeExplode
             return new Channel(id, title, logoUrl);
         }
 
-        /// <summary>
-        /// Gets a set of all available media stream infos for given video.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<MediaStreamInfoSet> GetVideoMediaStreamInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
@@ -466,9 +460,7 @@ namespace YoutubeExplode
             return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsLiveStreamUrl);
         }
 
-        /// <summary>
-        /// Gets all available closed caption track infos for given video.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<IReadOnlyList<ClosedCaptionTrackInfo>> GetVideoClosedCaptionTrackInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));

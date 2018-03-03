@@ -25,10 +25,7 @@ namespace YoutubeExplode
             return JToken.Parse(raw);
         }
 
-        /// <summary>
-        /// Gets playlist information by ID.
-        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
-        /// </summary>
+        /// <inheritdoc />
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
         {
             playlistId.GuardNotNull(nameof(playlistId));
@@ -112,9 +109,7 @@ namespace YoutubeExplode
             return new Playlist(playlistId, author, title, description, statistics, videos);
         }
 
-        /// <summary>
-        /// Gets playlist information by ID.
-        /// </summary>
+        /// <inheritdoc />
         public Task<Playlist> GetPlaylistAsync(string playlistId)
             => GetPlaylistAsync(playlistId, int.MaxValue);
     }

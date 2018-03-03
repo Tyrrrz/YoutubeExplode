@@ -10,9 +10,7 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        /// <summary>
-        /// Gets channel information by ID.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<Channel> GetChannelAsync(string channelId)
         {
             channelId.GuardNotNull(nameof(channelId));
@@ -33,10 +31,7 @@ namespace YoutubeExplode
             return await GetVideoAuthorChannelAsync(video.Id).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Gets videos uploaded by channel with given ID.
-        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
-        /// </summary>
+        /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
             channelId.GuardNotNull(nameof(channelId));
@@ -53,9 +48,7 @@ namespace YoutubeExplode
             return playlist.Videos;
         }
 
-        /// <summary>
-        /// Gets videos uploaded by channel with given ID.
-        /// </summary>
+        /// <inheritdoc />
         public Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId)
             => GetChannelUploadsAsync(channelId, int.MaxValue);
     }
