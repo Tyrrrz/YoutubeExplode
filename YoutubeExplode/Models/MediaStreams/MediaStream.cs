@@ -43,12 +43,6 @@ namespace YoutubeExplode.Models.MediaStreams
             _innerStream = innerStream.GuardNotNull(nameof(innerStream));
         }
 
-        /// <summary />
-        ~MediaStream()
-        {
-            Dispose(false);
-        }
-
         /// <inheritdoc />
         public override void Flush() => _innerStream.Flush();
 
