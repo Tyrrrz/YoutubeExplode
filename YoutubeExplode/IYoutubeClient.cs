@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
-
-#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
-using System;
-using System.Threading;
-#endif
 
 namespace YoutubeExplode
 {
@@ -93,15 +91,20 @@ namespace YoutubeExplode
         #region MediaStream
 
         /// <summary>
-        /// Gets the actual media stream associated with given metadata.
+        /// Gets the media stream associated with given metadata.
         /// </summary>
         Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo info);
+
+        /// <summary>
+        /// Downloads the stream associated with given metadata to the output stream.
+        /// </summary>
+        Task DownloadMediaStreamAsync(MediaStreamInfo info, Stream output,
+            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
         /// <summary>
-        /// Gets the actual media stream associated with given metadata
-        /// and downloads it to a file.
+        /// Downloads the stream associated with given metadata to a file.
         /// </summary>
         Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath,
             IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
@@ -113,15 +116,20 @@ namespace YoutubeExplode
         #region ClosedCaptionTrack
 
         /// <summary>
-        /// Gets the actual closed caption track associated with given metadata.
+        /// Gets the closed caption track associated with given metadata.
         /// </summary>
         Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo info);
+
+        /// <summary>
+        /// Downloads the closed caption track associated with given metadata to the output stream.
+        /// </summary>
+        Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, Stream output,
+            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
 #if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
 
         /// <summary>
-        /// Gets the actual closed caption track associated with given metadata
-        /// and downloads it as SRT file.
+        /// Downloads the closed caption track associated with given metadata to a file.
         /// </summary>
         Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
             IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
