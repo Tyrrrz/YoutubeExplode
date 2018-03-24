@@ -16,7 +16,6 @@ using YoutubeExplode.Internal.CipherOperations;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
-using YoutubeExplode.Services;
 
 namespace YoutubeExplode
 {
@@ -25,7 +24,7 @@ namespace YoutubeExplode
         private async Task<string> GetVideoEmbedPageRawAsync(string videoId)
         {
             var url = $"https://www.youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
-            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private async Task<JToken> GetVideoEmbedPageConfigAsync(string videoId)
@@ -40,7 +39,7 @@ namespace YoutubeExplode
         private async Task<string> GetVideoWatchPageRawAsync(string videoId)
         {
             var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&hl=en";
-            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private async Task<IHtmlDocument> GetVideoWatchPageAsync(string videoId)
@@ -54,14 +53,14 @@ namespace YoutubeExplode
         private async Task<string> GetVideoInfoRawAsync(string videoId, string el = "", string sts = "")
         {
             var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&sts={sts}&hl=en";
-            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "")
         {
             // Get video info
             var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
-            var videoInfo = UrlHelper.SplitUrlQuery(raw);
+            var videoInfo = UrlHelper.SplitQuery(raw);
 
             // If can't be embedded - try another value of el
             if (videoInfo.ContainsKey("errorcode"))
@@ -70,7 +69,7 @@ namespace YoutubeExplode
                 if (errorReason.Contains("&feature=player_embedded"))
                 {
                     raw = await GetVideoInfoRawAsync(videoId, "detailpage", sts).ConfigureAwait(false);
-                    videoInfo = UrlHelper.SplitUrlQuery(raw);
+                    videoInfo = UrlHelper.SplitQuery(raw);
                 }
             }
 
@@ -117,7 +116,7 @@ namespace YoutubeExplode
                 return playerSource;
 
             // Get player source code
-            var sourceRaw = await _httpService.GetStringAsync(sourceUrl).ConfigureAwait(false);
+            var sourceRaw = await _httpClient.GetStringAsync(sourceUrl).ConfigureAwait(false);
 
             // Find the name of the function that handles deciphering
             var entryPoint = Regex.Match(sourceRaw, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
@@ -284,7 +283,7 @@ namespace YoutubeExplode
             {
                 foreach (var streamEncoded in muxedStreamInfosEncoded.Split(","))
                 {
-                    var streamInfoDic = UrlHelper.SplitUrlQuery(streamEncoded);
+                    var streamInfoDic = UrlHelper.SplitQuery(streamEncoded);
 
                     // Extract values
                     var itag = streamInfoDic["itag"].ParseInt();
@@ -302,13 +301,13 @@ namespace YoutubeExplode
                         var playerSource =
                             await GetVideoPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
                         sig = playerSource.Decipher(sig);
-                        url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
+                        url = UrlHelper.SetQueryParameter(url, "signature", sig);
                     }
 
                     // Probe stream and get content length
                     long contentLength;
                     using (var request = new HttpRequestMessage(HttpMethod.Head, url))
-                    using (var response = await _httpService.PerformRequestAsync(request).ConfigureAwait(false))
+                    using (var response = await _httpClient.SendAsync(request).ConfigureAwait(false))
                     {
                         // Some muxed streams can be gone
                         if (response.StatusCode == HttpStatusCode.NotFound ||
@@ -334,7 +333,7 @@ namespace YoutubeExplode
             {
                 foreach (var streamEncoded in adaptiveStreamInfosEncoded.Split(","))
                 {
-                    var streamInfoDic = UrlHelper.SplitUrlQuery(streamEncoded);
+                    var streamInfoDic = UrlHelper.SplitQuery(streamEncoded);
 
                     // Extract values
                     var itag = streamInfoDic["itag"].ParseInt();
@@ -354,7 +353,7 @@ namespace YoutubeExplode
                         var playerSource =
                             await GetVideoPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
                         sig = playerSource.Decipher(sig);
-                        url = UrlHelper.SetUrlQueryParameter(url, "signature", sig);
+                        url = UrlHelper.SetQueryParameter(url, "signature", sig);
                     }
 
                     // Check if audio
@@ -396,11 +395,11 @@ namespace YoutubeExplode
                 {
                     var playerSource = await GetVideoPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
                     sig = playerSource.Decipher(sig);
-                    dashManifestUrl = UrlHelper.SetUrlRouteParameter(dashManifestUrl, "signature", sig);
+                    dashManifestUrl = UrlHelper.SetRouteParameter(dashManifestUrl, "signature", sig);
                 }
 
                 // Get the manifest
-                var response = await _httpService.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
+                var response = await _httpClient.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
                 var dashManifestXml = XElement.Parse(response).StripNamespaces();
                 var streamsXml = dashManifestXml.Descendants("Representation");
 
@@ -487,7 +486,7 @@ namespace YoutubeExplode
                 var url = captionJson["baseUrl"].Value<string>();
 
                 // Enforce format
-                url = UrlHelper.SetUrlQueryParameter(url, "format", "3");
+                url = UrlHelper.SetQueryParameter(url, "format", "3");
 
                 var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAuto);
                 closedCaptionTrackInfos.Add(closedCaptionTrackInfo);

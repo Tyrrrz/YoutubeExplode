@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
-using YoutubeExplode.Services;
 
 namespace YoutubeExplode
 {
@@ -16,7 +15,7 @@ namespace YoutubeExplode
         {
             query = query.UrlEncode();
             var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            return await _httpService.GetStringAsync(url, false).ConfigureAwait(false);
+            return await _httpClient.GetStringAsync(url, false).ConfigureAwait(false);
         }
 
         private async Task<JToken> GetSearchResultsAsync(string query, int page = 1)

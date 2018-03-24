@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
-using YoutubeExplode.Services;
 
 namespace YoutubeExplode
 {
@@ -16,7 +15,7 @@ namespace YoutubeExplode
         {
             var url =
                 $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-            return await _httpService.GetStringAsync(url).ConfigureAwait(false);
+            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private async Task<JToken> GetPlaylistInfoAsync(string playlistId, int index = 0)
@@ -30,6 +29,7 @@ namespace YoutubeExplode
         {
             playlistId.GuardNotNull(nameof(playlistId));
             maxPages.GuardPositive(nameof(maxPages));
+
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 

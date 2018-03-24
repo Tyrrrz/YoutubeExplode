@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Services;
 
 namespace YoutubeExplode
 {
@@ -9,23 +9,23 @@ namespace YoutubeExplode
     /// </summary>
     public partial class YoutubeClient : IYoutubeClient
     {
-        private readonly IHttpService _httpService;
+        private readonly HttpClient _httpClient;
         private readonly Dictionary<string, PlayerSource> _playerSourceCache;
 
         /// <summary>
-        /// Creates an instance of <see cref="YoutubeClient"/> with custom services.
+        /// Creates an instance of <see cref="YoutubeClient"/>.
         /// </summary>
-        public YoutubeClient(IHttpService httpService)
+        public YoutubeClient(HttpClient httpClient)
         {
-            _httpService = httpService.GuardNotNull(nameof(httpService));
+            _httpClient = httpClient.GuardNotNull(nameof(httpClient));
             _playerSourceCache = new Dictionary<string, PlayerSource>();
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="YoutubeClient"/> with default services.
+        /// Creates an instance of <see cref="YoutubeClient"/>.
         /// </summary>
         public YoutubeClient()
-            : this(HttpService.Instance)
+            : this(HttpClientEx.GetSingleton())
         {
         }
     }

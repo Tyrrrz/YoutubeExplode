@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.ClosedCaptions;
-using YoutubeExplode.Services;
 
 namespace YoutubeExplode
 {
@@ -19,7 +18,7 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
 
             // Get manifest
-            var raw = await _httpService.GetStringAsync(info.Url).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(info.Url).ConfigureAwait(false);
             var trackXml = XElement.Parse(raw).StripNamespaces();
 
             // Parse captions
