@@ -15,12 +15,12 @@ namespace YoutubeExplode.Internal
             if (_singleton != null)
                 return _singleton;
 
-            var httpClientHandler = new HttpClientHandler();
-            if (httpClientHandler.SupportsAutomaticDecompression)
-                httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            httpClientHandler.UseCookies = false;
+            var handler = new HttpClientHandler();
+            if (handler.SupportsAutomaticDecompression)
+                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            handler.UseCookies = false;
 
-            var client = new HttpClient(httpClientHandler, true);
+            var client = new HttpClient(handler, true);
             client.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
 
             return _singleton = client;
