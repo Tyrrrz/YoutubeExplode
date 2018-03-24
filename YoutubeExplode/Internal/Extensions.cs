@@ -4,8 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -235,36 +233,6 @@ namespace YoutubeExplode.Internal
                 totalBytesCopied += bytesCopied;
                 progress?.Report(1.0 * totalBytesCopied / source.Length);
             } while (bytesCopied > 0);
-        }
-
-        public static async Task<string> GetStringAsync(this HttpClient httpClient, string requestUri,
-            bool ensureSuccess = true)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, requestUri))
-            using (var response = await httpClient.SendAsync(request).ConfigureAwait(false))
-            {
-                if (ensureSuccess)
-                    response.EnsureSuccessStatusCode();
-
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            }
-        }
-
-        public static async Task<Stream> GetStreamAsync(this HttpClient httpClient, string requestUri,
-            long? from = null, long? to = null, bool ensureSuccess = true)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-            request.Headers.Range = new RangeHeaderValue(from, to);
-
-            using (request)
-            {
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-
-                if (ensureSuccess)
-                    response.EnsureSuccessStatusCode();
-
-                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            }
         }
     }
 }
