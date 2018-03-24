@@ -1,3 +1,9 @@
+### v4.2 (24-Mar-2018)
+
+- Added overloads for `DownloadMediaStreamAsync` and `DownloadClosedCaptionTrackAsync` that accept `Stream` as output.
+- Removed `IHttpService`, `HttpService` in favor of using unwrapped `HttpClient`.
+- Added `IYoutubeClient` to aid in testing.
+
 ### v4.1.1 (20-Feb-2018)
 
 - Fixed an issue where `GetClosedCaptionTrackAsync` would throw on some malformed automatic captions.
