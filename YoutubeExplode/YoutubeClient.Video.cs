@@ -199,6 +199,7 @@ namespace YoutubeExplode
         public async Task<Video> GetVideoAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
+
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
@@ -234,6 +235,7 @@ namespace YoutubeExplode
         public async Task<Channel> GetVideoAuthorChannelAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
+
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
@@ -256,6 +258,7 @@ namespace YoutubeExplode
         public async Task<MediaStreamInfoSet> GetVideoMediaStreamInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
+
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
@@ -306,8 +309,7 @@ namespace YoutubeExplode
 
                     // Probe stream and get content length
                     long contentLength;
-                    using (var request = new HttpRequestMessage(HttpMethod.Head, url))
-                    using (var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
+                    using (var response = await _httpClient.HeadAsync(url).ConfigureAwait(false))
                     {
                         // Some muxed streams can be gone
                         if (response.StatusCode == HttpStatusCode.NotFound ||
@@ -463,6 +465,7 @@ namespace YoutubeExplode
         public async Task<IReadOnlyList<ClosedCaptionTrackInfo>> GetVideoClosedCaptionTrackInfosAsync(string videoId)
         {
             videoId.GuardNotNull(nameof(videoId));
+
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
