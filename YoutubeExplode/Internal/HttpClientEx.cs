@@ -30,7 +30,7 @@ namespace YoutubeExplode.Internal
             bool ensureSuccess = true)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, requestUri))
-            using (var response = await httpClient.SendAsync(request).ConfigureAwait(false))
+            using (var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
             {
                 if (ensureSuccess)
                     response.EnsureSuccessStatusCode();
@@ -47,7 +47,7 @@ namespace YoutubeExplode.Internal
 
             using (request)
             {
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+                var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                 if (ensureSuccess)
                     response.EnsureSuccessStatusCode();

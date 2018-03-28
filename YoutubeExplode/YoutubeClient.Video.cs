@@ -307,7 +307,7 @@ namespace YoutubeExplode
                     // Probe stream and get content length
                     long contentLength;
                     using (var request = new HttpRequestMessage(HttpMethod.Head, url))
-                    using (var response = await _httpClient.SendAsync(request).ConfigureAwait(false))
+                    using (var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
                     {
                         // Some muxed streams can be gone
                         if (response.StatusCode == HttpStatusCode.NotFound ||

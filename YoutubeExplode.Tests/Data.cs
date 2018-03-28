@@ -13,6 +13,7 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("_kmeFXjjGfk"); // embed not allowed
             yield return new TestCaseData("5VGm0dczmHc"); // rating not allowed
             yield return new TestCaseData("ZGdLIwrGHG8"); // unlisted
+            yield return new TestCaseData("H1O_-JVbl_k"); // very large video
         }
 
         public static IEnumerable GetVideoIds_Invalid()
