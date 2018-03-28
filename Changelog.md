@@ -1,3 +1,7 @@
+### v4.2.1 (28-Mar-2018)
+
+- Fixed an `OutOfMemoryException` issue that would occur when executing `GetVideoMediaStreamInfosAsync` on a large video.
+
 ### v4.2 (24-Mar-2018)
 
 - Added overloads for `DownloadMediaStreamAsync` and `DownloadClosedCaptionTrackAsync` that accept `Stream` as output.
