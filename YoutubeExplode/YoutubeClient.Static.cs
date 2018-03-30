@@ -93,6 +93,7 @@ namespace YoutubeExplode
                 return false;
 
             if (playlistId.Length != 13 &&
+                playlistId.Length != 15 &&
                 playlistId.Length != 18 &&
                 playlistId.Length != 24 &&
                 playlistId.Length != 26 &&
