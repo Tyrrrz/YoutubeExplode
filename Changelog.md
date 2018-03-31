@@ -1,3 +1,7 @@
+### v4.2.2 (31-Mar-2018)
+
+- Fixed some playlist IDs being considered invalid even though they aren't.
+
 ### v4.2.1 (28-Mar-2018)
 
 - Fixed an `OutOfMemoryException` issue that would occur when executing `GetVideoMediaStreamInfosAsync` on a large video.
