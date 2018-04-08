@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -218,7 +217,7 @@ namespace YoutubeExplode
 
             // Extract values
             var uploadDate = watchPage.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content")
-                .ParseDateTime("yyyy-MM-dd");
+                .ParseDateTimeOffset("yyyy-MM-dd");
             var description = watchPage.QuerySelector("p#eow-description").TextEx();
             var likeCount = watchPage.QuerySelector("button.like-button-renderer-like-button").Text()
                 .StripNonDigit().ParseLongOrDefault();

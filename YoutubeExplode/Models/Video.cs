@@ -25,7 +25,7 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Upload date of this video.
         /// </summary>
-        public DateTime UploadDate { get; }
+        public DateTimeOffset UploadDate { get; }
 
         /// <summary>
         /// Title of this video.
@@ -63,7 +63,7 @@ namespace YoutubeExplode.Models
         public Statistics Statistics { get; }
 
         /// <summary />
-        public Video(string id, string author, DateTime uploadDate, string title, string description,
+        public Video(string id, string author, DateTimeOffset uploadDate, string title, string description,
             ThumbnailSet thumbnails, TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
         {
             Id = id.GuardNotNull(nameof(id));

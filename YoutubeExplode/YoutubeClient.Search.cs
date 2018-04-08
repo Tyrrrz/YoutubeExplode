@@ -50,7 +50,7 @@ namespace YoutubeExplode
                     // Basic info
                     var videoId = videoJson["encrypted_id"].Value<string>();
                     var videoAuthor = videoJson["author"].Value<string>();
-                    var videoUploadDate = videoJson["added"].Value<DateTime>();
+                    var videoUploadDate = videoJson["added"].Value<string>().ParseDateTimeOffset("M/d/yy");
                     var videoTitle = videoJson["title"].Value<string>();
                     var videoDuration = TimeSpan.FromSeconds(videoJson["length_seconds"].Value<double>());
                     var videoDescription = videoJson["description"].Value<string>().HtmlDecode();

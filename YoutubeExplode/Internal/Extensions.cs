@@ -98,14 +98,15 @@ namespace YoutubeExplode.Internal
                 : defaultValue;
         }
 
-        public static DateTime ParseDateTime(this string str)
+        public static DateTimeOffset ParseDateTimeOffset(this string str)
         {
-            return DateTime.Parse(str, DateTimeFormatInfo.InvariantInfo);
+            return DateTimeOffset.Parse(str, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal);
         }
 
-        public static DateTime ParseDateTime(this string str, string format)
+        public static DateTimeOffset ParseDateTimeOffset(this string str, string format)
         {
-            return DateTime.ParseExact(str, format, DateTimeFormatInfo.InvariantInfo);
+            return DateTimeOffset.ParseExact(str, format, DateTimeFormatInfo.InvariantInfo,
+                DateTimeStyles.AssumeUniversal);
         }
 
         public static string Reverse(this string str)

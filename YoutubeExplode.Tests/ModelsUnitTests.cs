@@ -14,7 +14,7 @@ namespace YoutubeExplode.Tests
         {
             var thumbnails = new ThumbnailSet("-TEST-TEST-");
             var statistics = new Statistics(1337, 13, 37);
-            return new Video("-TEST-TEST-", "Test Author", DateTime.Now, "Test Video", "test", thumbnails,
+            return new Video("-TEST-TEST-", "Test Author", DateTimeOffset.Now, "Test Video", "test", thumbnails,
                 TimeSpan.FromMinutes(2), new string[0], statistics);
         }
 
