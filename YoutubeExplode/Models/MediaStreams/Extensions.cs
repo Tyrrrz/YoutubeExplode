@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
@@ -159,6 +160,21 @@ namespace YoutubeExplode.Models.MediaStreams
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
             return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the expiry date of the stream URL.
+        /// Returns null if the expiry date could not be parsed.
+        /// </summary>
+        public static DateTimeOffset? GetUrlExpiryDate(this MediaStreamInfo streamInfo)
+        {
+            streamInfo.GuardNotNull(nameof(streamInfo));
+
+            var expiryDateUnix = Regex.Match(streamInfo.Url, @"expire[=/](\d+)").Groups[1].Value.ParseLongOrDefault();
+            if (expiryDateUnix == 0L)
+                return null;
+
+            return new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero).AddSeconds(expiryDateUnix);
         }
     }
 }
