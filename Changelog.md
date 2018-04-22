@@ -1,3 +1,9 @@
+### v4.2.3 (22-Apr-2018)
+
+- Added an extension method to parse `MediaStreamInfo.Url` expiry date -- `MediaStreamInfo.GetUrlExpiryDate`.
+- Replaced instances of `DateTime` with `DateTimeOffset`.
+- Relaxed validation rules for RD playlist IDs because there are simply too many possible variations.
+
 ### v4.2.2 (31-Mar-2018)
 
 - Fixed some playlist IDs being considered invalid even though they aren't.
