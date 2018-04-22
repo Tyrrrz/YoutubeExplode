@@ -474,18 +474,19 @@ namespace YoutubeExplode
             // Extract captions metadata
             var playerResponseRaw = videoInfo["player_response"];
             var playerResponseJson = JToken.Parse(playerResponseRaw);
-            var captionsJson = playerResponseJson.SelectToken("$..captionTracks").EmptyIfNull();
+            var captionTracksJson = playerResponseJson.SelectToken("$..captionTracks").EmptyIfNull();
 
             // Parse closed caption tracks
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
-            foreach (var captionJson in captionsJson)
+            foreach (var captionTrackJson in captionTracksJson)
             {
                 // Extract values
-                var code = captionJson["languageCode"].Value<string>();
-                var name = captionJson["name"]["simpleText"].Value<string>();
+                var code = captionTrackJson["languageCode"].Value<string>();
+                var name = captionTrackJson["name"]["simpleText"].Value<string>();
                 var language = new Language(code, name);
-                var isAuto = captionJson["vssId"].Value<string>().StartsWith("a.", StringComparison.OrdinalIgnoreCase);
-                var url = captionJson["baseUrl"].Value<string>();
+                var isAuto = captionTrackJson["vssId"].Value<string>()
+                    .StartsWith("a.", StringComparison.OrdinalIgnoreCase);
+                var url = captionTrackJson["baseUrl"].Value<string>();
 
                 // Enforce format
                 url = UrlEx.SetQueryParameter(url, "format", "3");

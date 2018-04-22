@@ -92,11 +92,11 @@ namespace YoutubeExplode
                 !playlistId.StartsWith("FL", StringComparison.Ordinal))
                 return false;
 
-            if (playlistId.Length != 13 &&
-                playlistId.Length != 15 &&
-                playlistId.Length != 18 &&
+            // RD playlist IDs can be of so many various lengths that it's not worth listing them
+            // Other playlist IDs are more fixed
+            if (!playlistId.StartsWith("RD", StringComparison.Ordinal) &&
+                playlistId.Length != 13 &&
                 playlistId.Length != 24 &&
-                playlistId.Length != 26 &&
                 playlistId.Length != 34)
                 return false;
 
