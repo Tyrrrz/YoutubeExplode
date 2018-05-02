@@ -1,3 +1,7 @@
+### v4.2.4 (02-May-2018)
+
+- Fixed an issue where `GetVideoAuthorChannelAsync` would always throw an exception due to recent YouTube changes.
+
 ### v4.2.3 (22-Apr-2018)
 
 - Added an extension method to parse `MediaStreamInfo.Url` expiry date -- `MediaStreamInfo.GetUrlExpiryDate`.
