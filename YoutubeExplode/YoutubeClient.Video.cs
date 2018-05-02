@@ -247,7 +247,7 @@ namespace YoutubeExplode
             // Extract values
             var channelPath = configJson["args"]["channel_path"].Value<string>();
             var id = channelPath.SubstringAfter("channel/");
-            var title = configJson["args"]["author"].Value<string>();
+            var title = configJson["args"]["expanded_title"].Value<string>();
             var logoUrl = configJson["args"]["profile_picture"].Value<string>();
 
             return new Channel(id, title, logoUrl);
