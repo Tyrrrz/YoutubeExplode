@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System.Collections;
 
 namespace YoutubeExplode.Tests
 {
@@ -56,6 +56,7 @@ namespace YoutubeExplode.Tests
 
         public static IEnumerable GetPlaylistIds()
         {
+            yield return new TestCaseData("PL601B2E69B03FAB9D"); // short??
             yield return new TestCaseData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e"); // normal
             yield return new TestCaseData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk"); // large
             yield return new TestCaseData("RD1hu8-y6fKg0"); // video mix
