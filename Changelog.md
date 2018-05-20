@@ -1,3 +1,7 @@
+### v4.2.5 (20-May-2018)
+
+- Relaxed validation rules for all playlist IDs because there are even more variations than expected.
+
 ### v4.2.4 (02-May-2018)
 
 - Fixed an issue where `GetVideoAuthorChannelAsync` would always throw an exception due to recent YouTube changes.
