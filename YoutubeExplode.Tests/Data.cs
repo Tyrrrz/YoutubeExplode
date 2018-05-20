@@ -72,7 +72,6 @@ namespace YoutubeExplode.Tests
         public static IEnumerable GetPlaylistIds_Invalid()
         {
             yield return new TestCaseData("");
-            yield return new TestCaseData("PLm_3vnTS-pvmZFuF3L1Pyhqf8kTTYVKj");
             yield return new TestCaseData("PLm_3vnTS-pvmZFuF L1Pyhqf8kTTYVKjW");
             yield return new TestCaseData("PLm_3vnTS-pvmZFuF3L1Pyhqf8kTTYVKjWz");
             yield return new TestCaseData("PLm_3vnTS-pvmZFuF3L=Pyhqf8kTTYVKjW");

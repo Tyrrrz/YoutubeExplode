@@ -14,6 +14,7 @@ namespace YoutubeExplode
             if (videoId.IsBlank())
                 return false;
 
+            // Video IDs are always 11 characters
             if (videoId.Length != 11)
                 return false;
 
@@ -80,9 +81,11 @@ namespace YoutubeExplode
             if (playlistId.IsBlank())
                 return false;
 
+            // Watch later playlist is special
             if (playlistId == "WL")
                 return true;
 
+            // Other playlist IDs should start with these two characters
             if (!playlistId.StartsWith("PL", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("RD", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("UL", StringComparison.Ordinal) &&
@@ -92,13 +95,8 @@ namespace YoutubeExplode
                 !playlistId.StartsWith("FL", StringComparison.Ordinal))
                 return false;
 
-            // RD playlist IDs can be of so many various lengths that it's not worth listing them
-            // Other playlist IDs are more fixed
-            if (!playlistId.StartsWith("RD", StringComparison.Ordinal) &&
-                playlistId.Length != 13 &&
-                playlistId.Length != 18 &&
-                playlistId.Length != 24 &&
-                playlistId.Length != 34)
+            // Playlist IDs vary a lot in lengths, so we will just compare with the extremes
+            if (playlistId.Length < 13 || playlistId.Length > 34)
                 return false;
 
             return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");
@@ -173,10 +171,12 @@ namespace YoutubeExplode
             if (channelId.IsBlank())
                 return false;
 
-            if (channelId.Length != 24)
+            // Channel IDs should start with these characters
+            if (!channelId.StartsWith("UC", StringComparison.Ordinal))
                 return false;
 
-            if (!channelId.StartsWith("UC", StringComparison.Ordinal))
+            // Channel IDs are always 24 characters
+            if (channelId.Length != 24)
                 return false;
 
             return !Regex.IsMatch(channelId, @"[^0-9a-zA-Z_\-]");
