@@ -16,8 +16,8 @@ namespace YoutubeExplode.Models
         [NotNull]
         public string Id { get; }
 
-        /// Type of this playlist.
         /// <summary>
+        /// Type of this playlist.
         /// </summary>
         public PlaylistType Type { get; }
 
