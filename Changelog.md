@@ -1,3 +1,7 @@
+### v4.2.6 (09-Jun-2018)
+
+- Fixed an issue where `VideoUnavailableException` would always be thrown for non-embeddable videos due to recent YouTube changes.
+
 ### v4.2.5 (20-May-2018)
 
 - Relaxed validation rules for all playlist IDs because there are even more variations than expected.
