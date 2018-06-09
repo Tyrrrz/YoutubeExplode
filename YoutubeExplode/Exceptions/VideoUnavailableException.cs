@@ -23,15 +23,10 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public string Reason { get; }
 
-        /// <inheritdoc />
-        public override string Message => $"Video [{VideoId}] is not available and cannot be processed." +
-                                          Environment.NewLine +
-                                          $"Error code: {Code}" +
-                                          Environment.NewLine +
-                                          $"Error reason: {Reason}";
-
         /// <summary />
         public VideoUnavailableException(string videoId, int code, string reason)
+            : base($"Video [{videoId}] is not available and cannot be processed. " +
+                   $"Code: {code}. Reason: {reason}.")
         {
             VideoId = videoId.GuardNotNull(nameof(videoId));
             Code = code;

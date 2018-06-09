@@ -18,13 +18,9 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public string PreviewVideoId { get; }
 
-        /// <inheritdoc />
-        public override string Message => $"Video [{VideoId}] requires purchase and cannot be processed." +
-                                          Environment.NewLine +
-                                          $"Free preview video [{PreviewVideoId}] is available.";
-
         /// <summary />
         public VideoRequiresPurchaseException(string videoId, string previewVideoId)
+            : base($"Video [{videoId}] requires purchase and cannot be processed.")
         {
             VideoId = videoId.GuardNotNull(nameof(videoId));
             PreviewVideoId = previewVideoId.GuardNotNull(nameof(previewVideoId));
