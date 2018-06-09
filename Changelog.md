@@ -1,3 +1,9 @@
+### v4.2.7 (09-Jun-2018)
+
+- Fixed an issue where non-embeddable age-restricted videos could not be processed.
+- Fixed exception messages not being shown in Visual Studio's exception popup.
+- Fixed xml docs on `Playlist.Type` property.
+
 ### v4.2.6 (09-Jun-2018)
 
 - Fixed an issue where `VideoUnavailableException` would always be thrown for non-embeddable videos due to recent YouTube changes.
