@@ -13,7 +13,7 @@ namespace DemoConsole
         /// If given a YouTube URL, parses video id from it.
         /// Otherwise returns the same string.
         /// </summary>
-        private static string NormalizeId(string input)
+        private static string NormalizeVideoId(string input)
         {
             if (!YoutubeClient.TryParseVideoId(input, out var id))
                 id = input;
@@ -21,7 +21,7 @@ namespace DemoConsole
         }
 
         /// <summary>
-        /// Turns file size in bytes into human-readable string
+        /// Turns file size in bytes into human-readable string.
         /// </summary>
         private static string NormalizeFileSize(long fileSize)
         {
@@ -46,24 +46,34 @@ namespace DemoConsole
             // Get the video ID
             Console.Write("Enter YouTube video ID or URL: ");
             var id = Console.ReadLine();
-            id = NormalizeId(id);
+            id = NormalizeVideoId(id);
+            Console.WriteLine();
 
             // Get the video info
-            Console.WriteLine("Loading...");
+            Console.Write("Obtaining general video info... ");
             var video = await client.GetVideoAsync(id);
-            Console.WriteLine('-'.Repeat(100));
-
-            // Print metadata
-            Console.WriteLine($"Id: {video.Id} | Title: {video.Title} | Author: {video.Author}");
+            Console.WriteLine('✓');
+            Console.WriteLine($"> {video.Title} by {video.Author}");
+            Console.WriteLine();
 
             // Get media stream info set
+            Console.Write("Obtaining media stream info set... ");
             var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(id);
+            Console.WriteLine('✓');
+            Console.WriteLine("> " +
+                              $"{streamInfoSet.Muxed.Count} muxed streams, " +
+                              $"{streamInfoSet.Video.Count} video-only streams, " +
+                              $"{streamInfoSet.Audio.Count} audio-only streams");
+            Console.WriteLine();
 
-            // Get the most preferable stream
-            Console.WriteLine("Looking for the best muxed stream...");
+            // Get the best muxed stream
             var streamInfo = streamInfoSet.Muxed.WithHighestVideoQuality();
-            var normalizedFileSize = NormalizeFileSize(streamInfo.Size);
-            Console.WriteLine($"Quality: {streamInfo.VideoQualityLabel} | Container: {streamInfo.Container} | Size: {normalizedFileSize}");
+            Console.WriteLine("Selected muxed stream with highest video quality:");
+            Console.WriteLine("> " +
+                              $"{streamInfo.VideoQualityLabel} video quality | " +
+                              $"{streamInfo.Container} format | " +
+                              $"{NormalizeFileSize(streamInfo.Size)}");
+            Console.WriteLine();
 
             // Compose file name, based on metadata
             var fileExtension = streamInfo.Container.GetFileExtension();
@@ -73,13 +83,12 @@ namespace DemoConsole
             fileName = fileName.Replace(Path.GetInvalidFileNameChars(), '_');
 
             // Download video
-            Console.WriteLine($"Downloading to [{fileName}]...");
-            Console.WriteLine('-'.Repeat(100));
+            Console.Write("Downloading... ");
+            using (var progress = new ProgressBar())
+                await client.DownloadMediaStreamAsync(streamInfo, fileName, progress);
+            Console.WriteLine();
 
-            var progress = new Progress<double>(p => Console.Title = $"YoutubeExplode Demo [{p:P0}]");
-            await client.DownloadMediaStreamAsync(streamInfo, fileName, progress);
-
-            Console.WriteLine("Download complete!");
+            Console.WriteLine($"Video saved to '{fileName}'");
             Console.ReadKey();
         }
 
