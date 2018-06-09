@@ -57,31 +57,27 @@ namespace YoutubeExplode
 
         private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "")
         {
-            // Get video info
+            // Get video info with 'el=embedded'
             var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
             var videoInfo = UrlEx.SplitQuery(raw);
 
-            // If can't be embedded - try another value of el
-            if (videoInfo.ContainsKey("errorcode"))
-            {
-                var errorReason = videoInfo["reason"];
-                if (errorReason.Contains("&feature=player_embedded"))
-                {
-                    raw = await GetVideoInfoRawAsync(videoId, "detailpage", sts).ConfigureAwait(false);
-                    videoInfo = UrlEx.SplitQuery(raw);
-                }
-            }
+            // If there is no error - return
+            if (!videoInfo.ContainsKey("errorcode"))
+                return videoInfo;
 
-            // Check error
-            if (videoInfo.ContainsKey("errorcode"))
-            {
-                var errorCode = videoInfo["errorcode"].ParseInt();
-                var errorReason = videoInfo["reason"];
+            // Get video info with 'el=detailpage'
+            raw = await GetVideoInfoRawAsync(videoId, "detailpage", sts).ConfigureAwait(false);
+            videoInfo = UrlEx.SplitQuery(raw);
 
-                throw new VideoUnavailableException(videoId, errorCode, errorReason);
-            }
+            // If there is no error - return
+            if (!videoInfo.ContainsKey("errorcode"))
+                return videoInfo;
 
-            return videoInfo;
+            // If there is error - throw
+            var errorCode = videoInfo["errorcode"].ParseInt();
+            var errorReason = videoInfo["reason"];
+
+            throw new VideoUnavailableException(videoId, errorCode, errorReason);
         }
 
         private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)
