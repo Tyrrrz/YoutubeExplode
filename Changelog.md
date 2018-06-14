@@ -1,3 +1,7 @@
+### v4.2.8 (14-Jun-2018)
+
+- Fixed an issue where some non-embeddable videos could not be processed.
+
 ### v4.2.7 (09-Jun-2018)
 
 - Fixed an issue where non-embeddable age-restricted videos could not be processed.
