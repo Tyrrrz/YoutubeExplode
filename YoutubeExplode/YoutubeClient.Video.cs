@@ -51,26 +51,36 @@ namespace YoutubeExplode
 
         private async Task<string> GetVideoInfoRawAsync(string videoId, string el = "", string sts = "")
         {
-            var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode(); // this makes all videos embeddable
+            // This parameter does magic and a lot of videos don't work without it
+            var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
+
             var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&sts={sts}&eurl={eurl}&hl=en";
             return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "")
         {
+            // Get video info with 'el=embedded'
             var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
             var videoInfo = UrlEx.SplitQuery(raw);
 
-            // Check if there is an error
-            if (videoInfo.ContainsKey("errorcode"))
-            {
-                var errorCode = videoInfo["errorcode"].ParseInt();
-                var errorReason = videoInfo["reason"];
+            // If there is no error - return
+            if (!videoInfo.ContainsKey("errorcode"))
+                return videoInfo;
 
-                throw new VideoUnavailableException(videoId, errorCode, errorReason);
-            }
+            // Get video info with 'el=detailpage'
+            raw = await GetVideoInfoRawAsync(videoId, "detailpage", sts).ConfigureAwait(false);
+            videoInfo = UrlEx.SplitQuery(raw);
 
-            return videoInfo;
+            // If there is no error - return
+            if (!videoInfo.ContainsKey("errorcode"))
+                return videoInfo;
+
+            // If there is error - throw
+            var errorCode = videoInfo["errorcode"].ParseInt();
+            var errorReason = videoInfo["reason"];
+
+            throw new VideoUnavailableException(videoId, errorCode, errorReason);
         }
 
         private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)
