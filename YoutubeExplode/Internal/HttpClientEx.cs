@@ -65,5 +65,17 @@ namespace YoutubeExplode.Internal
                 return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             }
         }
+
+        public static async Task<long?> GetContentLengthAsync(this HttpClient client, string requestUri,
+            bool ensureSuccess = true)
+        {
+            using (var response = await client.HeadAsync(requestUri).ConfigureAwait(false))
+            {
+                if (ensureSuccess)
+                    response.EnsureSuccessStatusCode();
+
+                return response.Content.Headers.ContentLength;
+            }
+        }
     }
 }

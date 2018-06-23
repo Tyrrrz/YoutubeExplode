@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -306,21 +305,11 @@ namespace YoutubeExplode
                     }
 
                     // Probe stream and get content length
-                    long contentLength;
-                    using (var response = await _httpClient.HeadAsync(url).ConfigureAwait(false))
-                    {
-                        // Some muxed streams can be gone
-                        if (response.StatusCode == HttpStatusCode.NotFound ||
-                            response.StatusCode == HttpStatusCode.Gone)
-                            continue;
-
-                        // Ensure success
-                        response.EnsureSuccessStatusCode();
-
-                        // Extract content length
-                        contentLength = response.Content.Headers.ContentLength ??
-                                        throw new ParseException("Could not extract content length of muxed stream.");
-                    }
+                    var contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
+                    
+                    // If probe failed, the stream is gone or faulty
+                    if (contentLength < 0)
+                        continue;
 
                     var streamInfo = new MuxedStreamInfo(itag, url, contentLength);
                     muxedStreamInfoMap[itag] = streamInfo;
