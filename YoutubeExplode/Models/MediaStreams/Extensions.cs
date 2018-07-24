@@ -86,8 +86,9 @@ namespace YoutubeExplode.Models.MediaStreams
             if (framerate <= 30)
                 return videoQuality.GetVideoQualityLabel();
 
-            // YouTube always shows framerate as 60, no matter what it is
-            return videoQuality.GetVideoQualityLabel() + "60";
+            // YouTube rounds framerate to nearest next ten
+            var framerateRounded = (int) Math.Ceiling(framerate / 10.0) * 10;
+            return videoQuality.GetVideoQualityLabel() + framerateRounded;
         }
 
         /// <summary>
