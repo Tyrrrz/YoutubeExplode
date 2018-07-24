@@ -57,9 +57,10 @@ namespace YoutubeExplode.Internal
 
         protected override void Dispose(bool disposing)
         {
-            _currentStream?.Dispose();
-
             base.Dispose(disposing);
+
+            if (disposing)
+                _currentStream?.Dispose();
         }
 
         #region Not supported
