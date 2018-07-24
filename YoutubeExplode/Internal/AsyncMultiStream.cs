@@ -24,13 +24,14 @@ namespace YoutubeExplode.Internal
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count,
             CancellationToken cancellationToken)
         {
-            // If queue is empty - return
-            if (!_queue.Any())
-                return 0;
-
             // If current stream is not set - resolve it
             if (_currentStream == null)
-                _currentStream = await _queue.Dequeue().Invoke().ConfigureAwait(false);
+            {
+                if (_queue.Any())
+                    _currentStream = await _queue.Dequeue().Invoke().ConfigureAwait(false);
+                else
+                    return 0;
+            }
 
             // Read from stream
             var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken)
@@ -39,12 +40,12 @@ namespace YoutubeExplode.Internal
             // If nothing was read - move to next stream
             if (bytesRead == 0)
             {
-                // Dispose and nullify
+                // Dispose and nullify current stream
                 _currentStream.Dispose();
                 _currentStream = null;
 
                 // Recursively read next stream
-                bytesRead += await ReadAsync(buffer, offset + bytesRead, count - bytesRead, cancellationToken)
+                bytesRead = await ReadAsync(buffer, offset + bytesRead, count - bytesRead, cancellationToken)
                     .ConfigureAwait(false);
             }
 
