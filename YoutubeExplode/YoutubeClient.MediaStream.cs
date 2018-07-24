@@ -16,14 +16,19 @@ namespace YoutubeExplode
         {
             info.GuardNotNull(nameof(info));
 
+            // Maximum segment stream size
+            const long segmentSize = 9_898_989; // this number was carefully devised through research
+
             // Determine if stream is rate-limited
             var isRateLimited = !Regex.IsMatch(info.Url, @"ratebypass[=/]yes");
 
-            // If rate-limited - split into segments and wrap into one stream
-            if (isRateLimited)
+            // Determine if the stream is longer than one segment
+            var isMultiSegment = info.Size > segmentSize;
+
+            // If rate-limited and long enough - split into segments and wrap into one stream
+            if (isRateLimited && isMultiSegment)
             {
                 // Determine segment count
-                const long segmentSize = 9_898_989; // this number was carefully devised through research
                 var segmentCount = (int) Math.Ceiling(1.0 * info.Size / segmentSize);
 
                 // Create resolvers for multi stream
@@ -43,11 +48,11 @@ namespace YoutubeExplode
                 var stream = new AsyncMultiStream(resolvers);
                 return new MediaStream(info, stream);
             }
-            // If not rate-limited - get the stream directly
+            // If not rate-limited or not long enough - get the stream in one segment
             else
             {
-                // Get full stream
-                var stream = await _httpClient.GetStreamAsync(info.Url).ConfigureAwait(false);
+                // Get the whole stream as one segment
+                var stream = await _httpClient.GetStreamAsync(info.Url, 0, info.Size).ConfigureAwait(false);
                 return new MediaStream(info, stream);
             }
         }
