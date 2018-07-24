@@ -152,7 +152,7 @@ namespace YoutubeExplode.Tests
             var fileInfo = new FileInfo(outputFilePath);
 
             Assert.That(fileInfo.Exists, Is.True);
-            Assert.That(fileInfo.Length, Is.GreaterThan(0));
+            Assert.That(fileInfo.Length, Is.EqualTo(streamInfo.Size));
         }
 
         [Test]
