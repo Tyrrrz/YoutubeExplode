@@ -1,3 +1,9 @@
+### v4.3 (25-Jul-2018)
+
+- Reworked `GetMediaStreamAsync` so that it implements the workaround for rate-limited streams, which was originally only available in `DownloadMediaStreamAsync`. This is achieved by returning a stream that internally sends multiple segmented requests in a sequence.
+- Fixed `MediaStream.ReadAsync` not using the `ReadAsync` of the underlying stream.
+- Fixed `GetVideoQualityLabel` so that it displays the framerate as rounded up to the nearest 10, instead of always displaying it as '60'.
+
 ### v4.2.8 (14-Jun-2018)
 
 - Fixed an issue where some non-embeddable videos could not be processed.
