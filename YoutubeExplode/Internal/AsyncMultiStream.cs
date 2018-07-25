@@ -45,8 +45,7 @@ namespace YoutubeExplode.Internal
                 _currentStream = null;
 
                 // Recursively read next stream
-                bytesRead = await ReadAsync(buffer, offset + bytesRead, count - bytesRead, cancellationToken)
-                    .ConfigureAwait(false);
+                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             }
 
             return bytesRead;
