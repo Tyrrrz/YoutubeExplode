@@ -206,28 +206,22 @@ namespace YoutubeExplode.Internal
             return sb.ToString();
         }
 
-        public static async Task<int> CopyChunkToAsync(this Stream source, Stream destination,
-            CancellationToken cancellationToken, byte[] buffer)
-        {
-            // Read
-            var bytesCopied = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
-
-            // Write
-            await destination.WriteAsync(buffer, 0, bytesCopied, cancellationToken).ConfigureAwait(false);
-
-            return bytesCopied;
-        }
-
         public static async Task CopyToAsync(this Stream source, Stream destination,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken), int bufferSize = 81920)
+            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken),
+            int bufferSize = 81920)
         {
+            var buffer = new byte[bufferSize];
+
             var totalBytesCopied = 0L;
             int bytesCopied;
-            var buffer = new byte[bufferSize];
+
             do
             {
-                // Copy
-                bytesCopied = await source.CopyChunkToAsync(destination, cancellationToken, buffer).ConfigureAwait(false);
+                // Read
+                bytesCopied = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+
+                // Write
+                await destination.WriteAsync(buffer, 0, bytesCopied, cancellationToken).ConfigureAwait(false);
 
                 // Report progress
                 totalBytesCopied += bytesCopied;
