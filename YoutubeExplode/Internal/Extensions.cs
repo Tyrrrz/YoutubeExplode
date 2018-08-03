@@ -207,10 +207,8 @@ namespace YoutubeExplode.Internal
         }
 
         public static async Task<int> CopyChunkToAsync(this Stream source, Stream destination,
-            CancellationToken cancellationToken, int bufferSize = 81920)
+            CancellationToken cancellationToken, byte[] buffer)
         {
-            var buffer = new byte[bufferSize];
-
             // Read
             var bytesCopied = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
 
@@ -221,14 +219,15 @@ namespace YoutubeExplode.Internal
         }
 
         public static async Task CopyToAsync(this Stream source, Stream destination,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken), int bufferSize = 81920)
         {
             var totalBytesCopied = 0L;
             int bytesCopied;
+            var buffer = new byte[bufferSize];
             do
             {
                 // Copy
-                bytesCopied = await source.CopyChunkToAsync(destination, cancellationToken).ConfigureAwait(false);
+                bytesCopied = await source.CopyChunkToAsync(destination, cancellationToken, buffer).ConfigureAwait(false);
 
                 // Report progress
                 totalBytesCopied += bytesCopied;
