@@ -1,3 +1,7 @@
+### v4.3.1 (28-Aug-2018)
+
+- Fixed an issue where retrieving some streams may throw a 403 HTTP error due to recent YouTube changes.
+
 ### v4.3 (25-Jul-2018)
 
 - Reworked `GetMediaStreamAsync` so that it implements the workaround for rate-limited streams, which was originally only available in `DownloadMediaStreamAsync`. This is achieved by returning a stream that internally sends multiple segmented requests in a sequence.
