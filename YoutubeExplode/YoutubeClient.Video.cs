@@ -141,7 +141,7 @@ namespace YoutubeExplode
                     break;
 
                 // Get the function called on this line
-                var calledFuncName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
+                var calledFuncName = Regex.Match(line, @"\w+(?:.|\[)(\""?\w+(?:\"")?)\]?\(").Groups[1].Value;
                 if (calledFuncName.IsBlank())
                     continue;
 
@@ -166,7 +166,7 @@ namespace YoutubeExplode
             foreach (var line in entryPointLines)
             {
                 // Get the function called on this line
-                var calledFuncName = Regex.Match(line, @"\w+\.(\w+)\(").Groups[1].Value;
+                var calledFuncName = Regex.Match(line, @"\w+(?:.|\[)(\""?\w+(?:\"")?)\]?\(").Groups[1].Value;
                 if (calledFuncName.IsBlank())
                     continue;
 
