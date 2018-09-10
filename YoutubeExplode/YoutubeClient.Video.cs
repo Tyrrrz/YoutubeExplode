@@ -106,6 +106,7 @@ namespace YoutubeExplode
             // Original code credit:
             // https://github.com/flagbug/YoutubeExtractor/blob/3106efa1063994fd19c0e967793315f6962b2d3c/YoutubeExtractor/YoutubeExtractor/Decipherer.cs
             // No copyright, MIT license
+            // Regexes found in this method have been sourced by contributors and from other projects
 
             // Try to resolve from cache first
             var playerSource = _playerSourceCache.GetOrDefault(sourceUrl);
@@ -116,7 +117,7 @@ namespace YoutubeExplode
             var sourceRaw = await _httpClient.GetStringAsync(sourceUrl).ConfigureAwait(false);
 
             // Find the name of the function that handles deciphering
-            var entryPoint = Regex.Match(sourceRaw, @"\""signature"",\s?([a-zA-Z0-9\$]+)\(").Groups[1].Value;
+            var entryPoint = Regex.Match(sourceRaw, @"(\w+)&&(\w+)\.set\(\w+,(\w+)\(\1\)\);return\s+\2").Groups[3].Value;
             if (entryPoint.IsBlank())
                 throw new ParseException("Could not find the entry function for signature deciphering.");
 
