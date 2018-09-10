@@ -1,3 +1,7 @@
+### v4.3.2 (11-Sep-2018)
+
+- Fixed an issue where `ParseException` was thrown on signature-protected videos due to recent YouTube changes.
+
 ### v4.3.1 (28-Aug-2018)
 
 - Fixed an issue where retrieving some streams may throw a 403 HTTP error due to recent YouTube changes.
