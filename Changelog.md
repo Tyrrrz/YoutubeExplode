@@ -1,3 +1,7 @@
+### v4.3.3 (26-Sep-2018)
+
+- Added support for AV1 video codec.
+
 ### v4.3.2 (11-Sep-2018)
 
 - Fixed an issue where `ParseException` was thrown on signature-protected videos due to recent YouTube changes.
