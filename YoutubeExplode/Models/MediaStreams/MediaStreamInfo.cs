@@ -100,6 +100,11 @@ namespace YoutubeExplode.Models.MediaStreams
             {266, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High2160)},
             {298, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High720)},
             {299, new ItagDescriptor(Container.Mp4, null, VideoEncoding.H264, VideoQuality.High1080)},
+            {399, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.High1080)},
+            {398, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.High720)},
+            {397, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Medium480)},
+            {396, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Medium360)},
+            {395, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Low240)},
 
             // Video-only (webm)
             {167, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp8, VideoQuality.Medium360)},

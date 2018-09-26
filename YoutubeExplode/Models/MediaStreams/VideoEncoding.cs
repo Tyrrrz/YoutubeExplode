@@ -28,6 +28,11 @@
         /// <summary>
         /// VP9.
         /// </summary>
-        Vp9
+        Vp9,
+
+        /// <summary>
+        /// AV1.
+        /// </summary>
+        Av1
     }
 }
