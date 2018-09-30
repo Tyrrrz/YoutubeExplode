@@ -43,6 +43,12 @@
         /// <summary>
         /// System playlist for videos user added to watch later.
         /// </summary>
-        WatchLater
+        WatchLater,
+
+        /// <summary>
+        /// A regular playlist but without any statistics
+        /// </summary>
+        NormalWithoutStatistics
+
     }
 }
