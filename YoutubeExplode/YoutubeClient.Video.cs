@@ -79,7 +79,7 @@ namespace YoutubeExplode
             var errorCode = videoInfo["errorcode"].ParseInt();
             var errorReason = videoInfo["reason"];
 
-            throw new VideoUnavailableException(videoId, errorCode, errorReason);
+            throw new VideoUnavailableException(videoId, errorCode, errorReason, videoInfo);
         }
 
         private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)

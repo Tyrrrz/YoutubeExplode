@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Exceptions
@@ -24,13 +25,17 @@ namespace YoutubeExplode.Exceptions
         public string Reason { get; }
 
         /// <summary />
-        public VideoUnavailableException(string videoId, int code, string reason)
+        public VideoUnavailableException(string videoId, int code, string reason, Dictionary<string, string> videoInfo)
             : base($"Video [{videoId}] is not available and cannot be processed. " +
                    $"Code: {code}. Reason: {reason}.")
         {
             VideoId = videoId.GuardNotNull(nameof(videoId));
             Code = code;
             Reason = reason.GuardNotNull(nameof(reason));
+            foreach (var info in videoInfo)
+            {
+                Data.Add(info.Key, info.Value);
+            }
         }
     }
 }
