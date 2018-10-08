@@ -177,44 +177,6 @@ namespace YoutubeExplode.Internal
             return result.Value;
         }
 
-        public static VideoQuality GetVideoQuality(string label)
-        {
-            if (label.StartsWith("144p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.Low144;
-
-            if (label.StartsWith("240p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.Low240;
-
-            if (label.StartsWith("360p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.Medium360;
-
-            if (label.StartsWith("480p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.Medium480;
-
-            if (label.StartsWith("720p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High720;
-
-            if (label.StartsWith("1080p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High1080;
-
-            if (label.StartsWith("1440p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High1440;
-
-            if (label.StartsWith("2160p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High2160;
-
-            if (label.StartsWith("2880p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High2880;
-
-            if (label.StartsWith("3072p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High3072;
-
-            if (label.StartsWith("4320p", StringComparison.OrdinalIgnoreCase))
-                return VideoQuality.High4320;
-
-            throw new ArgumentOutOfRangeException(nameof(label), $"Unexpected video quality label [{label}].");
-        }
-
         public static bool IsKnown(int itag)
         {
             return ItagMap.ContainsKey(itag);
