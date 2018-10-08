@@ -292,7 +292,7 @@ namespace YoutubeExplode
                     var sig = streamInfoDic.GetOrDefault("s");
 
 #if RELEASE
-                    if (!MediaStreamInfo.IsKnown(itag))
+                    if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 
@@ -333,7 +333,7 @@ namespace YoutubeExplode
                     var bitrate = streamInfoDic["bitrate"].ParseLong();
 
 #if RELEASE
-                    if (!MediaStreamInfo.IsKnown(itag))
+                    if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 
@@ -407,7 +407,7 @@ namespace YoutubeExplode
                     var bitrate = (long) streamXml.Attribute("bandwidth");
 
 #if RELEASE
-                    if (!MediaStreamInfo.IsKnown(itag))
+                    if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 

@@ -44,8 +44,8 @@ namespace YoutubeExplode.Models.MediaStreams
             : base(itag, url, size)
         {
             Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
-            VideoEncoding = GetVideoEncoding(itag);
-            VideoQuality = GetVideoQuality(itag);
+            VideoEncoding = ItagHelper.GetVideoEncoding(itag);
+            VideoQuality = ItagHelper.GetVideoQuality(itag);
             Resolution = resolution;
             Framerate = framerate.GuardNotNegative(nameof(framerate));
             VideoQualityLabel = VideoQuality.GetVideoQualityLabel(framerate);
@@ -57,11 +57,11 @@ namespace YoutubeExplode.Models.MediaStreams
             : base(itag, url, size)
         {
             Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
-            VideoEncoding = GetVideoEncoding(itag);
+            VideoEncoding = ItagHelper.GetVideoEncoding(itag);
             Resolution = resolution;
             Framerate = framerate.GuardNotNegative(nameof(framerate));
             VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
-            VideoQuality = GetVideoQuality(videoQualityLabel);
+            VideoQuality = ItagHelper.GetVideoQuality(videoQualityLabel);
         }
     }
 }
