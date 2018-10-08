@@ -87,6 +87,7 @@ namespace YoutubeExplode.Internal
             {397, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Medium480)},
             {396, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Medium360)},
             {395, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Low240)},
+            {394, new ItagDescriptor(Container.Mp4, null, VideoEncoding.Av1, VideoQuality.Low144)},
 
             // Video-only (webm)
             {167, new ItagDescriptor(Container.WebM, null, VideoEncoding.Vp8, VideoQuality.Medium360)},
