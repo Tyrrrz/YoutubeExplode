@@ -86,6 +86,17 @@ namespace YoutubeExplode
         /// </summary>
         Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId);
 
+        /// <summary>
+        /// Gets videos uploaded by user with given username.
+        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
+        /// </summary>
+        Task<IReadOnlyList<Video>> GetUserUploadsAsync(string username, int maxPages);
+
+        /// <summary>
+        /// Gets videos uploaded by user with given username.
+        /// </summary>
+        Task<IReadOnlyList<Video>> GetUserUploadsAsync(string username);
+
         #endregion
 
         #region MediaStream

@@ -105,6 +105,11 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("UCEnBXANsKmyj2r9xVyKoDiQ"); // normal
         }
 
+        public static IEnumerable GetUsernames()
+        {
+            yield return new TestCaseData("TheTyrrr");
+        }
+
         public static IEnumerable GetChannelIds_Invalid()
         {
             yield return new TestCaseData("");

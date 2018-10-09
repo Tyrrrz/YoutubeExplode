@@ -241,6 +241,17 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
+        public async Task YoutubeClient_GetUserUploadsAsync_Test(string username)
+        {
+            var client = new YoutubeClient();
+
+            var videos = await client.GetUserUploadsAsync(username);
+
+            Assert.That(videos, Is.Not.Null);
+        }
+
+        [Test]
         [TestCaseSource(typeof(Data), nameof(Data.GetVideoSearchQueries))]
         public async Task YoutubeClient_SearchVideosAsync_Test(string query)
         {
