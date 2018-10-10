@@ -92,6 +92,9 @@ namespace YoutubeExplode.Models
             if (id.StartsWith("PU", StringComparison.Ordinal))
                 return PlaylistType.PopularChannelVideos;
 
+            if (id.StartsWith("OL", StringComparison.Ordinal))
+                return PlaylistType.MusicAlbum;
+
             if (id.StartsWith("LL", StringComparison.Ordinal))
                 return PlaylistType.LikedVideos;
 
@@ -100,9 +103,6 @@ namespace YoutubeExplode.Models
 
             if (id.StartsWith("WL", StringComparison.Ordinal))
                 return PlaylistType.WatchLater;
-
-            if (id.StartsWith("OL", StringComparison.Ordinal))
-                return PlaylistType.MusicAlbum;
 
             throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}].");
         }

@@ -91,9 +91,9 @@ namespace YoutubeExplode
                 !playlistId.StartsWith("UL", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("UU", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("PU", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("OL", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("LL", StringComparison.Ordinal) &&
-                !playlistId.StartsWith("FL", StringComparison.Ordinal) &&
-                !playlistId.StartsWith("OL", StringComparison.Ordinal))
+                !playlistId.StartsWith("FL", StringComparison.Ordinal))
                 return false;
 
             // Playlist IDs vary a lot in lengths, so we will just compare with the extremes
