@@ -46,9 +46,9 @@
         WatchLater,
 
         /// <summary>
-        /// A regular playlist but without any statistics
+        /// Playlist generated from automated music channels
         /// </summary>
-        NormalWithoutStatistics
+        MusicAlbum
 
     }
 }

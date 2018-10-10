@@ -102,7 +102,7 @@ namespace YoutubeExplode.Models
                 return PlaylistType.WatchLater;
 
             if (id.StartsWith("OL", StringComparison.Ordinal))
-                return PlaylistType.NormalWithoutStatistics;
+                return PlaylistType.MusicAlbum;
 
             throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}].");
         }
