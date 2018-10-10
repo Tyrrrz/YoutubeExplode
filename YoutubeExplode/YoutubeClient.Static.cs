@@ -91,12 +91,13 @@ namespace YoutubeExplode
                 !playlistId.StartsWith("UL", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("UU", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("PU", StringComparison.Ordinal) &&
+                !playlistId.StartsWith("OL", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("LL", StringComparison.Ordinal) &&
                 !playlistId.StartsWith("FL", StringComparison.Ordinal))
                 return false;
 
             // Playlist IDs vary a lot in lengths, so we will just compare with the extremes
-            if (playlistId.Length < 13 || playlistId.Length > 34)
+            if (playlistId.Length < 13 || playlistId.Length > 42)
                 return false;
 
             return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");
