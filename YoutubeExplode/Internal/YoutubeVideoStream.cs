@@ -9,8 +9,13 @@ namespace YoutubeExplode.Internal
     internal class YoutubeVideoStream : Stream
     {
         private readonly HttpClient _httpClient;
+
         private const int MaxSegmentSize = 9_898_989;
+
         private readonly string _url;
+
+        Stream _currentStream;
+
         public YoutubeVideoStream(HttpClient httpClient, string url, long length)
         {
             _url = url;
@@ -29,7 +34,7 @@ namespace YoutubeExplode.Internal
         public override long Position { get; set; }
 
         public override void Flush() => throw new System.NotSupportedException();
-        Stream _currentStream { get; set; }
+
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             if (Position >= Length)
