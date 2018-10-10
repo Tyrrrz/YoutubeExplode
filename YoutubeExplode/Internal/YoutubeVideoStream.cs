@@ -34,10 +34,12 @@ namespace YoutubeExplode.Internal
         {
             if (count > MaxSegmentSize - 1)
                 count = (int)MaxSegmentSize - 1;
-            var currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + count).ConfigureAwait(false);
-            var bytesRead = await currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
-            Position += bytesRead;
-            return bytesRead;
+            using (var currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + count).ConfigureAwait(false))
+            {
+                var bytesRead = await currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+                Position += bytesRead;
+                return bytesRead;
+            }
         }
         public override int Read(byte[] buffer, int offset, int count) =>
             ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
