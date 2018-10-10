@@ -11,12 +11,11 @@ namespace YoutubeExplode.Internal
         private readonly HttpClient _httpClient;
         private const int MaxSegmentSize = 9_898_989;
         private readonly string _url;
-        private readonly long _size;
-        public YoutubeVideoStream(HttpClient httpClient, string url, long size)
+        public YoutubeVideoStream(HttpClient httpClient, string url, long length)
         {
             _url = url;
             _httpClient = httpClient;
-            _size = size;
+            Length = length;
         }
 
         public override bool CanRead => true;
@@ -25,13 +24,16 @@ namespace YoutubeExplode.Internal
 
         public override bool CanWrite => false;
 
-        public override long Length => _size;
+        public override long Length { get; }
 
         public override long Position { get; set; }
 
         public override void Flush() => throw new System.NotSupportedException();
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
+            if (Position >= Length)
+                return 0;
+
             count = Math.Min(MaxSegmentSize - 1, count);
             using (var currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + count).ConfigureAwait(false))
             {
