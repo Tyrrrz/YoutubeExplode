@@ -21,13 +21,13 @@ namespace YoutubeExplode.Models.MediaStreams
         public MediaStreamInfo Info { get; }
 
         /// <inheritdoc />
-        public override bool CanRead => true;
+        public override bool CanRead => _stream.CanRead;
 
         /// <inheritdoc />
-        public override bool CanSeek => false;
+        public override bool CanSeek => _stream.CanSeek;
 
         /// <inheritdoc />
-        public override bool CanWrite => false;
+        public override bool CanWrite => _stream.CanWrite;
 
         /// <inheritdoc />
         public override long Length => Info.Size;
@@ -70,13 +70,13 @@ namespace YoutubeExplode.Models.MediaStreams
         #region Not supported
 
         /// <inheritdoc />
-        public override void Flush() => throw new NotSupportedException();
+        public override void Flush() => _stream.Flush();
 
         /// <inheritdoc />
-        public override void SetLength(long value) => throw new NotSupportedException();
+        public override void SetLength(long value) => _stream.SetLength(value);
 
         /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        public override void Write(byte[] buffer, int offset, int count) => _stream.Write(buffer, offset, count);
 
         #endregion
     }
