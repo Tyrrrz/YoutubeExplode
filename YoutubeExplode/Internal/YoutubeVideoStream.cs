@@ -50,7 +50,7 @@ namespace YoutubeExplode.Internal
             {
                 _currentStream.Dispose();
                 _currentStream = null;
-                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken);
+                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             }
             return bytesRead;
         }
