@@ -218,6 +218,17 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
+        public async Task YoutubeClient_GetChannelIdAsync_Test(string username)
+        {
+            var client = new YoutubeClient();
+
+            var channelId = await client.GetChannelIdAsync(username);
+
+            Assert.That(channelId, Is.Not.Null.Or.Empty);
+        }
+
+        [Test]
         [TestCaseSource(typeof(Data), nameof(Data.GetChannelIds))]
         public async Task YoutubeClient_GetChannelAsync_Test(string channelId)
         {
@@ -236,17 +247,6 @@ namespace YoutubeExplode.Tests
             var client = new YoutubeClient();
 
             var videos = await client.GetChannelUploadsAsync(channelId);
-
-            Assert.That(videos, Is.Not.Null);
-        }
-
-        [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
-        public async Task YoutubeClient_GetUserUploadsAsync_Test(string username)
-        {
-            var client = new YoutubeClient();
-
-            var videos = await client.GetUserUploadsAsync(username);
 
             Assert.That(videos, Is.Not.Null);
         }

@@ -71,6 +71,11 @@ namespace YoutubeExplode
         #region Channel
 
         /// <summary>
+        /// Gets channel ID by username.
+        /// </summary>
+        Task<string> GetChannelIdAsync(string username);
+
+        /// <summary>
         /// Gets channel information by ID.
         /// </summary>
         Task<Channel> GetChannelAsync(string channelId);
@@ -85,17 +90,6 @@ namespace YoutubeExplode
         /// Gets videos uploaded by channel with given ID.
         /// </summary>
         Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId);
-
-        /// <summary>
-        /// Gets videos uploaded by user with given username.
-        /// The video list is truncated at given number of pages (1 page ≤ 200 videos).
-        /// </summary>
-        Task<IReadOnlyList<Video>> GetUserUploadsAsync(string username, int maxPages);
-
-        /// <summary>
-        /// Gets videos uploaded by user with given username.
-        /// </summary>
-        Task<IReadOnlyList<Video>> GetUserUploadsAsync(string username);
 
         #endregion
 
