@@ -29,18 +29,25 @@ namespace YoutubeExplode.Internal
         public override long Position { get; set; }
 
         public override void Flush() => throw new System.NotSupportedException();
+        Stream _currentStream { get; set; }
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             if (Position >= Length)
                 return 0;
 
             count = Math.Min(MaxSegmentSize - 1, count);
-            using (var currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + count).ConfigureAwait(false))
+            if(_currentStream == null)
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + MaxSegmentSize).ConfigureAwait(false);
+            
+            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(true);
+            Position += bytesRead;
+            if (bytesRead == 0)
             {
-                var bytesRead = await currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
-                Position += bytesRead;
-                return bytesRead;
+                _currentStream.Dispose();
+                _currentStream = null;
+                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken);
             }
+            return bytesRead;
         }
         public override int Read(byte[] buffer, int offset, int count) =>
             ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
@@ -59,11 +66,21 @@ namespace YoutubeExplode.Internal
                     Position = Math.Max(0, Math.Min(Length, Length - offset));
                     break;
             }
+            _currentStream.Dispose();
+            _currentStream = null;
             return Position;
         }
 
         public override void SetLength(long value) => throw new System.NotSupportedException();
 
         public override void Write(byte[] buffer, int offset, int count) => throw new System.NotSupportedException();
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+                _currentStream?.Dispose();
+        }
     }
 }
