@@ -66,6 +66,7 @@ namespace YoutubeExplode.Internal
             }
             return bytesRead;
         }
+
         public override int Read(byte[] buffer, int offset, int count) =>
             ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
 
@@ -83,12 +84,13 @@ namespace YoutubeExplode.Internal
                     throw new ArgumentException(nameof(origin), "Invalid SeekOrigin");
             }
         }
+        
         public override long Seek(long offset, SeekOrigin origin)
         {
             var newPosition = GetNewPosition(offset, origin);
             if (newPosition < 0)
                 throw new IOException("An attempt was made to move the position before the beginning of the stream.");
-                
+
             if (Position == newPosition)
                 return Position;
 
