@@ -16,6 +16,8 @@ namespace YoutubeExplode.Internal
 
         Stream _currentStream;
 
+        private long _position;
+
         public YoutubeVideoStream(HttpClient httpClient, string url, long length)
         {
             _url = url;
@@ -31,7 +33,18 @@ namespace YoutubeExplode.Internal
 
         public override long Length { get; }
 
-        public override long Position { get; set; }
+        public override long Position
+        {
+            get => _position;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), "Non-negative number required");
+                }
+                _position = value;
+            }
+        }
 
         public override void Flush() => throw new System.NotSupportedException();
 
@@ -40,10 +53,9 @@ namespace YoutubeExplode.Internal
             if (Position >= Length)
                 return 0;
 
-            count = Math.Min(MaxSegmentSize - 1, count);
-            if(_currentStream == null)
+            if (_currentStream == null)
                 _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + MaxSegmentSize).ConfigureAwait(false);
-            
+
             var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             Position += bytesRead;
             if (bytesRead == 0)
@@ -57,21 +69,31 @@ namespace YoutubeExplode.Internal
         public override int Read(byte[] buffer, int offset, int count) =>
             ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
 
-        public override long Seek(long offset, SeekOrigin origin)
+        private long GetNewPosition(long offset, SeekOrigin origin)
         {
             switch (origin)
             {
                 case SeekOrigin.Begin:
-                    Position = Math.Max(0, offset);
-                    break;
+                    return offset;
                 case SeekOrigin.Current:
-                    Position = Math.Max(0, Math.Min(Length, Position + offset));
-                    break;
+                    return Position + offset;
                 case SeekOrigin.End:
-                    Position = Math.Max(0, Math.Min(Length, Length - offset));
-                    break;
+                    return Length + offset;
+                default:
+                    throw new ArgumentException(nameof(origin), "Invalid SeekOrigin");
             }
-            _currentStream.Dispose();
+        }
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            var newPosition = GetNewPosition(offset, origin);
+            if (newPosition < 0)
+                throw new IOException("An attempt was made to move the position before the beginning of the stream.");
+                
+            if (Position == newPosition)
+                return Position;
+
+            Position = newPosition;
+            _currentStream?.Dispose();
             _currentStream = null;
             return Position;
         }
