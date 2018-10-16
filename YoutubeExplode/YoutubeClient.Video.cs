@@ -30,7 +30,7 @@ namespace YoutubeExplode
             // TODO: check if video is available
 
             var raw = await GetVideoEmbedPageRawAsync(videoId).ConfigureAwait(false);
-            var part = raw.SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ").SubstringUntil(",'");
+            var part = raw.SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ").SubstringUntil("});");
             return JToken.Parse(part);
         }
 
