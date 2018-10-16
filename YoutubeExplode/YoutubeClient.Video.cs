@@ -28,10 +28,11 @@ namespace YoutubeExplode
         private async Task<JToken> GetVideoEmbedPageConfigAsync(string videoId)
         {
             // TODO: check if video is available
-
             var raw = await GetVideoEmbedPageRawAsync(videoId).ConfigureAwait(false);
-            var part = raw.SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ").SubstringUntil(",'");
-            return JToken.Parse(part);
+            var r = new Regex(@"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})");
+            var m = r.Match(raw);
+            if (m.Success) return JToken.Parse(m.Groups["Json"].Value);
+            throw new ParseException("Could not parse player config.");
         }
 
         private async Task<string> GetVideoWatchPageRawAsync(string videoId)
