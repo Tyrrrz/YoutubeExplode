@@ -1,3 +1,7 @@
+### v4.3.4 (16-Oct-2018)
+
+- Fixed an issue where `JsonReaderException` was thrown on all videos due to recent YouTube changes.
+
 ### v4.3.3 (26-Sep-2018)
 
 - Added support for AV1 video codec.
