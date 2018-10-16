@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using AngleSharp.Dom;
 
 namespace YoutubeExplode.Internal
 {
@@ -188,22 +187,6 @@ namespace YoutubeExplode.Internal
             }
 
             return result;
-        }
-
-        public static string TextEx(this INode node)
-        {
-            if (node.NodeType == NodeType.Text)
-                return node.TextContent;
-
-            var sb = new StringBuilder();
-
-            foreach (var child in node.ChildNodes)
-                sb.Append(child.TextEx());
-
-            if (node.NodeName == "BR")
-                sb.AppendLine();
-
-            return sb.ToString();
         }
 
         public static async Task CopyToAsync(this Stream source, Stream destination,
