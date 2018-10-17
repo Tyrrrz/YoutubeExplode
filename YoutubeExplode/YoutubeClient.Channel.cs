@@ -37,6 +37,10 @@ namespace YoutubeExplode
             var channelId = userPage.QuerySelector("link[rel=\"canonical\"]").GetAttribute("href")
                 .SubstringAfter("channel/");
 
+            // Validate channel ID
+            if (!ValidateChannelId(channelId))
+                throw new ParseException("Could not parse channel ID.");
+
             return channelId;
         }
 
