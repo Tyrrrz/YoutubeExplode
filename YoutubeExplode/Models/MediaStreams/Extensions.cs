@@ -16,63 +16,21 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public static string GetFileExtension(this Container container)
         {
-            if (container == Container.Mp4)
-                return "mp4";
-
-            if (container == Container.M4A)
-                return "m4a";
-
-            if (container == Container.WebM)
-                return "webm";
-
+            // Tgpp gets special treatment
             if (container == Container.Tgpp)
                 return "3gpp";
 
-            if (container == Container.Flv)
-                return "flv";
-
-            throw new ArgumentOutOfRangeException(nameof(container), $"Unexpected container type [{container}].");
+            // Convert to lower case string
+            return container.ToString().ToLowerInvariant();
         }
 
         /// <summary>
-        /// Gets label for given video quality , as displayed on YouTube.
+        /// Gets label for given video quality, as displayed on YouTube.
         /// </summary>
         public static string GetVideoQualityLabel(this VideoQuality videoQuality)
         {
-            if (videoQuality == VideoQuality.Low144)
-                return "144p";
-
-            if (videoQuality == VideoQuality.Low240)
-                return "240p";
-
-            if (videoQuality == VideoQuality.Medium360)
-                return "360p";
-
-            if (videoQuality == VideoQuality.Medium480)
-                return "480p";
-
-            if (videoQuality == VideoQuality.High720)
-                return "720p";
-
-            if (videoQuality == VideoQuality.High1080)
-                return "1080p";
-
-            if (videoQuality == VideoQuality.High1440)
-                return "1440p";
-
-            if (videoQuality == VideoQuality.High2160)
-                return "2160p";
-
-            if (videoQuality == VideoQuality.High2880)
-                return "2880p";
-
-            if (videoQuality == VideoQuality.High3072)
-                return "3072p";
-
-            if (videoQuality == VideoQuality.High4320)
-                return "4320p";
-
-            throw new ArgumentOutOfRangeException(nameof(videoQuality), $"Unexpected video quality [{videoQuality}].");
+            // Convert to string, strip non-digits and add "p"
+            return videoQuality.ToString().StripNonDigit() + "p";
         }
 
         /// <summary>

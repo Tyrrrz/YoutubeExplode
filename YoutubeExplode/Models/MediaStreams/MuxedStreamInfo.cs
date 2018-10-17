@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -32,9 +33,9 @@ namespace YoutubeExplode.Models.MediaStreams
         public MuxedStreamInfo(int itag, string url, long size)
             : base(itag, url, size)
         {
-            AudioEncoding = GetAudioEncoding(itag);
-            VideoEncoding = GetVideoEncoding(itag);
-            VideoQuality = GetVideoQuality(itag);
+            AudioEncoding = ItagHelper.GetAudioEncoding(itag);
+            VideoEncoding = ItagHelper.GetVideoEncoding(itag);
+            VideoQuality = ItagHelper.GetVideoQuality(itag);
             VideoQualityLabel = VideoQuality.GetVideoQualityLabel();
         }
     }

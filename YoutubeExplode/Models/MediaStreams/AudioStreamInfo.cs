@@ -22,7 +22,7 @@ namespace YoutubeExplode.Models.MediaStreams
             : base(itag, url, size)
         {
             Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
-            AudioEncoding = GetAudioEncoding(itag);
+            AudioEncoding = ItagHelper.GetAudioEncoding(itag);
         }
     }
 }

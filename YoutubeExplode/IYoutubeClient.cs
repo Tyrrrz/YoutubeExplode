@@ -71,6 +71,11 @@ namespace YoutubeExplode
         #region Channel
 
         /// <summary>
+        /// Gets channel ID by username.
+        /// </summary>
+        Task<string> GetChannelIdAsync(string username);
+
+        /// <summary>
         /// Gets channel information by ID.
         /// </summary>
         Task<Channel> GetChannelAsync(string channelId);

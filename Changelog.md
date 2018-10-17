@@ -1,3 +1,10 @@
+### v4.3.4 (16-Oct-2018)
+
+- Fixed an issue where `JsonReaderException` was thrown on all videos due to recent YouTube changes.
+- Added support for itag 394.
+- Added `GetChannelIdAsync` method that retrieves channel ID from username.
+- Added support for OL playlists.
+
 ### v4.3.3 (26-Sep-2018)
 
 - Added support for AV1 video codec.

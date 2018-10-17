@@ -218,6 +218,17 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
+        public async Task YoutubeClient_GetChannelIdAsync_Test(string username)
+        {
+            var client = new YoutubeClient();
+
+            var channelId = await client.GetChannelIdAsync(username);
+
+            Assert.That(channelId, Is.Not.Null.Or.Empty);
+        }
+
+        [Test]
         [TestCaseSource(typeof(Data), nameof(Data.GetChannelIds))]
         public async Task YoutubeClient_GetChannelAsync_Test(string channelId)
         {

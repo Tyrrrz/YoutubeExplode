@@ -50,7 +50,7 @@ namespace YoutubeExplode
             return await new HtmlParser().ParseAsync(raw).ConfigureAwait(false);
         }
 
-        private async Task<string> GetVideoInfoRawAsync(string videoId, string el = "", string sts = "")
+        private async Task<string> GetVideoInfoRawAsync(string videoId, string el, string sts)
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
@@ -59,29 +59,52 @@ namespace YoutubeExplode
             return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
         }
 
-        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "")
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string el, string sts)
         {
-            // Get video info with 'el=embedded'
-            var raw = await GetVideoInfoRawAsync(videoId, "embedded", sts).ConfigureAwait(false);
-            var videoInfo = UrlEx.SplitQuery(raw);
+            var raw = await GetVideoInfoRawAsync(videoId, el, sts).ConfigureAwait(false);
+            return UrlEx.SplitQuery(raw);
+        }
 
-            // If there is no error - return
-            if (!videoInfo.ContainsKey("errorcode"))
-                return videoInfo;
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId)
+        {
+            var videoInfo = await GetVideoInfoAsync(videoId, "embedded", "").ConfigureAwait(false);
 
-            // Get video info with 'el=detailpage'
-            raw = await GetVideoInfoRawAsync(videoId, "detailpage", sts).ConfigureAwait(false);
-            videoInfo = UrlEx.SplitQuery(raw);
+            // Check if video exists by verifying that "video_id" property is not empty
+            if (videoInfo.GetOrDefault("video_id").IsBlank())
+            {
+                // Get native error code and error reason
+                var errorCode = videoInfo["errorcode"].ParseInt();
+                var errorReason = videoInfo["reason"];
 
-            // If there is no error - return
-            if (!videoInfo.ContainsKey("errorcode"))
-                return videoInfo;
+                throw new VideoUnavailableException(videoId, errorCode, errorReason);
+            }
 
-            // If there is error - throw
-            var errorCode = videoInfo["errorcode"].ParseInt();
-            var errorReason = videoInfo["reason"];
+            return videoInfo;
+        }
 
-            throw new VideoUnavailableException(videoId, errorCode, errorReason);
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts)
+        {
+            // If requested with "sts" parameter, it means that the calling code is interested in getting video info
+            // with downloadable streams. For that we also need to make sure there are no error codes.
+
+            // Get with "el=embedded"
+            var videoInfo = await GetVideoInfoAsync(videoId, "embedded", sts).ConfigureAwait(false);
+
+            // If there are errors - retry with "el=detailpage"
+            if (videoInfo.ContainsKey("errorcode"))
+                videoInfo = await GetVideoInfoAsync(videoId, "detailpage", sts).ConfigureAwait(false);
+
+            // If there are still errors - throw
+            if (videoInfo.ContainsKey("errorcode"))
+            {
+                // Get native error code and error reason
+                var errorCode = videoInfo["errorcode"].ParseInt();
+                var errorReason = videoInfo["reason"];
+
+                throw new VideoUnavailableException(videoId, errorCode, errorReason);
+            }
+
+            return videoInfo;
         }
 
         private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)
@@ -294,7 +317,7 @@ namespace YoutubeExplode
                     var sig = streamInfoDic.GetOrDefault("s");
 
 #if RELEASE
-                    if (!MediaStreamInfo.IsKnown(itag))
+                    if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 
@@ -335,7 +358,7 @@ namespace YoutubeExplode
                     var bitrate = streamInfoDic["bitrate"].ParseLong();
 
 #if RELEASE
-                    if (!MediaStreamInfo.IsKnown(itag))
+                    if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 
@@ -409,7 +432,7 @@ namespace YoutubeExplode
                     var bitrate = (long) streamXml.Attribute("bandwidth");
 
 #if RELEASE
-                    if (!MediaStreamInfo.IsKnown(itag))
+                    if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 
