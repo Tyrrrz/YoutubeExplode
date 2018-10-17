@@ -71,9 +71,10 @@ namespace YoutubeExplode
             return UrlEx.SplitQuery(raw);
         }
 
-        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId)
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = "")
         {
-            var videoInfo = await GetVideoInfoAsync(videoId, "embedded", "").ConfigureAwait(false);
+            // Get with "el=embedded"
+            var videoInfo = await GetVideoInfoAsync(videoId, "embedded", sts).ConfigureAwait(false);
 
             // Check if video exists by verifying that "video_id" property is not empty
             if (videoInfo.GetOrDefault("video_id").IsBlank())
@@ -85,29 +86,22 @@ namespace YoutubeExplode
                 throw new VideoUnavailableException(videoId, errorCode, errorReason);
             }
 
-            return videoInfo;
-        }
-
-        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts)
-        {
-            // If requested with "sts" parameter, it means that the calling code is interested in getting video info
-            // with downloadable streams. For that we also need to make sure there are no error codes.
-
-            // Get with "el=embedded"
-            var videoInfo = await GetVideoInfoAsync(videoId, "embedded", sts).ConfigureAwait(false);
-
-            // If there are errors - retry with "el=detailpage"
-            if (videoInfo.ContainsKey("errorcode"))
+            // If requested with "sts" parameter, it means that the calling code is interested in getting video info with streams.
+            // For that we also need to make sure the video is fully available by checking for errors.
+            if (sts.IsNotBlank() && videoInfo.ContainsKey("errorcode"))
+            {
+                // Retry with "el=detailpage"
                 videoInfo = await GetVideoInfoAsync(videoId, "detailpage", sts).ConfigureAwait(false);
 
-            // If there are still errors - throw
-            if (videoInfo.ContainsKey("errorcode"))
-            {
-                // Get native error code and error reason
-                var errorCode = videoInfo["errorcode"].ParseInt();
-                var errorReason = videoInfo["reason"];
+                // If there are still errors - throw
+                if (videoInfo.ContainsKey("errorcode"))
+                {
+                    // Get native error code and error reason
+                    var errorCode = videoInfo["errorcode"].ParseInt();
+                    var errorReason = videoInfo["reason"];
 
-                throw new VideoUnavailableException(videoId, errorCode, errorReason);
+                    throw new VideoUnavailableException(videoId, errorCode, errorReason);
+                }
             }
 
             return videoInfo;
