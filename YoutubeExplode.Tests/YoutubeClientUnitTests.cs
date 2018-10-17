@@ -166,7 +166,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetPossibleUsernames))]
+        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
         public void YoutubeClient_ValidateUsername_Test(string username)
         {
             var success = YoutubeClient.ValidateUsername(username);

@@ -110,13 +110,8 @@ namespace YoutubeExplode.Tests
         public static IEnumerable GetUsernames()
         {
             yield return new TestCaseData("TheTyrrr");
-        }
-
-        public static IEnumerable GetPossibleUsernames()
-        {
-            yield return new TestCaseData("ABC");
-            yield return new TestCaseData("A1B2C3");
-            yield return new TestCaseData("12432");
+            yield return new TestCaseData("KannibalenRecords");
+            yield return new TestCaseData("JClayton1994");
         }
 
         public static IEnumerable GetUsernames_Invalid()
