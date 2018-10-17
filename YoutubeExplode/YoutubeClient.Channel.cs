@@ -30,6 +30,9 @@ namespace YoutubeExplode
         {
             username.GuardNotNull(nameof(username));
 
+            if (!ValidateUsername(username))
+                throw new ParseException("Could not parse channel ID.");
+
             // Get user page
             var userPage = await GetUserPageAsync(username).ConfigureAwait(false);
 
