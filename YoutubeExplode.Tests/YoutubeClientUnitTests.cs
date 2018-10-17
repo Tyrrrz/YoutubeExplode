@@ -166,6 +166,25 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
+        public void YoutubeClient_ValidateUsername_Test(string username)
+        {
+            var success = YoutubeClient.ValidateUsername(username);
+
+            Assert.That(success, Is.True);
+        }
+
+        [Test]
+        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames_Invalid))]
+        public void YoutubeClient_ValidateUsername_Invalid_Test(string username)
+        {
+            var success = YoutubeClient.ValidateUsername(username);
+
+            Assert.That(success, Is.Not.True);
+        }
+
+
+        [Test]
         [TestCaseSource(typeof(Data), nameof(Data.GetUserUrls))]
         public void YoutubeClient_TryParseUsername_Test(string userUrl, string expectedUsername)
         {
@@ -199,5 +218,6 @@ namespace YoutubeExplode.Tests
         {
             Assert.Throws<FormatException>(() => YoutubeClient.ParseUsername(userUrl));
         }
+
     }
 }

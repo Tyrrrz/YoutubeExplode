@@ -110,6 +110,17 @@ namespace YoutubeExplode.Tests
         public static IEnumerable GetUsernames()
         {
             yield return new TestCaseData("TheTyrrr");
+            yield return new TestCaseData("ABC");
+            yield return new TestCaseData("A1B2C3");
+            yield return new TestCaseData("12432");
+        }
+
+        public static IEnumerable GetUsernames_Invalid()
+        {
+            yield return new TestCaseData("The_Tyrrr");
+            yield return new TestCaseData("0123456789ABCDEFGHIJK"); // 21 characters
+            yield return new TestCaseData("A1B2C3-");
+            yield return new TestCaseData("=0123456789ABCDEF");
         }
 
         public static IEnumerable GetChannelIds_Invalid()
