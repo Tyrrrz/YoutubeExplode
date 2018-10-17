@@ -227,7 +227,7 @@ namespace YoutubeExplode
             if (userUrl.IsBlank())
                 return false;
 
-            var regularMatch = Regex.Match(userUrl, @"youtube\.com\/user\/([a-zA-Z0-9]{1,20})").Groups[1].Value;
+            var regularMatch = Regex.Match(userUrl, @"youtube\.com\/user\/([a-zA-Z0-9]{1,20})(?:\/|$)", RegexOptions.Multiline).Groups[1].Value;
 
             if (regularMatch.IsNotBlank())
             {
