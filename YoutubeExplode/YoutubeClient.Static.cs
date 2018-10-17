@@ -218,6 +218,22 @@ namespace YoutubeExplode
         }
 
         /// <summary>
+        /// Verifies that the given string is syntactically a valid YouTube username.
+        /// </summary>
+        public static bool ValidateUsername(string username)
+        {
+            if (username.IsBlank())
+                return false;
+
+            // Usernames can't be longer than 20 characters
+            if (username.Length > 20)
+                return false;
+
+            return !Regex.IsMatch(username, @"[^0-9a-zA-Z]");
+
+        }
+
+        /// <summary>
         /// Tries to parses a username from a YouTube user URL
         /// </summary>
         public static bool TryParseUsername(string userUrl, out string username)
@@ -227,9 +243,9 @@ namespace YoutubeExplode
             if (userUrl.IsBlank())
                 return false;
 
-            var regularMatch = Regex.Match(userUrl, @"youtube\.com\/user\/([a-zA-Z0-9]{1,20})(?:\/|$)", RegexOptions.Multiline).Groups[1].Value;
+            var regularMatch = Regex.Match(userUrl, @"youtube\.com\/user\/(.*?)(?:&|\/|$)").Groups[1].Value;
 
-            if (regularMatch.IsNotBlank())
+            if (regularMatch.IsNotBlank() && ValidateUsername(regularMatch))
             {
                 username = regularMatch;
                 return true;
@@ -247,7 +263,7 @@ namespace YoutubeExplode
 
             return TryParseUsername(userUrl, out string username)
                 ? username
-                : throw new FormatException($"Could not parse username from given string [{userUrl}]");
+                : throw new FormatException($"Could not parse username from given string [{userUrl}].");
         }
     }
 }
