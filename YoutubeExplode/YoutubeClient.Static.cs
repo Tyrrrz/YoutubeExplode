@@ -216,5 +216,38 @@ namespace YoutubeExplode
                 ? result
                 : throw new FormatException($"Could not parse channel ID from given string [{channelUrl}].");
         }
+
+        /// <summary>
+        /// Tries to parses a username from a YouTube user URL
+        /// </summary>
+        public static bool TryParseUsername(string userUrl, out string username)
+        {
+            username = default(string);
+
+            if (userUrl.IsBlank())
+                return false;
+
+            var regularMatch = Regex.Match(userUrl, @"youtube\.com\/user\/([a-zA-Z0-9]{1,20})").Groups[1].Value;
+
+            if (regularMatch.IsNotBlank())
+            {
+                username = regularMatch;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Parses username from a YouTube user URL.
+        /// </summary>
+        public static string ParseUsername(string userUrl)
+        {
+            userUrl.GuardNotNull(nameof(userUrl));
+
+            return TryParseUsername(userUrl, out string username)
+                ? username
+                : throw new FormatException($"Could not parse username from given string [{userUrl}]");
+        }
     }
 }
