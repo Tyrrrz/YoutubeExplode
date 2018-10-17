@@ -31,7 +31,7 @@ namespace YoutubeExplode
             username.GuardNotNull(nameof(username));
 
             if (!ValidateUsername(username))
-                throw new ParseException("Could not parse channel ID.");
+                throw new ArgumentException($"Invalid YouTube username [{username}].");
 
             // Get user page
             var userPage = await GetUserPageAsync(username).ConfigureAwait(false);
