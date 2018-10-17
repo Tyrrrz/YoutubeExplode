@@ -110,6 +110,16 @@ namespace YoutubeExplode.Tests
         public static IEnumerable GetUsernames()
         {
             yield return new TestCaseData("TheTyrrr");
+            yield return new TestCaseData("KannibalenRecords");
+            yield return new TestCaseData("JClayton1994");
+        }
+
+        public static IEnumerable GetUsernames_Invalid()
+        {
+            yield return new TestCaseData("The_Tyrrr");
+            yield return new TestCaseData("0123456789ABCDEFGHIJK"); // 21 characters
+            yield return new TestCaseData("A1B2C3-");
+            yield return new TestCaseData("=0123456789ABCDEF");
         }
 
         public static IEnumerable GetChannelIds_Invalid()
@@ -139,6 +149,25 @@ namespace YoutubeExplode.Tests
         {
             yield return new TestCaseData("undead corporation megalomania");
             yield return new TestCaseData("white siberian fox");
+        }
+
+        public static IEnumerable GetUserUrls()
+        {
+            yield return new TestCaseData("https://www.youtube.com/user/ProZD/", "ProZD");
+            yield return new TestCaseData("http://www.youtube.com/user/ProZD/", "ProZD");
+            yield return new TestCaseData("www.youtube.com/user/ProZD/", "ProZD");
+            yield return new TestCaseData("youtube.com/user/ProZD/", "ProZD");
+            yield return new TestCaseData("https://www.youtube.com/user/ProZD", "ProZD");
+        }
+
+        public static IEnumerable GetUserUrls_Invalid()
+        {
+            yield return new TestCaseData("https://www.youtube.com/user/P_roZD/"); // username cannot contain anything other than A-Z, a-z, 0-9
+            yield return new TestCaseData("http://www.youtube.com/user/Pr?-0oZD/");
+            yield return new TestCaseData("www.youtube.com/user/ProZD1234567890ABCDEF/"); // max allowed username is 20 character
+            yield return new TestCaseData("youtube.com/user//asdaz");
+            yield return new TestCaseData("https://www.example.com/user/ProZD/");
+            yield return new TestCaseData("youtube.com/");
         }
     }
 }
