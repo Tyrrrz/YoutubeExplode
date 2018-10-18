@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace YoutubeExplode.Internal
 {
-    internal class YoutubeVideoStream : Stream
+    internal class SegmentedHttpStream : Stream
     {
         private readonly HttpClient _httpClient;
 
@@ -18,7 +18,7 @@ namespace YoutubeExplode.Internal
 
         private long _position;
 
-        public YoutubeVideoStream(HttpClient httpClient, string url, long length)
+        public SegmentedHttpStream(HttpClient httpClient, string url, long length)
         {
             _url = url;
             _httpClient = httpClient;

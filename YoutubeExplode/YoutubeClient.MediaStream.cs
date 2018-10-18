@@ -15,7 +15,7 @@ namespace YoutubeExplode
         public Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo info)
         {
             info.GuardNotNull(nameof(info));
-            return Task.FromResult(new MediaStream(info, new YoutubeVideoStream(_httpClient, info.Url, info.Size)));
+            return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size)));
         }
 
         /// <inheritdoc />

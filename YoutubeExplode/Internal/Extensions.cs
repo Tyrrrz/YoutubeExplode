@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -227,6 +228,11 @@ namespace YoutubeExplode.Internal
                 totalBytesCopied += bytesCopied;
                 progress?.Report(1.0 * totalBytesCopied / source.Length);
             } while (bytesCopied > 0);
+        }
+
+        public static SegmentedHttpStream GetSegmentedStream(this HttpClient httpClient, string url, long length)
+        {
+            return new SegmentedHttpStream(httpClient, url, length);
         }
     }
 }
