@@ -17,12 +17,14 @@ namespace YoutubeExplode.Internal
         Stream _currentStream;
 
         private long _position;
+        private readonly int _maxSegmentSize;
 
-        public SegmentedHttpStream(HttpClient httpClient, string url, long length)
+        public SegmentedHttpStream(HttpClient httpClient, string url, long length, int maxSegmentSize = MaxSegmentSize)
         {
             _url = url;
             _httpClient = httpClient;
             Length = length;
+            _maxSegmentSize = maxSegmentSize;
         }
 
         public override bool CanRead => true;
@@ -52,7 +54,7 @@ namespace YoutubeExplode.Internal
 
         private void ClearCurrentStream()
         {
-            _currentStream.Dispose();
+            _currentStream?.Dispose();
             _currentStream = null;
         }
 
@@ -64,7 +66,7 @@ namespace YoutubeExplode.Internal
                 return 0;
 
             if (_currentStream is null)
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + MaxSegmentSize - 1).ConfigureAwait(false);
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _maxSegmentSize - 1).ConfigureAwait(false);
 
             var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             Position += bytesRead;
