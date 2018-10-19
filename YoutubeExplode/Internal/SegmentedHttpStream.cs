@@ -42,8 +42,18 @@ namespace YoutubeExplode.Internal
                 {
                     throw new ArgumentOutOfRangeException(nameof(value), "Non-negative number required");
                 }
-                _position = value;
+                if (_position != value)
+                {
+                    _position = value;
+                    ClearCurrentStream();
+                }
             }
+        }
+
+        private void ClearCurrentStream()
+        {
+            _currentStream.Dispose();
+            _currentStream = null;
         }
 
         public override void Flush() => throw new System.NotSupportedException();
@@ -53,15 +63,14 @@ namespace YoutubeExplode.Internal
             if (Position >= Length)
                 return 0;
 
-            if (_currentStream == null)
+            if (_currentStream is null)
                 _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + MaxSegmentSize - 1).ConfigureAwait(false);
 
             var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             Position += bytesRead;
             if (bytesRead == 0)
             {
-                _currentStream.Dispose();
-                _currentStream = null;
+                ClearCurrentStream();
                 bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             }
             return bytesRead;
@@ -84,7 +93,7 @@ namespace YoutubeExplode.Internal
                     throw new ArgumentException(nameof(origin), "Invalid SeekOrigin");
             }
         }
-        
+
         public override long Seek(long offset, SeekOrigin origin)
         {
             var newPosition = GetNewPosition(offset, origin);
@@ -95,8 +104,7 @@ namespace YoutubeExplode.Internal
                 return Position;
 
             Position = newPosition;
-            _currentStream?.Dispose();
-            _currentStream = null;
+            ClearCurrentStream();
             return Position;
         }
 
@@ -109,7 +117,7 @@ namespace YoutubeExplode.Internal
             base.Dispose(disposing);
 
             if (disposing)
-                _currentStream?.Dispose();
+                ClearCurrentStream();
         }
     }
 }
