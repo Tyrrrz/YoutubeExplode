@@ -70,7 +70,7 @@ namespace YoutubeExplode.Internal
                 _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _maxSegmentSize - 1).ConfigureAwait(false);
 
             var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
-            Position += bytesRead;
+            _position += bytesRead;
             if (bytesRead == 0)
             {
                 ClearCurrentStream();
@@ -107,7 +107,6 @@ namespace YoutubeExplode.Internal
                 return Position;
 
             Position = newPosition;
-            ClearCurrentStream();
             return Position;
         }
 
