@@ -26,6 +26,28 @@ namespace YoutubeExplode
         }
 
         /// <inheritdoc />
+        public async Task<string> GetChannelIdAsync(string username)
+        {
+            username.GuardNotNull(nameof(username));
+
+            if (!ValidateUsername(username))
+                throw new ArgumentException($"Invalid YouTube username [{username}].");
+
+            // Get user page
+            var userPage = await GetUserPageAsync(username).ConfigureAwait(false);
+
+            // Extract channel ID
+            var channelId = userPage.QuerySelector("link[rel=\"canonical\"]").GetAttribute("href")
+                .SubstringAfter("channel/");
+
+            // Validate channel ID
+            if (!ValidateChannelId(channelId))
+                throw new ParseException("Could not parse channel ID.");
+
+            return channelId;
+        }
+
+        /// <inheritdoc />
         public async Task<Channel> GetChannelAsync(string channelId)
         {
             channelId.GuardNotNull(nameof(channelId));
@@ -68,25 +90,5 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId)
             => GetChannelUploadsAsync(channelId, int.MaxValue);
-
-        /// <inheritdoc />
-        public async Task<IReadOnlyList<Video>> GetUserUploadsAsync(string username, int maxPages)
-        {
-            username.GuardNotNull(nameof(username));
-            maxPages.GuardPositive(nameof(maxPages));
-
-            // Get user page
-            var userPage = await GetUserPageAsync(username).ConfigureAwait(false);
-
-            // Get channel ID
-            var channelId = userPage.QuerySelector("link[rel=\"canonical\"]").GetAttribute("href")
-                .SubstringAfter("channel/");
-
-            return await GetChannelUploadsAsync(channelId, maxPages);
-        }
-
-        /// <inheritdoc />
-        public Task<IReadOnlyList<Video>> GetUserUploadsAsync(string channelId)
-            => GetUserUploadsAsync(channelId, int.MaxValue);
     }
 }

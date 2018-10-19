@@ -31,6 +31,11 @@
         PopularChannelVideos,
 
         /// <summary>
+        /// Playlist generated from automated music videos.
+        /// </summary>
+        MusicAlbum,
+
+        /// <summary>
         /// System playlist for videos liked by a user.
         /// </summary>
         LikedVideos,
