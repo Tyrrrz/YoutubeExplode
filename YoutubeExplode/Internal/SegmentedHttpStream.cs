@@ -10,7 +10,8 @@ namespace YoutubeExplode.Internal
     {
         private readonly HttpClient _httpClient;
 
-        private const int MaxSegmentSize = 9_898_989;
+        // Maximum segment size for rate limited streams
+        private const int MaxSegmentSize = 9_898_989; // this number was carefully devised through research
 
         private readonly string _url;
 
