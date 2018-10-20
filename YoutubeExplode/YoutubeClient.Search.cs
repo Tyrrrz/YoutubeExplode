@@ -34,6 +34,7 @@ namespace YoutubeExplode
                 var parser = await GetSearchResultsAjaxParserAsync(query, page).ConfigureAwait(false);
 
                 // Parse videos
+                var countDelta = 0;
                 foreach (var videoParser in parser.GetVideos())
                 {
                     // Extract info
@@ -55,7 +56,12 @@ namespace YoutubeExplode
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics);
 
                     videos.Add(video);
+                    countDelta++;
                 }
+
+                // Break if no distinct videos were added to the list
+                if (countDelta <= 0)
+                    break;
             }
 
             return videos;
