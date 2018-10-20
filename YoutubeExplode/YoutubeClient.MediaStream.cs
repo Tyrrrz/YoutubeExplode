@@ -17,14 +17,14 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
 
             // Maximum segment stream size
-            const int segmentSize = 9_898_989; // this number was carefully devised through research
+            const int maxSegmentSize = 9_898_989; // this number was carefully devised through research
 
             // Determine if stream is rate-limited
             var isRateLimited = !Regex.IsMatch(info.Url, @"ratebypass[=/]yes");
 
-            if (isRateLimited)
-                return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size, segmentSize)));
-            return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size, int.MaxValue)));
+            var segmentSize = isRateLimited ? maxSegmentSize : int.MaxValue;
+
+            return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size, segmentSize)));
         }
 
         /// <inheritdoc />

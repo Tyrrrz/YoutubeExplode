@@ -10,13 +10,12 @@ namespace YoutubeExplode.Internal
     {
         private readonly HttpClient _httpClient;
 
-
-
         private readonly string _url;
 
         Stream _currentStream;
 
         private long _position;
+
         private readonly int _maxSegmentSize;
 
         public SegmentedHttpStream(HttpClient httpClient, string url, long length, int maxSegmentSize)
