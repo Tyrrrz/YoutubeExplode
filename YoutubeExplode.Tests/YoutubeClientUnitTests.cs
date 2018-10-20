@@ -217,6 +217,5 @@ namespace YoutubeExplode.Tests
         {
             Assert.Throws<FormatException>(() => YoutubeClient.ParseChannelId(channelUrl));
         }
-
     }
 }

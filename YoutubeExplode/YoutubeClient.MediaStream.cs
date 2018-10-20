@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -16,15 +15,19 @@ namespace YoutubeExplode
         {
             info.GuardNotNull(nameof(info));
 
-            // Maximum segment stream size
-            const int maxSegmentSize = 9_898_989; // this number was carefully devised through research
-
             // Determine if stream is rate-limited
             var isRateLimited = !Regex.IsMatch(info.Url, @"ratebypass[=/]yes");
 
-            var segmentSize = isRateLimited ? maxSegmentSize : int.MaxValue;
+            // Determine segment size
+            var segmentSize = isRateLimited
+                ? 9_898_989 // this number was carefully devised through research
+                : long.MaxValue; // don't use segmentation for non-rate-limited streams
 
-            return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size, segmentSize)));
+            // Get segmented stream
+            var stream = _httpClient.GetSegmentedStream(info.Url, info.Size, segmentSize);
+
+            // This method must return a task for backwards-compatibility reasons
+            return Task.FromResult(new MediaStream(info, stream));
         }
 
         /// <inheritdoc />

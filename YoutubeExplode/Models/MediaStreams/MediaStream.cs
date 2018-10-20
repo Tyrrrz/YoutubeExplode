@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -56,6 +55,15 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <inheritdoc />
         public override long Seek(long offset, SeekOrigin origin) => _stream.Seek(offset, origin);
 
+        /// <inheritdoc />
+        public override void Flush() => _stream.Flush();
+
+        /// <inheritdoc />
+        public override void SetLength(long value) => _stream.SetLength(value);
+
+        /// <inheritdoc />
+        public override void Write(byte[] buffer, int offset, int count) => _stream.Write(buffer, offset, count);
+
         /// <summary>
         /// Disposes resources.
         /// </summary>
@@ -66,18 +74,5 @@ namespace YoutubeExplode.Models.MediaStreams
             if (disposing)
                 _stream.Dispose();
         }
-
-        #region Not supported
-
-        /// <inheritdoc />
-        public override void Flush() => _stream.Flush();
-
-        /// <inheritdoc />
-        public override void SetLength(long value) => _stream.SetLength(value);
-
-        /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count) => _stream.Write(buffer, offset, count);
-
-        #endregion
     }
 }

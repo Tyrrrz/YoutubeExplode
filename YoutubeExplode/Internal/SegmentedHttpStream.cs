@@ -9,21 +9,18 @@ namespace YoutubeExplode.Internal
     internal class SegmentedHttpStream : Stream
     {
         private readonly HttpClient _httpClient;
-
         private readonly string _url;
+        private readonly long _segmentSize;
 
-        Stream _currentStream;
-
+        private Stream _currentStream;
         private long _position;
 
-        private readonly int _maxSegmentSize;
-
-        public SegmentedHttpStream(HttpClient httpClient, string url, long length, int maxSegmentSize)
+        public SegmentedHttpStream(HttpClient httpClient, string url, long length, long segmentSize)
         {
             _url = url;
             _httpClient = httpClient;
             Length = length;
-            _maxSegmentSize = maxSegmentSize;
+            _segmentSize = segmentSize;
         }
 
         public override bool CanRead => true;
@@ -39,15 +36,12 @@ namespace YoutubeExplode.Internal
             get => _position;
             set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Non-negative number required");
-                }
-                if (_position != value)
-                {
-                    _position = value;
-                    ClearCurrentStream();
-                }
+                value.GuardNotNegative(nameof(value));
+
+                if (_position == value) return;
+
+                _position = value;
+                ClearCurrentStream();
             }
         }
 
@@ -57,23 +51,36 @@ namespace YoutubeExplode.Internal
             _currentStream = null;
         }
 
-        public override void Flush() => throw new System.NotSupportedException();
-
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
+            // If full length has been exceeded - return 0
             if (Position >= Length)
                 return 0;
 
-            if (_currentStream is null)
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _maxSegmentSize - 1).ConfigureAwait(false);
+            // If current stream is not set - resolve it
+            if (_currentStream == null)
+            {
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1)
+                    .ConfigureAwait(false);
+            }
 
-            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+            // Read from current stream
+            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken)
+                .ConfigureAwait(false);
+
+            // Advance the position (using field directly to avoid clearing stream)
             _position += bytesRead;
+
+            // If no bytes have been read - resolve a new stream
             if (bytesRead == 0)
             {
+                // Clear current stream
                 ClearCurrentStream();
+
+                // Recursively read again
                 bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             }
+
             return bytesRead;
         }
 
@@ -91,26 +98,30 @@ namespace YoutubeExplode.Internal
                 case SeekOrigin.End:
                     return Length + offset;
                 default:
-                    throw new ArgumentException(nameof(origin), "Invalid SeekOrigin");
+                    throw new ArgumentOutOfRangeException(nameof(origin));
             }
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
+            // Get new position
             var newPosition = GetNewPosition(offset, origin);
             if (newPosition < 0)
                 throw new IOException("An attempt was made to move the position before the beginning of the stream.");
 
-            if (Position == newPosition)
-                return Position;
-
-            Position = newPosition;
-            return Position;
+            // Change position
+            return Position = newPosition;
         }
 
-        public override void SetLength(long value) => throw new System.NotSupportedException();
+        #region Not supported
 
-        public override void Write(byte[] buffer, int offset, int count) => throw new System.NotSupportedException();
+        public override void Flush() => throw new NotSupportedException();
+
+        public override void SetLength(long value) => throw new NotSupportedException();
+
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+        #endregion
 
         protected override void Dispose(bool disposing)
         {

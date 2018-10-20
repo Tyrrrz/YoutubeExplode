@@ -77,5 +77,11 @@ namespace YoutubeExplode.Internal
                 return response.Content.Headers.ContentLength;
             }
         }
+
+        public static SegmentedHttpStream GetSegmentedStream(this HttpClient httpClient, string url, long length,
+            long segmentSize)
+        {
+            return new SegmentedHttpStream(httpClient, url, length, segmentSize);
+        }
     }
 }
