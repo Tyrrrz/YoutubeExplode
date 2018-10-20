@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
+using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<string> GetPlaylistInfoRawAsync(string playlistId, int index = 0)
+        private async Task<PlaylistAjaxParser> GetPlaylistAjaxParserAsync(string playlistId, int index)
         {
-            var url =
-                $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-            return await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-        }
+            var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
-        private async Task<JToken> GetPlaylistInfoAsync(string playlistId, int index = 0)
-        {
-            var raw = await GetPlaylistInfoRawAsync(playlistId, index).ConfigureAwait(false);
-            return JToken.Parse(raw);
+            return PlaylistAjaxParser.Initialize(raw);
         }
 
         /// <inheritdoc />
@@ -33,77 +26,69 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
-            // Get all videos across pages
-            var pagesDone = 0;
-            var offset = 0;
-            JToken playlistJson;
+            // Get parser for the first page
+            var parser = await GetPlaylistAjaxParserAsync(playlistId, 0).ConfigureAwait(false);
+
+            // Extract info
+            var author = parser.ParseAuthor();
+            var title = parser.ParseTitle();
+            var description = parser.ParseDescription();
+            var viewCount = parser.ParseViewCount();
+            var likeCount = parser.ParseLikeCount();
+            var dislikeCount = parser.ParseDislikeCount();
+
+            // Parse videos from all pages
+            var page = 0;
+            var index = 0;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             do
             {
-                // Get playlist info
-                playlistJson = await GetPlaylistInfoAsync(playlistId, offset).ConfigureAwait(false);
-
                 // Parse videos
-                var total = 0;
-                var delta = 0;
-                foreach (var videoJson in playlistJson["video"])
+                var countTotal = 0;
+                var countDelta = 0;
+                foreach (var videoParser in parser.GetVideos())
                 {
-                    // Basic info
-                    var videoId = videoJson["encrypted_id"].Value<string>();
-                    var videoAuthor = videoJson["author"].Value<string>();
-                    var videoUploadDate = videoJson["added"].Value<string>().ParseDateTimeOffset("M/d/yy");
-                    var videoTitle = videoJson["title"].Value<string>();
-                    var videoDuration = TimeSpan.FromSeconds(videoJson["length_seconds"].Value<double>());
-                    var videoDescription = videoJson["description"].Value<string>();
+                    // Extract info
+                    var videoId = videoParser.GetId();
+                    var videoAuthor = videoParser.GetAuthor();
+                    var videoUploadDate = videoParser.GetUploadDate();
+                    var videoTitle = videoParser.GetTitle();
+                    var videoDescription = videoParser.GetDescription();
+                    var videoDuration = videoParser.GetDuration();
+                    var videoKeywords = videoParser.GetKeywords();
+                    var videoViewCount = videoParser.GetViewCount();
+                    var videoLikeCount = videoParser.GetLikeCount();
+                    var videoDislikeCount = videoParser.GetDislikeCount();
 
-                    // Keywords
-                    var videoKeywordsJoined = videoJson["keywords"].Value<string>();
-                    var videoKeywords = Regex
-                        .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
-                        .Cast<Match>()
-                        .Select(m => m.Value)
-                        .Where(s => s.IsNotBlank())
-                        .ToArray();
-
-                    // Statistics
-                    var videoViewCount = videoJson["views"].Value<string>().StripNonDigit().ParseLong();
-                    var videoLikeCount = videoJson["likes"].Value<long>();
-                    var videoDislikeCount = videoJson["dislikes"].Value<long>();
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
-
-                    // Video
                     var videoThumbnails = new ThumbnailSet(videoId);
+
                     var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics);
 
-                    // Add to list if not already there
+                    // Add video to the list if it's not already there
                     if (videoIds.Add(video.Id))
                     {
                         videos.Add(video);
-                        delta++;
+                        countDelta++;
                     }
-                    total++;
+
+                    countTotal++;
                 }
 
                 // Break if no distinct videos were added to the list
-                if (delta <= 0)
+                if (countDelta <= 0)
                     break;
 
-                // Prepare for next page
-                pagesDone++;
-                offset += total;
-            } while (pagesDone < maxPages);
+                // Prepare for the next page
+                page++;
+                index += countTotal;
 
-            // Extract playlist info
-            var title = playlistJson["title"].Value<string>();
-            var author = playlistJson["author"]?.Value<string>() ?? ""; // system playlists don't have an author
-            var description = playlistJson["description"]?.Value<string>() ?? ""; // system playlists don't have description
+                // Get parser for the next page
+                parser = await GetPlaylistAjaxParserAsync(playlistId, index).ConfigureAwait(false);
+            } while (page < maxPages);
 
-            // Statistics
-            var viewCount = playlistJson["views"]?.Value<long>() ?? 0; // watchlater does not have views
-            var likeCount = playlistJson["likes"]?.Value<long>() ?? 0; // system playlists don't have likes
-            var dislikeCount = playlistJson["dislikes"]?.Value<long>() ?? 0; // system playlists don't have dislikes
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
 
             return new Playlist(playlistId, author, title, description, statistics, videos);
