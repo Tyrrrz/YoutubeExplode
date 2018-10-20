@@ -29,13 +29,31 @@ namespace YoutubeExplode.Internal.Parsers
             foreach (var childNode in childNodes)
             {
                 if (childNode.NodeType == NodeType.Text)
+                {
                     buffer.Append(childNode.TextContent);
-
+                }
                 else if (childNode is IHtmlAnchorElement anchorNode)
-                    buffer.Append(anchorNode.TextContent);
+                {
+                    // If it uses YouTube redirect - get the actual link
+                    if (anchorNode.PathName.Equals("/redirect", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Get query parameters
+                        var queryParams = UrlEx.SplitQuery(anchorNode.Search);
 
+                        // Get the actual href
+                        var actualHref = queryParams["q"].UrlDecode();
+
+                        buffer.Append(actualHref);
+                    }
+                    else
+                    {
+                        buffer.Append(anchorNode.TextContent);
+                    }
+                }
                 else if (childNode is IHtmlBreakRowElement)
+                {
                     buffer.AppendLine();
+                }
             }
 
             return buffer.ToString();
