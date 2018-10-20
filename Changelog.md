@@ -1,3 +1,9 @@
+### v4.4 (20-Oct-2018)
+
+- Improved `GetVideoAsync`, `GetVideoAuthorChannelAsync` and `GetVideoClosedCaptionTrackInfosAsync` so that they don't fail on unavailable videos.
+- Added extra result validation to `GetChannelIdAsync` to verify that the extracted value is indeed a valid channel ID.
+- Added static methods to parse and validate YouTube usernames.
+
 ### v4.3.4 (16-Oct-2018)
 
 - Fixed an issue where `JsonReaderException` was thrown on all videos due to recent YouTube changes.
