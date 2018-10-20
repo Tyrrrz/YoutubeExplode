@@ -47,7 +47,7 @@ namespace YoutubeExplode
             var videoInfoParser = await GetVideoInfoParserAsync(videoId, "embedded", sts).ConfigureAwait(false);
 
             // Check if video exists by verifying that video ID property is not empty
-            if (videoInfoParser.GetVideoId().IsBlank())
+            if (videoInfoParser.GetId().IsBlank())
             {
                 // Get native error code and error reason
                 var errorCode = videoInfoParser.GetErrorCode();

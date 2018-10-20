@@ -18,7 +18,7 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string GetErrorReason() => _root.GetOrDefault("reason");
 
-        public string GetVideoId() => _root.GetOrDefault("video_id");
+        public string GetId() => _root.GetOrDefault("video_id");
 
         public string GetTitle() => _root.GetOrDefault("title");
 
@@ -60,7 +60,6 @@ namespace YoutubeExplode.Internal.Parsers
 
     internal partial class VideoInfoParser
     {
-        // Muxed stream info sub-parser
         public class MuxedStreamInfoParser
         {
             private readonly IReadOnlyDictionary<string, string> _root;
@@ -77,7 +76,6 @@ namespace YoutubeExplode.Internal.Parsers
             public string GetSignature() => _root.GetOrDefault("s");
         }
 
-        // Adaptive stream info sub-parser
         public class AdaptiveStreamInfoParser
         {
             private readonly IReadOnlyDictionary<string, string> _root;
@@ -109,7 +107,6 @@ namespace YoutubeExplode.Internal.Parsers
             public string GetQualityLabel() => _root.GetOrDefault("quality_label");
         }
 
-        // Closed caption track info sub-parser
         public class ClosedCaptionTrackInfoParser
         {
             private readonly JToken _root;

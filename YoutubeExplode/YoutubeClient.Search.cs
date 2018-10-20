@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
+using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<string> GetSearchResultsRawAsync(string query, int page = 1)
+        private async Task<SearchResultsAjaxParser> GetSearchResultsAjaxParserAsync(string query, int page)
         {
             query = query.UrlEncode();
-            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            return await _httpClient.GetStringAsync(url, false).ConfigureAwait(false);
-        }
 
-        private async Task<JToken> GetSearchResultsAsync(string query, int page = 1)
-        {
-            var raw = await GetSearchResultsRawAsync(query, page).ConfigureAwait(false);
-            return JToken.Parse(raw);
+            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+
+            return SearchResultsAjaxParser.Initialize(raw);
         }
 
         /// <inheritdoc />
@@ -35,42 +29,27 @@ namespace YoutubeExplode
             for (var i = 1; i <= maxPages; i++)
             {
                 // Get search results
-                var searchResultsJson = await GetSearchResultsAsync(query, i).ConfigureAwait(false);
-
-                // Get videos
-                var videosJson = searchResultsJson["video"].EmptyIfNull().ToArray();
-
-                // Break if there are no videos
-                if (!videosJson.Any())
-                    break;
+                var parser = await GetSearchResultsAjaxParserAsync(query, i).ConfigureAwait(false);
 
                 // Parse videos
-                foreach (var videoJson in videosJson)
+                foreach (var videoParser in parser.Videos())
                 {
                     // Basic info
-                    var videoId = videoJson["encrypted_id"].Value<string>();
-                    var videoAuthor = videoJson["author"].Value<string>();
-                    var videoUploadDate = videoJson["added"].Value<string>().ParseDateTimeOffset("M/d/yy");
-                    var videoTitle = videoJson["title"].Value<string>();
-                    var videoDuration = TimeSpan.FromSeconds(videoJson["length_seconds"].Value<double>());
-                    var videoDescription = videoJson["description"].Value<string>().HtmlDecode();
-
-                    // Keywords
-                    var videoKeywordsJoined = videoJson["keywords"].Value<string>();
-                    var videoKeywords = Regex
-                        .Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
-                        .Cast<Match>()
-                        .Select(m => m.Value)
-                        .Where(s => s.IsNotBlank())
-                        .ToArray();
+                    var videoId = videoParser.GetId();
+                    var videoAuthor = videoParser.GetAuthor();
+                    var videoUploadDate = videoParser.GetUploadDate();
+                    var videoTitle = videoParser.GetTitle();
+                    var videoDuration = videoParser.GetDuration();
+                    var videoDescription = videoParser.GetDescription();
+                    var videoKeywords = videoParser.GetKeywords();
 
                     // Statistics
-                    var videoViewCount = videoJson["views"].Value<string>().StripNonDigit().ParseLong();
-                    var videoLikeCount = videoJson["likes"].Value<long>();
-                    var videoDislikeCount = videoJson["dislikes"].Value<long>();
-                    var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
+                    var videoViewCount = videoParser.GetViewCount();
+                    var videoLikeCount = videoParser.GetLikeCount();
+                    var videoDislikeCount = videoParser.GetDislikeCount();
 
                     // Video
+                    var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
                     var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics);
