@@ -7,11 +7,11 @@ using AngleSharp.Parser.Html;
 
 namespace YoutubeExplode.Internal.Parsers
 {
-    internal partial class VideoWatchPage
+    internal partial class VideoWatchPageParser
     {
         private readonly IHtmlDocument _root;
 
-        public VideoWatchPage(IHtmlDocument root)
+        public VideoWatchPageParser(IHtmlDocument root)
         {
             _root = root;
         }
@@ -48,12 +48,12 @@ namespace YoutubeExplode.Internal.Parsers
         }
     }
 
-    internal partial class VideoWatchPage
+    internal partial class VideoWatchPageParser
     {
-        public static VideoWatchPage Parse(string raw)
+        public static VideoWatchPageParser Initialize(string raw)
         {
             var root = new HtmlParser().Parse(raw);
-            return new VideoWatchPage(root);
+            return new VideoWatchPageParser(root);
         }
     }
 }

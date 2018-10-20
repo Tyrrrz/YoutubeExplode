@@ -3,11 +3,11 @@ using Newtonsoft.Json.Linq;
 
 namespace YoutubeExplode.Internal.Parsers
 {
-    internal partial class VideoEmbedPage
+    internal partial class VideoEmbedPageParser
     {
         private readonly JToken _root;
 
-        public VideoEmbedPage(JToken root)
+        public VideoEmbedPageParser(JToken root)
         {
             _root = root;
         }
@@ -37,17 +37,18 @@ namespace YoutubeExplode.Internal.Parsers
         public string GetChannelLogoUrl() => _root["args"]["profile_picture"].Value<string>();
     }
 
-    internal partial class VideoEmbedPage
+    internal partial class VideoEmbedPageParser
     {
-        public static VideoEmbedPage Parse(string raw)
+        public static VideoEmbedPageParser Initialize(string raw)
         {
-            var part = Regex.Match(raw,
+            // Extract the config part
+            var config = Regex.Match(raw,
                     @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                 .Groups["Json"].Value;
 
-            var root = JToken.Parse(part);
+            var root = JToken.Parse(config);
 
-            return new VideoEmbedPage(root);
+            return new VideoEmbedPageParser(root);
         }
     }
 }
