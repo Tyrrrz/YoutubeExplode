@@ -230,11 +230,6 @@ namespace YoutubeExplode.Internal
             } while (bytesCopied > 0);
         }
 
-        public static SegmentedHttpStream GetSegmentedStream(this HttpClient httpClient, string url, long length)
-        {
-            return new SegmentedHttpStream(httpClient, url, length);
-        }
-
         public static SegmentedHttpStream GetSegmentedStream(this HttpClient httpClient, string url, long length, int maxSegmentSize)
         {
             return new SegmentedHttpStream(httpClient, url, length, maxSegmentSize);

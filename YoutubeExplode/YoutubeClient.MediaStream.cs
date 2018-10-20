@@ -15,16 +15,16 @@ namespace YoutubeExplode
         public Task<MediaStream> GetMediaStreamAsync(MediaStreamInfo info)
         {
             info.GuardNotNull(nameof(info));
-            return Task.FromResult(new MediaStream(info, GetSegmentedStreamForMediaInfo(info)));
-        }
 
-        private Stream GetSegmentedStreamForMediaInfo(MediaStreamInfo info)
-        {
+            // Maximum segment stream size
+            const int segmentSize = 9_898_989; // this number was carefully devised through research
+
             // Determine if stream is rate-limited
             var isRateLimited = !Regex.IsMatch(info.Url, @"ratebypass[=/]yes");
+
             if (isRateLimited)
-                return _httpClient.GetSegmentedStream(info.Url, info.Size);
-            return _httpClient.GetSegmentedStream(info.Url, info.Size, int.MaxValue);
+                return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size, segmentSize)));
+            return Task.FromResult(new MediaStream(info, _httpClient.GetSegmentedStream(info.Url, info.Size, int.MaxValue)));
         }
 
         /// <inheritdoc />
