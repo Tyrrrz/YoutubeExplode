@@ -1,3 +1,8 @@
+### v4.5 (20-Oct-2018)
+
+- Fixed an issue where external links were truncated in `Video.Description` if they are too long.
+- Added support for seeking in `MediaStream`.
+
 ### v4.4 (20-Oct-2018)
 
 - Improved `GetVideoAsync`, `GetVideoAuthorChannelAsync` and `GetVideoClosedCaptionTrackInfosAsync` so that they don't fail on unavailable videos.
