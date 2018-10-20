@@ -12,10 +12,10 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfoParserAsync(string url)
+        private async Task<ClosedCaptionTrackAjaxParser> GetClosedCaptionTrackAjaxParserAsync(string url)
         {
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-            return ClosedCaptionTrackInfoParser.Initialize(raw);
+            return ClosedCaptionTrackAjaxParser.Initialize(raw);
         }
 
         /// <inheritdoc />
@@ -24,20 +24,21 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
 
             // Get parser
-            var parser = await GetClosedCaptionTrackInfoParserAsync(info.Url).ConfigureAwait(false);
+            var parser = await GetClosedCaptionTrackAjaxParserAsync(info.Url).ConfigureAwait(false);
 
             // Parse captions
             var closedCaptions = new List<ClosedCaption>();
-            foreach (var closedCaptionParser in parser.ClosedCaptions())
+            foreach (var closedCaptionParser in parser.GetClosedCaptions())
             {
-                var text = closedCaptionParser.GetText();
+                // Extract info
+                var text = closedCaptionParser.ParseText();
 
                 // Skip caption tracks without text
                 if (text.IsBlank())
                     continue;
 
-                var offset = closedCaptionParser.GetOffset();
-                var duration = closedCaptionParser.GetDuration();
+                var offset = closedCaptionParser.ParseOffset();
+                var duration = closedCaptionParser.ParseDuration();
 
                 var caption = new ClosedCaption(text, offset, duration);
                 closedCaptions.Add(caption);

@@ -15,19 +15,19 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public string GetTitle() => _root["title"].Value<string>();
+        public string ParseAuthor() => _root["author"]?.Value<string>() ?? ""; // system playlists don't have an author
 
-        public string GetAuthor() => _root["author"]?.Value<string>() ?? ""; // system playlists don't have an author
+        public string ParseTitle() => _root["title"].Value<string>();
 
-        public string GetDescription() => _root["description"]?.Value<string>() ?? ""; // system playlists don't have description
+        public string ParseDescription() => _root["description"]?.Value<string>() ?? ""; // system playlists don't have description
 
-        public long GetViewCount() => _root["views"]?.Value<long>() ?? 0; // watchlater does not have views
+        public long ParseViewCount() => _root["views"]?.Value<long>() ?? 0; // watchlater does not have views
 
-        public long GetLikeCount() => _root["likes"]?.Value<long>() ?? 0; // system playlists don't have likes
+        public long ParseLikeCount() => _root["likes"]?.Value<long>() ?? 0; // system playlists don't have likes
 
-        public long GetDislikeCount() => _root["dislikes"]?.Value<long>() ?? 0; // system playlists don't have dislikes
+        public long ParseDislikeCount() => _root["dislikes"]?.Value<long>() ?? 0; // system playlists don't have dislikes
 
-        public IEnumerable<VideoParser> Videos()
+        public IEnumerable<VideoParser> GetVideos()
         {
             var videosJson = _root["video"];
             return videosJson.EmptyIfNull().Select(t => new VideoParser(t));
@@ -53,9 +53,9 @@ namespace YoutubeExplode.Internal.Parsers
 
             public string GetTitle() => _root["title"].Value<string>();
 
-            public TimeSpan GetDuration() => TimeSpan.FromSeconds(_root["length_seconds"].Value<double>());
-
             public string GetDescription() => _root["description"].Value<string>();
+
+            public TimeSpan GetDuration() => TimeSpan.FromSeconds(_root["length_seconds"].Value<double>());
 
             public IReadOnlyList<string> GetKeywords()
             {

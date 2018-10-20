@@ -15,7 +15,7 @@ namespace YoutubeExplode.Internal.Parsers
             _raw = raw;
         }
 
-        public IReadOnlyList<ICipherOperation> GetCipherOperations()
+        public IReadOnlyList<ICipherOperation> ParseCipherOperations()
         {
             // Original code credit:
             // https://github.com/flagbug/YoutubeExtractor/blob/3106efa1063994fd19c0e967793315f6962b2d3c/YoutubeExtractor/YoutubeExtractor/Decipherer.cs

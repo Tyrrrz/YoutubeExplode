@@ -34,15 +34,15 @@ namespace YoutubeExplode
                 var parser = await GetSearchResultsAjaxParserAsync(query, page).ConfigureAwait(false);
 
                 // Parse videos
-                foreach (var videoParser in parser.Videos())
+                foreach (var videoParser in parser.GetVideos())
                 {
                     // Extract info
                     var videoId = videoParser.GetId();
                     var videoAuthor = videoParser.GetAuthor();
                     var videoUploadDate = videoParser.GetUploadDate();
                     var videoTitle = videoParser.GetTitle();
-                    var videoDuration = videoParser.GetDuration();
                     var videoDescription = videoParser.GetDescription();
+                    var videoDuration = videoParser.GetDuration();
                     var videoKeywords = videoParser.GetKeywords();
                     var videoViewCount = videoParser.GetViewCount();
                     var videoLikeCount = videoParser.GetLikeCount();

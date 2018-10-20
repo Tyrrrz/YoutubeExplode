@@ -16,16 +16,10 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public DateTimeOffset GetUploadDate() => _root.QuerySelector("meta[itemprop=\"datePublished\"]")
+        public DateTimeOffset ParseUploadDate() => _root.QuerySelector("meta[itemprop=\"datePublished\"]")
             .GetAttribute("content").ParseDateTimeOffset("yyyy-MM-dd");
 
-        public long GetLikeCount() => _root.QuerySelector("button.like-button-renderer-like-button").Text()
-            .StripNonDigit().ParseLongOrDefault();
-
-        public long GetDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button").Text()
-            .StripNonDigit().ParseLongOrDefault();
-
-        public string GetDescription()
+        public string ParseDescription()
         {
             var buffer = new StringBuilder();
 
@@ -46,6 +40,12 @@ namespace YoutubeExplode.Internal.Parsers
 
             return buffer.ToString();
         }
+
+        public long ParseLikeCount() => _root.QuerySelector("button.like-button-renderer-like-button").Text()
+            .StripNonDigit().ParseLongOrDefault();
+
+        public long ParseDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button").Text()
+            .StripNonDigit().ParseLongOrDefault();
     }
 
     internal partial class VideoWatchPageParser

@@ -14,7 +14,7 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public IEnumerable<DashStreamInfoParser> DashStreamInfos()
+        public IEnumerable<StreamInfoParser> GetStreamInfos()
         {
             var streamInfosXml = _root.Descendants("Representation");
 
@@ -22,36 +22,36 @@ namespace YoutubeExplode.Internal.Parsers
             streamInfosXml = streamInfosXml.Where(s =>
                 s.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value.Contains("sq/") != true);
 
-            return streamInfosXml.Select(x => new DashStreamInfoParser(x));
+            return streamInfosXml.Select(x => new StreamInfoParser(x));
         }
     }
 
     internal partial class DashManifestParser
     {
-        public class DashStreamInfoParser
+        public class StreamInfoParser
         {
             private readonly XElement _root;
 
-            public DashStreamInfoParser(XElement root)
+            public StreamInfoParser(XElement root)
             {
                 _root = root;
             }
 
-            public string GetUrl() => (string) _root.Element("BaseURL");
+            public int ParseItag() => (int) _root.Attribute("id");
 
-            public int GetItag() => (int) _root.Attribute("id");
+            public string ParseUrl() => (string) _root.Element("BaseURL");
 
-            public long GetBitrate() => (long) _root.Attribute("bandwidth");
+            public long ParseContentLength() => Regex.Match(ParseUrl(), @"clen[/=](\d+)").Groups[1].Value.ParseLong();
 
-            public long GetContentLength() => Regex.Match(GetUrl(), @"clen[/=](\d+)").Groups[1].Value.ParseLong();
+            public long ParseBitrate() => (long) _root.Attribute("bandwidth");
 
-            public bool GetIsAudioOnly() => _root.Element("AudioChannelConfiguration") != null;
+            public bool ParseIsAudioOnly() => _root.Element("AudioChannelConfiguration") != null;
 
-            public int GetWidth() => (int) _root.Attribute("width");
+            public int ParseWidth() => (int) _root.Attribute("width");
 
-            public int GetHeight() => (int) _root.Attribute("height");
+            public int ParseHeight() => (int) _root.Attribute("height");
 
-            public int GetFramerate() => (int) _root.Attribute("frameRate");
+            public int ParseFramerate() => (int) _root.Attribute("frameRate");
         }
     }
 

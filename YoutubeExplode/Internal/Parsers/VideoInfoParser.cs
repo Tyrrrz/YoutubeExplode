@@ -14,41 +14,41 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public int GetErrorCode() => _root.GetOrDefault("errorcode").ParseIntOrDefault();
+        public int ParseErrorCode() => _root.GetOrDefault("errorcode").ParseIntOrDefault();
 
-        public string GetErrorReason() => _root.GetOrDefault("reason");
+        public string ParseErrorReason() => _root.GetOrDefault("reason");
 
-        public string GetId() => _root.GetOrDefault("video_id");
+        public string ParsePreviewVideoId() => _root.GetOrDefault("ypc_vid");
 
-        public string GetTitle() => _root.GetOrDefault("title");
+        public string ParseId() => _root.GetOrDefault("video_id");
 
-        public string GetAuthor() => _root.GetOrDefault("author");
+        public string ParseAuthor() => _root.GetOrDefault("author");
 
-        public TimeSpan GetDuration() => TimeSpan.FromSeconds(_root.GetOrDefault("length_seconds").ParseDouble());
+        public string ParseTitle() => _root.GetOrDefault("title");
 
-        public long GetViewCount() => _root.GetOrDefault("view_count").ParseLong();
+        public TimeSpan ParseDuration() => TimeSpan.FromSeconds(_root.GetOrDefault("length_seconds").ParseDouble());
 
-        public IReadOnlyList<string> GetKeywords() => _root.GetOrDefault("keywords").Split(",");
+        public IReadOnlyList<string> ParseKeywords() => _root.GetOrDefault("keywords").Split(",");
 
-        public string GetPreviewVideoId() => _root.GetOrDefault("ypc_vid");
+        public long ParseViewCount() => _root.GetOrDefault("view_count").ParseLong();
 
-        public string GetDashManifestUrl() => _root.GetOrDefault("dashmpd");
+        public string ParseDashManifestUrl() => _root.GetOrDefault("dashmpd");
 
-        public string GetHlsPlaylistUrl() => _root.GetOrDefault("hlsvp");
+        public string ParseHlsPlaylistUrl() => _root.GetOrDefault("hlsvp");
 
-        public IEnumerable<MuxedStreamInfoParser> MuxedStreamInfos()
-        {
-            var streamInfosEncoded = _root.GetOrDefault("url_encoded_fmt_stream_map")?.Split(",");
-            return streamInfosEncoded.EmptyIfNull().Select(UrlEx.SplitQuery).Select(d => new MuxedStreamInfoParser(d));
-        }
+        public IEnumerable<MuxedStreamInfoParser> GetMuxedStreamInfos() => _root.GetOrDefault("url_encoded_fmt_stream_map")
+            ?.Split(",")
+            .EmptyIfNull()
+            .Select(UrlEx.SplitQuery)
+            .Select(d => new MuxedStreamInfoParser(d));
 
-        public IEnumerable<AdaptiveStreamInfoParser> AdaptiveStreamInfos()
-        {
-            var streamInfosEncoded = _root.GetOrDefault("adaptive_fmts")?.Split(",");
-            return streamInfosEncoded.EmptyIfNull().Select(UrlEx.SplitQuery).Select(d => new AdaptiveStreamInfoParser(d));
-        }
+        public IEnumerable<AdaptiveStreamInfoParser> GetAdaptiveStreamInfos() => _root.GetOrDefault("adaptive_fmts")
+            ?.Split(",")
+            .EmptyIfNull()
+            .Select(UrlEx.SplitQuery)
+            .Select(d => new AdaptiveStreamInfoParser(d));
 
-        public IEnumerable<ClosedCaptionTrackInfoParser> ClosedCaptionTrackInfos()
+        public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos()
         {
             var playerResponseRaw = _root.GetOrDefault("player_response");
             var playerResponseJson = JToken.Parse(playerResponseRaw);
@@ -69,11 +69,11 @@ namespace YoutubeExplode.Internal.Parsers
                 _root = root;
             }
 
-            public string GetUrl() => _root.GetOrDefault("url");
+            public int ParseItag() => _root.GetOrDefault("itag").ParseInt();
 
-            public int GetItag() => _root.GetOrDefault("itag").ParseInt();
+            public string ParseUrl() => _root.GetOrDefault("url");
 
-            public string GetSignature() => _root.GetOrDefault("s");
+            public string ParseSignature() => _root.GetOrDefault("s");
         }
 
         public class AdaptiveStreamInfoParser
@@ -85,26 +85,26 @@ namespace YoutubeExplode.Internal.Parsers
                 _root = root;
             }
 
-            public string GetUrl() => _root.GetOrDefault("url");
+            public int ParseItag() => _root.GetOrDefault("itag").ParseInt();
 
-            public int GetItag() => _root.GetOrDefault("itag").ParseInt();
+            public string ParseUrl() => _root.GetOrDefault("url");
 
-            public bool GetIsAudioOnly() => _root.GetOrDefault("type")
+            public string ParseSignature() => _root.GetOrDefault("s");
+
+            public long ParseContentLength() => _root.GetOrDefault("clen").ParseLong();
+
+            public long ParseBitrate() => _root.GetOrDefault("bitrate").ParseLong();
+
+            public bool ParseIsAudioOnly() => _root.GetOrDefault("type")
                 .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 
-            public string GetSignature() => _root.GetOrDefault("s");
+            public int ParseWidth() => _root.GetOrDefault("size").SubstringUntil("x").ParseInt();
 
-            public long GetContentLength() => _root.GetOrDefault("clen").ParseLong();
+            public int ParseHeight() => _root.GetOrDefault("size").SubstringAfter("x").ParseInt();
 
-            public long GetBitrate() => _root.GetOrDefault("bitrate").ParseLong();
+            public int ParseFramerate() => _root.GetOrDefault("fps").ParseInt();
 
-            public int GetWidth() => _root.GetOrDefault("size").SubstringUntil("x").ParseInt();
-
-            public int GetHeight() => _root.GetOrDefault("size").SubstringAfter("x").ParseInt();
-
-            public int GetFramerate() => _root.GetOrDefault("fps").ParseInt();
-
-            public string GetQualityLabel() => _root.GetOrDefault("quality_label");
+            public string ParseQualityLabel() => _root.GetOrDefault("quality_label");
         }
 
         public class ClosedCaptionTrackInfoParser
@@ -116,13 +116,13 @@ namespace YoutubeExplode.Internal.Parsers
                 _root = root;
             }
 
-            public string GetUrl() => _root["baseUrl"].Value<string>();
+            public string ParseUrl() => _root["baseUrl"].Value<string>();
 
-            public string GetLanguageCode() => _root["languageCode"].Value<string>();
+            public string ParseLanguageCode() => _root["languageCode"].Value<string>();
 
-            public string GetLanguageName() => _root["name"]["simpleText"].Value<string>();
+            public string ParseLanguageName() => _root["name"]["simpleText"].Value<string>();
 
-            public bool GetIsAutoGenerated() => _root["vssId"].Value<string>()
+            public bool ParseIsAutoGenerated() => _root["vssId"].Value<string>()
                 .StartsWith("a.", StringComparison.OrdinalIgnoreCase);
         }
     }

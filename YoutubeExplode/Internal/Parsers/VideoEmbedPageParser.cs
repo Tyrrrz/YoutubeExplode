@@ -12,7 +12,7 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public string GetPlayerSourceUrl()
+        public string ParsePlayerSourceUrl()
         {
             var relativeUrl = _root["assets"]["js"].Value<string>();
 
@@ -22,9 +22,9 @@ namespace YoutubeExplode.Internal.Parsers
             return relativeUrl;
         }
 
-        public string GetSts() => _root["sts"].Value<string>();
+        public string ParseSts() => _root["sts"].Value<string>();
 
-        public string GetChannelId()
+        public string ParseChannelId()
         {
             var channelPath = _root["args"]["channel_path"].Value<string>();
             var channelId = channelPath.SubstringAfter("channel/");
@@ -32,9 +32,9 @@ namespace YoutubeExplode.Internal.Parsers
             return channelId;
         }
 
-        public string GetChannelTitle() => _root["args"]["expanded_title"].Value<string>();
+        public string ParseChannelTitle() => _root["args"]["expanded_title"].Value<string>();
 
-        public string GetChannelLogoUrl() => _root["args"]["profile_picture"].Value<string>();
+        public string ParseChannelLogoUrl() => _root["args"]["profile_picture"].Value<string>();
     }
 
     internal partial class VideoEmbedPageParser

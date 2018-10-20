@@ -30,12 +30,12 @@ namespace YoutubeExplode
             var parser = await GetPlaylistAjaxParserAsync(playlistId, 0).ConfigureAwait(false);
 
             // Extract info
-            var title = parser.GetTitle();
-            var author = parser.GetAuthor();
-            var description = parser.GetDescription();
-            var viewCount = parser.GetViewCount();
-            var likeCount = parser.GetLikeCount();
-            var dislikeCount = parser.GetDislikeCount();
+            var author = parser.ParseAuthor();
+            var title = parser.ParseTitle();
+            var description = parser.ParseDescription();
+            var viewCount = parser.ParseViewCount();
+            var likeCount = parser.ParseLikeCount();
+            var dislikeCount = parser.ParseDislikeCount();
 
             // Parse videos from all pages
             var page = 0;
@@ -47,15 +47,15 @@ namespace YoutubeExplode
                 // Parse videos
                 var countTotal = 0;
                 var countDelta = 0;
-                foreach (var videoParser in parser.Videos())
+                foreach (var videoParser in parser.GetVideos())
                 {
                     // Extract info
                     var videoId = videoParser.GetId();
                     var videoAuthor = videoParser.GetAuthor();
                     var videoUploadDate = videoParser.GetUploadDate();
                     var videoTitle = videoParser.GetTitle();
-                    var videoDuration = videoParser.GetDuration();
                     var videoDescription = videoParser.GetDescription();
+                    var videoDuration = videoParser.GetDuration();
                     var videoKeywords = videoParser.GetKeywords();
                     var videoViewCount = videoParser.GetViewCount();
                     var videoLikeCount = videoParser.GetLikeCount();

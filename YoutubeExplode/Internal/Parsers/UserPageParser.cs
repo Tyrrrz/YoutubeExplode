@@ -12,7 +12,7 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public string GetChannelId() => _root.QuerySelector("link[rel=\"canonical\"]").GetAttribute("href")
+        public string ParseChannelId() => _root.QuerySelector("link[rel=\"canonical\"]").GetAttribute("href")
             .SubstringAfter("channel/");
     }
 
