@@ -11,8 +11,7 @@ namespace YoutubeExplode
     {
         private async Task<PlaylistAjaxParser> GetPlaylistAjaxParserAsync(string playlistId, int index)
         {
-            var url =
-                $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
+            var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return PlaylistAjaxParser.Initialize(raw);
@@ -27,7 +26,7 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
-            // Get playlist parser for the first page
+            // Get parser for the first page
             var parser = await GetPlaylistAjaxParserAsync(playlistId, 0).ConfigureAwait(false);
 
             // Extract info
@@ -38,19 +37,19 @@ namespace YoutubeExplode
             var likeCount = parser.GetLikeCount();
             var dislikeCount = parser.GetDislikeCount();
 
-            // Extract collective video info from all pages
-            var pagesDone = 0;
+            // Parse videos from all pages
+            var page = 0;
             var index = 0;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             do
             {
                 // Parse videos
-                var total = 0;
-                var delta = 0;
+                var countTotal = 0;
+                var countDelta = 0;
                 foreach (var videoParser in parser.Videos())
                 {
-                    // Basic info
+                    // Extract info
                     var videoId = videoParser.GetId();
                     var videoAuthor = videoParser.GetAuthor();
                     var videoUploadDate = videoParser.GetUploadDate();
@@ -58,40 +57,40 @@ namespace YoutubeExplode
                     var videoDuration = videoParser.GetDuration();
                     var videoDescription = videoParser.GetDescription();
                     var videoKeywords = videoParser.GetKeywords();
-
-                    // Statistics
                     var videoViewCount = videoParser.GetViewCount();
                     var videoLikeCount = videoParser.GetLikeCount();
                     var videoDislikeCount = videoParser.GetDislikeCount();
 
-                    // Video
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
+
                     var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics);
 
-                    // Add to list if not already there
+                    // Add video to the list if it's not already there
                     if (videoIds.Add(video.Id))
                     {
                         videos.Add(video);
-                        delta++;
+                        countDelta++;
                     }
-                    total++;
+
+                    countTotal++;
                 }
 
                 // Break if no distinct videos were added to the list
-                if (delta <= 0)
+                if (countDelta <= 0)
                     break;
 
-                // Prepare for next page
-                pagesDone++;
-                index += total;
+                // Prepare for the next page
+                page++;
+                index += countTotal;
 
-                // Get parser for next page
+                // Get parser for the next page
                 parser = await GetPlaylistAjaxParserAsync(playlistId, index).ConfigureAwait(false);
-            } while (pagesDone < maxPages);
+            } while (page < maxPages);
 
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
+
             return new Playlist(playlistId, author, title, description, statistics, videos);
         }
 

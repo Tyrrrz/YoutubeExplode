@@ -12,8 +12,10 @@ namespace YoutubeExplode
         {
             query = query.UrlEncode();
 
+            // Don't ensure success here so that empty pages could be parsed
+
             var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(url, false).ConfigureAwait(false);
 
             return SearchResultsAjaxParser.Initialize(raw);
         }
@@ -26,15 +28,15 @@ namespace YoutubeExplode
 
             // Get all videos across pages
             var videos = new List<Video>();
-            for (var i = 1; i <= maxPages; i++)
+            for (var page = 1; page <= maxPages; page++)
             {
-                // Get search results
-                var parser = await GetSearchResultsAjaxParserAsync(query, i).ConfigureAwait(false);
+                // Get parser
+                var parser = await GetSearchResultsAjaxParserAsync(query, page).ConfigureAwait(false);
 
                 // Parse videos
                 foreach (var videoParser in parser.Videos())
                 {
-                    // Basic info
+                    // Extract info
                     var videoId = videoParser.GetId();
                     var videoAuthor = videoParser.GetAuthor();
                     var videoUploadDate = videoParser.GetUploadDate();
@@ -42,15 +44,13 @@ namespace YoutubeExplode
                     var videoDuration = videoParser.GetDuration();
                     var videoDescription = videoParser.GetDescription();
                     var videoKeywords = videoParser.GetKeywords();
-
-                    // Statistics
                     var videoViewCount = videoParser.GetViewCount();
                     var videoLikeCount = videoParser.GetLikeCount();
                     var videoDislikeCount = videoParser.GetDislikeCount();
 
-                    // Video
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
+
                     var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics);
 

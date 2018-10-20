@@ -14,7 +14,7 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public IEnumerable<TrackParser> Tracks()
+        public IEnumerable<TrackParser> ClosedCaptions()
         {
             return _root.Descendants("p").Select(x => new TrackParser(x));
         }

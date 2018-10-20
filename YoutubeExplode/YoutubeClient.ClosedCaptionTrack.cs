@@ -14,9 +14,7 @@ namespace YoutubeExplode
     {
         private async Task<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfoParserAsync(string url)
         {
-            // Get raw response body
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-
             return ClosedCaptionTrackInfoParser.Initialize(raw);
         }
 
@@ -29,23 +27,23 @@ namespace YoutubeExplode
             var parser = await GetClosedCaptionTrackInfoParserAsync(info.Url).ConfigureAwait(false);
 
             // Parse captions
-            var captions = new List<ClosedCaption>();
-            foreach (var trackParser in parser.Tracks())
+            var closedCaptions = new List<ClosedCaption>();
+            foreach (var closedCaptionParser in parser.ClosedCaptions())
             {
-                var text = trackParser.GetText();
+                var text = closedCaptionParser.GetText();
 
                 // Skip caption tracks without text
                 if (text.IsBlank())
                     continue;
 
-                var offset = trackParser.GetOffset();
-                var duration = trackParser.GetDuration();
+                var offset = closedCaptionParser.GetOffset();
+                var duration = closedCaptionParser.GetDuration();
 
                 var caption = new ClosedCaption(text, offset, duration);
-                captions.Add(caption);
+                closedCaptions.Add(caption);
             }
 
-            return new ClosedCaptionTrack(info, captions);
+            return new ClosedCaptionTrack(info, closedCaptions);
         }
 
         /// <inheritdoc />

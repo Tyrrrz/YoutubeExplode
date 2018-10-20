@@ -29,13 +29,13 @@ namespace YoutubeExplode
             if (!ValidateUsername(username))
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
-            // Get user page parser
+            // Get parser
             var parser = await GetUserPageParserAsync(username).ConfigureAwait(false);
 
-            // Extract channel ID
+            // Extract info
             var channelId = parser.GetChannelId();
 
-            // Validate channel ID
+            // Validate channel ID to make sure it was extracted successfully
             if (!ValidateChannelId(channelId))
                 throw new ParseException("Could not parse channel ID.");
 
@@ -61,7 +61,9 @@ namespace YoutubeExplode
                 throw new ParseException("Channel does not have any videos.");
 
             // Get video channel
-            return await GetVideoAuthorChannelAsync(video.Id).ConfigureAwait(false);
+            var channel = await GetVideoAuthorChannelAsync(video.Id).ConfigureAwait(false);
+
+            return channel;
         }
 
         /// <inheritdoc />
@@ -73,7 +75,7 @@ namespace YoutubeExplode
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
-            // Compose a playlist ID
+            // Compose ID for the playlist that contains all videos uploaded by this channel
             var playlistId = "UU" + channelId.SubstringAfter("UC");
 
             // Get playlist
