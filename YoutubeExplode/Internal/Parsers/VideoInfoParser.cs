@@ -36,17 +36,29 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string ParseHlsPlaylistUrl() => _root.GetOrDefault("hlsvp");
 
-        public IEnumerable<MuxedStreamInfoParser> GetMuxedStreamInfos() => _root.GetOrDefault("url_encoded_fmt_stream_map")
-            ?.Split(",")
-            .EmptyIfNull()
-            .Select(UrlEx.SplitQuery)
-            .Select(d => new MuxedStreamInfoParser(d));
+        public IEnumerable<MuxedStreamInfoParser> GetMuxedStreamInfos()
+        {
+            var streamInfosEncoded = _root.GetOrDefault("url_encoded_fmt_stream_map");
 
-        public IEnumerable<AdaptiveStreamInfoParser> GetAdaptiveStreamInfos() => _root.GetOrDefault("adaptive_fmts")
-            ?.Split(",")
-            .EmptyIfNull()
-            .Select(UrlEx.SplitQuery)
-            .Select(d => new AdaptiveStreamInfoParser(d));
+            if (streamInfosEncoded.IsBlank())
+                return Enumerable.Empty<MuxedStreamInfoParser>();
+
+            return streamInfosEncoded.Split(",")
+                .Select(UrlEx.SplitQuery)
+                .Select(d => new MuxedStreamInfoParser(d));
+        }
+
+        public IEnumerable<AdaptiveStreamInfoParser> GetAdaptiveStreamInfos()
+        {
+            var streamInfosEncoded = _root.GetOrDefault("adaptive_fmts");
+
+            if (streamInfosEncoded.IsBlank())
+                return Enumerable.Empty<AdaptiveStreamInfoParser>();
+
+            return streamInfosEncoded.Split(",")
+                .Select(UrlEx.SplitQuery)
+                .Select(d => new AdaptiveStreamInfoParser(d));
+        }
 
         public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos()
         {
