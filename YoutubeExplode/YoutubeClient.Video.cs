@@ -22,7 +22,7 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
-            return new VideoEmbedPage(raw);
+            return VideoEmbedPage.Parse(raw);
         }
 
         private async Task<VideoWatchPage> GetVideoWatchPageAsync(string videoId)
