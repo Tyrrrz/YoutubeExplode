@@ -32,7 +32,7 @@ namespace YoutubeExplode.Internal.Parsers
                     buffer.Append(childNode.TextContent);
 
                 else if (childNode is IHtmlAnchorElement anchorNode)
-                    buffer.Append(anchorNode.Href);
+                    buffer.Append(anchorNode.TextContent);
 
                 else if (childNode is IHtmlBreakRowElement)
                     buffer.AppendLine();
