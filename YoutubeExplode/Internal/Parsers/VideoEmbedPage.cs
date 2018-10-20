@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 namespace YoutubeExplode.Internal.Parsers
 {
@@ -40,7 +41,10 @@ namespace YoutubeExplode.Internal.Parsers
     {
         public static VideoEmbedPage Parse(string raw)
         {
-            var part = raw.SubstringAfter("yt.setConfig({'PLAYER_CONFIG': ").SubstringUntil(",'");
+            var part = Regex.Match(raw,
+                    @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                .Groups["Json"].Value;
+
             var root = JToken.Parse(part);
 
             return new VideoEmbedPage(root);

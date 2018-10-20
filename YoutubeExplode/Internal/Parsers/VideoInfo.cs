@@ -19,6 +19,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string GetErrorReason() => GetPropertyOrDefault("reason");
 
+        public string GetVideoId() => GetPropertyOrDefault("video_id");
+
         public string GetTitle() => GetPropertyOrDefault("title");
 
         public string GetAuthor() => GetPropertyOrDefault("author");

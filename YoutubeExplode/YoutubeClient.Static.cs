@@ -32,8 +32,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/watch?v=yIVRs6YSbOM
-            var regularMatch =
-                Regex.Match(videoUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(videoUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateVideoId(regularMatch))
             {
                 videoId = regularMatch;
@@ -41,8 +40,7 @@ namespace YoutubeExplode
             }
 
             // https://youtu.be/yIVRs6YSbOM
-            var shortMatch =
-                Regex.Match(videoUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var shortMatch = Regex.Match(videoUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (shortMatch.IsNotBlank() && ValidateVideoId(shortMatch))
             {
                 videoId = shortMatch;
@@ -50,8 +48,7 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/embed/yIVRs6YSbOM
-            var embedMatch =
-                Regex.Match(videoUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var embedMatch = Regex.Match(videoUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (embedMatch.IsNotBlank() && ValidateVideoId(embedMatch))
             {
                 videoId = embedMatch;
@@ -114,8 +111,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
-            var regularMatch =
-                Regex.Match(playlistUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(playlistUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidatePlaylistId(regularMatch))
             {
                 playlistId = regularMatch;
@@ -123,8 +119,7 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            var compositeMatch =
-                Regex.Match(playlistUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            var compositeMatch = Regex.Match(playlistUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (compositeMatch.IsNotBlank() && ValidatePlaylistId(compositeMatch))
             {
                 playlistId = compositeMatch;
@@ -132,8 +127,7 @@ namespace YoutubeExplode
             }
 
             // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            var shortCompositeMatch =
-                Regex.Match(playlistUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            var shortCompositeMatch = Regex.Match(playlistUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (shortCompositeMatch.IsNotBlank() && ValidatePlaylistId(shortCompositeMatch))
             {
                 playlistId = shortCompositeMatch;
@@ -141,8 +135,8 @@ namespace YoutubeExplode
             }
 
             // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-            var embedCompositeMatch =
-                Regex.Match(playlistUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
+            var embedCompositeMatch = Regex.Match(playlistUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)")
+                .Groups[1].Value;
             if (embedCompositeMatch.IsNotBlank() && ValidatePlaylistId(embedCompositeMatch))
             {
                 playlistId = embedCompositeMatch;
@@ -162,6 +156,54 @@ namespace YoutubeExplode
             return TryParsePlaylistId(playlistUrl, out var result)
                 ? result
                 : throw new FormatException($"Could not parse playlist ID from given string [{playlistUrl}].");
+        }
+
+        /// <summary>
+        /// Verifies that the given string is syntactically a valid YouTube username.
+        /// </summary>
+        public static bool ValidateUsername(string username)
+        {
+            if (username.IsBlank())
+                return false;
+
+            // Usernames can't be longer than 20 characters
+            if (username.Length > 20)
+                return false;
+
+            return !Regex.IsMatch(username, @"[^0-9a-zA-Z]");
+        }
+
+        /// <summary>
+        /// Tries to parse username from a YouTube user URL.
+        /// </summary>
+        public static bool TryParseUsername(string userUrl, out string username)
+        {
+            username = default(string);
+
+            if (userUrl.IsBlank())
+                return false;
+
+            // https://www.youtube.com/user/TheTyrrr
+            var regularMatch = Regex.Match(userUrl, @"youtube\..+?/user/(.*?)(?:&|/|$)").Groups[1].Value;
+            if (regularMatch.IsNotBlank() && ValidateUsername(regularMatch))
+            {
+                username = regularMatch;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Parses username from a YouTube user URL.
+        /// </summary>
+        public static string ParseUsername(string userUrl)
+        {
+            userUrl.GuardNotNull(nameof(userUrl));
+
+            return TryParseUsername(userUrl, out var username)
+                ? username
+                : throw new FormatException($"Could not parse username from given string [{userUrl}].");
         }
 
         /// <summary>
@@ -194,8 +236,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
-            var regularMatch =
-                Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateChannelId(regularMatch))
             {
                 channelId = regularMatch;

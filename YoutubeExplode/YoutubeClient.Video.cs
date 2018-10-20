@@ -48,21 +48,35 @@ namespace YoutubeExplode
             // Get video info with 'el=embedded'
             var videoInfo = await GetVideoInfoAsync(videoId, "embedded", sts).ConfigureAwait(false);
 
-            // If there is no error - return
-            if (videoInfo.GetErrorCode() == 0)
-                return videoInfo;
+            // Check if video exists by verifying that video ID property is not empty
+            if (videoInfo.GetVideoId().IsBlank())
+            {
+                // Get native error code and error reason
+                var errorCode = videoInfo.GetErrorCode();
+                var errorReason = videoInfo.GetErrorReason();
 
-            // Get video info with 'el=detailpage'
-            videoInfo = await GetVideoInfoAsync(videoId, "detailpage", sts).ConfigureAwait(false);
+                throw new VideoUnavailableException(videoId, errorCode, errorReason);
+            }
 
-            // If there is no error - return
-            if (videoInfo.GetErrorCode() == 0)
-                return videoInfo;
+            // If requested with "sts" parameter, it means that the calling code is interested in getting video info with streams.
+            // For that we also need to make sure the video is fully available by checking for errors.
+            if (sts.IsNotBlank() && videoInfo.GetErrorCode() != 0)
+            {
+                // Retry with "el=detailpage"
+                videoInfo = await GetVideoInfoAsync(videoId, "detailpage", sts).ConfigureAwait(false);
 
-            // If there is error - throw
-            var errorCode = videoInfo.GetErrorCode();
-            var errorReason = videoInfo.GetErrorReason();
-            throw new VideoUnavailableException(videoId, errorCode, errorReason);
+                // If there are still errors - throw
+                if (videoInfo.GetErrorCode() != 0)
+                {
+                    // Get native error code and error reason
+                    var errorCode = videoInfo.GetErrorCode();
+                    var errorReason = videoInfo.GetErrorReason();
+
+                    throw new VideoUnavailableException(videoId, errorCode, errorReason);
+                }
+            }
+
+            return videoInfo;
         }
 
         private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)
