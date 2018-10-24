@@ -204,14 +204,16 @@ namespace YoutubeExplode
             // Parse muxed stream infos
             foreach (var muxedStreamInfoParser in parser.GetMuxedStreamInfos())
             {
-                // Extract info
+                // Extract itag
                 var itag = muxedStreamInfoParser.ParseItag();
 
 #if RELEASE
+                // Skip unknown itags
                 if (!ItagHelper.IsKnown(itag))
                     continue;
 #endif
 
+                // Extract URL
                 var url = muxedStreamInfoParser.ParseUrl();
 
                 // Decipher signature if needed
@@ -227,8 +229,8 @@ namespace YoutubeExplode
                 // Probe stream and get content length
                 var contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
                 
-                // If probe failed, the stream is gone or faulty
-                if (contentLength < 0)
+                // If probe failed or content length is 0, it means the stream is gone or faulty
+                if (contentLength <= 0)
                     continue;
 
                 var streamInfo = new MuxedStreamInfo(itag, url, contentLength);
@@ -242,13 +244,20 @@ namespace YoutubeExplode
                 var itag = adaptiveStreamInfoParser.ParseItag();
 
 #if RELEASE
+                // Skip unknown itags
                 if (!ItagHelper.IsKnown(itag))
                     continue;
 #endif
 
-                var url = adaptiveStreamInfoParser.ParseUrl();
+                // Extract content length
                 var contentLength = adaptiveStreamInfoParser.ParseContentLength();
-                var bitrate = adaptiveStreamInfoParser.ParseBitrate();
+
+                // If content length is 0, it means that the stream is gone or faulty
+                if (contentLength <= 0)
+                    continue;
+
+                // Extract URL
+                var url = adaptiveStreamInfoParser.ParseUrl();
 
                 // Decipher signature if needed
                 var signature = adaptiveStreamInfoParser.ParseSignature();
@@ -259,6 +268,9 @@ namespace YoutubeExplode
                     signature = playerSource.Decipher(signature);
                     url = UrlEx.SetQueryParameter(url, "signature", signature);
                 }
+
+                // Extract bitrate
+                var bitrate = adaptiveStreamInfoParser.ParseBitrate();
 
                 // If audio-only
                 if (adaptiveStreamInfoParser.ParseIsAudioOnly())
@@ -303,14 +315,16 @@ namespace YoutubeExplode
                 // Parse dash stream infos
                 foreach (var dashStreamInfoParser in dashManifestParser.GetStreamInfos())
                 {
-                    // Extract info
+                    // Extract itag
                     var itag = dashStreamInfoParser.ParseItag();
 
 #if RELEASE
+                    // Skip unknown itags
                     if (!ItagHelper.IsKnown(itag))
                         continue;
 #endif
 
+                    // Extract info
                     var url = dashStreamInfoParser.ParseUrl();
                     var contentLength = dashStreamInfoParser.ParseContentLength();
                     var bitrate = dashStreamInfoParser.ParseBitrate();
