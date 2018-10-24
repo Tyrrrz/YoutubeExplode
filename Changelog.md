@@ -1,3 +1,7 @@
+### v4.5.1 (24-Oct-2018)
+
+- Fixed an issue where `GetVideoMediaStreamInfosAsync` was sometimes returning adaptive streams that were not working. There are very rare cases where it still might happen.
+
 ### v4.5 (20-Oct-2018)
 
 - Fixed an issue where external links were truncated in `Video.Description` if they are too long.
