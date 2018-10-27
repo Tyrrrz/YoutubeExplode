@@ -85,7 +85,7 @@ namespace YoutubeExplode.Internal
         }
 
         public override int Read(byte[] buffer, int offset, int count) =>
-            ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
+            ReadAsync(buffer, offset, count).ConfigureAwait(false).GetAwaiter().GetResult();
 
         private long GetNewPosition(long offset, SeekOrigin origin)
         {
