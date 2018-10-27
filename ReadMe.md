@@ -38,6 +38,8 @@ A lot of helper methods are provided as extensions for models, make sure to incl
 
 Media streams come in 3 forms -- `Muxed` (video & audio), `Audio` (audio only) and `Video` (video only). Highest qualities are not available in muxed streams so you'll have to download separate streams and multiplex them yourself using tools like [ffmpeg](https://www.ffmpeg.org/).
 
+You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) to take care of multiplexing for you.
+
 ##### Parse ID from URL
 
 ```c#
