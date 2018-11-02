@@ -1,3 +1,7 @@
+### v4.5.2 (02-Nov-2018)
+
+- Fixed an issue where `GetVideoAsync` was throwing an exception due to recent YouTube changes.
+
 ### v4.5.1 (24-Oct-2018)
 
 - Fixed an issue where `GetVideoMediaStreamInfosAsync` was sometimes returning adaptive streams that were not working. There are very rare cases where it still might happen.
