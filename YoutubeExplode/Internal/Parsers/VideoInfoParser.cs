@@ -28,9 +28,26 @@ namespace YoutubeExplode.Internal.Parsers
 
         public TimeSpan ParseDuration() => TimeSpan.FromSeconds(_root.GetOrDefault("length_seconds").ParseDouble());
 
-        public IReadOnlyList<string> ParseKeywords() => _root.GetOrDefault("keywords").Split(",");
+        public IReadOnlyList<string> ParseKeywords()
+        {
+            var playerResponseRaw = _root.GetOrDefault("player_response");
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
+            var keywordsJson = playerResponseJson["videoDetails"]["keywords"];
 
-        public long ParseViewCount() => _root.GetOrDefault("view_count").ParseLong();
+            // If no keywords - return empty
+            if (keywordsJson == null)
+                return new string[0];
+
+            return keywordsJson.Values<string>().ToArray();
+        }
+
+        public long ParseViewCount()
+        {
+            var playerResponseRaw = _root.GetOrDefault("player_response");
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
+
+            return playerResponseJson["videoDetails"]["viewCount"].Value<string>().ParseLong();
+        }
 
         public string ParseDashManifestUrl() => _root.GetOrDefault("dashmpd");
 
