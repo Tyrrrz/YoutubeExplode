@@ -23,7 +23,7 @@ namespace YoutubeExplode.Internal.Parsers
             // Regexes found in this method have been sourced by contributors and from other projects
 
             // Find the name of the function that handles deciphering
-            var entryPoint = Regex.Match(_raw, @"(\w+)&&(\w+)\.set\(\w+,(\w+)\(\1\)\);return\s+\2").Groups[3].Value;
+            var entryPoint = Regex.Match(_raw, @"\bc\s*&&\s*d\.set\([^,]+\s*,\s*\([^)]*\)\s*\(\s*([a-zA-Z0-9$]+)\(").Groups[1].Value;
             if (entryPoint.IsBlank())
                 throw new ParseException("Could not find the entry function for signature deciphering.");
 
