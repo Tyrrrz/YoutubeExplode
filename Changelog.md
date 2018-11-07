@@ -1,3 +1,7 @@
+### v4.5.3 (07-Nov-2018)
+
+- Fixed an issue where signature decipherer was throwing an exception due to recent YouTube changes.
+
 ### v4.5.2 (02-Nov-2018)
 
 - Fixed an issue where `GetVideoAsync` was throwing an exception due to recent YouTube changes.
