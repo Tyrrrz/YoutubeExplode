@@ -24,7 +24,7 @@ namespace YoutubeExplode.Internal
 
             // Configure client
             var client = new HttpClient(handler, true);
-            client.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
+            //client.DefaultRequestHeaders.Add("User-Agent", "YoutubeExplode (github.com/Tyrrrz/YoutubeExplode)");
 
             return _singleton = client;
         }
