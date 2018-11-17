@@ -7,10 +7,6 @@
 
 YoutubeExplode is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks. Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered AJAX requests to retrieve information. As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
 
-## Screenshots
-
-![](http://www.tyrrrz.me/Projects/YoutubeExplode/Images/1.png)
-
 ## Download
 
 - [NuGet](https://nuget.org/packages/YoutubeExplode): `Install-Package YoutubeExplode`
@@ -29,6 +25,10 @@ YoutubeExplode is a library that provides an interface to query metadata of YouT
 - Fully asynchronous API
 - Targets .NET Framework 4.5+, .NET Core 1.0+ and .NET Standard 1.1+
 - No need for an API key and no usage quotas
+
+## Screenshots
+
+![](http://www.tyrrrz.me/Projects/YoutubeExplode/Images/1.png)
 
 ## Usage
 
