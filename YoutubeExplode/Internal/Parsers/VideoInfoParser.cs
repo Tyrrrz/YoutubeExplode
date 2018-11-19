@@ -7,133 +7,89 @@ namespace YoutubeExplode.Internal.Parsers
 {
     internal partial class VideoInfoParser
     {
-        private readonly IReadOnlyDictionary<string, string> _root;
+        private readonly JToken _root;
 
-        public VideoInfoParser(IReadOnlyDictionary<string, string> root)
+        public VideoInfoParser(JToken root)
         {
             _root = root;
         }
 
-        public int ParseErrorCode() => _root.GetOrDefault("errorcode").ParseIntOrDefault();
+        public bool ParseIsSuccessful() => _root["videoDetails"] != null;
 
-        public string ParseErrorReason() => _root.GetOrDefault("reason");
+        public bool ParseIsPlayable() => _root["playabilityStatus"]["status"]?.Value<string>() == "OK";
 
-        public string ParsePreviewVideoId() => _root.GetOrDefault("ypc_vid");
+        public string ParseErrorReason() => _root["playabilityStatus"]["reason"]?.Value<string>();
 
-        public string ParseId() => _root.GetOrDefault("video_id");
+        public string ParseAuthor() => _root["videoDetails"]["author"].Value<string>();
 
-        public string ParseAuthor() => _root.GetOrDefault("author");
+        public string ParseTitle() => _root["videoDetails"]["title"].Value<string>();
 
-        public string ParseTitle() => _root.GetOrDefault("title");
-
-        public TimeSpan ParseDuration() => TimeSpan.FromSeconds(_root.GetOrDefault("length_seconds").ParseDouble());
+        public TimeSpan ParseDuration()
+        {
+            var durationSeconds = _root["videoDetails"]["lengthSeconds"].Value<double>();
+            return TimeSpan.FromSeconds(durationSeconds);
+        }
 
         public IReadOnlyList<string> ParseKeywords()
         {
-            var playerResponseRaw = _root.GetOrDefault("player_response");
-            var playerResponseJson = JToken.Parse(playerResponseRaw);
-            var keywordsJson = playerResponseJson["videoDetails"]["keywords"];
+            var keywordsJson = _root["videoDetails"]["keywords"];
 
-            // If no keywords - return empty
-            if (keywordsJson == null)
-                return new string[0];
-
-            return keywordsJson.Values<string>().ToArray();
+            return keywordsJson != null 
+                ? keywordsJson.Values<string>().ToArray() 
+                : new string[0]; // don't return null if keywords are unavailable
         }
 
-        public long ParseViewCount()
+        public long ParseViewCount() => _root["videoDetails"]["viewCount"].Value<long>();
+
+        public string ParseDashManifestUrl() => _root["streamingData"]["dashManifestUrl"]?.Value<string>();
+
+        public string ParseHlsPlaylistUrl() => _root["hlsManifestUrl"]?.Value<string>();
+
+        public TimeSpan ParseStreamInfoSetLifeSpan()
         {
-            var playerResponseRaw = _root.GetOrDefault("player_response");
-            var playerResponseJson = JToken.Parse(playerResponseRaw);
-
-            return playerResponseJson["videoDetails"]["viewCount"].Value<string>().ParseLong();
+            var expiresInSeconds = _root["streamingData"]["expiresInSeconds"].Value<double>();
+            return TimeSpan.FromSeconds(expiresInSeconds);
         }
 
-        public string ParseDashManifestUrl() => _root.GetOrDefault("dashmpd");
+        public IEnumerable<StreamInfoParser> GetMuxedStreamInfos() 
+            => _root["streamingData"]["formats"].EmptyIfNull().Select(j => new StreamInfoParser(j));
 
-        public string ParseHlsPlaylistUrl() => _root.GetOrDefault("hlsvp");
+        public IEnumerable<StreamInfoParser> GetAdaptiveStreamInfos() 
+            => _root["streamingData"]["adaptiveFormats"].EmptyIfNull().Select(j => new StreamInfoParser(j));
 
-        public IEnumerable<MuxedStreamInfoParser> GetMuxedStreamInfos()
-        {
-            var streamInfosEncoded = _root.GetOrDefault("url_encoded_fmt_stream_map");
-
-            if (streamInfosEncoded.IsBlank())
-                return Enumerable.Empty<MuxedStreamInfoParser>();
-
-            return streamInfosEncoded.Split(",")
-                .Select(UrlEx.SplitQuery)
-                .Select(d => new MuxedStreamInfoParser(d));
-        }
-
-        public IEnumerable<AdaptiveStreamInfoParser> GetAdaptiveStreamInfos()
-        {
-            var streamInfosEncoded = _root.GetOrDefault("adaptive_fmts");
-
-            if (streamInfosEncoded.IsBlank())
-                return Enumerable.Empty<AdaptiveStreamInfoParser>();
-
-            return streamInfosEncoded.Split(",")
-                .Select(UrlEx.SplitQuery)
-                .Select(d => new AdaptiveStreamInfoParser(d));
-        }
-
-        public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos()
-        {
-            var playerResponseRaw = _root.GetOrDefault("player_response");
-            var playerResponseJson = JToken.Parse(playerResponseRaw);
-            var closedCaptionTracksJson = playerResponseJson.SelectToken("$..captionTracks");
-
-            return closedCaptionTracksJson.EmptyIfNull().Select(t => new ClosedCaptionTrackInfoParser(t));
-        }
+        public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos() 
+            => _root["captions"]["playerCaptionsTracklistRenderer"]["captionTracks"].EmptyIfNull().Select(t => new ClosedCaptionTrackInfoParser(t));
     }
 
     internal partial class VideoInfoParser
     {
-        public class MuxedStreamInfoParser
+        public class StreamInfoParser
         {
-            private readonly IReadOnlyDictionary<string, string> _root;
+            private readonly JToken _root;
 
-            public MuxedStreamInfoParser(IReadOnlyDictionary<string, string> root)
+            public StreamInfoParser(JToken root)
             {
                 _root = root;
             }
 
-            public int ParseItag() => _root.GetOrDefault("itag").ParseInt();
+            public int ParseItag() => _root["itag"].Value<int>();
 
-            public string ParseUrl() => _root.GetOrDefault("url");
+            public string ParseUrl() => _root["url"].Value<string>();
 
-            public string ParseSignature() => _root.GetOrDefault("s");
-        }
+            public long ParseContentLength() => _root["contentLength"]?.Value<long>() ?? 1; // this is a hack used for live streams in DASH manifest
 
-        public class AdaptiveStreamInfoParser
-        {
-            private readonly IReadOnlyDictionary<string, string> _root;
+            public long ParseBitrate() => _root["bitrate"].Value<long>();
 
-            public AdaptiveStreamInfoParser(IReadOnlyDictionary<string, string> root)
-            {
-                _root = root;
-            }
-
-            public int ParseItag() => _root.GetOrDefault("itag").ParseInt();
-
-            public string ParseUrl() => _root.GetOrDefault("url");
-
-            public string ParseSignature() => _root.GetOrDefault("s");
-
-            public long ParseContentLength() => _root.GetOrDefault("clen").ParseLong();
-
-            public long ParseBitrate() => _root.GetOrDefault("bitrate").ParseLong();
-
-            public bool ParseIsAudioOnly() => _root.GetOrDefault("type")
+            public bool ParseIsAudioOnly() => _root["mimeType"].Value<string>()
                 .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 
-            public int ParseWidth() => _root.GetOrDefault("size").SubstringUntil("x").ParseInt();
+            public int ParseWidth() => _root["width"].Value<int>();
 
-            public int ParseHeight() => _root.GetOrDefault("size").SubstringAfter("x").ParseInt();
+            public int ParseHeight() => _root["height"].Value<int>();
 
-            public int ParseFramerate() => _root.GetOrDefault("fps").ParseInt();
+            public int ParseFramerate() => _root["fps"].Value<int>();
 
-            public string ParseQualityLabel() => _root.GetOrDefault("quality_label");
+            public string ParseQualityLabel() => _root["qualityLabel"].Value<string>();
         }
 
         public class ClosedCaptionTrackInfoParser
@@ -160,7 +116,11 @@ namespace YoutubeExplode.Internal.Parsers
     {
         public static VideoInfoParser Initialize(string raw)
         {
-            var root = UrlEx.SplitQuery(raw);
+            var dic = UrlEx.SplitQuery(raw);
+            var playerResponse = dic["player_response"];
+
+            var root = JToken.Parse(playerResponse);
+
             return new VideoInfoParser(root);
         }
     }

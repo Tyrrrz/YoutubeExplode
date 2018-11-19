@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -30,95 +29,47 @@ namespace YoutubeExplode
             return VideoWatchPageParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string el, string sts)
+        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string el)
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
 
-            var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&sts={sts}&eurl={eurl}&hl=en";
+            var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&eurl={eurl}&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
             
             return VideoInfoParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string sts = "")
+        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, bool ensurePlayability = false)
         {
-            // Get parser for 'el=embedded'
-            var parser = await GetVideoInfoParserAsync(videoId, "embedded", sts).ConfigureAwait(false);
+            // Get parser with 'el=embedded'
+            var parser = await GetVideoInfoParserAsync(videoId, "embedded").ConfigureAwait(false);
 
-            // Check if video exists by verifying that video ID property is not empty
-            if (parser.ParseId().IsBlank())
+            // If the request wasn't successful - it means the video doesn't exist
+            if (!parser.ParseIsSuccessful())
+                throw new VideoUnavailableException(videoId, $"Video [{videoId}] does not exist.");
+
+            // If requested to ensure playability and the video is not playable - try again
+            if (ensurePlayability && !parser.ParseIsPlayable())
             {
-                // Get native error code and error reason
-                var errorCode = parser.ParseErrorCode();
-                var errorReason = parser.ParseErrorReason();
+                // Retry with "el=detailpage"
+                parser = await GetVideoInfoParserAsync(videoId, "detailpage").ConfigureAwait(false);
 
-                throw new VideoUnavailableException(videoId, errorCode, errorReason);
-            }
-
-            // If requested with "sts" parameter, it means that the calling code is interested in getting video info with streams.
-            // For that we also need to make sure the video is fully available by checking for errors.
-            if (sts.IsNotBlank() && parser.ParseErrorCode() != 0)
-            {
-                // Retry for "el=detailpage"
-                parser = await GetVideoInfoParserAsync(videoId, "detailpage", sts).ConfigureAwait(false);
-
-                // If there are still errors - throw
-                if (parser.ParseErrorCode() != 0)
+                // If the video is still not playable - throw exception
+                if (!parser.ParseIsPlayable())
                 {
-                    // Get native error code and error reason
-                    var errorCode = parser.ParseErrorCode();
                     var errorReason = parser.ParseErrorReason();
-
-                    throw new VideoUnavailableException(videoId, errorCode, errorReason);
+                    throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable. {errorReason}");
                 }
             }
 
             return parser;
         }
 
-        private async Task<PlayerSourceParser> GetPlayerSourceParserAsync(string sourceUrl)
-        {
-            var raw = await _httpClient.GetStringAsync(sourceUrl).ConfigureAwait(false);
-            return PlayerSourceParser.Initialize(raw);
-        }
-
         private async Task<DashManifestParser> GetDashManifestParserAsync(string dashManifestUrl)
         {
             var raw = await _httpClient.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
             return DashManifestParser.Initialize(raw);
-        }
-
-        private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)
-        {
-            // Get parser
-            var parser = await GetVideoEmbedPageParserAsync(videoId).ConfigureAwait(false);
-
-            // Extract info
-            var playerSourceUrl = parser.ParsePlayerSourceUrl();
-            var sts = parser.ParseSts();
-
-            // Check if successful
-            if (playerSourceUrl.IsBlank() || sts.IsBlank())
-                throw new ParseException("Could not parse player context.");
-
-            return new PlayerContext(playerSourceUrl, sts);
-        }
-
-        private async Task<PlayerSource> GetVideoPlayerSourceAsync(string sourceUrl)
-        {
-            // Try to resolve from cache first
-            var playerSource = _playerSourceCache.GetOrDefault(sourceUrl);
-            if (playerSource != null)
-                return playerSource;
-
-            // Get parser
-            var parser = await GetPlayerSourceParserAsync(sourceUrl).ConfigureAwait(false);
-            
-            // Extract cipher operations
-            var operations = parser.ParseCipherOperations();
-
-            return _playerSourceCache[sourceUrl] = new PlayerSource(operations);
         }
 
         /// <inheritdoc />
@@ -185,16 +136,9 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get player context
-            var playerContext = await GetVideoPlayerContextAsync(videoId).ConfigureAwait(false);
-
             // Get parser
-            var parser = await GetVideoInfoParserAsync(videoId, playerContext.Sts).ConfigureAwait(false);
-
-            // Check if video requires purchase
-            var previewVideoId = parser.ParsePreviewVideoId();
-            if (previewVideoId.IsNotBlank())
-                throw new VideoRequiresPurchaseException(videoId, previewVideoId);
+            var requestedAt = DateTimeOffset.Now;
+            var parser = await GetVideoInfoParserAsync(videoId, true).ConfigureAwait(false);
 
             // Prepare stream info maps
             var muxedStreamInfoMap = new Dictionary<int, MuxedStreamInfo>();
@@ -202,46 +146,10 @@ namespace YoutubeExplode
             var videoStreamInfoMap = new Dictionary<int, VideoStreamInfo>();
 
             // Parse muxed stream infos
-            foreach (var muxedStreamInfoParser in parser.GetMuxedStreamInfos())
+            foreach (var streamInfoParser in parser.GetMuxedStreamInfos())
             {
                 // Extract itag
-                var itag = muxedStreamInfoParser.ParseItag();
-
-#if RELEASE
-                // Skip unknown itags
-                if (!ItagHelper.IsKnown(itag))
-                    continue;
-#endif
-
-                // Extract URL
-                var url = muxedStreamInfoParser.ParseUrl();
-
-                // Decipher signature if needed
-                var signature = muxedStreamInfoParser.ParseSignature();
-                if (signature.IsNotBlank())
-                {
-                    var playerSource =
-                        await GetVideoPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
-                    signature = playerSource.Decipher(signature);
-                    url = UrlEx.SetQueryParameter(url, "signature", signature);
-                }
-
-                // Probe stream and get content length
-                var contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
-                
-                // If probe failed or content length is 0, it means the stream is gone or faulty
-                if (contentLength <= 0)
-                    continue;
-
-                var streamInfo = new MuxedStreamInfo(itag, url, contentLength);
-                muxedStreamInfoMap[itag] = streamInfo;
-            }
-
-            // Parse adaptive stream infos
-            foreach (var adaptiveStreamInfoParser in parser.GetAdaptiveStreamInfos())
-            {
-                // Extract info
-                var itag = adaptiveStreamInfoParser.ParseItag();
+                var itag = streamInfoParser.ParseItag();
 
 #if RELEASE
                 // Skip unknown itags
@@ -250,30 +158,44 @@ namespace YoutubeExplode
 #endif
 
                 // Extract content length
-                var contentLength = adaptiveStreamInfoParser.ParseContentLength();
+                var contentLength = streamInfoParser.ParseContentLength();
 
                 // If content length is 0, it means that the stream is gone or faulty
                 if (contentLength <= 0)
                     continue;
 
                 // Extract URL
-                var url = adaptiveStreamInfoParser.ParseUrl();
+                var url = streamInfoParser.ParseUrl();
 
-                // Decipher signature if needed
-                var signature = adaptiveStreamInfoParser.ParseSignature();
-                if (signature.IsNotBlank())
-                {
-                    var playerSource =
-                        await GetVideoPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
-                    signature = playerSource.Decipher(signature);
-                    url = UrlEx.SetQueryParameter(url, "signature", signature);
-                }
+                var streamInfo = new MuxedStreamInfo(itag, url, contentLength);
+                muxedStreamInfoMap[itag] = streamInfo;
+            }
 
-                // Extract bitrate
-                var bitrate = adaptiveStreamInfoParser.ParseBitrate();
+            // Parse adaptive stream infos
+            foreach (var streamInfoParser in parser.GetAdaptiveStreamInfos())
+            {
+                // Extract info
+                var itag = streamInfoParser.ParseItag();
+
+#if RELEASE
+                // Skip unknown itags
+                if (!ItagHelper.IsKnown(itag))
+                    continue;
+#endif
+
+                // Extract content length
+                var contentLength = streamInfoParser.ParseContentLength();
+
+                // If content length is 0, it means that the stream is gone or faulty
+                if (contentLength <= 0)
+                    continue;
+
+                // Extract URL and bitrate
+                var url = streamInfoParser.ParseUrl();
+                var bitrate = streamInfoParser.ParseBitrate();
 
                 // If audio-only
-                if (adaptiveStreamInfoParser.ParseIsAudioOnly())
+                if (streamInfoParser.ParseIsAudioOnly())
                 {
                     var streamInfo = new AudioStreamInfo(itag, url, contentLength, bitrate);
                     audioStreamInfoMap[itag] = streamInfo;
@@ -282,10 +204,10 @@ namespace YoutubeExplode
                 else
                 {
                     // Extract info
-                    var width = adaptiveStreamInfoParser.ParseWidth();
-                    var height = adaptiveStreamInfoParser.ParseHeight();
-                    var framerate = adaptiveStreamInfoParser.ParseFramerate();
-                    var qualityLabel = adaptiveStreamInfoParser.ParseQualityLabel();
+                    var width = streamInfoParser.ParseWidth();
+                    var height = streamInfoParser.ParseHeight();
+                    var framerate = streamInfoParser.ParseFramerate();
+                    var qualityLabel = streamInfoParser.ParseQualityLabel();
 
                     var resolution = new VideoResolution(width, height);
                     var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate,
@@ -298,17 +220,6 @@ namespace YoutubeExplode
             var dashManifestUrl = parser.ParseDashManifestUrl();
             if (dashManifestUrl.IsNotBlank())
             {
-                // Parse signature
-                var signature = Regex.Match(dashManifestUrl, @"/s/(.*?)(?:/|$)").Groups[1].Value;
-
-                // Decipher signature if needed
-                if (signature.IsNotBlank())
-                {
-                    var playerSource = await GetVideoPlayerSourceAsync(playerContext.SourceUrl).ConfigureAwait(false);
-                    signature = playerSource.Decipher(signature);
-                    dashManifestUrl = UrlEx.SetRouteParameter(dashManifestUrl, "signature", signature);
-                }
-
                 // Get the dash manifest parser
                 var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl).ConfigureAwait(false);
 
@@ -350,15 +261,19 @@ namespace YoutubeExplode
                 }
             }
 
-            // Get the raw HLS stream playlist (*.m3u8)
-            var hlsPlaylistUrl = parser.ParseHlsPlaylistUrl();
-
             // Finalize stream info collections
             var muxedStreamInfos = muxedStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
             var audioStreamInfos = audioStreamInfoMap.Values.OrderByDescending(s => s.Bitrate).ToArray();
             var videoStreamInfos = videoStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
 
-            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsPlaylistUrl);
+            // Get the raw HLS stream playlist (*.m3u8)
+            var hlsPlaylistUrl = parser.ParseHlsPlaylistUrl();
+
+            // Get date until which the streams are valid
+            var lifeSpan = parser.ParseStreamInfoSetLifeSpan();
+            var validUntil = requestedAt.Add(lifeSpan);
+
+            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsPlaylistUrl, validUntil);
         }
 
         /// <inheritdoc />

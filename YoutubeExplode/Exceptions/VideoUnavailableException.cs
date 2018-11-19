@@ -13,24 +13,11 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public string VideoId { get; }
 
-        /// <summary>
-        /// Error code reported by YouTube.
-        /// </summary>
-        public int Code { get; }
-
-        /// <summary>
-        /// Error reason reported by YouTube.
-        /// </summary>
-        public string Reason { get; }
-
         /// <summary />
-        public VideoUnavailableException(string videoId, int code, string reason)
-            : base($"Video [{videoId}] is not available and cannot be processed. " +
-                   $"Code: {code}. Reason: {reason}.")
+        public VideoUnavailableException(string videoId, string message)
+            : base(message)
         {
             VideoId = videoId.GuardNotNull(nameof(videoId));
-            Code = code;
-            Reason = reason.GuardNotNull(nameof(reason));
         }
     }
 }

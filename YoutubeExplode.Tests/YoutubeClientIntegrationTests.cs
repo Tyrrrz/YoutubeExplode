@@ -88,15 +88,6 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_RequiresPurchase))]
-        public void YoutubeClient_GetVideoMediaStreamInfosAsync_RequiresPurchase_Test(string videoId)
-        {
-            var client = new YoutubeClient();
-
-            Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
-        }
-
-        [Test]
         [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
         public async Task YoutubeClient_GetVideoClosedCaptionTrackInfosAsync_Test(string videoId)
         {

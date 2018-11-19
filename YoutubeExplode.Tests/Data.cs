@@ -32,11 +32,6 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("qld9w0b-1ao"); // non-existing
         }
 
-        public static IEnumerable GetVideoIds_RequiresPurchase()
-        {
-            yield return new TestCaseData("p3dDcKOFXQg");
-        }
-
         public static IEnumerable GetVideoIds_HasClosedCaptions()
         {
             yield return new TestCaseData("_QdPW8JrYzQ");
