@@ -14,51 +14,50 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public bool ParseIsSuccessful() => _root["videoDetails"] != null;
+        public bool ParseIsSuccessful() => _root.SelectToken("videoDetails") != null;
 
-        public bool ParseIsPlayable() => _root["playabilityStatus"]["status"]?.Value<string>() == "OK";
+        public bool ParseIsPlayable()
+        {
+            var playabilityStatusValue = _root.SelectToken("playabilityStatus.status")?.Value<string>();
+            return string.Equals(playabilityStatusValue, "OK", StringComparison.OrdinalIgnoreCase);
+        }
 
-        public string ParseErrorReason() => _root["playabilityStatus"]["reason"]?.Value<string>();
+        public string ParseErrorReason() => _root.SelectToken("playabilityStatus.reason")?.Value<string>();
 
-        public string ParseAuthor() => _root["videoDetails"]["author"].Value<string>();
+        public string ParseAuthor() => _root.SelectToken("videoDetails.author").Value<string>();
 
-        public string ParseTitle() => _root["videoDetails"]["title"].Value<string>();
+        public string ParseTitle() => _root.SelectToken("videoDetails.title").Value<string>();
 
         public TimeSpan ParseDuration()
         {
-            var durationSeconds = _root["videoDetails"]["lengthSeconds"].Value<double>();
+            var durationSeconds = _root.SelectToken("videoDetails.lengthSeconds").Value<double>();
             return TimeSpan.FromSeconds(durationSeconds);
         }
 
-        public IReadOnlyList<string> ParseKeywords()
-        {
-            var keywordsJson = _root["videoDetails"]["keywords"];
+        public IReadOnlyList<string> ParseKeywords() =>
+            _root.SelectToken("videoDetails.keywords").EmptyIfNull().Values<string>().ToArray();
 
-            return keywordsJson != null 
-                ? keywordsJson.Values<string>().ToArray() 
-                : new string[0]; // don't return null if keywords are unavailable
-        }
+        public long ParseViewCount() => _root.SelectToken("videoDetails.viewCount").Value<long>();
 
-        public long ParseViewCount() => _root["videoDetails"]["viewCount"].Value<long>();
+        public string ParseDashManifestUrl() => _root.SelectToken("streamingData.dashManifestUrl")?.Value<string>();
 
-        public string ParseDashManifestUrl() => _root["streamingData"]["dashManifestUrl"]?.Value<string>();
-
-        public string ParseHlsPlaylistUrl() => _root["hlsManifestUrl"]?.Value<string>();
+        public string ParseHlsPlaylistUrl() => _root.SelectToken("hlsManifestUrl")?.Value<string>();
 
         public TimeSpan ParseStreamInfoSetLifeSpan()
         {
-            var expiresInSeconds = _root["streamingData"]["expiresInSeconds"].Value<double>();
+            var expiresInSeconds = _root.SelectToken("streamingData.expiresInSeconds").Value<double>();
             return TimeSpan.FromSeconds(expiresInSeconds);
         }
 
-        public IEnumerable<StreamInfoParser> GetMuxedStreamInfos() 
-            => _root["streamingData"]["formats"].EmptyIfNull().Select(j => new StreamInfoParser(j));
+        public IEnumerable<StreamInfoParser> GetMuxedStreamInfos()
+            => _root.SelectToken("streamingData.formats").EmptyIfNull().Select(j => new StreamInfoParser(j));
 
         public IEnumerable<StreamInfoParser> GetAdaptiveStreamInfos() 
-            => _root["streamingData"]["adaptiveFormats"].EmptyIfNull().Select(j => new StreamInfoParser(j));
+            => _root.SelectToken("streamingData.adaptiveFormats").EmptyIfNull().Select(j => new StreamInfoParser(j));
 
-        public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos() 
-            => _root["captions"]["playerCaptionsTracklistRenderer"]["captionTracks"].EmptyIfNull().Select(t => new ClosedCaptionTrackInfoParser(t));
+        public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos()
+            => _root.SelectToken("captions.playerCaptionsTracklistRenderer.captionTracks").EmptyIfNull()
+                .Select(t => new ClosedCaptionTrackInfoParser(t));
     }
 
     internal partial class VideoInfoParser
