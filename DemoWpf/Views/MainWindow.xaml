@@ -299,7 +299,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" /><Run Text="/" /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -340,7 +340,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -378,7 +378,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>

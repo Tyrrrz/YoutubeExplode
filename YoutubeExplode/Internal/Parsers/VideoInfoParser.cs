@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
 namespace YoutubeExplode.Internal.Parsers
@@ -75,9 +76,25 @@ namespace YoutubeExplode.Internal.Parsers
 
             public string ParseUrl() => _root.SelectToken("url").Value<string>();
 
-            public long ParseContentLength() => _root.SelectToken("contentLength")?.Value<long>() ?? 1; // this is a hack used for live streams in DASH manifest
+            public long ParseContentLength() => _root.SelectToken("contentLength")?.Value<long>() ?? -1;
 
             public long ParseBitrate() => _root.SelectToken("bitrate").Value<long>();
+
+            public string ParseMimeType() => _root.SelectToken("mimeType").Value<string>();
+
+            public string ParseFormat() => ParseMimeType().SubstringAfter("/").SubstringUntil(";");
+
+            public string ParseAudioEncoding()
+            {
+                var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");
+                return codecs.LastOrDefault();
+            }
+
+            public string ParseVideoEncoding()
+            {
+                var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");
+                return codecs.FirstOrDefault();
+            }
 
             public bool ParseIsAudioOnly() => _root.SelectToken("mimeType").Value<string>()
                 .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);

@@ -135,7 +135,7 @@ namespace YoutubeExplode.Tests
 
             var mediaStreamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
 
-            var streamInfo = mediaStreamInfoSet.Audio.OrderBy(s => s.Size).First();
+            var streamInfo = mediaStreamInfoSet.Audio.OrderBy(s => s.ContentLength).First();
             var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());
             Directory.CreateDirectory(_tempDirPath);
             await client.DownloadMediaStreamAsync(streamInfo, outputFilePath);
@@ -143,7 +143,7 @@ namespace YoutubeExplode.Tests
             var fileInfo = new FileInfo(outputFilePath);
 
             Assert.That(fileInfo.Exists, Is.True);
-            Assert.That(fileInfo.Length, Is.EqualTo(streamInfo.Size));
+            Assert.That(fileInfo.Length, Is.EqualTo(streamInfo.ContentLength));
         }
 
         [Test]

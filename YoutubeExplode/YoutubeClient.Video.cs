@@ -148,27 +148,33 @@ namespace YoutubeExplode
             // Parse muxed stream infos
             foreach (var streamInfoParser in parser.GetMuxedStreamInfos())
             {
-                // Extract itag
+                // Extract info
                 var itag = streamInfoParser.ParseItag();
-
-#if RELEASE
-                // Skip unknown itags
-                if (!ItagHelper.IsKnown(itag))
-                    continue;
-#endif
-
-                // Extract content length
-                var contentLength = streamInfoParser.ParseContentLength();
-
-                // If content length is 0, it means that the stream is gone or faulty
-                if (contentLength <= 0)
-                    continue;
-
-                // Extract URL
                 var url = streamInfoParser.ParseUrl();
+                var contentLength = streamInfoParser.ParseContentLength();
+                var bitrate = streamInfoParser.ParseBitrate();
+                var format = streamInfoParser.ParseFormat();
+                var audioEncoding = streamInfoParser.ParseAudioEncoding();
+                var videoEncoding = streamInfoParser.ParseVideoEncoding();
+                var videoQualityLabel = streamInfoParser.ParseQualityLabel();
+                var videoQuality = VideoQualityConverter.FromVideoQualityLabel(videoQualityLabel);
+                var width = streamInfoParser.ParseWidth();
+                var height = streamInfoParser.ParseHeight();
+                var resolution = new VideoResolution(width, height);
+                var framerate = 25; // there is no info about framerate for muxed streams
 
-                var streamInfo = new MuxedStreamInfo(itag, url, contentLength);
-                muxedStreamInfoMap[itag] = streamInfo;
+                // TODO: refactor this
+                // If content length is not set - get it ourselves
+                if (contentLength <= 0)
+                {
+                    contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
+
+                    if (contentLength <= 0)
+                        continue;
+                }
+
+                muxedStreamInfoMap[itag] = new MuxedStreamInfo(url, contentLength, bitrate, format, audioEncoding,
+                    videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
             }
 
             // Parse adaptive stream infos
@@ -176,43 +182,33 @@ namespace YoutubeExplode
             {
                 // Extract info
                 var itag = streamInfoParser.ParseItag();
-
-#if RELEASE
-                // Skip unknown itags
-                if (!ItagHelper.IsKnown(itag))
-                    continue;
-#endif
-
-                // Extract content length
-                var contentLength = streamInfoParser.ParseContentLength();
-
-                // If content length is 0, it means that the stream is gone or faulty
-                if (contentLength <= 0)
-                    continue;
-
-                // Extract URL and bitrate
                 var url = streamInfoParser.ParseUrl();
+                var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
-
+                var format = streamInfoParser.ParseFormat();
+                
                 // If audio-only
                 if (streamInfoParser.ParseIsAudioOnly())
                 {
-                    var streamInfo = new AudioStreamInfo(itag, url, contentLength, bitrate);
-                    audioStreamInfoMap[itag] = streamInfo;
+                    // Extract audio-specific info
+                    var audioEncoding = streamInfoParser.ParseAudioEncoding();
+
+                    audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, format, audioEncoding);
                 }
                 // If video-only
                 else
                 {
-                    // Extract info
+                    // Extract video-specific info
+                    var videoEncoding = streamInfoParser.ParseVideoEncoding();
+                    var videoQualityLabel = streamInfoParser.ParseQualityLabel();
+                    var videoQuality = VideoQualityConverter.FromVideoQualityLabel(videoQualityLabel);
                     var width = streamInfoParser.ParseWidth();
                     var height = streamInfoParser.ParseHeight();
-                    var framerate = streamInfoParser.ParseFramerate();
-                    var qualityLabel = streamInfoParser.ParseQualityLabel();
-
                     var resolution = new VideoResolution(width, height);
-                    var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate,
-                        qualityLabel);
-                    videoStreamInfoMap[itag] = streamInfo;
+                    var framerate = streamInfoParser.ParseFramerate();
+
+                    videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format, videoEncoding,
+                        videoQualityLabel, videoQuality, resolution, framerate);
                 }
             }
 
@@ -220,22 +216,16 @@ namespace YoutubeExplode
             var dashManifestUrl = parser.ParseDashManifestUrl();
             if (dashManifestUrl.IsNotBlank())
             {
+                // TODO: this is broken
+
                 // Get the dash manifest parser
                 var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl).ConfigureAwait(false);
 
                 // Parse dash stream infos
                 foreach (var dashStreamInfoParser in dashManifestParser.GetStreamInfos())
                 {
-                    // Extract itag
-                    var itag = dashStreamInfoParser.ParseItag();
-
-#if RELEASE
-                    // Skip unknown itags
-                    if (!ItagHelper.IsKnown(itag))
-                        continue;
-#endif
-
                     // Extract info
+                    var itag = dashStreamInfoParser.ParseItag();
                     var url = dashStreamInfoParser.ParseUrl();
                     var contentLength = dashStreamInfoParser.ParseContentLength();
                     var bitrate = dashStreamInfoParser.ParseBitrate();
@@ -243,20 +233,21 @@ namespace YoutubeExplode
                     // If audio-only
                     if (dashStreamInfoParser.ParseIsAudioOnly())
                     {
-                        var streamInfo = new AudioStreamInfo(itag, url, contentLength, bitrate);
-                        audioStreamInfoMap[itag] = streamInfo;
+                        // Extract audio-specific info
+
+                        audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, "TODO", "TODO");
                     }
                     // If video-only
                     else
                     {
-                        // Parse additional data
+                        // Extract video-specific info
                         var width = dashStreamInfoParser.ParseWidth();
                         var height = dashStreamInfoParser.ParseHeight();
+                        var resolution = new VideoResolution(width, height);
                         var framerate = dashStreamInfoParser.ParseFramerate();
 
-                        var resolution = new VideoResolution(width, height);
-                        var streamInfo = new VideoStreamInfo(itag, url, contentLength, bitrate, resolution, framerate);
-                        videoStreamInfoMap[itag] = streamInfo;
+                        videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, "TODO", "TODO",
+                            "TODO", VideoQuality.High1080, resolution, framerate);
                     }
                 }
             }
