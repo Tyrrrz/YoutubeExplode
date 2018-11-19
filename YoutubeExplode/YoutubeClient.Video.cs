@@ -229,24 +229,27 @@ namespace YoutubeExplode
                     var url = dashStreamInfoParser.ParseUrl();
                     var contentLength = dashStreamInfoParser.ParseContentLength();
                     var bitrate = dashStreamInfoParser.ParseBitrate();
+                    var format = dashStreamInfoParser.ParseFormat();
 
                     // If audio-only
                     if (dashStreamInfoParser.ParseIsAudioOnly())
                     {
                         // Extract audio-specific info
+                        var audioEncoding = dashStreamInfoParser.ParseAudioEncoding();
 
-                        audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, "TODO", "TODO");
+                        audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, format, audioEncoding);
                     }
                     // If video-only
                     else
                     {
                         // Extract video-specific info
+                        var videoEncoding = dashStreamInfoParser.ParseVideoEncoding();
                         var width = dashStreamInfoParser.ParseWidth();
                         var height = dashStreamInfoParser.ParseHeight();
                         var resolution = new VideoResolution(width, height);
                         var framerate = dashStreamInfoParser.ParseFramerate();
 
-                        videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, "TODO", "TODO",
+                        videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format, videoEncoding,
                             "TODO", VideoQuality.High1080, resolution, framerate);
                     }
                 }
