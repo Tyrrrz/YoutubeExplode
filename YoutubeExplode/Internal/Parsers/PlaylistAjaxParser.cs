@@ -15,23 +15,20 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public string ParseAuthor() => _root["author"]?.Value<string>() ?? ""; // system playlists don't have an author
+        public string ParseAuthor() => _root.SelectToken("author")?.Value<string>() ?? ""; // system playlists don't have an author
 
-        public string ParseTitle() => _root["title"].Value<string>();
+        public string ParseTitle() => _root.SelectToken("title").Value<string>();
 
-        public string ParseDescription() => _root["description"]?.Value<string>() ?? ""; // system playlists don't have description
+        public string ParseDescription() => _root.SelectToken("description")?.Value<string>() ?? ""; // system playlists don't have description
 
-        public long ParseViewCount() => _root["views"]?.Value<long>() ?? 0; // watchlater does not have views
+        public long ParseViewCount() => _root.SelectToken("views")?.Value<long>() ?? 0; // watchlater does not have views
 
-        public long ParseLikeCount() => _root["likes"]?.Value<long>() ?? 0; // system playlists don't have likes
+        public long ParseLikeCount() => _root.SelectToken("likes")?.Value<long>() ?? 0; // system playlists don't have likes
 
-        public long ParseDislikeCount() => _root["dislikes"]?.Value<long>() ?? 0; // system playlists don't have dislikes
+        public long ParseDislikeCount() => _root.SelectToken("dislikes")?.Value<long>() ?? 0; // system playlists don't have dislikes
 
-        public IEnumerable<VideoParser> GetVideos()
-        {
-            var videosJson = _root["video"];
-            return videosJson.EmptyIfNull().Select(t => new VideoParser(t));
-        }
+        public IEnumerable<VideoParser> GetVideos() 
+            => _root.SelectToken("video").EmptyIfNull().Select(t => new VideoParser(t));
     }
 
     internal partial class PlaylistAjaxParser
@@ -45,21 +42,25 @@ namespace YoutubeExplode.Internal.Parsers
                 _root = root;
             }
 
-            public string GetId() => _root["encrypted_id"].Value<string>();
+            public string GetId() => _root.SelectToken("encrypted_id").Value<string>();
 
-            public string GetAuthor() => _root["author"].Value<string>();
+            public string GetAuthor() => _root.SelectToken("author").Value<string>();
 
-            public DateTimeOffset GetUploadDate() => _root["added"].Value<string>().ParseDateTimeOffset("M/d/yy");
+            public DateTimeOffset GetUploadDate() => _root.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
 
-            public string GetTitle() => _root["title"].Value<string>();
+            public string GetTitle() => _root.SelectToken("title").Value<string>();
 
-            public string GetDescription() => _root["description"].Value<string>();
+            public string GetDescription() => _root.SelectToken("description").Value<string>();
 
-            public TimeSpan GetDuration() => TimeSpan.FromSeconds(_root["length_seconds"].Value<double>());
+            public TimeSpan GetDuration()
+            {
+                var durationSeconds = _root.SelectToken("length_seconds").Value<double>();
+                return TimeSpan.FromSeconds(durationSeconds);
+            }
 
             public IReadOnlyList<string> GetKeywords()
             {
-                var videoKeywordsJoined = _root["keywords"].Value<string>();
+                var videoKeywordsJoined = _root.SelectToken("keywords").Value<string>();
                 return Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                     .Cast<Match>()
                     .Select(m => m.Value)
@@ -67,11 +68,11 @@ namespace YoutubeExplode.Internal.Parsers
                     .ToArray();
             }
 
-            public long GetViewCount() => _root["views"].Value<string>().StripNonDigit().ParseLong();
+            public long GetViewCount() => _root.SelectToken("views").Value<string>().StripNonDigit().ParseLong();
 
-            public long GetLikeCount() => _root["likes"].Value<long>();
+            public long GetLikeCount() => _root.SelectToken("likes").Value<long>();
 
-            public long GetDislikeCount() => _root["dislikes"].Value<long>();
+            public long GetDislikeCount() => _root.SelectToken("dislikes").Value<long>();
         }
     }
 
