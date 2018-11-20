@@ -106,8 +106,6 @@ namespace YoutubeExplode.Internal.Parsers
 
             public string ParseMimeType() => _root.SelectToken("mimeType").Value<string>();
 
-            public string ParseFormat() => ParseMimeType().SubstringAfter("/").SubstringUntil(";");
-
             public string ParseAudioCodec()
             {
                 var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");

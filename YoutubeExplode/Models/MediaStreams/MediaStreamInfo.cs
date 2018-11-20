@@ -17,7 +17,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Content length (bytes) of the associated stream.
         /// </summary>
-        public long ContentLength { get; }
+        public long Size { get; }
 
         /// <summary>
         /// Video bitrate (bits/s) of the associated stream.
@@ -25,23 +25,22 @@ namespace YoutubeExplode.Models.MediaStreams
         public long Bitrate { get; }
 
         /// <summary>
-        /// Format of the associated stream.
+        /// Container of the associated stream.
         /// </summary>
-        [NotNull]
-        public string Format { get; }
+        public Container Container { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="MediaStreamInfo"/>.
         /// </summary>
-        protected MediaStreamInfo(string url, long contentLength, long bitrate, string format)
+        protected MediaStreamInfo(string url, long size, long bitrate, Container container)
         {
             Url = url.GuardNotNull(nameof(url));
-            ContentLength = contentLength.GuardPositive(nameof(contentLength));
+            Size = size.GuardPositive(nameof(size));
             Bitrate = bitrate.GuardPositive(nameof(bitrate));
-            Format = format.GuardNotNull(nameof(format));
+            Container = container;
         }
 
         /// <inheritdoc />
-        public override string ToString() => Format;
+        public override string ToString() => Container.ToString();
     }
 }

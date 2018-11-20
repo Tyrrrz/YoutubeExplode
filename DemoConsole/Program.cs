@@ -71,12 +71,12 @@ namespace DemoConsole
             Console.WriteLine("Selected muxed stream with highest video quality:");
             Console.WriteLine("> " +
                               $"{streamInfo.VideoQualityLabel} video quality | " +
-                              $"{streamInfo.Format} format | " +
-                              $"{NormalizeFileSize(streamInfo.ContentLength)}");
+                              $"{streamInfo.Container} format | " +
+                              $"{NormalizeFileSize(streamInfo.Size)}");
             Console.WriteLine();
 
             // Compose file name, based on metadata
-            var fileExtension = streamInfo.Format;
+            var fileExtension = streamInfo.Container;
             var fileName = $"{video.Title}.{fileExtension}";
 
             // Replace illegal characters in file name

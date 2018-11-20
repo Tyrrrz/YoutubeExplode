@@ -292,14 +292,14 @@
                                                 <Run Text="Quality:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Format:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
+                                                <Run Text="Container:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Codecs:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioCodec, Mode=OneWay}" />
+                                                <Run Text="Encodings:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -333,14 +333,14 @@
                                                 <Run Text="Quality:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Format:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
+                                                <Run Text="Container:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Codec:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" />
+                                                <Run Text="Encoding:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -371,14 +371,14 @@
 
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
-                                                <Run Text="Format:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
+                                                <Run Text="Container:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Codec:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioCodec, Mode=OneWay}" />
+                                                <Run Text="Encoding:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>

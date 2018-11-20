@@ -8,7 +8,7 @@ namespace YoutubeExplode.Models.MediaStreams
     public class VideoStreamInfo : MediaStreamInfo, IHasVideo
     {
         /// <inheritdoc />
-        public string VideoCodec { get; }
+        public VideoEncoding VideoEncoding { get; }
 
         /// <inheritdoc />
         public string VideoQualityLabel { get; }
@@ -25,11 +25,11 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Initializes an instance of <see cref="VideoStreamInfo"/>.
         /// </summary>
-        public VideoStreamInfo(string url, long contentLength, long bitrate, string format, string videoCodec,
+        public VideoStreamInfo(string url, long size, long bitrate, Container container, VideoEncoding videoEncoding,
             string videoQualityLabel, VideoQuality videoQuality, VideoResolution resolution, int framerate)
-            : base(url, contentLength, bitrate, format)
+            : base(url, size, bitrate, container)
         {
-            VideoCodec = videoCodec.GuardNotNull(nameof(videoCodec));
+            VideoEncoding = videoEncoding;
             VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
             VideoQuality = videoQuality;
             Resolution = resolution;

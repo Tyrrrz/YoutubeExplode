@@ -80,20 +80,12 @@ namespace YoutubeExplode.Tests
             foreach (var streamInfo in streamInfoSet.GetAll())
             {
                 Assert.That(streamInfo.Bitrate, Is.GreaterThan(0));
-                Assert.That(streamInfo.ContentLength, Is.GreaterThan(0));
-                Assert.That(streamInfo.Format, Is.Not.Null.Or.Empty);
+                Assert.That(streamInfo.Size, Is.GreaterThan(0));
+                Assert.That(streamInfo.Container, Is.Not.Null.Or.Empty);
                 Assert.That(streamInfo.Url, Is.Not.Null.Or.Empty);
 
-                if (streamInfo is IHasAudio hasAudio)
-                {
-                    Assert.That(hasAudio.AudioCodec, Is.Not.Null.Or.Empty);
-                }
-
                 if (streamInfo is IHasVideo hasVideo)
-                {
-                    Assert.That(hasVideo.VideoCodec, Is.Not.Null.Or.Empty);
                     Assert.That(hasVideo.VideoQualityLabel, Is.Not.Null.Or.Empty);
-                }
             }
         }
 
@@ -163,7 +155,7 @@ namespace YoutubeExplode.Tests
 
             var mediaStreamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
 
-            var streamInfo = mediaStreamInfoSet.Audio.OrderBy(s => s.ContentLength).First();
+            var streamInfo = mediaStreamInfoSet.Audio.OrderBy(s => s.Size).First();
             var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());
             Directory.CreateDirectory(_tempDirPath);
             await client.DownloadMediaStreamAsync(streamInfo, outputFilePath);
@@ -171,7 +163,7 @@ namespace YoutubeExplode.Tests
             var fileInfo = new FileInfo(outputFilePath);
 
             Assert.That(fileInfo.Exists, Is.True);
-            Assert.That(fileInfo.Length, Is.EqualTo(streamInfo.ContentLength));
+            Assert.That(fileInfo.Length, Is.EqualTo(streamInfo.Size));
         }
 
         [Test]

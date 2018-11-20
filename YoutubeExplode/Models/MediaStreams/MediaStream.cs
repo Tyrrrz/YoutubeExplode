@@ -29,7 +29,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public override bool CanWrite => _stream.CanWrite;
 
         /// <inheritdoc />
-        public override long Length => Info.ContentLength;
+        public override long Length => Info.Size;
 
         /// <inheritdoc />
         public override long Position

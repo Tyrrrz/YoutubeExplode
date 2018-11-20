@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Implemented by <see cref="MediaStreamInfo"/>s that contain audio.
@@ -8,9 +6,8 @@ namespace YoutubeExplode.Models.MediaStreams
     public interface IHasAudio
     {
         /// <summary>
-        /// Audio codec of the associated stream.
+        /// Audio encoding of the associated stream.
         /// </summary>
-        [NotNull]
-        string AudioCodec { get; }
+        AudioEncoding AudioEncoding { get; }
     }
 }

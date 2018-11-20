@@ -1,6 +1,4 @@
-﻿using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains only audio.
@@ -8,15 +6,15 @@ namespace YoutubeExplode.Models.MediaStreams
     public class AudioStreamInfo : MediaStreamInfo, IHasAudio
     {
         /// <inheritdoc />
-        public string AudioCodec { get; }
+        public AudioEncoding AudioEncoding { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="AudioStreamInfo"/>.
         /// </summary>
-        public AudioStreamInfo(string url, long contentLength, long bitrate, string format, string audioCodec) 
-            : base(url, contentLength, bitrate, format)
+        public AudioStreamInfo(string url, long size, long bitrate, Container container, AudioEncoding audioEncoding) 
+            : base(url, size, bitrate, container)
         {
-            AudioCodec = audioCodec.GuardNotNull(nameof(audioCodec));
+            AudioEncoding = audioEncoding;
         }
     }
 }
