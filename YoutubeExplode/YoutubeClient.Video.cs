@@ -177,7 +177,7 @@ namespace YoutubeExplode
                 if (bitrate <= 0)
                 {
                     var duration = streamInfoParser.ParseDuration();
-                    bitrate = (long) (contentLength / (duration.TotalMinutes * 0.0075));
+                    bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
                 muxedStreamInfoMap[itag] = new MuxedStreamInfo(url, contentLength, bitrate, format, audioEncoding,
@@ -208,7 +208,7 @@ namespace YoutubeExplode
                 if (bitrate <= 0)
                 {
                     var duration = streamInfoParser.ParseDuration();
-                    bitrate = (long) (contentLength / (duration.TotalMinutes * 0.0075));
+                    bitrate = (long)(0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
                 // If audio-only
