@@ -226,6 +226,7 @@ namespace YoutubeExplode.Tests
             var channelId = await client.GetChannelIdAsync(username);
 
             Assert.That(channelId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidateChannelId(channelId));
         }
 
         [Test]

@@ -40,7 +40,7 @@ namespace YoutubeExplode
             return VideoInfoParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, bool ensurePlayability = false)
+        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, bool ensureIsPlayable = false)
         {
             // Get parser with 'el=embedded'
             var parser = await GetVideoInfoParserAsync(videoId, "embedded").ConfigureAwait(false);
@@ -53,7 +53,7 @@ namespace YoutubeExplode
             }
 
             // If requested to ensure playability but the video is not playable - try again
-            if (ensurePlayability && !parser.ParseIsPlayable())
+            if (ensureIsPlayable && !parser.ParseIsPlayable())
             {
                 // Retry with "el=detailpage"
                 parser = await GetVideoInfoParserAsync(videoId, "detailpage").ConfigureAwait(false);
