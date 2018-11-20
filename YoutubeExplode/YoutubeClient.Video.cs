@@ -45,11 +45,14 @@ namespace YoutubeExplode
             // Get parser with 'el=embedded'
             var parser = await GetVideoInfoParserAsync(videoId, "embedded").ConfigureAwait(false);
 
-            // If the request wasn't successful - it means the video doesn't exist
-            if (!parser.ParseIsSuccessful())
-                throw new VideoUnavailableException(videoId, $"Video [{videoId}] does not exist.");
+            // If the video is not available - throw exception
+            if (!parser.ParseIsAvailable())
+            {
+                var errorReason = parser.ParseErrorReason();
+                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable. {errorReason}");
+            }
 
-            // If requested to ensure playability and the video is not playable - try again
+            // If requested to ensure playability but the video is not playable - try again
             if (ensurePlayability && !parser.ParseIsPlayable())
             {
                 // Retry with "el=detailpage"
@@ -59,7 +62,7 @@ namespace YoutubeExplode
                 if (!parser.ParseIsPlayable())
                 {
                     var errorReason = parser.ParseErrorReason();
-                    throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable. {errorReason}");
+                    throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. {errorReason}");
                 }
             }
 

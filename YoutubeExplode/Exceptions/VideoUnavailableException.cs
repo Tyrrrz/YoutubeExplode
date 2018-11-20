@@ -4,7 +4,8 @@ using YoutubeExplode.Internal;
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when video is not available and cannot be processed.
+    /// Thrown when a video is not available and cannot be processed.
+    /// This can happen because the video does not exist, is deleted, is private, or due to other reasons.
     /// </summary>
     public class VideoUnavailableException : Exception
     {
@@ -13,7 +14,9 @@ namespace YoutubeExplode.Exceptions
         /// </summary>
         public string VideoId { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes a new instance of <see cref="VideoUnavailableException"/>.
+        /// </summary>
         public VideoUnavailableException(string videoId, string message)
             : base(message)
         {

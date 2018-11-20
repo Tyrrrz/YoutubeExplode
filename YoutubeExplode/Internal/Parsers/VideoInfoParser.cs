@@ -14,7 +14,7 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public bool ParseIsSuccessful() => _root.SelectToken("videoDetails") != null;
+        public bool ParseIsAvailable() => _root.SelectToken("videoDetails") != null;
 
         public bool ParseIsPlayable()
         {
