@@ -160,7 +160,7 @@ namespace YoutubeExplode
                 var audioCodec = streamInfoParser.ParseAudioCodec();
                 var videoCodec = streamInfoParser.ParseVideoCodec();
                 var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                var videoQuality = VideoQualityConverter.FromVideoQualityLabel(videoQualityLabel);
+                var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
                 var width = streamInfoParser.ParseWidth();
                 var height = streamInfoParser.ParseHeight();
                 var resolution = new VideoResolution(width, height);
@@ -228,7 +228,7 @@ namespace YoutubeExplode
                     // Extract video-specific info
                     var videoCodec = streamInfoParser.ParseVideoCodec();
                     var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                    var videoQuality = VideoQualityConverter.FromVideoQualityLabel(videoQualityLabel);
+                    var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
                     var width = streamInfoParser.ParseWidth();
                     var height = streamInfoParser.ParseHeight();
                     var resolution = new VideoResolution(width, height);
@@ -243,8 +243,6 @@ namespace YoutubeExplode
             var dashManifestUrl = parser.ParseDashManifestUrl();
             if (dashManifestUrl.IsNotBlank())
             {
-                // TODO: this is broken
-
                 // Get the dash manifest parser
                 var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl).ConfigureAwait(false);
 
@@ -277,8 +275,12 @@ namespace YoutubeExplode
                         var resolution = new VideoResolution(width, height);
                         var framerate = dashStreamInfoParser.ParseFramerate();
 
+                        // Try to determine video quality from height
+                        var videoQuality = VideoQualityConverter.VideoQualityFromHeight(height);
+                        var videoQualityLabel = VideoQualityConverter.VideoQualityToLabel(videoQuality, framerate);
+
                         videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format,
-                            videoCodec, "TODO", VideoQuality.High1080, resolution, framerate);
+                            videoCodec, videoQualityLabel, videoQuality, resolution, framerate);
                     }
                 }
             }

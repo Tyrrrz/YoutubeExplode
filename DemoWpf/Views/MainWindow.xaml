@@ -290,7 +290,7 @@
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Format:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
@@ -331,7 +331,7 @@
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Format:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
