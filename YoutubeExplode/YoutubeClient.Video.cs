@@ -139,8 +139,10 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get parser
+            // Register the time at which the request was made to calculate expiry date later on
             var requestedAt = DateTimeOffset.Now;
+
+            // Get parser
             var parser = await GetVideoInfoParserAsync(videoId, true).ConfigureAwait(false);
 
             // Prepare stream info maps
@@ -151,8 +153,10 @@ namespace YoutubeExplode
             // Parse muxed stream infos
             foreach (var streamInfoParser in parser.GetMuxedStreamInfos())
             {
-                // Extract info
+                // Extract itag to uniquely identify this stream
                 var itag = streamInfoParser.ParseItag();
+
+                // Extract info
                 var url = streamInfoParser.ParseUrl();
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
@@ -160,29 +164,36 @@ namespace YoutubeExplode
                 var audioCodec = streamInfoParser.ParseAudioCodec();
                 var videoCodec = streamInfoParser.ParseVideoCodec();
                 var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
                 var width = streamInfoParser.ParseWidth();
                 var height = streamInfoParser.ParseHeight();
-                var resolution = new VideoResolution(width, height);
                 var framerate = streamInfoParser.ParseFramerate();
 
-                // TODO: refactor this
-                // If content length is not set - get it ourselves
+                // Determine video quality from quality label
+                var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
+
+                // Combine width and height into resolution
+                var resolution = new VideoResolution(width, height);
+
+                // If content length is not set - get it manually
                 if (contentLength <= 0)
                 {
+                    // Send HEAD request and get content length
                     contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
 
+                    // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0)
                         continue;
                 }
 
-                // If bitrate is not set - calculate it ourselves
+                // If bitrate is not set - calculate it manually
                 if (bitrate <= 0)
                 {
+                    // Average bitrate = content length divided by duration
                     var duration = streamInfoParser.ParseDuration();
                     bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
+                // Add stream to map
                 muxedStreamInfoMap[itag] = new MuxedStreamInfo(url, contentLength, bitrate, format, audioCodec,
                     videoCodec, videoQualityLabel, videoQuality, resolution, framerate);
             }
@@ -190,28 +201,32 @@ namespace YoutubeExplode
             // Parse adaptive stream infos
             foreach (var streamInfoParser in parser.GetAdaptiveStreamInfos())
             {
-                // Extract info
+                // Extract itag to uniquely identify this stream
                 var itag = streamInfoParser.ParseItag();
+
+                // Extract info
                 var url = streamInfoParser.ParseUrl();
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
                 var format = streamInfoParser.ParseFormat();
 
-                // TODO: refactor this
-                // If content length is not set - get it ourselves
+                // If content length is not set - get it manually
                 if (contentLength <= 0)
                 {
+                    // Send HEAD request and get content length
                     contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
 
+                    // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0)
                         continue;
                 }
 
-                // If bitrate is not set - calculate it ourselves
+                // If bitrate is not set - calculate it manually
                 if (bitrate <= 0)
                 {
+                    // Average bitrate = content length divided by duration
                     var duration = streamInfoParser.ParseDuration();
-                    bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
+                    bitrate = (long)(0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
                 // If audio-only
@@ -220,6 +235,7 @@ namespace YoutubeExplode
                     // Extract audio-specific info
                     var audioCodec = streamInfoParser.ParseAudioCodec();
 
+                    // Add stream to map
                     audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, format, audioCodec);
                 }
                 // If video-only
@@ -228,12 +244,17 @@ namespace YoutubeExplode
                     // Extract video-specific info
                     var videoCodec = streamInfoParser.ParseVideoCodec();
                     var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                    var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
                     var width = streamInfoParser.ParseWidth();
                     var height = streamInfoParser.ParseHeight();
-                    var resolution = new VideoResolution(width, height);
                     var framerate = streamInfoParser.ParseFramerate();
 
+                    // Determine video quality from quality label
+                    var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
+
+                    // Combine width and height into resolution
+                    var resolution = new VideoResolution(width, height);
+
+                    // Add stream to map
                     videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format, videoCodec,
                         videoQualityLabel, videoQuality, resolution, framerate);
                 }
@@ -249,8 +270,10 @@ namespace YoutubeExplode
                 // Parse dash stream infos
                 foreach (var dashStreamInfoParser in dashManifestParser.GetStreamInfos())
                 {
-                    // Extract info
+                    // Extract itag to uniquely identify this stream
                     var itag = dashStreamInfoParser.ParseItag();
+
+                    // Extract info
                     var url = dashStreamInfoParser.ParseUrl();
                     var contentLength = dashStreamInfoParser.ParseContentLength();
                     var bitrate = dashStreamInfoParser.ParseBitrate();
@@ -262,6 +285,7 @@ namespace YoutubeExplode
                         // Extract audio-specific info
                         var audioCodec = dashStreamInfoParser.ParseAudioCodec();
 
+                        // Add stream to map
                         audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, format,
                             audioCodec);
                     }
@@ -272,13 +296,18 @@ namespace YoutubeExplode
                         var videoCodec = dashStreamInfoParser.ParseVideoCodec();
                         var width = dashStreamInfoParser.ParseWidth();
                         var height = dashStreamInfoParser.ParseHeight();
-                        var resolution = new VideoResolution(width, height);
                         var framerate = dashStreamInfoParser.ParseFramerate();
 
-                        // Try to determine video quality from height
+                        // Determine video quality from height
                         var videoQuality = VideoQualityConverter.VideoQualityFromHeight(height);
+
+                        // Determine video quality label from video quality and framerate
                         var videoQualityLabel = VideoQualityConverter.VideoQualityToLabel(videoQuality, framerate);
 
+                        // Combine width and height into resolution
+                        var resolution = new VideoResolution(width, height);
+
+                        // Add stream to map
                         videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format,
                             videoCodec, videoQualityLabel, videoQuality, resolution, framerate);
                     }
@@ -293,7 +322,7 @@ namespace YoutubeExplode
             // Get the HLS manifest URL if available
             var hlsManifestUrl = parser.ParseHlsManifestUrl();
 
-            // Get date until which the streams are valid
+            // Get expiry date
             var lifeSpan = parser.ParseStreamInfoSetLifeSpan();
             var validUntil = requestedAt.Add(lifeSpan);
 
@@ -322,7 +351,7 @@ namespace YoutubeExplode
                 var name = closedCaptionTrackInfoParser.ParseLanguageName();
                 var isAutoGenerated = closedCaptionTrackInfoParser.ParseIsAutoGenerated();
 
-                // Enforce format to the format we know how to parse
+                // Enforce format to the one we know how to parse
                 url = UrlEx.SetQueryParameter(url, "format", "3");
 
                 var language = new Language(code, name);
