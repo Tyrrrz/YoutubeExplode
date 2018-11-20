@@ -171,8 +171,6 @@ namespace YoutubeExplode
                 // Determine video quality from quality label
                 var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
 
-                // Combine width and height into resolution
-                var resolution = new VideoResolution(width, height);
 
                 // If content length is not set - get it manually
                 if (contentLength <= 0)
@@ -193,7 +191,7 @@ namespace YoutubeExplode
                     bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
-                // Add stream to map
+                var resolution = new VideoResolution(width, height);
                 muxedStreamInfoMap[itag] = new MuxedStreamInfo(url, contentLength, bitrate, format, audioCodec,
                     videoCodec, videoQualityLabel, videoQuality, resolution, framerate);
             }
@@ -251,10 +249,7 @@ namespace YoutubeExplode
                     // Determine video quality from quality label
                     var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
 
-                    // Combine width and height into resolution
                     var resolution = new VideoResolution(width, height);
-
-                    // Add stream to map
                     videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format, videoCodec,
                         videoQualityLabel, videoQuality, resolution, framerate);
                 }
@@ -304,10 +299,7 @@ namespace YoutubeExplode
                         // Determine video quality label from video quality and framerate
                         var videoQualityLabel = VideoQualityConverter.VideoQualityToLabel(videoQuality, framerate);
 
-                        // Combine width and height into resolution
                         var resolution = new VideoResolution(width, height);
-
-                        // Add stream to map
                         videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format,
                             videoCodec, videoQualityLabel, videoQuality, resolution, framerate);
                     }

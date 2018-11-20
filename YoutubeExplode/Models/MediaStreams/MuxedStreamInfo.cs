@@ -38,7 +38,7 @@ namespace YoutubeExplode.Models.MediaStreams
             VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
             VideoQuality = videoQuality;
             Resolution = resolution;
-            Framerate = framerate;
+            Framerate = framerate.GuardNotNegative(nameof(framerate));
         }
     }
 }

@@ -38,5 +38,12 @@ namespace YoutubeExplode.Internal
                 ? i
                 : throw new ArgumentOutOfRangeException(argName, i, "Cannot be negative or zero.");
         }
+
+        public static long GuardPositive(this long i, string argName = null)
+        {
+            return i > 0
+                ? i
+                : throw new ArgumentOutOfRangeException(argName, i, "Cannot be negative or zero.");
+        }
     }
 }

@@ -36,8 +36,8 @@ namespace YoutubeExplode.Models.MediaStreams
         protected MediaStreamInfo(string url, long contentLength, long bitrate, string format)
         {
             Url = url.GuardNotNull(nameof(url));
-            ContentLength = contentLength;
-            Bitrate = bitrate;
+            ContentLength = contentLength.GuardPositive(nameof(contentLength));
+            Bitrate = bitrate.GuardPositive(nameof(bitrate));
             Format = format.GuardNotNull(nameof(format));
         }
 
