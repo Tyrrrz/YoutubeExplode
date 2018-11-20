@@ -3,7 +3,7 @@
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
-    /// Implemented by <see cref="MediaStreamInfo"/> that contain video.
+    /// Implemented by <see cref="MediaStreamInfo"/>s that contain video.
     /// </summary>
     public interface IHasVideo
     {
