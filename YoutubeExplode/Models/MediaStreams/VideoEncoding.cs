@@ -1,4 +1,6 @@
-﻿namespace YoutubeExplode.Models.MediaStreams
+﻿using System;
+
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Video encoding.
@@ -13,6 +15,7 @@
         /// <summary>
         /// MPEG-4 Part 10, Advanced Video Coding.
         /// </summary>
+        [Obsolete("Not available anymore.")]
         H263,
 
         /// <summary>

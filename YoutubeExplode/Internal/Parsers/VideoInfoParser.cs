@@ -118,7 +118,7 @@ namespace YoutubeExplode.Internal.Parsers
                 return codecs.FirstOrDefault(); // video codec is either the only codec or the first codec
             }
 
-            public bool ParseIsAudioOnly() => _root.SelectToken("mimeType").Value<string>()
+            public bool ParseIsAudioOnly() => ParseMimeType().Value<string>()
                 .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 
             public int ParseWidth() => _root.SelectToken("width").Value<int>();

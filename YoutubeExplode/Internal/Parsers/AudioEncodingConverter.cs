@@ -7,7 +7,17 @@ namespace YoutubeExplode.Internal.Parsers
     {
         public static AudioEncoding AudioEncodingFromCodec(string codec)
         {
-            throw new NotImplementedException();
+            if (codec.StartsWith("mp4a.", StringComparison.OrdinalIgnoreCase))
+                return AudioEncoding.Aac;
+
+            if (codec.Equals("vorbis", StringComparison.OrdinalIgnoreCase))
+                return AudioEncoding.Vorbis;
+
+            if (codec.Equals("opus", StringComparison.OrdinalIgnoreCase))
+                return AudioEncoding.Opus;
+
+            // Unknown
+            throw new ArgumentOutOfRangeException(nameof(codec), $"Unknown codec [{codec}].");
         }
     }
 }

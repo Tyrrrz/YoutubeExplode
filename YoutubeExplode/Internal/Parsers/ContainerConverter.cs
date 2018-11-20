@@ -5,9 +5,10 @@ namespace YoutubeExplode.Internal.Parsers
 {
     internal static class ContainerConverter
     {
-        public static Container ContainerFromMimeType(string mime)
+        public static Container ContainerFromMimeType(string mimeType)
         {
-            throw new NotImplementedException();
+            // Unknown
+            throw new ArgumentOutOfRangeException(nameof(mimeType), $"Unknown mime type [{mimeType}].");
         }
     }
 }
