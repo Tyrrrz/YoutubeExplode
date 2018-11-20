@@ -208,7 +208,7 @@ namespace YoutubeExplode
                 if (bitrate <= 0)
                 {
                     var duration = streamInfoParser.ParseDuration();
-                    bitrate = (long)(0.001 * contentLength / (duration.TotalMinutes * 0.0075));
+                    bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
                 // If audio-only
@@ -261,7 +261,8 @@ namespace YoutubeExplode
                         // Extract audio-specific info
                         var audioEncoding = dashStreamInfoParser.ParseAudioEncoding();
 
-                        audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, format, audioEncoding);
+                        audioStreamInfoMap[itag] =
+                            new AudioStreamInfo(url, contentLength, bitrate, format, audioEncoding);
                     }
                     // If video-only
                     else
@@ -273,8 +274,8 @@ namespace YoutubeExplode
                         var resolution = new VideoResolution(width, height);
                         var framerate = dashStreamInfoParser.ParseFramerate();
 
-                        videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format, videoEncoding,
-                            "TODO", VideoQuality.High1080, resolution, framerate);
+                        videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, format,
+                            videoEncoding, "TODO", VideoQuality.High1080, resolution, framerate);
                     }
                 }
             }
@@ -291,7 +292,8 @@ namespace YoutubeExplode
             var lifeSpan = parser.ParseStreamInfoSetLifeSpan();
             var validUntil = requestedAt.Add(lifeSpan);
 
-            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsPlaylistUrl, validUntil);
+            return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsPlaylistUrl,
+                validUntil);
         }
 
         /// <inheritdoc />

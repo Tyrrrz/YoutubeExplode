@@ -39,7 +39,15 @@ namespace YoutubeExplode.Internal.Parsers
 
         public long ParseViewCount() => _root.SelectToken("videoDetails.viewCount").Value<long>();
 
-        public string ParseDashManifestUrl() => _root.SelectToken("streamingData.dashManifestUrl")?.Value<string>();
+        public string ParseDashManifestUrl()
+        {
+            // HACK: Don't return DASH manifest URL if it's a live stream
+            // I'm not sure how to handle these streams yet
+            if (ParseIsLiveStream())
+                return null;
+
+            return _root.SelectToken("streamingData.dashManifestUrl")?.Value<string>();
+        }
 
         public string ParseHlsPlaylistUrl() => _root.SelectToken("streamingData.hlsManifestUrl")?.Value<string>();
 
@@ -49,11 +57,28 @@ namespace YoutubeExplode.Internal.Parsers
             return TimeSpan.FromSeconds(expiresInSeconds);
         }
 
-        public IEnumerable<StreamInfoParser> GetMuxedStreamInfos()
-            => _root.SelectToken("streamingData.formats").EmptyIfNull().Select(j => new StreamInfoParser(j));
+        public bool ParseIsLiveStream() => _root.SelectToken("videoDetails.isLiveContent")?.Value<bool>() == true;
 
-        public IEnumerable<StreamInfoParser> GetAdaptiveStreamInfos() 
-            => _root.SelectToken("streamingData.adaptiveFormats").EmptyIfNull().Select(j => new StreamInfoParser(j));
+        public IEnumerable<StreamInfoParser> GetMuxedStreamInfos()
+        {
+            // HACK: Don't return streams if it's a live stream
+            // I'm not sure how to handle these streams yet
+            if (ParseIsLiveStream())
+                return Enumerable.Empty<StreamInfoParser>();
+
+            return _root.SelectToken("streamingData.formats").EmptyIfNull().Select(j => new StreamInfoParser(j));
+        }
+
+        public IEnumerable<StreamInfoParser> GetAdaptiveStreamInfos()
+        {
+            // HACK: Don't return streams if it's a live stream
+            // I'm not sure how to handle these streams yet
+            if (ParseIsLiveStream())
+                return Enumerable.Empty<StreamInfoParser>();
+
+            return _root.SelectToken("streamingData.adaptiveFormats").EmptyIfNull()
+                .Select(j => new StreamInfoParser(j));
+        }
 
         public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos()
             => _root.SelectToken("captions.playerCaptionsTracklistRenderer.captionTracks").EmptyIfNull()
