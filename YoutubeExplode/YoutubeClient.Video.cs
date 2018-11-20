@@ -161,7 +161,7 @@ namespace YoutubeExplode
                 var width = streamInfoParser.ParseWidth();
                 var height = streamInfoParser.ParseHeight();
                 var resolution = new VideoResolution(width, height);
-                var framerate = 25; // there is no info about framerate for muxed streams
+                var framerate = streamInfoParser.ParseFramerate();
 
                 // TODO: refactor this
                 // If content length is not set - get it ourselves
@@ -171,6 +171,13 @@ namespace YoutubeExplode
 
                     if (contentLength <= 0)
                         continue;
+                }
+
+                // If bitrate is not set - calculate it ourselves
+                if (bitrate <= 0)
+                {
+                    var duration = streamInfoParser.ParseDuration();
+                    bitrate = (long) (contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
                 muxedStreamInfoMap[itag] = new MuxedStreamInfo(url, contentLength, bitrate, format, audioEncoding,
@@ -186,7 +193,24 @@ namespace YoutubeExplode
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
                 var format = streamInfoParser.ParseFormat();
-                
+
+                // TODO: refactor this
+                // If content length is not set - get it ourselves
+                if (contentLength <= 0)
+                {
+                    contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
+
+                    if (contentLength <= 0)
+                        continue;
+                }
+
+                // If bitrate is not set - calculate it ourselves
+                if (bitrate <= 0)
+                {
+                    var duration = streamInfoParser.ParseDuration();
+                    bitrate = (long) (contentLength / (duration.TotalMinutes * 0.0075));
+                }
+
                 // If audio-only
                 if (streamInfoParser.ParseIsAudioOnly())
                 {
