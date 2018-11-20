@@ -290,13 +290,13 @@
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Format:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Encoding:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" /><Run Text="/" /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
+                                                <Run Text="Codecs:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioCodec, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
@@ -331,13 +331,13 @@
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding QualityLabel, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Format:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Encoding:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" />
+                                                <Run Text="Codec:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />
@@ -374,8 +374,8 @@
                                                 <Run Text="Format:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Format, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Encoding:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
+                                                <Run Text="Codec:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioCodec, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding ContentLength, Converter={StaticResource FileSizeToStringConverter}, StringFormat=\{0\}, Mode=OneWay}" />

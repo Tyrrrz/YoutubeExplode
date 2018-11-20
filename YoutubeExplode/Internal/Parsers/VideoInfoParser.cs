@@ -49,7 +49,7 @@ namespace YoutubeExplode.Internal.Parsers
             return _root.SelectToken("streamingData.dashManifestUrl")?.Value<string>();
         }
 
-        public string ParseHlsPlaylistUrl() => _root.SelectToken("streamingData.hlsManifestUrl")?.Value<string>();
+        public string ParseHlsManifestUrl() => _root.SelectToken("streamingData.hlsManifestUrl")?.Value<string>();
 
         public TimeSpan ParseStreamInfoSetLifeSpan()
         {
@@ -108,16 +108,16 @@ namespace YoutubeExplode.Internal.Parsers
 
             public string ParseFormat() => ParseMimeType().SubstringAfter("/").SubstringUntil(";");
 
-            public string ParseAudioEncoding()
+            public string ParseAudioCodec()
             {
                 var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");
-                return codecs.LastOrDefault();
+                return codecs.LastOrDefault(); // audio codec is either the only codec or the second (last) codec
             }
 
-            public string ParseVideoEncoding()
+            public string ParseVideoCodec()
             {
                 var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");
-                return codecs.FirstOrDefault();
+                return codecs.FirstOrDefault(); // video codec is either the only codec or the first codec
             }
 
             public bool ParseIsAudioOnly() => _root.SelectToken("mimeType").Value<string>()
@@ -129,7 +129,7 @@ namespace YoutubeExplode.Internal.Parsers
 
             public int ParseFramerate() => _root.SelectToken("fps")?.Value<int>() ?? -1;
 
-            public string ParseQualityLabel() => _root.SelectToken("qualityLabel").Value<string>();
+            public string ParseVideoQualityLabel() => _root.SelectToken("qualityLabel").Value<string>();
 
             public TimeSpan ParseDuration()
             {

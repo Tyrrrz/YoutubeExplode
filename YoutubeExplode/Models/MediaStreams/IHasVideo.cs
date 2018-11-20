@@ -8,10 +8,10 @@ namespace YoutubeExplode.Models.MediaStreams
     public interface IHasVideo
     {
         /// <summary>
-        /// Video encoding of the associated stream.
+        /// Video codec of the associated stream.
         /// </summary>
         [NotNull]
-        string VideoEncoding { get; }
+        string VideoCodec { get; }
 
         /// <summary>
         /// Video quality label of the associated stream.

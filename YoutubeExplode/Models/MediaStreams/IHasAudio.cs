@@ -8,9 +8,9 @@ namespace YoutubeExplode.Models.MediaStreams
     public interface IHasAudio
     {
         /// <summary>
-        /// Audio encoding of the associated stream.
+        /// Audio codec of the associated stream.
         /// </summary>
         [NotNull]
-        string AudioEncoding { get; }
+        string AudioCodec { get; }
     }
 }

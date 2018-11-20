@@ -8,10 +8,10 @@ namespace YoutubeExplode.Models.MediaStreams
     public class MuxedStreamInfo : MediaStreamInfo, IHasAudio, IHasVideo
     {
         /// <inheritdoc />
-        public string AudioEncoding { get; }
+        public string AudioCodec { get; }
 
         /// <inheritdoc />
-        public string VideoEncoding { get; }
+        public string VideoCodec { get; }
 
         /// <inheritdoc />
         public string VideoQualityLabel { get; }
@@ -28,13 +28,13 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
         /// </summary>
-        public MuxedStreamInfo(string url, long contentLength, long bitrate, string format, string audioEncoding,
-            string videoEncoding, string videoQualityLabel, VideoQuality videoQuality, VideoResolution resolution,
+        public MuxedStreamInfo(string url, long contentLength, long bitrate, string format, string audioCodec,
+            string videoCodec, string videoQualityLabel, VideoQuality videoQuality, VideoResolution resolution,
             int framerate)
             : base(url, contentLength, bitrate, format)
         {
-            AudioEncoding = audioEncoding.GuardNotNull(nameof(audioEncoding));
-            VideoEncoding = videoEncoding.GuardNotNull(nameof(videoEncoding));
+            AudioCodec = audioCodec.GuardNotNull(nameof(audioCodec));
+            VideoCodec = videoCodec.GuardNotNull(nameof(videoCodec));
             VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
             VideoQuality = videoQuality;
             Resolution = resolution;

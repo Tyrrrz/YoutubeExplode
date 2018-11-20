@@ -48,9 +48,9 @@ namespace YoutubeExplode.Internal.Parsers
 
             public string ParseFormat() => Regex.Match(ParseUrl(), @"mime[/=]\w*/([\w\d]*)").Groups[1].Value;
 
-            public string ParseAudioEncoding() => (string) _root.Attribute("codecs");
+            public string ParseAudioCodec() => (string) _root.Attribute("codecs");
 
-            public string ParseVideoEncoding() => (string) _root.Attribute("codecs"); // it's always one or the other
+            public string ParseVideoCodec() => (string) _root.Attribute("codecs"); // it's always one or the other
 
             public bool ParseIsAudioOnly() => _root.Element("AudioChannelConfiguration") != null;
 
