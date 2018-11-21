@@ -49,20 +49,40 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <summary>
-        /// Gets the stream with highest video quality.
+        /// Gets the muxed stream with highest video quality.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static T WithHighestVideoQuality<T>(this IEnumerable<T> streamInfos) where T : IHasVideo
+        public static MuxedStreamInfo WithHighestVideoQuality(this IEnumerable<MuxedStreamInfo> streamInfos)
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
             return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
         }
 
         /// <summary>
-        /// Gets the stream with highest bitrate.
+        /// Gets the video stream with highest video quality.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static T WithHighestBitrate<T>(this IEnumerable<T> streamInfos) where T : MediaStreamInfo
+        public static VideoStreamInfo WithHighestVideoQuality(this IEnumerable<VideoStreamInfo> streamInfos)
+        {
+            streamInfos.GuardNotNull(nameof(streamInfos));
+            return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the audio stream with highest bitrate.
+        /// Returns null if sequence is empty.
+        /// </summary>
+        public static AudioStreamInfo WithHighestBitrate(this IEnumerable<AudioStreamInfo> streamInfos)
+        {
+            streamInfos.GuardNotNull(nameof(streamInfos));
+            return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the video stream with highest bitrate.
+        /// Returns null if sequence is empty.
+        /// </summary>
+        public static VideoStreamInfo WithHighestBitrate(this IEnumerable<VideoStreamInfo> streamInfos)
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
             return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();

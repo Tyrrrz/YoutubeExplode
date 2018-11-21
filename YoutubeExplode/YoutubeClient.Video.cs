@@ -169,15 +169,6 @@ namespace YoutubeExplode
                     if (contentLength <= 0) continue;
                 }
 
-                // Try to parse bitrate, otherwise calculate it
-                var bitrate = streamInfoParser.ParseBitrate();
-                if (bitrate <= 0)
-                {
-                    // Average bitrate = content length divided by duration
-                    var duration = streamInfoParser.ParseDuration();
-                    bitrate = BitrateHelper.CalculateAverageBitrate(contentLength, duration);
-                }
-
                 // Parse container
                 var containerStr = streamInfoParser.ParseContainer();
                 var container = ContainerHelper.ContainerFromString(containerStr);
@@ -199,17 +190,9 @@ namespace YoutubeExplode
                 var height = streamInfoParser.ParseHeight();
                 var resolution = new VideoResolution(width, height);
 
-                // Try to parse framerate, otherwise just set a dummy one
-                var framerate = streamInfoParser.ParseFramerate();
-                if (framerate <= 0)
-                {
-                    // The most common framerate for muxed streams is 25 fps
-                    framerate = 25;
-                }
-
                 // Add stream
-                var streamInfo = new MuxedStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding,
-                    videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
+                var streamInfo = new MuxedStreamInfo(itag, url, container, contentLength, audioEncoding, videoEncoding,
+                    videoQualityLabel, videoQuality, resolution);
                 muxedStreamInfoMap[itag] = streamInfo;
             }
 
@@ -219,6 +202,7 @@ namespace YoutubeExplode
                 // Parse info
                 var itag = streamInfoParser.ParseItag();
                 var url = streamInfoParser.ParseUrl();
+                var bitrate = streamInfoParser.ParseBitrate();
 
                 // Try to parse content length, otherwise get it manually
                 var contentLength = streamInfoParser.ParseContentLength();
@@ -229,15 +213,6 @@ namespace YoutubeExplode
 
                     // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0) continue;
-                }
-
-                // Try to parse bitrate, otherwise calculate it
-                var bitrate = streamInfoParser.ParseBitrate();
-                if (bitrate <= 0)
-                {
-                    // Average bitrate = content length divided by duration
-                    var duration = streamInfoParser.ParseDuration();
-                    bitrate = BitrateHelper.CalculateAverageBitrate(contentLength, duration);
                 }
 
                 // Parse container

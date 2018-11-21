@@ -1,25 +1,42 @@
-﻿using YoutubeExplode.Internal;
+﻿using JetBrains.Annotations;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains only video.
     /// </summary>
-    public class VideoStreamInfo : MediaStreamInfo, IHasVideo
+    public class VideoStreamInfo : MediaStreamInfo
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Bitrate (bits/s) of the associated stream.
+        /// </summary>
+        public long Bitrate { get; }
+
+        /// <summary>
+        /// Video encoding of the associated stream.
+        /// </summary>
         public VideoEncoding VideoEncoding { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video quality label of the associated stream.
+        /// </summary>
+        [NotNull]
         public string VideoQualityLabel { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video quality of the associated stream.
+        /// </summary>
         public VideoQuality VideoQuality { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video resolution of the associated stream.
+        /// </summary>
         public VideoResolution Resolution { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video framerate (FPS) of the associated stream.
+        /// </summary>
         public int Framerate { get; }
 
         /// <summary>
@@ -28,8 +45,9 @@ namespace YoutubeExplode.Models.MediaStreams
         public VideoStreamInfo(int itag, string url, Container container, long size, long bitrate,
             VideoEncoding videoEncoding, string videoQualityLabel, VideoQuality videoQuality,
             VideoResolution resolution, int framerate)
-            : base(itag, url, container, size, bitrate)
+            : base(itag, url, container, size)
         {
+            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
             VideoEncoding = videoEncoding;
             VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
             VideoQuality = videoQuality;

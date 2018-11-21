@@ -102,7 +102,7 @@ namespace YoutubeExplode.Internal.Parsers
 
             public long ParseContentLength() => _root.SelectToken("contentLength")?.Value<long>() ?? -1;
 
-            public long ParseBitrate() => _root.SelectToken("bitrate")?.Value<long>() ?? -1;
+            public long ParseBitrate() => _root.SelectToken("bitrate").Value<long>();
 
             public string ParseMimeType() => _root.SelectToken("mimeType").Value<string>();
 
@@ -120,15 +120,9 @@ namespace YoutubeExplode.Internal.Parsers
 
             public int ParseHeight() => _root.SelectToken("height").Value<int>();
 
-            public int ParseFramerate() => _root.SelectToken("fps")?.Value<int>() ?? -1;
+            public int ParseFramerate() => _root.SelectToken("fps").Value<int>();
 
             public string ParseVideoQualityLabel() => _root.SelectToken("qualityLabel").Value<string>();
-
-            public TimeSpan ParseDuration()
-            {
-                var durationMilliseconds = _root.SelectToken("approxDurationMs").Value<double>();
-                return TimeSpan.FromMilliseconds(durationMilliseconds);
-            }
         }
 
         public class ClosedCaptionTrackInfoParser

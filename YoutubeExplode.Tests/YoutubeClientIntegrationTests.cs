@@ -76,17 +76,6 @@ namespace YoutubeExplode.Tests
             var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
 
             Assert.That(streamInfoSet, Is.Not.Null);
-
-            foreach (var streamInfo in streamInfoSet.GetAll())
-            {
-                Assert.That(streamInfo.Bitrate, Is.GreaterThan(0));
-                Assert.That(streamInfo.Size, Is.GreaterThan(0));
-                Assert.That(streamInfo.Container, Is.Not.Null.Or.Empty);
-                Assert.That(streamInfo.Url, Is.Not.Null.Or.Empty);
-
-                if (streamInfo is IHasVideo hasVideo)
-                    Assert.That(hasVideo.VideoQualityLabel, Is.Not.Null.Or.Empty);
-            }
         }
 
         [Test]

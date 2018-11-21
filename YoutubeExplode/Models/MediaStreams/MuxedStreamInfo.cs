@@ -1,44 +1,52 @@
-﻿using YoutubeExplode.Internal;
+﻿using JetBrains.Annotations;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains both audio and video.
     /// </summary>
-    public class MuxedStreamInfo : MediaStreamInfo, IHasAudio, IHasVideo
+    public class MuxedStreamInfo : MediaStreamInfo
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Audio encoding of the associated stream.
+        /// </summary>
         public AudioEncoding AudioEncoding { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video encoding of the associated stream.
+        /// </summary>
         public VideoEncoding VideoEncoding { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video quality label of the associated stream.
+        /// </summary>
+        [NotNull]
         public string VideoQualityLabel { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video quality of the associated stream.
+        /// </summary>
         public VideoQuality VideoQuality { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Video resolution of the associated stream.
+        /// </summary>
         public VideoResolution Resolution { get; }
-
-        /// <inheritdoc />
-        public int Framerate { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
         /// </summary>
-        public MuxedStreamInfo(int itag, string url, Container container, long size, long bitrate,
-            AudioEncoding audioEncoding, VideoEncoding videoEncoding, string videoQualityLabel,
-            VideoQuality videoQuality, VideoResolution resolution, int framerate)
-            : base(itag, url, container, size, bitrate)
+        public MuxedStreamInfo(int itag, string url, Container container, long size, AudioEncoding audioEncoding,
+            VideoEncoding videoEncoding, string videoQualityLabel, VideoQuality videoQuality,
+            VideoResolution resolution)
+            : base(itag, url, container, size)
         {
             AudioEncoding = audioEncoding;
             VideoEncoding = videoEncoding;
             VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
             VideoQuality = videoQuality;
             Resolution = resolution;
-            Framerate = framerate.GuardNotNegative(nameof(framerate));
         }
 
         /// <inheritdoc />
