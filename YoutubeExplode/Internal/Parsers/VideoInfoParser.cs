@@ -106,20 +106,15 @@ namespace YoutubeExplode.Internal.Parsers
 
             public string ParseMimeType() => _root.SelectToken("mimeType").Value<string>();
 
-            public string ParseAudioCodec()
-            {
-                var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");
-                return codecs.LastOrDefault(); // audio codec is either the only codec or the second (last) codec
-            }
+            public string ParseContainer() => ParseMimeType().SubstringUntil(";").SubstringAfter("/");
 
-            public string ParseVideoCodec()
-            {
-                var codecs = ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"").Split(", ");
-                return codecs.FirstOrDefault(); // video codec is either the only codec or the first codec
-            }
+            public string ParseAudioEncoding() => ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"")
+                .Split(", ").LastOrDefault(); // audio codec is either the only codec or the second (last) codec
 
-            public bool ParseIsAudioOnly() => ParseMimeType().Value<string>()
-                .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
+            public string ParseVideoEncoding() => ParseMimeType().SubstringAfter("codecs=\"").SubstringUntil("\"")
+                .Split(", ").FirstOrDefault(); // video codec is either the only codec or the first codec
+
+            public bool ParseIsAudioOnly() => ParseMimeType().StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 
             public int ParseWidth() => _root.SelectToken("width").Value<int>();
 

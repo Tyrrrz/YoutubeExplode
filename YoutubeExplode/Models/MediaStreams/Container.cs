@@ -31,6 +31,7 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Flash Video (.flv).
         /// </summary>
+        [Obsolete("Not available anymore.")]
         Flv
     }
 }

@@ -5,19 +5,19 @@ namespace YoutubeExplode.Internal.Parsers
 {
     internal static class AudioEncodingConverter
     {
-        public static AudioEncoding AudioEncodingFromCodec(string codec)
+        public static AudioEncoding AudioEncodingFromString(string str)
         {
-            if (codec.StartsWith("mp4a.", StringComparison.OrdinalIgnoreCase))
+            if (str.StartsWith("mp4a", StringComparison.OrdinalIgnoreCase))
                 return AudioEncoding.Aac;
 
-            if (codec.Equals("vorbis", StringComparison.OrdinalIgnoreCase))
+            if (str.StartsWith("vorbis", StringComparison.OrdinalIgnoreCase))
                 return AudioEncoding.Vorbis;
 
-            if (codec.Equals("opus", StringComparison.OrdinalIgnoreCase))
+            if (str.StartsWith("opus", StringComparison.OrdinalIgnoreCase))
                 return AudioEncoding.Opus;
 
             // Unknown
-            throw new ArgumentOutOfRangeException(nameof(codec), $"Unknown codec [{codec}].");
+            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown encoding [{str}].");
         }
     }
 }

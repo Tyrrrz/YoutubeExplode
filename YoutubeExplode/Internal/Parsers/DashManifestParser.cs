@@ -46,11 +46,9 @@ namespace YoutubeExplode.Internal.Parsers
 
             public long ParseBitrate() => (long) _root.Attribute("bandwidth");
 
-            public string ParseMimeType() => Regex.Match(ParseUrl(), @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value.UrlDecode();
+            public string ParseContainer() => Regex.Match(ParseUrl(), @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value.UrlDecode();
 
-            public string ParseAudioCodec() => (string) _root.Attribute("codecs");
-
-            public string ParseVideoCodec() => (string) _root.Attribute("codecs"); // it's always one or the other
+            public string ParseEncoding() => (string) _root.Attribute("codecs");
 
             public bool ParseIsAudioOnly() => _root.Element("AudioChannelConfiguration") != null;
 

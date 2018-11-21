@@ -158,22 +158,22 @@ namespace YoutubeExplode
                 var url = streamInfoParser.ParseUrl();
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
-                var mimeType = streamInfoParser.ParseMimeType();
-                var audioCodec = streamInfoParser.ParseAudioCodec();
-                var videoCodec = streamInfoParser.ParseVideoCodec();
+                var containerStr = streamInfoParser.ParseContainer();
+                var audioEncodingStr = streamInfoParser.ParseAudioEncoding();
+                var videoEncodingStr = streamInfoParser.ParseVideoEncoding();
                 var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
                 var width = streamInfoParser.ParseWidth();
                 var height = streamInfoParser.ParseHeight();
                 var framerate = streamInfoParser.ParseFramerate();
 
                 // Determine container from mime type
-                var container = ContainerConverter.ContainerFromMimeType(mimeType);
+                var container = ContainerConverter.ContainerFromString(containerStr);
 
                 // Determine audio encoding from codec
-                var audioEncoding = AudioEncodingConverter.AudioEncodingFromCodec(audioCodec);
+                var audioEncoding = AudioEncodingConverter.AudioEncodingFromString(audioEncodingStr);
 
                 // Determine video encoding from codec
-                var videoEncoding = VideoEncodingConverter.VideoEncodingFromCodec(videoCodec);
+                var videoEncoding = VideoEncodingConverter.VideoEncodingFromString(videoEncodingStr);
 
                 // Determine video quality from quality label
                 var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
@@ -218,10 +218,10 @@ namespace YoutubeExplode
                 var url = streamInfoParser.ParseUrl();
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
-                var mimeType = streamInfoParser.ParseMimeType();
+                var containerStr = streamInfoParser.ParseContainer();
 
                 // Determine container from mime type
-                var container = ContainerConverter.ContainerFromMimeType(mimeType);
+                var container = ContainerConverter.ContainerFromString(containerStr);
 
                 // If content length is not set - get it manually
                 if (contentLength <= 0)
@@ -246,10 +246,10 @@ namespace YoutubeExplode
                 if (streamInfoParser.ParseIsAudioOnly())
                 {
                     // Extract audio-specific info
-                    var audioCodec = streamInfoParser.ParseAudioCodec();
+                    var audioEncodingStr = streamInfoParser.ParseAudioEncoding();
 
                     // Determine audio encoding from codec
-                    var audioEncoding = AudioEncodingConverter.AudioEncodingFromCodec(audioCodec);
+                    var audioEncoding = AudioEncodingConverter.AudioEncodingFromString(audioEncodingStr);
 
                     // Add stream to map
                     audioStreamInfoMap[itag] =
@@ -259,14 +259,14 @@ namespace YoutubeExplode
                 else
                 {
                     // Extract video-specific info
-                    var videoCodec = streamInfoParser.ParseVideoCodec();
+                    var videoEncodingStr = streamInfoParser.ParseVideoEncoding();
                     var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
                     var width = streamInfoParser.ParseWidth();
                     var height = streamInfoParser.ParseHeight();
                     var framerate = streamInfoParser.ParseFramerate();
 
                     // Determine video encoding from codec
-                    var videoEncoding = VideoEncodingConverter.VideoEncodingFromCodec(videoCodec);
+                    var videoEncoding = VideoEncodingConverter.VideoEncodingFromString(videoEncodingStr);
 
                     // Determine video quality from quality label
                     var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
@@ -295,19 +295,19 @@ namespace YoutubeExplode
                     var url = dashStreamInfoParser.ParseUrl();
                     var contentLength = dashStreamInfoParser.ParseContentLength();
                     var bitrate = dashStreamInfoParser.ParseBitrate();
-                    var mimeType = dashStreamInfoParser.ParseMimeType();
+                    var containerStr = dashStreamInfoParser.ParseContainer();
 
                     // Determine container from mime type
-                    var container = ContainerConverter.ContainerFromMimeType(mimeType);
+                    var container = ContainerConverter.ContainerFromString(containerStr);
 
                     // If audio-only
                     if (dashStreamInfoParser.ParseIsAudioOnly())
                     {
                         // Extract audio-specific info
-                        var audioCodec = dashStreamInfoParser.ParseAudioCodec();
+                        var encodingStr = dashStreamInfoParser.ParseEncoding();
 
                         // Determine audio encoding from codec
-                        var audioEncoding = AudioEncodingConverter.AudioEncodingFromCodec(audioCodec);
+                        var audioEncoding = AudioEncodingConverter.AudioEncodingFromString(encodingStr);
 
                         // Add stream to map
                         audioStreamInfoMap[itag] =
@@ -317,13 +317,13 @@ namespace YoutubeExplode
                     else
                     {
                         // Extract video-specific info
-                        var videoCodec = dashStreamInfoParser.ParseVideoCodec();
+                        var encodingStr = dashStreamInfoParser.ParseEncoding();
                         var width = dashStreamInfoParser.ParseWidth();
                         var height = dashStreamInfoParser.ParseHeight();
                         var framerate = dashStreamInfoParser.ParseFramerate();
 
                         // Determine video encoding from codec
-                        var videoEncoding = VideoEncodingConverter.VideoEncodingFromCodec(videoCodec);
+                        var videoEncoding = VideoEncodingConverter.VideoEncodingFromString(encodingStr);
 
                         // Determine video quality from height
                         var videoQuality = VideoQualityConverter.VideoQualityFromHeight(height);
