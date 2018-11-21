@@ -51,7 +51,7 @@ namespace YoutubeExplode.Models.MediaStreams
             }
         }
 
-        
+        /// <inheritdoc />
         public override string ToString() => $"{Width}x{Height}";
     }
 
