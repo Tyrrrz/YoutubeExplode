@@ -51,7 +51,9 @@ namespace YoutubeExplode.Models
         [NotNull, ItemNotNull]
         public IReadOnlyList<Video> Videos { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="Playlist"/>.
+        /// </summary>
         public Playlist(string id, string author, string title, string description, Statistics statistics,
             IReadOnlyList<Video> videos)
         {

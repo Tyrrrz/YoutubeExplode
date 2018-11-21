@@ -25,7 +25,9 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// </summary>
         public TimeSpan Duration { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="ClosedCaption"/>.
+        /// </summary>
         public ClosedCaption(string text, TimeSpan offset, TimeSpan duration)
         {
             Text = text.GuardNotNull(nameof(text));

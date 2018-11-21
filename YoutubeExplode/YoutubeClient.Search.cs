@@ -37,17 +37,17 @@ namespace YoutubeExplode
                 var countDelta = 0;
                 foreach (var videoParser in parser.GetVideos())
                 {
-                    // Extract info
-                    var videoId = videoParser.GetId();
-                    var videoAuthor = videoParser.GetAuthor();
-                    var videoUploadDate = videoParser.GetUploadDate();
-                    var videoTitle = videoParser.GetTitle();
-                    var videoDescription = videoParser.GetDescription();
-                    var videoDuration = videoParser.GetDuration();
-                    var videoKeywords = videoParser.GetKeywords();
-                    var videoViewCount = videoParser.GetViewCount();
-                    var videoLikeCount = videoParser.GetLikeCount();
-                    var videoDislikeCount = videoParser.GetDislikeCount();
+                    // Parse info
+                    var videoId = videoParser.ParseId();
+                    var videoAuthor = videoParser.ParseAuthor();
+                    var videoUploadDate = videoParser.ParseUploadDate();
+                    var videoTitle = videoParser.ParseTitle();
+                    var videoDescription = videoParser.ParseDescription();
+                    var videoDuration = videoParser.ParseDuration();
+                    var videoKeywords = videoParser.ParseKeywords();
+                    var videoViewCount = videoParser.ParseViewCount();
+                    var videoLikeCount = videoParser.ParseLikeCount();
+                    var videoDislikeCount = videoParser.ParseDislikeCount();
 
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);

@@ -15,7 +15,7 @@ namespace YoutubeExplode.Exceptions
         public string VideoId { get; }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="VideoUnavailableException"/>.
+        /// Initializes an instance of <see cref="VideoUnavailableException"/>.
         /// </summary>
         public VideoUnavailableException(string videoId, string message)
             : base(message)

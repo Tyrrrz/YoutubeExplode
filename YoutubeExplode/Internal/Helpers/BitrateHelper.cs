@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YoutubeExplode.Internal
+namespace YoutubeExplode.Internal.Helpers
 {
     internal static class BitrateHelper
     {

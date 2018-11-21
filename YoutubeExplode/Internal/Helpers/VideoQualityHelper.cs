@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Internal.Parsers
+namespace YoutubeExplode.Internal.Helpers
 {
-    internal static class VideoQualityConverter
+    internal static class VideoQualityHelper
     {
         private static readonly Dictionary<int, VideoQuality> HeightToVideoQualityMap =
             Enum.GetValues(typeof(VideoQuality)).Cast<VideoQuality>().ToDictionary(
@@ -14,8 +14,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public static VideoQuality VideoQualityFromHeight(int height)
         {
-            // Find the video quality by height (lowest video quality that has height above or equal to given)
-            var matchingHeight = HeightToVideoQualityMap.Keys.FirstOrDefault(h => h >= height);
+            // Find the video quality by height (highest video quality that has height below or equal to given)
+            var matchingHeight = HeightToVideoQualityMap.Keys.LastOrDefault(h => h <= height);
 
             // If found - return video quality
             return matchingHeight > 0

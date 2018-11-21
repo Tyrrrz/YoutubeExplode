@@ -34,7 +34,9 @@ namespace YoutubeExplode.Models
             }
         }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="Statistics"/>.
+        /// </summary>
         public Statistics(long viewCount, long likeCount, long dislikeCount)
         {
             ViewCount = viewCount.GuardNotNegative(nameof(viewCount));

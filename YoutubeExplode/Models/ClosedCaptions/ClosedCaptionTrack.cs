@@ -21,7 +21,9 @@ namespace YoutubeExplode.Models.ClosedCaptions
         [NotNull, ItemNotNull]
         public IReadOnlyList<ClosedCaption> Captions { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="ClosedCaptionTrack"/>.
+        /// </summary>
         public ClosedCaptionTrack(ClosedCaptionTrackInfo info, IReadOnlyList<ClosedCaption> captions)
         {
             Info = info.GuardNotNull(nameof(info));

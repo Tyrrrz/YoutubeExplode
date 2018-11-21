@@ -40,7 +40,9 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public DateTimeOffset ValidUntil { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="MediaStreamInfoSet"/>.
+        /// </summary>
         public MediaStreamInfoSet(IReadOnlyList<MuxedStreamInfo> muxed,
             IReadOnlyList<AudioStreamInfo> audio,
             IReadOnlyList<VideoStreamInfo> video,

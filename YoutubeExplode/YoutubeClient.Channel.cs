@@ -31,7 +31,7 @@ namespace YoutubeExplode
             // Get parser
             var parser = await GetUserPageParserAsync(username).ConfigureAwait(false);
 
-            // Extract info
+            // Parse info
             var channelId = parser.ParseChannelId();
 
             return channelId;

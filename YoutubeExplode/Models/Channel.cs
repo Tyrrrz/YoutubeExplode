@@ -26,7 +26,9 @@ namespace YoutubeExplode.Models
         [NotNull]
         public string LogoUrl { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="Channel"/>.
+        /// </summary>
         public Channel(string id, string title, string logoUrl)
         {
             Id = id.GuardNotNull(nameof(id));

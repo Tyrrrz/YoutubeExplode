@@ -18,7 +18,9 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public int Height { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="VideoResolution"/>.
+        /// </summary>
         public VideoResolution(int width, int height)
         {
             Width = width.GuardNotNegative(nameof(width));
@@ -49,7 +51,7 @@ namespace YoutubeExplode.Models.MediaStreams
             }
         }
 
-        /// <inheritdoc />
+        
         public override string ToString() => $"{Width}x{Height}";
     }
 

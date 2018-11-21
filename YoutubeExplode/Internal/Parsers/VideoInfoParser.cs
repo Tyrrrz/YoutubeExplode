@@ -39,6 +39,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public long ParseViewCount() => _root.SelectToken("videoDetails.viewCount").Value<long>();
 
+        public bool ParseIsLiveStream() => _root.SelectToken("videoDetails.isLiveContent")?.Value<bool>() == true;
+
         public string ParseDashManifestUrl()
         {
             // HACK: Don't return DASH manifest URL if it's a live stream
@@ -51,13 +53,11 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string ParseHlsManifestUrl() => _root.SelectToken("streamingData.hlsManifestUrl")?.Value<string>();
 
-        public TimeSpan ParseStreamInfoSetLifeSpan()
+        public TimeSpan ParseStreamInfoSetExpiresIn()
         {
             var expiresInSeconds = _root.SelectToken("streamingData.expiresInSeconds").Value<double>();
             return TimeSpan.FromSeconds(expiresInSeconds);
         }
-
-        public bool ParseIsLiveStream() => _root.SelectToken("videoDetails.isLiveContent")?.Value<bool>() == true;
 
         public IEnumerable<StreamInfoParser> GetMuxedStreamInfos()
         {

@@ -38,7 +38,9 @@ namespace YoutubeExplode.Models.MediaStreams
             set => _stream.Position = value;
         }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="MediaStream"/>.
+        /// </summary>
         public MediaStream(MediaStreamInfo info, Stream stream)
         {
             Info = info.GuardNotNull(nameof(info));

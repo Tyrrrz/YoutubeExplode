@@ -1,9 +1,9 @@
 ﻿using System;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Internal.Parsers
+namespace YoutubeExplode.Internal.Helpers
 {
-    internal static class ContainerConverter
+    internal static class ContainerHelper
     {
         public static Container ContainerFromString(string str)
         {
@@ -18,6 +18,16 @@ namespace YoutubeExplode.Internal.Parsers
 
             // Unknown
             throw new ArgumentOutOfRangeException(nameof(str), $"Unknown container [{str}].");
+        }
+
+        public static string ContainerToFileExtension(Container container)
+        {
+            // Tgpp gets special treatment
+            if (container == Container.Tgpp)
+                return "3gpp";
+
+            // Convert to lower case string
+            return container.ToString().ToLowerInvariant();
         }
     }
 }

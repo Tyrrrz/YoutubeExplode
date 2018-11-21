@@ -62,7 +62,9 @@ namespace YoutubeExplode.Models
         [NotNull]
         public Statistics Statistics { get; }
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="Video"/>.
+        /// </summary>
         public Video(string id, string author, DateTimeOffset uploadDate, string title, string description,
             ThumbnailSet thumbnails, TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
         {

@@ -42,7 +42,9 @@ namespace YoutubeExplode.Models
         [NotNull]
         public string MaxResUrl => $"https://img.youtube.com/vi/{_videoId}/maxresdefault.jpg";
 
-        /// <summary />
+        /// <summary>
+        /// Initializes an instance of <see cref="ThumbnailSet"/>.
+        /// </summary>
         public ThumbnailSet(string videoId)
         {
             _videoId = videoId.GuardNotNull(nameof(videoId));

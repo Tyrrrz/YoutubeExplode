@@ -30,7 +30,7 @@ namespace YoutubeExplode
             var closedCaptions = new List<ClosedCaption>();
             foreach (var closedCaptionParser in parser.GetClosedCaptions())
             {
-                // Extract info
+                // Parse info
                 var text = closedCaptionParser.ParseText();
 
                 // Skip caption tracks without text

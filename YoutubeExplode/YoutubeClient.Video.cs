@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
+using YoutubeExplode.Internal.Helpers;
 using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
@@ -86,7 +87,7 @@ namespace YoutubeExplode
             // Get video info parser
             var videoInfoParser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
 
-            // Extract info
+            // Parse info
             var author = videoInfoParser.ParseAuthor();
             var title = videoInfoParser.ParseTitle();
             var duration = videoInfoParser.ParseDuration();
@@ -96,7 +97,7 @@ namespace YoutubeExplode
             // Get video watch page parser
             var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
 
-            // Extract info
+            // Parse info
             var uploadDate = videoWatchPageParser.ParseUploadDate();
             var description = videoWatchPageParser.ParseDescription();
             var likeCount = videoWatchPageParser.ParseLikeCount();
@@ -123,7 +124,7 @@ namespace YoutubeExplode
             // Get parser
             var parser = await GetVideoEmbedPageParserAsync(videoId).ConfigureAwait(false);
 
-            // Extract info
+            // Parse info
             var id = parser.ParseChannelId();
             var title = parser.ParseChannelTitle();
             var logoUrl = parser.ParseChannelLogoUrl();
@@ -179,36 +180,37 @@ namespace YoutubeExplode
 
                 // Parse container
                 var containerStr = streamInfoParser.ParseContainer();
-                var container = ContainerConverter.ContainerFromString(containerStr);
+                var container = ContainerHelper.ContainerFromString(containerStr);
 
                 // Parse audio encoding
                 var audioEncodingStr = streamInfoParser.ParseAudioEncoding();
-                var audioEncoding = AudioEncodingConverter.AudioEncodingFromString(audioEncodingStr);
+                var audioEncoding = AudioEncodingHelper.AudioEncodingFromString(audioEncodingStr);
 
                 // Parse video encoding
                 var videoEncodingStr = streamInfoParser.ParseVideoEncoding();
-                var videoEncoding = VideoEncodingConverter.VideoEncodingFromString(videoEncodingStr);
+                var videoEncoding = VideoEncodingHelper.VideoEncodingFromString(videoEncodingStr);
 
                 // Parse video quality label and video quality
                 var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
+                var videoQuality = VideoQualityHelper.VideoQualityFromLabel(videoQualityLabel);
 
                 // Parse resolution
                 var width = streamInfoParser.ParseWidth();
                 var height = streamInfoParser.ParseHeight();
                 var resolution = new VideoResolution(width, height);
 
-                // Try to parse framerate or just set a dummy one
+                // Try to parse framerate, otherwise just set a dummy one
                 var framerate = streamInfoParser.ParseFramerate();
                 if (framerate <= 0)
                 {
-                    // We can only guess
-                    framerate = 25; // the most common framerate for muxed streams
+                    // The most common framerate for muxed streams is 25 fps
+                    framerate = 25;
                 }
 
                 // Add stream
-                muxedStreamInfoMap[itag] = new MuxedStreamInfo(itag, url, container, contentLength, bitrate,
-                    audioEncoding, videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
+                var streamInfo = new MuxedStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding,
+                    videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
+                muxedStreamInfoMap[itag] = streamInfo;
             }
 
             // Parse adaptive stream infos
@@ -240,29 +242,29 @@ namespace YoutubeExplode
 
                 // Parse container
                 var containerStr = streamInfoParser.ParseContainer();
-                var container = ContainerConverter.ContainerFromString(containerStr);
+                var container = ContainerHelper.ContainerFromString(containerStr);
 
                 // If audio-only
                 if (streamInfoParser.ParseIsAudioOnly())
                 {
                     // Parse audio encoding
                     var audioEncodingStr = streamInfoParser.ParseAudioEncoding();
-                    var audioEncoding = AudioEncodingConverter.AudioEncodingFromString(audioEncodingStr);
+                    var audioEncoding = AudioEncodingHelper.AudioEncodingFromString(audioEncodingStr);
 
                     // Add stream
-                    audioStreamInfoMap[itag] =
-                        new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
+                    var streamInfo = new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
+                    audioStreamInfoMap[itag] = streamInfo;
                 }
                 // If video-only
                 else
                 {
                     // Parse video encoding
                     var videoEncodingStr = streamInfoParser.ParseVideoEncoding();
-                    var videoEncoding = VideoEncodingConverter.VideoEncodingFromString(videoEncodingStr);
+                    var videoEncoding = VideoEncodingHelper.VideoEncodingFromString(videoEncodingStr);
 
                     // Parse video quality label and video quality
                     var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                    var videoQuality = VideoQualityConverter.VideoQualityFromLabel(videoQualityLabel);
+                    var videoQuality = VideoQualityHelper.VideoQualityFromLabel(videoQualityLabel);
 
                     // Parse resolution
                     var width = streamInfoParser.ParseWidth();
@@ -273,8 +275,9 @@ namespace YoutubeExplode
                     var framerate = streamInfoParser.ParseFramerate();
 
                     // Add stream
-                    videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate,
-                        videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
+                    var streamInfo = new VideoStreamInfo(itag, url, container, contentLength, bitrate, videoEncoding,
+                        videoQualityLabel, videoQuality, resolution, framerate);
+                    videoStreamInfoMap[itag] = streamInfo;
                 }
             }
 
@@ -296,25 +299,26 @@ namespace YoutubeExplode
 
                     // Parse container
                     var containerStr = streamInfoParser.ParseContainer();
-                    var container = ContainerConverter.ContainerFromString(containerStr);
+                    var container = ContainerHelper.ContainerFromString(containerStr);
 
                     // If audio-only
                     if (streamInfoParser.ParseIsAudioOnly())
                     {
                         // Parse audio encoding
                         var audioEncodingStr = streamInfoParser.ParseEncoding();
-                        var audioEncoding = AudioEncodingConverter.AudioEncodingFromString(audioEncodingStr);
+                        var audioEncoding = AudioEncodingHelper.AudioEncodingFromString(audioEncodingStr);
 
                         // Add stream
-                        audioStreamInfoMap[itag] =
+                        var streamInfo =
                             new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
+                        audioStreamInfoMap[itag] = streamInfo;
                     }
                     // If video-only
                     else
                     {
                         // Parse video encoding
                         var videoEncodingStr = streamInfoParser.ParseEncoding();
-                        var videoEncoding = VideoEncodingConverter.VideoEncodingFromString(videoEncodingStr);
+                        var videoEncoding = VideoEncodingHelper.VideoEncodingFromString(videoEncodingStr);
 
                         // Parse resolution
                         var width = streamInfoParser.ParseWidth();
@@ -325,14 +329,15 @@ namespace YoutubeExplode
                         var framerate = streamInfoParser.ParseFramerate();
 
                         // Determine video quality from height
-                        var videoQuality = VideoQualityConverter.VideoQualityFromHeight(height);
+                        var videoQuality = VideoQualityHelper.VideoQualityFromHeight(height);
 
                         // Determine video quality label from video quality and framerate
-                        var videoQualityLabel = VideoQualityConverter.VideoQualityToLabel(videoQuality, framerate);
+                        var videoQualityLabel = VideoQualityHelper.VideoQualityToLabel(videoQuality, framerate);
 
                         // Add stream
-                        videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate,
+                        var streamInfo = new VideoStreamInfo(itag, url, container, contentLength, bitrate,
                             videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
+                        videoStreamInfoMap[itag] = streamInfo;
                     }
                 }
             }
@@ -346,8 +351,8 @@ namespace YoutubeExplode
             var hlsManifestUrl = parser.ParseHlsManifestUrl();
 
             // Get expiry date
-            var lifeSpan = parser.ParseStreamInfoSetLifeSpan();
-            var validUntil = requestedAt.Add(lifeSpan);
+            var expiresIn = parser.ParseStreamInfoSetExpiresIn();
+            var validUntil = requestedAt.Add(expiresIn);
 
             return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsManifestUrl,
                 validUntil);
@@ -368,16 +373,18 @@ namespace YoutubeExplode
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
             foreach (var closedCaptionTrackInfoParser in parser.GetClosedCaptionTrackInfos())
             {
-                // Extract info
+                // Parse info
                 var url = closedCaptionTrackInfoParser.ParseUrl();
+                var isAutoGenerated = closedCaptionTrackInfoParser.ParseIsAutoGenerated();
+
+                // Parse language
                 var code = closedCaptionTrackInfoParser.ParseLanguageCode();
                 var name = closedCaptionTrackInfoParser.ParseLanguageName();
-                var isAutoGenerated = closedCaptionTrackInfoParser.ParseIsAutoGenerated();
+                var language = new Language(code, name);
 
                 // Enforce format to the one we know how to parse
                 url = UrlEx.SetQueryParameter(url, "format", "3");
 
-                var language = new Language(code, name);
                 var closedCaptionTrackInfo = new ClosedCaptionTrackInfo(url, language, isAutoGenerated);
                 closedCaptionTrackInfos.Add(closedCaptionTrackInfo);
             }

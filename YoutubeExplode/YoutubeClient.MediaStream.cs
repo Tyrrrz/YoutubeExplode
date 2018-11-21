@@ -24,7 +24,7 @@ namespace YoutubeExplode
                 : long.MaxValue; // don't use segmentation for non-rate-limited streams
 
             // Get segmented stream
-            var stream = _httpClient.GetSegmentedStream(info.Url, info.Size, segmentSize);
+            var stream = _httpClient.CreateSegmentedStream(info.Url, info.Size, segmentSize);
 
             // This method must return a task for backwards-compatibility reasons
             return Task.FromResult(new MediaStream(info, stream));

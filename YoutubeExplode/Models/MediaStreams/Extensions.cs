@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Internal;
+using YoutubeExplode.Internal.Helpers;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -12,15 +13,8 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Gets file extension based on container type.
         /// </summary>
-        public static string GetFileExtension(this Container container)
-        {
-            // Tgpp gets special treatment
-            if (container == Container.Tgpp)
-                return "3gpp";
-
-            // Convert to lower case string
-            return container.ToString().ToLowerInvariant();
-        }
+        public static string GetFileExtension(this Container container) 
+            => ContainerHelper.ContainerToFileExtension(container);
 
         /// <summary>
         /// Gets all available media stream infos in a <see cref="MediaStreamInfoSet"/>.

@@ -1,9 +1,9 @@
 ﻿using System;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Internal.Parsers
+namespace YoutubeExplode.Internal.Helpers
 {
-    internal static class AudioEncodingConverter
+    internal static class AudioEncodingHelper
     {
         public static AudioEncoding AudioEncodingFromString(string str)
         {

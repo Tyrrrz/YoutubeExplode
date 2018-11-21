@@ -42,23 +42,23 @@ namespace YoutubeExplode.Internal.Parsers
                 _root = root;
             }
 
-            public string GetId() => _root.SelectToken("encrypted_id").Value<string>();
+            public string ParseId() => _root.SelectToken("encrypted_id").Value<string>();
 
-            public string GetAuthor() => _root.SelectToken("author").Value<string>();
+            public string ParseAuthor() => _root.SelectToken("author").Value<string>();
 
-            public DateTimeOffset GetUploadDate() => _root.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
+            public DateTimeOffset ParseUploadDate() => _root.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
 
-            public string GetTitle() => _root.SelectToken("title").Value<string>();
+            public string ParseTitle() => _root.SelectToken("title").Value<string>();
 
-            public string GetDescription() => _root.SelectToken("description").Value<string>();
+            public string ParseDescription() => _root.SelectToken("description").Value<string>();
 
-            public TimeSpan GetDuration()
+            public TimeSpan ParseDuration()
             {
                 var durationSeconds = _root.SelectToken("length_seconds").Value<double>();
                 return TimeSpan.FromSeconds(durationSeconds);
             }
 
-            public IReadOnlyList<string> GetKeywords()
+            public IReadOnlyList<string> ParseKeywords()
             {
                 var videoKeywordsJoined = _root.SelectToken("keywords").Value<string>();
                 return Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
@@ -68,11 +68,11 @@ namespace YoutubeExplode.Internal.Parsers
                     .ToArray();
             }
 
-            public long GetViewCount() => _root.SelectToken("views").Value<string>().StripNonDigit().ParseLong();
+            public long ParseViewCount() => _root.SelectToken("views").Value<string>().StripNonDigit().ParseLong();
 
-            public long GetLikeCount() => _root.SelectToken("likes").Value<long>();
+            public long ParseLikeCount() => _root.SelectToken("likes").Value<long>();
 
-            public long GetDislikeCount() => _root.SelectToken("dislikes").Value<long>();
+            public long ParseDislikeCount() => _root.SelectToken("dislikes").Value<long>();
         }
     }
 
