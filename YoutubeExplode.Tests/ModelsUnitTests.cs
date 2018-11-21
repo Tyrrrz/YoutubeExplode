@@ -84,15 +84,6 @@ namespace YoutubeExplode.Tests
             Assert.That(ext, Is.Not.Null.Or.Empty);
         }
 
-        [Theory]
-        public void Extensions_VideoQuality_GetVideoQualityLabel_Test(VideoQuality quality,
-            [Values(24, 30, 60)] int framerate)
-        {
-            var label = quality.GetVideoQualityLabel(framerate);
-
-            Assert.That(label, Is.Not.Null.Or.Empty);
-        }
-
         [Test]
         public void Extensions_GetUrl_Video_Test()
         {

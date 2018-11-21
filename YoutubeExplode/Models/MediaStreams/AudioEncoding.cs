@@ -1,4 +1,6 @@
-﻿namespace YoutubeExplode.Models.MediaStreams
+﻿using System;
+
+namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Audio encoding.
@@ -8,10 +10,11 @@
         /// <summary>
         /// MPEG-2 Audio Layer III.
         /// </summary>
+        [Obsolete("Not available anymore.")]
         Mp3,
 
         /// <summary>
-        /// Advanced Audio Coding.
+        /// MPEG-4 Part 3, Advanced Audio Coding (AAC).
         /// </summary>
         Aac,
 

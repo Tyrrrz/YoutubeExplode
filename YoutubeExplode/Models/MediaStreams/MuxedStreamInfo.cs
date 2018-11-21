@@ -1,42 +1,47 @@
-﻿using JetBrains.Annotations;
-using YoutubeExplode.Internal;
+﻿using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains both audio and video.
     /// </summary>
-    public class MuxedStreamInfo : MediaStreamInfo
+    public class MuxedStreamInfo : MediaStreamInfo, IHasAudio, IHasVideo
     {
-        /// <summary>
-        /// Audio encoding of the associated stream.
-        /// </summary>
+        /// <inheritdoc />
         public AudioEncoding AudioEncoding { get; }
 
-        /// <summary>
-        /// Video encoding of the associated stream.
-        /// </summary>
+        /// <inheritdoc />
         public VideoEncoding VideoEncoding { get; }
 
-        /// <summary>
-        /// Video quality of the associated stream.
-        /// </summary>
-        public VideoQuality VideoQuality { get; }
-
-        /// <summary>
-        /// Video quality label of the associated stream.
-        /// </summary>
-        [NotNull]
+        /// <inheritdoc />
         public string VideoQualityLabel { get; }
 
-        /// <summary />
-        public MuxedStreamInfo(int itag, string url, long size)
-            : base(itag, url, size)
+        /// <inheritdoc />
+        public VideoQuality VideoQuality { get; }
+
+        /// <inheritdoc />
+        public VideoResolution Resolution { get; }
+
+        /// <inheritdoc />
+        public int Framerate { get; }
+
+        /// <summary>
+        /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
+        /// </summary>
+        public MuxedStreamInfo(int itag, string url, Container container, long size, long bitrate,
+            AudioEncoding audioEncoding, VideoEncoding videoEncoding, string videoQualityLabel,
+            VideoQuality videoQuality, VideoResolution resolution, int framerate)
+            : base(itag, url, container, size, bitrate)
         {
-            AudioEncoding = ItagHelper.GetAudioEncoding(itag);
-            VideoEncoding = ItagHelper.GetVideoEncoding(itag);
-            VideoQuality = ItagHelper.GetVideoQuality(itag);
-            VideoQualityLabel = VideoQuality.GetVideoQualityLabel();
+            AudioEncoding = audioEncoding;
+            VideoEncoding = videoEncoding;
+            VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
+            VideoQuality = videoQuality;
+            Resolution = resolution;
+            Framerate = framerate.GuardNotNegative(nameof(framerate));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{Itag} ({Container}) [muxed]";
     }
 }

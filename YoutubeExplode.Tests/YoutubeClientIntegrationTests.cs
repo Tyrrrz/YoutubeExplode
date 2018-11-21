@@ -76,6 +76,17 @@ namespace YoutubeExplode.Tests
             var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
 
             Assert.That(streamInfoSet, Is.Not.Null);
+
+            foreach (var streamInfo in streamInfoSet.GetAll())
+            {
+                Assert.That(streamInfo.Bitrate, Is.GreaterThan(0));
+                Assert.That(streamInfo.Size, Is.GreaterThan(0));
+                Assert.That(streamInfo.Container, Is.Not.Null.Or.Empty);
+                Assert.That(streamInfo.Url, Is.Not.Null.Or.Empty);
+
+                if (streamInfo is IHasVideo hasVideo)
+                    Assert.That(hasVideo.VideoQualityLabel, Is.Not.Null.Or.Empty);
+            }
         }
 
         [Test]
@@ -88,12 +99,12 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_RequiresPurchase))]
-        public void YoutubeClient_GetVideoMediaStreamInfosAsync_RequiresPurchase_Test(string videoId)
+        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unplayable))]
+        public void YoutubeClient_GetVideoMediaStreamInfosAsync_Unplayable_Test(string videoId)
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
+            Assert.ThrowsAsync<VideoUnplayableException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
         }
 
         [Test]
@@ -226,6 +237,7 @@ namespace YoutubeExplode.Tests
             var channelId = await client.GetChannelIdAsync(username);
 
             Assert.That(channelId, Is.Not.Null.Or.Empty);
+            Assert.That(YoutubeClient.ValidateChannelId(channelId));
         }
 
         [Test]

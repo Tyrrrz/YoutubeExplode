@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
@@ -22,31 +20,6 @@ namespace YoutubeExplode.Models.MediaStreams
 
             // Convert to lower case string
             return container.ToString().ToLowerInvariant();
-        }
-
-        /// <summary>
-        /// Gets label for given video quality, as displayed on YouTube.
-        /// </summary>
-        public static string GetVideoQualityLabel(this VideoQuality videoQuality)
-        {
-            // Convert to string, strip non-digits and add "p"
-            return videoQuality.ToString().StripNonDigit() + "p";
-        }
-
-        /// <summary>
-        /// Gets label for given video quality and framerate, as displayed on YouTube.
-        /// </summary>
-        public static string GetVideoQualityLabel(this VideoQuality videoQuality, int framerate)
-        {
-            framerate.GuardNotNegative(nameof(framerate));
-
-            // Framerate appears only if it's above 30
-            if (framerate <= 30)
-                return videoQuality.GetVideoQualityLabel();
-
-            // YouTube rounds framerate to nearest next ten
-            var framerateRounded = (int) Math.Ceiling(framerate / 10.0) * 10;
-            return videoQuality.GetVideoQualityLabel() + framerateRounded;
         }
 
         /// <summary>
@@ -82,58 +55,23 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <summary>
-        /// Gets the muxed stream with highest video quality.
+        /// Gets the stream with highest video quality.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static MuxedStreamInfo WithHighestVideoQuality(this IEnumerable<MuxedStreamInfo> streamInfos)
+        public static T WithHighestVideoQuality<T>(this IEnumerable<T> streamInfos) where T : IHasVideo
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
             return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
         }
 
         /// <summary>
-        /// Gets the video stream with highest video quality.
+        /// Gets the stream with highest bitrate.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static VideoStreamInfo WithHighestVideoQuality(this IEnumerable<VideoStreamInfo> streamInfos)
-        {
-            streamInfos.GuardNotNull(nameof(streamInfos));
-            return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Gets the audio stream with highest bitrate.
-        /// Returns null if sequence is empty.
-        /// </summary>
-        public static AudioStreamInfo WithHighestBitrate(this IEnumerable<AudioStreamInfo> streamInfos)
+        public static T WithHighestBitrate<T>(this IEnumerable<T> streamInfos) where T : MediaStreamInfo
         {
             streamInfos.GuardNotNull(nameof(streamInfos));
             return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Gets the video stream with highest bitrate.
-        /// Returns null if sequence is empty.
-        /// </summary>
-        public static VideoStreamInfo WithHighestBitrate(this IEnumerable<VideoStreamInfo> streamInfos)
-        {
-            streamInfos.GuardNotNull(nameof(streamInfos));
-            return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Gets the expiry date of the stream URL.
-        /// Returns null if the expiry date could not be parsed.
-        /// </summary>
-        public static DateTimeOffset? GetUrlExpiryDate(this MediaStreamInfo streamInfo)
-        {
-            streamInfo.GuardNotNull(nameof(streamInfo));
-
-            var expiryDateUnix = Regex.Match(streamInfo.Url, @"expire[=/](\d+)").Groups[1].Value.ParseLongOrDefault();
-            if (expiryDateUnix == 0L)
-                return null;
-
-            return new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero).AddSeconds(expiryDateUnix);
         }
     }
 }

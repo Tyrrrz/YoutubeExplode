@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using YoutubeExplode.Internal;
 
 namespace YoutubeExplode
@@ -10,7 +9,6 @@ namespace YoutubeExplode
     public partial class YoutubeClient : IYoutubeClient
     {
         private readonly HttpClient _httpClient;
-        private readonly Dictionary<string, PlayerSource> _playerSourceCache;
 
         /// <summary>
         /// Creates an instance of <see cref="YoutubeClient"/>.
@@ -18,7 +16,6 @@ namespace YoutubeExplode
         public YoutubeClient(HttpClient httpClient)
         {
             _httpClient = httpClient.GuardNotNull(nameof(httpClient));
-            _playerSourceCache = new Dictionary<string, PlayerSource>();
         }
 
         /// <summary>

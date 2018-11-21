@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
@@ -35,10 +34,6 @@ namespace YoutubeExplode
             // Extract info
             var channelId = parser.ParseChannelId();
 
-            // Validate channel ID to make sure it was extracted successfully
-            if (!ValidateChannelId(channelId))
-                throw new ParseException("Could not parse channel ID.");
-
             return channelId;
         }
 
@@ -58,7 +53,7 @@ namespace YoutubeExplode
             // Get first video
             var video = uploads.FirstOrDefault();
             if (video == null)
-                throw new ParseException("Channel does not have any videos.");
+                throw new InvalidOperationException("Channel contains no videos.");
 
             // Get video channel
             var channel = await GetVideoAuthorChannelAsync(video.Id).ConfigureAwait(false);

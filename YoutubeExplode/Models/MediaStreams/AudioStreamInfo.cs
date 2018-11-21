@@ -1,28 +1,24 @@
-﻿using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains only audio.
     /// </summary>
-    public class AudioStreamInfo : MediaStreamInfo
+    public class AudioStreamInfo : MediaStreamInfo, IHasAudio
     {
-        /// <summary>
-        /// Bitrate (bit/s) of the associated stream.
-        /// </summary>
-        public long Bitrate { get; }
-
-        /// <summary>
-        /// Audio encoding of the associated stream.
-        /// </summary>
+        /// <inheritdoc />
         public AudioEncoding AudioEncoding { get; }
 
-        /// <summary />
-        public AudioStreamInfo(int itag, string url, long size, long bitrate)
-            : base(itag, url, size)
+        /// <summary>
+        /// Initializes an instance of <see cref="AudioStreamInfo"/>.
+        /// </summary>
+        public AudioStreamInfo(int itag, string url, Container container, long size, long bitrate,
+            AudioEncoding audioEncoding)
+            : base(itag, url, container, size, bitrate)
         {
-            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
-            AudioEncoding = ItagHelper.GetAudioEncoding(itag);
+            AudioEncoding = audioEncoding;
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{Itag} ({Container}) [audio]";
     }
 }

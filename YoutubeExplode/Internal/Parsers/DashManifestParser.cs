@@ -20,7 +20,8 @@ namespace YoutubeExplode.Internal.Parsers
 
             // Filter out partial streams
             streamInfosXml = streamInfosXml.Where(s =>
-                s.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value.Contains("sq/") != true);
+                s.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value.Contains("sq/") !=
+                true);
 
             return streamInfosXml.Select(x => new StreamInfoParser(x));
         }
@@ -44,6 +45,10 @@ namespace YoutubeExplode.Internal.Parsers
             public long ParseContentLength() => Regex.Match(ParseUrl(), @"clen[/=](\d+)").Groups[1].Value.ParseLong();
 
             public long ParseBitrate() => (long) _root.Attribute("bandwidth");
+
+            public string ParseContainer() => Regex.Match(ParseUrl(), @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value.UrlDecode();
+
+            public string ParseEncoding() => (string) _root.Attribute("codecs");
 
             public bool ParseIsAudioOnly() => _root.Element("AudioChannelConfiguration") != null;
 

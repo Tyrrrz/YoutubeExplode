@@ -15,10 +15,7 @@ namespace YoutubeExplode.Internal.Parsers
 
         // Video parser is exactly the same as in playlists
         public IEnumerable<PlaylistAjaxParser.VideoParser> GetVideos()
-        {
-            var videosJson = _root["video"];
-            return videosJson.EmptyIfNull().Select(t => new PlaylistAjaxParser.VideoParser(t));
-        }
+            => _root.SelectToken("video").EmptyIfNull().Select(t => new PlaylistAjaxParser.VideoParser(t));
     }
 
     internal partial class SearchResultsAjaxParser

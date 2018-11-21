@@ -29,13 +29,21 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public long Size { get; }
 
-        /// <summary />
-        protected MediaStreamInfo(int itag, string url, long size)
+        /// <summary>
+        /// Video bitrate (bits/s) of the associated stream.
+        /// </summary>
+        public long Bitrate { get; }
+
+        /// <summary>
+        /// Initializes an instance of <see cref="MediaStreamInfo"/>.
+        /// </summary>
+        protected MediaStreamInfo(int itag, string url, Container container, long size, long bitrate)
         {
             Itag = itag;
             Url = url.GuardNotNull(nameof(url));
-            Container = ItagHelper.GetContainer(itag);
+            Container = container;
             Size = size.GuardNotNegative(nameof(size));
+            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
         }
 
         /// <inheritdoc />
