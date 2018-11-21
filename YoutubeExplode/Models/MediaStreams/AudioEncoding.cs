@@ -14,7 +14,7 @@ namespace YoutubeExplode.Models.MediaStreams
         Mp3,
 
         /// <summary>
-        /// Advanced Audio Coding.
+        /// MPEG-4 Part 3, Advanced Audio Coding (AAC).
         /// </summary>
         Aac,
 

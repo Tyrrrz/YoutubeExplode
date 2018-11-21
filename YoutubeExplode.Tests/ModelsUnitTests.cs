@@ -80,6 +80,7 @@ namespace YoutubeExplode.Tests
         public void Extensions_Container_GetFileExtension_Test(Container container)
         {
             var ext = container.GetFileExtension();
+
             Assert.That(ext, Is.Not.Null.Or.Empty);
         }
 

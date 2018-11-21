@@ -164,7 +164,7 @@ namespace YoutubeExplode
                 var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
                 var width = streamInfoParser.ParseWidth();
                 var height = streamInfoParser.ParseHeight();
-                var framerate = streamInfoParser.ParseFramerate();
+                var framerate = 0; // muxed streams don't provide framerate info
 
                 // Determine container from mime type
                 var container = ContainerConverter.ContainerFromString(containerStr);
@@ -195,13 +195,6 @@ namespace YoutubeExplode
                     // Average bitrate = content length divided by duration
                     var duration = streamInfoParser.ParseDuration();
                     bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
-                }
-
-                // If framerate is no set - guess it
-                if (framerate <= 0)
-                {
-                    // TODO: find a better solution
-                    framerate = 25;
                 }
 
                 var resolution = new VideoResolution(width, height);
@@ -239,7 +232,7 @@ namespace YoutubeExplode
                 {
                     // Average bitrate = content length divided by duration
                     var duration = streamInfoParser.ParseDuration();
-                    bitrate = (long)(0.001 * contentLength / (duration.TotalMinutes * 0.0075));
+                    bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
                 // If audio-only

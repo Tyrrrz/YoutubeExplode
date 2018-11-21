@@ -20,7 +20,7 @@ namespace YoutubeExplode.Models.MediaStreams
         public string Url { get; }
 
         /// <summary>
-        /// Container of the associated stream.
+        /// Container type of the associated stream.
         /// </summary>
         public Container Container { get; }
 
