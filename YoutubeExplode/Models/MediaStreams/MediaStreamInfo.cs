@@ -42,8 +42,8 @@ namespace YoutubeExplode.Models.MediaStreams
             Itag = itag;
             Url = url.GuardNotNull(nameof(url));
             Container = container;
-            Size = size.GuardPositive(nameof(size));
-            Bitrate = bitrate.GuardPositive(nameof(bitrate));
+            Size = size.GuardNotNegative(nameof(size));
+            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
         }
 
         /// <inheritdoc />

@@ -197,7 +197,15 @@ namespace YoutubeExplode
                     bitrate = (long) (0.001 * contentLength / (duration.TotalMinutes * 0.0075));
                 }
 
+                // If framerate is no set - guess it
+                if (framerate <= 0)
+                {
+                    // TODO: find a better solution
+                    framerate = 25;
+                }
+
                 var resolution = new VideoResolution(width, height);
+
                 muxedStreamInfoMap[itag] = new MuxedStreamInfo(itag, url, container, contentLength, bitrate,
                     audioEncoding, videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
             }
