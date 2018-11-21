@@ -120,7 +120,7 @@ namespace YoutubeExplode.Internal.Parsers
 
             public int ParseHeight() => _root.SelectToken("height").Value<int>();
 
-            public int ParseFramerate() => _root.SelectToken("fps").Value<int>();
+            public int ParseFramerate() => _root.SelectToken("fps")?.Value<int>() ?? -1;
 
             public string ParseVideoQualityLabel() => _root.SelectToken("qualityLabel").Value<string>();
 
