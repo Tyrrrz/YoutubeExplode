@@ -155,7 +155,7 @@ namespace DemoWpf.ViewModels
                 FileName = defaultFileName,
                 Filter = $"{fileExt} files|*.{fileExt}|All Files|*.*",
                 AddExtension = true,
-                DefaultExt = Path.GetExtension(defaultFileName)
+                DefaultExt = fileExt
             };
 
             // Select file path
