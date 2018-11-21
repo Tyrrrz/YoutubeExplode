@@ -147,12 +147,13 @@ namespace DemoWpf.ViewModels
         private async void DownloadMediaStream(MediaStreamInfo info)
         {
             // Create dialog
-            var defaultFileName = $"{Video.Title}.{info.Container}"
+            var fileExt = info.Container.GetFileExtension();
+            var defaultFileName = $"{Video.Title}.{fileExt}"
                 .Replace(Path.GetInvalidFileNameChars(), '_');
             var sfd = new SaveFileDialog
             {
                 FileName = defaultFileName,
-                Filter = $"{info.Container} files|*.{info.Container}|All Files|*.*",
+                Filter = $"{fileExt} files|*.{fileExt}|All Files|*.*",
                 AddExtension = true,
                 DefaultExt = Path.GetExtension(defaultFileName)
             };

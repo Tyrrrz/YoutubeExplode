@@ -76,7 +76,7 @@ namespace DemoConsole
             Console.WriteLine();
 
             // Compose file name, based on metadata
-            var fileExtension = streamInfo.Container;
+            var fileExtension = streamInfo.Container.GetFileExtension();
             var fileName = $"{video.Title}.{fileExtension}";
 
             // Replace illegal characters in file name

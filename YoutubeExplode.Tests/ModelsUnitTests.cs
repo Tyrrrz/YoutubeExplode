@@ -76,6 +76,13 @@ namespace YoutubeExplode.Tests
             Assert.That(vr2.GetHashCode(), Is.Not.EqualTo(vr3.GetHashCode()));
         }
 
+        [Theory]
+        public void Extensions_Container_GetFileExtension_Test(Container container)
+        {
+            var ext = container.GetFileExtension();
+            Assert.That(ext, Is.Not.Null.Or.Empty);
+        }
+
         [Test]
         public void Extensions_GetUrl_Video_Test()
         {
