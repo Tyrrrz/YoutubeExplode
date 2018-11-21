@@ -11,10 +11,14 @@
         /// <summary>
         /// Initializes an instance of <see cref="AudioStreamInfo"/>.
         /// </summary>
-        public AudioStreamInfo(string url, long size, long bitrate, Container container, AudioEncoding audioEncoding) 
-            : base(url, size, bitrate, container)
+        public AudioStreamInfo(int itag, string url, Container container, long size, long bitrate,
+            AudioEncoding audioEncoding)
+            : base(itag, url, container, size, bitrate)
         {
             AudioEncoding = audioEncoding;
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{Itag} ({Container}) [audio]";
     }
 }

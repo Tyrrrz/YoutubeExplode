@@ -33,10 +33,10 @@ namespace YoutubeExplode.Models.MediaStreams
         /// Null if not a live stream.
         /// </summary>
         [CanBeNull]
-        public string HlsManifestUrl { get; }
+        public string HlsLiveStreamUrl { get; }
 
         /// <summary>
-        /// Expiry date for streams in this set.
+        /// Expiry date for this information.
         /// </summary>
         public DateTimeOffset ValidUntil { get; }
 
@@ -44,13 +44,13 @@ namespace YoutubeExplode.Models.MediaStreams
         public MediaStreamInfoSet(IReadOnlyList<MuxedStreamInfo> muxed,
             IReadOnlyList<AudioStreamInfo> audio,
             IReadOnlyList<VideoStreamInfo> video,
-            string hlsManifestUrl, 
+            string hlsLiveStreamUrl, 
             DateTimeOffset validUntil)
         {
             Muxed = muxed.GuardNotNull(nameof(muxed));
             Audio = audio.GuardNotNull(nameof(audio));
             Video = video.GuardNotNull(nameof(video));
-            HlsManifestUrl = hlsManifestUrl;
+            HlsLiveStreamUrl = hlsLiveStreamUrl;
             ValidUntil = validUntil;
         }
     }

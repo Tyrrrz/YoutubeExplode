@@ -28,10 +28,10 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
         /// </summary>
-        public MuxedStreamInfo(string url, long size, long bitrate, Container container, AudioEncoding audioEncoding,
-            VideoEncoding videoEncoding, string videoQualityLabel, VideoQuality videoQuality, VideoResolution resolution,
-            int framerate)
-            : base(url, size, bitrate, container)
+        public MuxedStreamInfo(int itag, string url, Container container, long size, long bitrate,
+            AudioEncoding audioEncoding, VideoEncoding videoEncoding, string videoQualityLabel,
+            VideoQuality videoQuality, VideoResolution resolution, int framerate)
+            : base(itag, url, container, size, bitrate)
         {
             AudioEncoding = audioEncoding;
             VideoEncoding = videoEncoding;
@@ -40,5 +40,8 @@ namespace YoutubeExplode.Models.MediaStreams
             Resolution = resolution;
             Framerate = framerate.GuardNotNegative(nameof(framerate));
         }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{Itag} ({Container}) [muxed]";
     }
 }

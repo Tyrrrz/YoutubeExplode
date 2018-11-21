@@ -153,10 +153,8 @@ namespace YoutubeExplode
             // Parse muxed stream infos
             foreach (var streamInfoParser in parser.GetMuxedStreamInfos())
             {
-                // Extract itag to uniquely identify this stream
-                var itag = streamInfoParser.ParseItag();
-
                 // Extract info
+                var itag = streamInfoParser.ParseItag();
                 var url = streamInfoParser.ParseUrl();
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
@@ -200,17 +198,15 @@ namespace YoutubeExplode
                 }
 
                 var resolution = new VideoResolution(width, height);
-                muxedStreamInfoMap[itag] = new MuxedStreamInfo(url, contentLength, bitrate, container, audioEncoding,
-                    videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
+                muxedStreamInfoMap[itag] = new MuxedStreamInfo(itag, url, container, contentLength, bitrate,
+                    audioEncoding, videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
             }
 
             // Parse adaptive stream infos
             foreach (var streamInfoParser in parser.GetAdaptiveStreamInfos())
             {
-                // Extract itag to uniquely identify this stream
-                var itag = streamInfoParser.ParseItag();
-
                 // Extract info
+                var itag = streamInfoParser.ParseItag();
                 var url = streamInfoParser.ParseUrl();
                 var contentLength = streamInfoParser.ParseContentLength();
                 var bitrate = streamInfoParser.ParseBitrate();
@@ -248,7 +244,8 @@ namespace YoutubeExplode
                     var audioEncoding = AudioEncodingConverter.AudioEncodingFromCodec(audioCodec);
 
                     // Add stream to map
-                    audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, container, audioEncoding);
+                    audioStreamInfoMap[itag] =
+                        new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
                 }
                 // If video-only
                 else
@@ -268,8 +265,8 @@ namespace YoutubeExplode
 
                     var resolution = new VideoResolution(width, height);
 
-                    videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, container, videoEncoding,
-                        videoQualityLabel, videoQuality, resolution, framerate);
+                    videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate,
+                        videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
                 }
             }
 
@@ -305,8 +302,8 @@ namespace YoutubeExplode
                         var audioEncoding = AudioEncodingConverter.AudioEncodingFromCodec(audioCodec);
 
                         // Add stream to map
-                        audioStreamInfoMap[itag] = new AudioStreamInfo(url, contentLength, bitrate, container,
-                            audioEncoding);
+                        audioStreamInfoMap[itag] =
+                            new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
                     }
                     // If video-only
                     else
@@ -327,7 +324,8 @@ namespace YoutubeExplode
                         var videoQualityLabel = VideoQualityConverter.VideoQualityToLabel(videoQuality, framerate);
 
                         var resolution = new VideoResolution(width, height);
-                        videoStreamInfoMap[itag] = new VideoStreamInfo(url, contentLength, bitrate, container,
+
+                        videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate,
                             videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
                     }
                 }

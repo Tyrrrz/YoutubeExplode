@@ -9,10 +9,20 @@ namespace YoutubeExplode.Models.MediaStreams
     public abstract class MediaStreamInfo
     {
         /// <summary>
+        /// Unique tag that identifies the properties of the associated stream.
+        /// </summary>
+        public int Itag { get; }
+
+        /// <summary>
         /// URL of the endpoint that serves the associated stream.
         /// </summary>
         [NotNull]
         public string Url { get; }
+
+        /// <summary>
+        /// Container of the associated stream.
+        /// </summary>
+        public Container Container { get; }
 
         /// <summary>
         /// Content length (bytes) of the associated stream.
@@ -25,22 +35,18 @@ namespace YoutubeExplode.Models.MediaStreams
         public long Bitrate { get; }
 
         /// <summary>
-        /// Container of the associated stream.
-        /// </summary>
-        public Container Container { get; }
-
-        /// <summary>
         /// Initializes an instance of <see cref="MediaStreamInfo"/>.
         /// </summary>
-        protected MediaStreamInfo(string url, long size, long bitrate, Container container)
+        protected MediaStreamInfo(int itag, string url, Container container, long size, long bitrate)
         {
+            Itag = itag;
             Url = url.GuardNotNull(nameof(url));
+            Container = container;
             Size = size.GuardPositive(nameof(size));
             Bitrate = bitrate.GuardPositive(nameof(bitrate));
-            Container = container;
         }
 
         /// <inheritdoc />
-        public override string ToString() => Container.ToString();
+        public override string ToString() => $"{Itag} ({Container})";
     }
 }
