@@ -5,19 +5,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models.ClosedCaptions;
 
 namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<ClosedCaptionTrackAjaxParser> GetClosedCaptionTrackAjaxParserAsync(string url)
-        {
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-            return ClosedCaptionTrackAjaxParser.Initialize(raw);
-        }
-
         /// <inheritdoc />
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo info)
         {

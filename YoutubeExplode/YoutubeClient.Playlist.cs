@@ -2,21 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<PlaylistAjaxParser> GetPlaylistAjaxParserAsync(string playlistId, int index)
-        {
-            var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-
-            return PlaylistAjaxParser.Initialize(raw);
-        }
-
         /// <inheritdoc />
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
         {

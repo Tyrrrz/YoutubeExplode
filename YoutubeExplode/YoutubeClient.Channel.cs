@@ -3,23 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<UserPageParser> GetUserPageParserAsync(string username)
-        {
-            username = username.UrlEncode();
-
-            var url = $"https://www.youtube.com/user/{username}";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-
-            return UserPageParser.Initialize(raw);
-        }
-
         /// <inheritdoc />
         public async Task<string> GetChannelIdAsync(string username)
         {
@@ -29,7 +18,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
             // Get parser
-            var parser = await GetUserPageParserAsync(username).ConfigureAwait(false);
+            var parser = await GetChannelPageParserByUsernameAsync(username).ConfigureAwait(false);
 
             // Parse info
             var channelId = parser.ParseChannelId();

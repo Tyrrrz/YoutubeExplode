@@ -26,6 +26,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string ParseAuthor() => _root.SelectToken("videoDetails.author").Value<string>();
 
+        public string ParseChannelId() => _root.SelectToken("videoDetails.channelId").Value<string>();
+
         public string ParseTitle() => _root.SelectToken("videoDetails.title").Value<string>();
 
         public TimeSpan ParseDuration()

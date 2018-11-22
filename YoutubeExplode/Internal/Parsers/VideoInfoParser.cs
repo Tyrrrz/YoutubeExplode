@@ -14,6 +14,7 @@ namespace YoutubeExplode.Internal.Parsers
 
         public PlayerResponseParser GetPlayerResponse()
         {
+            // Extract player response
             var playerResponseRaw = _root["player_response"];
             var playerResponseJson = JToken.Parse(playerResponseRaw);
 

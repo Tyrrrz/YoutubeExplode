@@ -79,7 +79,7 @@ namespace YoutubeExplode.Internal.Parsers
             var configJson = JToken.Parse(configRaw);
 
             // Extract player response
-            var playerResponseRaw = configJson.SelectToken("args.player_response").Value<string>();
+            var playerResponseRaw = configJson.SelectToken("args.player_response").Value<string>(); // it's json encoded as string inside json
             var playerResponseJson = JToken.Parse(playerResponseRaw);
 
             return new PlayerResponseParser(playerResponseJson);

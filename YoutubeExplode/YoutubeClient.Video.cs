@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Helpers;
-using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
@@ -14,70 +12,6 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<VideoEmbedPageParser> GetVideoEmbedPageParserAsync(string videoId)
-        {
-            var url = $"https://www.youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-
-            return VideoEmbedPageParser.Initialize(raw);
-        }
-
-        private async Task<VideoWatchPageParser> GetVideoWatchPageParserAsync(string videoId)
-        {
-            var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-
-            return VideoWatchPageParser.Initialize(raw);
-        }
-
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string el = "embedded")
-        {
-            // This parameter does magic and a lot of videos don't work without it
-            var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
-
-            var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&eurl={eurl}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-            
-            return VideoInfoParser.Initialize(raw);
-        }
-
-        private async Task<PlayerResponseParser> GetPlayerResponseParserAsync(string videoId, bool ensureIsPlayable = false)
-        {
-            // Get player response parser via video info
-            var videoInfoParser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
-            var playerResponseParser = videoInfoParser.GetPlayerResponse();
-
-            // If the video is not available - throw exception
-            if (!playerResponseParser.ParseIsAvailable())
-            {
-                var errorReason = playerResponseParser.ParseErrorReason();
-                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable. {errorReason}");
-            }
-
-            // If requested to ensure playability but the video is not playable - try again
-            if (ensureIsPlayable && !playerResponseParser.ParseIsPlayable())
-            {
-                // Get player response parser via watch page
-                var watchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
-                playerResponseParser = watchPageParser.GetPlayerResponse();
-
-                // If the video is still not playable - throw exception
-                if (!playerResponseParser.ParseIsPlayable())
-                {
-                    var errorReason = playerResponseParser.ParseErrorReason();
-                    throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. {errorReason}");
-                }
-            }
-
-            return playerResponseParser;
-        }
-
-        private async Task<DashManifestParser> GetDashManifestParserAsync(string dashManifestUrl)
-        {
-            var raw = await _httpClient.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
-            return DashManifestParser.Initialize(raw);
-        }
-
         /// <inheritdoc />
         public async Task<Video> GetVideoAsync(string videoId)
         {
@@ -120,16 +54,18 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get player response parser just to check for errors
-            await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
+            // Get player response parser
+            var playerResponseParser = await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
 
-            // Get parser
-            var parser = await GetVideoEmbedPageParserAsync(videoId).ConfigureAwait(false);
+            // Get channel ID
+            var id = playerResponseParser.ParseChannelId();
+
+            // Get channel page parser
+            var channelPageParser = await GetChannelPageParserAsync(id).ConfigureAwait(false);
 
             // Parse info
-            var id = parser.ParseChannelId();
-            var title = parser.ParseChannelTitle();
-            var logoUrl = parser.ParseChannelLogoUrl();
+            var title = channelPageParser.ParseChannelTitle();
+            var logoUrl = channelPageParser.ParseChannelLogoUrl();
 
             return new Channel(id, title, logoUrl);
         }

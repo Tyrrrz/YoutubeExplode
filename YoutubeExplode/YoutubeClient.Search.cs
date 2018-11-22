@@ -1,25 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<SearchResultsAjaxParser> GetSearchResultsAjaxParserAsync(string query, int page)
-        {
-            query = query.UrlEncode();
-
-            // Don't ensure success here so that empty pages could be parsed
-
-            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url, false).ConfigureAwait(false);
-
-            return SearchResultsAjaxParser.Initialize(raw);
-        }
-
         /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> SearchVideosAsync(string query, int maxPages)
         {
@@ -31,7 +18,7 @@ namespace YoutubeExplode
             for (var page = 1; page <= maxPages; page++)
             {
                 // Get parser
-                var parser = await GetSearchResultsAjaxParserAsync(query, page).ConfigureAwait(false);
+                var parser = await GetPlaylistAjaxParserForSearchAsync(query, page).ConfigureAwait(false);
 
                 // Parse videos
                 var countDelta = 0;
