@@ -24,13 +24,13 @@ namespace YoutubeExplode
 
         private async Task<VideoWatchPageParser> GetVideoWatchPageParserAsync(string videoId)
         {
-            var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&hl=en";
+            var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return VideoWatchPageParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string el)
+        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string el = "embedded")
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
@@ -41,33 +41,35 @@ namespace YoutubeExplode
             return VideoInfoParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, bool ensureIsPlayable = false)
+        private async Task<PlayerResponseParser> GetPlayerResponseParserAsync(string videoId, bool ensureIsPlayable = false)
         {
-            // Get parser with 'el=embedded'
-            var parser = await GetVideoInfoParserAsync(videoId, "embedded").ConfigureAwait(false);
+            // Get player response parser via video info
+            var videoInfoParser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
+            var playerResponseParser = videoInfoParser.GetPlayerResponse();
 
             // If the video is not available - throw exception
-            if (!parser.ParseIsAvailable())
+            if (!playerResponseParser.ParseIsAvailable())
             {
-                var errorReason = parser.ParseErrorReason();
+                var errorReason = playerResponseParser.ParseErrorReason();
                 throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable. {errorReason}");
             }
 
             // If requested to ensure playability but the video is not playable - try again
-            if (ensureIsPlayable && !parser.ParseIsPlayable())
+            if (ensureIsPlayable && !playerResponseParser.ParseIsPlayable())
             {
-                // Retry with "el=detailpage"
-                parser = await GetVideoInfoParserAsync(videoId, "detailpage").ConfigureAwait(false);
+                // Get player response parser via watch page
+                var watchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
+                playerResponseParser = watchPageParser.GetPlayerResponse();
 
                 // If the video is still not playable - throw exception
-                if (!parser.ParseIsPlayable())
+                if (!playerResponseParser.ParseIsPlayable())
                 {
-                    var errorReason = parser.ParseErrorReason();
+                    var errorReason = playerResponseParser.ParseErrorReason();
                     throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. {errorReason}");
                 }
             }
 
-            return parser;
+            return playerResponseParser;
         }
 
         private async Task<DashManifestParser> GetDashManifestParserAsync(string dashManifestUrl)
@@ -84,15 +86,14 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info parser
-            var videoInfoParser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
+            // Get player response parser
+            var playerResponseParser = await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
 
             // Parse info
-            var author = videoInfoParser.ParseAuthor();
-            var title = videoInfoParser.ParseTitle();
-            var duration = videoInfoParser.ParseDuration();
-            var keywords = videoInfoParser.ParseKeywords();
-            var viewCount = videoInfoParser.ParseViewCount();
+            var author = playerResponseParser.ParseAuthor();
+            var title = playerResponseParser.ParseTitle();
+            var duration = playerResponseParser.ParseDuration();
+            var keywords = playerResponseParser.ParseKeywords();
 
             // Get video watch page parser
             var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
@@ -100,6 +101,7 @@ namespace YoutubeExplode
             // Parse info
             var uploadDate = videoWatchPageParser.ParseUploadDate();
             var description = videoWatchPageParser.ParseDescription();
+            var viewCount = videoWatchPageParser.ParseViewCount();
             var likeCount = videoWatchPageParser.ParseLikeCount();
             var dislikeCount = videoWatchPageParser.ParseDislikeCount();
 
@@ -118,8 +120,8 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info parser just to assert that the video exists
-            await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
+            // Get player response parser just to check for errors
+            await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
 
             // Get parser
             var parser = await GetVideoEmbedPageParserAsync(videoId).ConfigureAwait(false);
@@ -144,7 +146,7 @@ namespace YoutubeExplode
             var requestedAt = DateTimeOffset.Now;
 
             // Get parser
-            var parser = await GetVideoInfoParserAsync(videoId, true).ConfigureAwait(false);
+            var parser = await GetPlayerResponseParserAsync(videoId, true).ConfigureAwait(false);
 
             // Prepare stream info maps
             var muxedStreamInfoMap = new Dictionary<int, MuxedStreamInfo>();
@@ -341,8 +343,8 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info parser
-            var parser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
+            // Get parser
+            var parser = await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
 
             // Parse closed caption track infos
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();

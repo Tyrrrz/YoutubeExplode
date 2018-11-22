@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
+using Newtonsoft.Json.Linq;
 
 namespace YoutubeExplode.Internal.Parsers
 {
@@ -59,11 +61,29 @@ namespace YoutubeExplode.Internal.Parsers
             return buffer.ToString();
         }
 
-        public long ParseLikeCount() => _root.QuerySelector("button.like-button-renderer-like-button").Text()
-            .StripNonDigit().ParseLongOrDefault();
+        public long ParseViewCount() => _root.QuerySelector("meta[itemprop=\"interactionCount\"]")
+            ?.GetAttribute("content").ParseLongOrDefault() ?? 0;
 
-        public long ParseDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button").Text()
-            .StripNonDigit().ParseLongOrDefault();
+        public long ParseLikeCount() => _root.QuerySelector("button.like-button-renderer-like-button")?.Text()
+            .StripNonDigit().ParseLongOrDefault() ?? 0;
+
+        public long ParseDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text()
+            .StripNonDigit().ParseLongOrDefault() ?? 0;
+
+        public PlayerResponseParser GetPlayerResponse()
+        {
+            // Parse config
+            var configRaw = Regex.Match(_root.Source.Text,
+                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                .Groups["Json"].Value;
+            var configJson = JToken.Parse(configRaw);
+
+            // Extract player response
+            var playerResponseRaw = configJson.SelectToken("args.player_response").Value<string>();
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
+
+            return new PlayerResponseParser(playerResponseJson);
+        }
     }
 
     internal partial class VideoWatchPageParser
