@@ -27,7 +27,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available))]
         public async Task YoutubeClient_GetVideoAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -39,7 +39,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Unavailable))]
         public void YoutubeClient_GetVideoAsync_Unavailable_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -48,7 +48,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available))]
         public async Task YoutubeClient_GetVideoAuthorChannelAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -59,7 +59,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Unavailable))]
         public void YoutubeClient_GetVideoAuthorChannelAsync_Unavailable_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -68,7 +68,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Playable))]
         public async Task YoutubeClient_GetVideoMediaStreamInfosAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -79,7 +79,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Unavailable))]
         public void YoutubeClient_GetVideoMediaStreamInfosAsync_Unavailable_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -88,7 +88,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unplayable))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Unplayable))]
         public void YoutubeClient_GetVideoMediaStreamInfosAsync_Unplayable_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -97,7 +97,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Playable))]
         public async Task YoutubeClient_GetVideoClosedCaptionTrackInfosAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -108,7 +108,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_Unavailable))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Unavailable))]
         public void YoutubeClient_GetVideoClosedCaptionTrackInfosAsync_Unavailable_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -117,7 +117,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Playable))]
         public async Task YoutubeClient_GetMediaStreamAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -137,7 +137,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Playable))]
         public async Task YoutubeClient_DownloadMediaStreamAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -156,7 +156,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_HasClosedCaptions))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Playable_WithClosedCaptions))]
         public async Task YoutubeClient_GetClosedCaptionTrackAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -170,7 +170,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoIds_HasClosedCaptions))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoIds_Valid_Available_Playable_WithClosedCaptions))]
         public async Task YoutubeClient_DownloadClosedCaptionTrackAsync_Test(string videoId)
         {
             var client = new YoutubeClient();
@@ -189,7 +189,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetPlaylistIds_Valid))]
         public async Task YoutubeClient_GetPlaylistAsync_Test(string playlistId)
         {
             // TODO: this should somehow verify video count
@@ -203,7 +203,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetPlaylistIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetPlaylistIds_Valid))]
         public async Task YoutubeClient_GetPlaylistAsync_Truncated_Test(string playlistId)
         {
             const int pageLimit = 1;
@@ -218,7 +218,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetUsernames))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetUsernames_Valid))]
         public async Task YoutubeClient_GetChannelIdAsync_Test(string username)
         {
             var client = new YoutubeClient();
@@ -230,7 +230,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetChannelIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetChannelIds_Valid))]
         public async Task YoutubeClient_GetChannelAsync_Test(string channelId)
         {
             var client = new YoutubeClient();
@@ -242,7 +242,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetChannelIds))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetChannelIds_Valid))]
         public async Task YoutubeClient_GetChannelUploadsAsync_Test(string channelId)
         {
             var client = new YoutubeClient();
@@ -253,7 +253,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Test]
-        [TestCaseSource(typeof(Data), nameof(Data.GetVideoSearchQueries))]
+        [TestCaseSource(typeof(TestData), nameof(TestData.GetVideoSearchQueries))]
         public async Task YoutubeClient_SearchVideosAsync_Test(string query)
         {
             var client = new YoutubeClient();
