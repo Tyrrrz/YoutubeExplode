@@ -17,10 +17,10 @@ namespace YoutubeExplode.Internal.Helpers
             // Find the video quality by height (highest video quality that has height below or equal to given)
             var matchingHeight = HeightToVideoQualityMap.Keys.LastOrDefault(h => h <= height);
 
-            // If found - return video quality
+            // Return video quality
             return matchingHeight > 0
                 ? HeightToVideoQualityMap[matchingHeight] // if found - return matching quality
-                : HeightToVideoQualityMap.Values.Last(); // otherwise return highest available quality
+                : HeightToVideoQualityMap.Values.First(); // otherwise return lowest available quality
         }
 
         public static VideoQuality VideoQualityFromLabel(string label)
