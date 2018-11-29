@@ -1,10 +1,12 @@
 ### v4.6 (23-Nov-2018)
 
-- Switched majority of video-related parsing to a new approach, which allows circumventing signature deciphering, provides more info, and is marginally faster and more consistent.
+- Switched majority of video-related parsing to a new approach, which allows circumventing signature deciphering, provides more info, and is marginally faster and more consistent. This makes `GetVideoMediaStreamInfosAsync` complete twice as fast, on average.
 - Switched from itag-based property mapping to manual string parsing, which should be more stable in the long run.
+- Added `MediaStreamInfoSet.ValidUntil` property which can be used to determine when the contained streams will expire.
 - Fixed an issue where controversial videos could not be parsed.
 - Removed `User-Agent` header from default request headers.
 - Removed `VideoQuality.GetVideoQualityLabel` extension method.
+- Removed `MediaStreamInfo.GetUrlExpiryDate` extension method.
 - Removed `VideoRequiresPurchaseException` and replaced it with `VideoUnplayableException` which covers a wider spectrum of errors.
 - `VideoUnavailableException` no longer has properties for error code and error reason. Error code was basically useless so it was removed, error reason is now part of the `Message` property.
 - Removed `ParseException` entirely.
