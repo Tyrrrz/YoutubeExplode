@@ -104,4 +104,3 @@ var videoAuthor = video.Author; // "Igorrr Official"
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [NUnit](https://github.com/nunit/nunit)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
-- [Tyrrrz.WpfExtensions](https://github.com/Tyrrrz/WpfExtensions)

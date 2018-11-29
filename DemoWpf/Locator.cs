@@ -1,6 +1,6 @@
-﻿using DemoWpf.ViewModels;
+﻿using CommonServiceLocator;
+using DemoWpf.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 
 namespace DemoWpf
 {

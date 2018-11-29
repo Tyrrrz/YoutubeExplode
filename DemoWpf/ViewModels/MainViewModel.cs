@@ -150,6 +150,7 @@ namespace DemoWpf.ViewModels
             var fileExt = info.Container.GetFileExtension();
             var defaultFileName = $"{Video.Title}.{fileExt}"
                 .Replace(Path.GetInvalidFileNameChars(), '_');
+
             var sfd = new SaveFileDialog
             {
                 FileName = defaultFileName,
@@ -180,6 +181,7 @@ namespace DemoWpf.ViewModels
             // Create dialog
             var defaultFileName = $"{Video.Title}.{info.Language.Name}.srt"
                 .Replace(Path.GetInvalidFileNameChars(), '_');
+
             var sfd = new SaveFileDialog
             {
                 FileName = defaultFileName,
