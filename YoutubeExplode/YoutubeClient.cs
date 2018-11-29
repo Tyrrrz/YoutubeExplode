@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -93,20 +94,48 @@ namespace YoutubeExplode
 
         private async Task<ChannelPageParser> GetChannelPageParserAsync(string channelId)
         {
-            var url = $"https://www.youtube.com/channel/{channelId}";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
 
-            return ChannelPageParser.Initialize(raw);
+            // Retry up to 5 times because sometimes the response has random errors
+            for (var retry = 0; retry < 5; retry++)
+            {                
+                var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+                var parser = ChannelPageParser.Initialize(raw);
+
+                // If successful - return
+                if (parser.ParseIsAvailable())
+                    return parser;
+
+                // Otherwise put a delay before trying again
+                await Task.Delay(150).ConfigureAwait(false);
+            }
+
+            // Throw exception
+            throw new InvalidDataException("Could not get channel page.");
         }
 
         private async Task<ChannelPageParser> GetChannelPageParserByUsernameAsync(string username)
         {
             username = username.UrlEncode();
 
-            var url = $"https://www.youtube.com/user/{username}";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var url = $"https://www.youtube.com/user/{username}?hl=en";
 
-            return ChannelPageParser.Initialize(raw);
+            // Retry up to 5 times because sometimes the response has random errors
+            for (var retry = 0; retry < 5; retry++)
+            {                
+                var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+                var parser = ChannelPageParser.Initialize(raw);
+
+                // If successful - return
+                if (parser.ParseIsAvailable())
+                    return parser;
+
+                // Otherwise put a delay before trying again
+                await Task.Delay(150).ConfigureAwait(false);
+            }
+
+            // Throw exception
+            throw new InvalidDataException("Could not get channel page.");
         }
 
         private async Task<PlaylistAjaxParser> GetPlaylistAjaxParserAsync(string playlistId, int index)

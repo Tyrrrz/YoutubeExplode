@@ -12,6 +12,8 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
+        public bool ParseIsAvailable() => _root.QuerySelector("meta[property=\"og:url\"]") != null;
+
         public string ParseChannelUrl() => _root.QuerySelector("meta[property=\"og:url\"]")
             .GetAttribute("content");
 
