@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Tyrrrz.Extensions" Version="1.5.0" />
+    <PackageReference Include="Tyrrrz.Extensions" Version="1.5.1" />
   </ItemGroup>
 
   <ItemGroup>
