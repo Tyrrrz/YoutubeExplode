@@ -51,7 +51,7 @@ namespace YoutubeExplode
 
         private async Task<PlayerResponseParser> GetPlayerResponseParserAsync(string videoId, bool ensureIsPlayable = false)
         {
-            // Get player response parser via video info
+            // Get player response parser via video info (this works for most videos)
             var videoInfoParser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
             var playerResponseParser = videoInfoParser.GetPlayerResponse();
 
@@ -59,21 +59,32 @@ namespace YoutubeExplode
             if (!playerResponseParser.ParseIsAvailable())
             {
                 var errorReason = playerResponseParser.ParseErrorReason();
-                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable. {errorReason}");
+                throw new VideoUnavailableException(videoId,
+                    $"Video [{videoId}] is unavailable. (Reason: {errorReason})");
             }
 
-            // If requested to ensure playability but the video is not playable - try again
+            // If asked to, ensure that the video is playable
             if (ensureIsPlayable && !playerResponseParser.ParseIsPlayable())
             {
-                // Get player response parser via watch page
+                // Get player response parser via watch page (this works for some other videos)
                 var watchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
                 playerResponseParser = watchPageParser.GetPlayerResponse();
 
-                // If the video is still not playable - throw exception
+                // If the video is not playable because it requires purchase - throw specific exception
+                var previewVideoId = watchPageParser.ParsePreviewVideoId();
+                if (previewVideoId.IsNotBlank())
+                {
+                    var errorReason = playerResponseParser.ParseErrorReason();
+                    throw new VideoRequiresPurchaseException(previewVideoId, videoId,
+                        $"Video [{videoId}] is unplayable because it requires purchase. (Reason: {errorReason})");
+                }
+
+                // If the video is not playable for other reasons - throw generic exception
                 if (!playerResponseParser.ParseIsPlayable())
                 {
                     var errorReason = playerResponseParser.ParseErrorReason();
-                    throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. {errorReason}");
+                    throw new VideoUnplayableException(videoId,
+                        $"Video [{videoId}] is unplayable. (Reason: {errorReason})");
                 }
             }
 

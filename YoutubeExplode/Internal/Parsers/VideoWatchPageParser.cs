@@ -18,6 +18,16 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
+        private JToken GetConfigJson()
+        {
+            var configRaw = Regex.Match(_root.Source.Text,
+                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                .Groups["Json"].Value;
+            return JToken.Parse(configRaw);
+        }
+
+        public string ParsePreviewVideoId() => GetConfigJson().SelectToken("args.ypc_vid")?.Value<string>();
+
         public DateTimeOffset ParseUploadDate() => _root.QuerySelector("meta[itemprop=\"datePublished\"]")
             .GetAttribute("content").ParseDateTimeOffset("yyyy-MM-dd");
 
@@ -72,13 +82,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public PlayerResponseParser GetPlayerResponse()
         {
-            // Parse config
-            var configRaw = Regex.Match(_root.Source.Text,
-                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                .Groups["Json"].Value;
-            var configJson = JToken.Parse(configRaw);
-
             // Extract player response
+            var configJson = GetConfigJson();
             var playerResponseRaw = configJson.SelectToken("args.player_response").Value<string>(); // it's json encoded as string inside json
             var playerResponseJson = JToken.Parse(playerResponseRaw);
 

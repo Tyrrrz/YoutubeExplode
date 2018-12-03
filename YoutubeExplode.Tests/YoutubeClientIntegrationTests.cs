@@ -44,7 +44,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoAsync(videoId));
+            Assert.CatchAsync<VideoUnavailableException>(() => client.GetVideoAsync(videoId));
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoAuthorChannelAsync(videoId));
+            Assert.CatchAsync<VideoUnavailableException>(() => client.GetVideoAuthorChannelAsync(videoId));
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
+            Assert.CatchAsync<VideoUnavailableException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoUnplayableException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
+            Assert.CatchAsync<VideoUnplayableException>(() => client.GetVideoMediaStreamInfosAsync(videoId));
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace YoutubeExplode.Tests
         {
             var client = new YoutubeClient();
 
-            Assert.ThrowsAsync<VideoUnavailableException>(() => client.GetVideoClosedCaptionTrackInfosAsync(videoId));
+            Assert.CatchAsync<VideoUnavailableException>(() => client.GetVideoClosedCaptionTrackInfosAsync(videoId));
         }
 
         [Test]
