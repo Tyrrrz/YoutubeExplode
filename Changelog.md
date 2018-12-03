@@ -1,3 +1,8 @@
+### v4.6.1 (03-Dec-2018)
+
+- Fixed sporadic failures in `GetVideoAuthorChannelAsync` and `GetChannelIdAsync`.
+- Re-added `VideoRequiresPurchaseException` as a child of `VideoUnplayableException`.
+
 ### v4.6 (23-Nov-2018)
 
 - Switched majority of video-related parsing to a new approach, which allows circumventing signature deciphering, provides more info, and is marginally faster and more consistent. This makes `GetVideoMediaStreamInfosAsync` complete twice as fast, on average.
