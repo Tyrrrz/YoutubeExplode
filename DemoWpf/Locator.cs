@@ -10,13 +10,9 @@ namespace DemoWpf
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            SimpleIoc.Default.Register<IMainViewModel, MainViewModel>();
+            SimpleIoc.Default.Register<MainViewModel>();
         }
 
-        public static void Cleanup()
-        {
-        }
-
-        public IMainViewModel MainViewModel => ServiceLocator.Current.GetInstance<IMainViewModel>();
+        public MainViewModel MainViewModel => ServiceLocator.Current.GetInstance<MainViewModel>();
     }
 }

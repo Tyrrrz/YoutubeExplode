@@ -10,15 +10,8 @@
     Background="{DynamicResource MaterialDesignPaper}"
     DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
     FocusManager.FocusedElement="{Binding ElementName=QueryTextBox}"
-    FontFamily="{DynamicResource MaterialDesignFont}"
     Icon="/DemoWpf;component/favicon.ico"
-    SnapsToDevicePixels="True"
-    TextElement.FontSize="13"
-    TextElement.FontWeight="Regular"
-    TextElement.Foreground="{DynamicResource SecondaryTextBrush}"
-    TextOptions.TextFormattingMode="Ideal"
-    TextOptions.TextRenderingMode="Auto"
-    UseLayoutRounding="True"
+    Style="{DynamicResource MaterialDesignRoot}"
     WindowStartupLocation="CenterScreen">
     <DockPanel>
         <!--  Toolbar  -->
@@ -48,7 +41,7 @@
                             Grid.Column="1"
                             Margin="0,6,6,6"
                             Padding="4"
-                            Command="{Binding GetDataCommand}"
+                            Command="{Binding PullDataCommand}"
                             IsDefault="True"
                             Style="{DynamicResource MaterialDesignFlatButton}">
                             <materialDesign:PackIcon

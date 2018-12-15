@@ -14,10 +14,5 @@ namespace DemoWpf
         {
             Locator.Init();
         }
-
-        private void App_OnExit(object sender, ExitEventArgs e)
-        {
-            Locator.Cleanup();
-        }
     }
 }

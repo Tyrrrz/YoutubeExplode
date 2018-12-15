@@ -15,9 +15,9 @@ namespace DemoConsole
         /// </summary>
         private static string NormalizeVideoId(string input)
         {
-            if (!YoutubeClient.TryParseVideoId(input, out var id))
-                id = input;
-            return id;
+            return YoutubeClient.TryParseVideoId(input, out var videoId) 
+                ? videoId
+                : input;
         }
 
         /// <summary>
@@ -45,20 +45,20 @@ namespace DemoConsole
 
             // Get the video ID
             Console.Write("Enter YouTube video ID or URL: ");
-            var id = Console.ReadLine();
-            id = NormalizeVideoId(id);
+            var videoId = Console.ReadLine();
+            videoId = NormalizeVideoId(videoId);
             Console.WriteLine();
 
             // Get the video info
             Console.Write("Obtaining general video info... ");
-            var video = await client.GetVideoAsync(id);
+            var video = await client.GetVideoAsync(videoId);
             Console.WriteLine('✓');
             Console.WriteLine($"> {video.Title} by {video.Author}");
             Console.WriteLine();
 
             // Get media stream info set
             Console.Write("Obtaining media stream info set... ");
-            var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(id);
+            var streamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
             Console.WriteLine('✓');
             Console.WriteLine("> " +
                               $"{streamInfoSet.Muxed.Count} muxed streams, " +
