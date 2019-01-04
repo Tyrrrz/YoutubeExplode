@@ -123,8 +123,11 @@ namespace YoutubeExplode.Tests
             var client = new YoutubeClient();
 
             var mediaStreamInfoSet = await client.GetVideoMediaStreamInfosAsync(videoId);
+            var mediaStreamInfos = mediaStreamInfoSet.GetAll().ToArray();
 
-            foreach (var streamInfo in mediaStreamInfoSet.GetAll())
+            Assert.That(mediaStreamInfos, Is.Not.Empty);
+
+            foreach (var streamInfo in mediaStreamInfos)
             {
                 using (var stream = await client.GetMediaStreamAsync(streamInfo))
                 {
@@ -163,10 +166,14 @@ namespace YoutubeExplode.Tests
 
             var closedCaptionTrackInfos = await client.GetVideoClosedCaptionTrackInfosAsync(videoId);
 
-            var trackInfo = closedCaptionTrackInfos.First();
-            var track = await client.GetClosedCaptionTrackAsync(trackInfo);
+            Assert.That(closedCaptionTrackInfos, Is.Not.Empty);
 
-            Assert.That(track, Is.Not.Null);
+            foreach (var trackInfo in closedCaptionTrackInfos)
+            {
+                var track = await client.GetClosedCaptionTrackAsync(trackInfo);
+
+                Assert.That(track, Is.Not.Null);
+            }
         }
 
         [Test]
