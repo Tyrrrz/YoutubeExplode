@@ -1,3 +1,7 @@
+### v4.6.2 (04-Jan-2019)
+
+- Fixed an issue where `GetVideoMediaStreamInfosAsync` returned empty for live stream recording videos.
+
 ### v4.6.1 (03-Dec-2018)
 
 - Fixed sporadic failures in `GetVideoAuthorChannelAsync` and `GetChannelIdAsync`.
