@@ -39,7 +39,7 @@ namespace YoutubeExplode.Internal.Parsers
         public IReadOnlyList<string> ParseKeywords() =>
             _root.SelectToken("videoDetails.keywords").EmptyIfNull().Values<string>().ToArray();
 
-        public bool ParseIsLiveStream() => _root.SelectToken("videoDetails.isLiveContent")?.Value<bool>() == true;
+        public bool ParseIsLiveStream() => _root.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
 
         public string ParseDashManifestUrl()
         {
