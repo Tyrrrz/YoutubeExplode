@@ -49,6 +49,23 @@ namespace YoutubeExplode.Models.MediaStreams
         }
 
         /// <summary>
+        /// Gets video quality labels of all streams available in a <see cref="MediaStreamInfoSet"/>.
+        /// </summary>
+        public static IEnumerable<string> GetAllVideoQualityLabels(this MediaStreamInfoSet streamInfoSet)
+        {
+            streamInfoSet.GuardNotNull(nameof(streamInfoSet));
+
+            var labels = new HashSet<string>();
+
+            foreach (var streamInfo in streamInfoSet.Muxed)
+                labels.Add(streamInfo.VideoQualityLabel);
+            foreach (var streamInfo in streamInfoSet.Video)
+                labels.Add(streamInfo.VideoQualityLabel);
+
+            return labels;
+        }
+
+        /// <summary>
         /// Gets the muxed stream with highest video quality.
         /// Returns null if sequence is empty.
         /// </summary>
