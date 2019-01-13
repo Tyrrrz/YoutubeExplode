@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
@@ -34,20 +33,14 @@ namespace YoutubeExplode
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
-            // This is a hack, it gets uploads and then gets uploader info of first video
+            // Get parser
+            var parser = await GetChannelPageParserAsync(channelId).ConfigureAwait(false);
 
-            // Get channel uploads
-            var uploads = await GetChannelUploadsAsync(channelId, 1).ConfigureAwait(false);
+            // Parse info
+            var title = parser.ParseChannelTitle();
+            var logoUrl = parser.ParseChannelLogoUrl();
 
-            // Get first video
-            var video = uploads.FirstOrDefault();
-            if (video == null)
-                throw new InvalidOperationException("Channel contains no videos.");
-
-            // Get video channel
-            var channel = await GetVideoAuthorChannelAsync(video.Id).ConfigureAwait(false);
-
-            return channel;
+            return new Channel(channelId, title, logoUrl);
         }
 
         /// <inheritdoc />
