@@ -43,7 +43,8 @@ namespace YoutubeExplode.Internal.Parsers
     {
         public static ClosedCaptionTrackAjaxParser Initialize(string raw)
         {
-            var root = XElement.Parse(raw).StripNamespaces();
+            // Parse with whitespace because we're interested in inner text
+            var root = XElement.Parse(raw, LoadOptions.PreserveWhitespace).StripNamespaces();
             return new ClosedCaptionTrackAjaxParser(root);
         }
     }
