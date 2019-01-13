@@ -1,3 +1,8 @@
+### v4.6.3 (13-Jan-2019)
+
+- Fixed an issue where closed caption tracks were sometimes missing whitespace between words in auto-generated tracks.
+- Added an extension method to get all distinct video quality labels from a set -- `MediaStreamInfoSet.GetAllVideoQualityLabels`.
+
 ### v4.6.2 (04-Jan-2019)
 
 - Fixed an issue where `GetVideoMediaStreamInfosAsync` returned empty for live stream recording videos.
