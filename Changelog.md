@@ -1,3 +1,8 @@
+### v4.6.4 (16-Jan-2019)
+
+- Pinned AngleSharp dependency to version 0.9.11 because newer versions contain breaking changes that are currently incompatible with YoutubeExplode.
+- Improved the implementation of `GetChannelAsync` so that it's more fast and works on channels without any uploaded videos.
+
 ### v4.6.3 (13-Jan-2019)
 
 - Fixed an issue where closed caption tracks were sometimes missing whitespace between words in auto-generated tracks.
