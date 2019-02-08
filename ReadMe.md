@@ -40,14 +40,14 @@ Media streams come in 3 forms -- `Muxed` (video & audio), `Audio` (audio only) a
 
 You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) to take care of multiplexing for you.
 
-##### Parse ID from URL
+### Parse ID from URL
 
 ```c#
 var url = "https://www.youtube.com/watch?v=bnsUkE8i0tU";
 var id = YoutubeClient.ParseVideoId(url); // "bnsUkE8i0tU"
 ```
 
-##### Get video info
+### Get video info
 
 ```c#
 var client = new YoutubeClient();
@@ -58,7 +58,7 @@ var author = video.Author; // "Monstercat"
 var duration = video.Duration; // 00:07:14
 ```
 
-##### Download video
+### Download video
 
 ```c#
 var client = new YoutubeClient();
@@ -69,7 +69,7 @@ var ext = streamInfo.Container.GetFileExtension();
 await client.DownloadMediaStreamAsync(streamInfo, $"downloaded_video.{ext}");
 ```
 
-##### Extract closed captions
+### Extract closed captions
 
 ```c#
 var client = new YoutubeClient();
@@ -82,7 +82,7 @@ var caption = track.GetByTime(TimeSpan.FromSeconds(61));
 var text = caption.Text; // "And the game was afoot."
 ```
 
-##### Get playlist info
+### Get playlist info
 
 ```c#
 var client = new YoutubeClient();
