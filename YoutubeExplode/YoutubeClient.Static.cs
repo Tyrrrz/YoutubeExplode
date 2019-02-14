@@ -184,7 +184,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/user/TheTyrrr
-            var regularMatch = Regex.Match(userUrl, @"youtube\..+?/user/(.*?)(?:&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(userUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateUsername(regularMatch))
             {
                 username = regularMatch;
@@ -236,7 +236,7 @@ namespace YoutubeExplode
                 return false;
 
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
-            var regularMatch = Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (regularMatch.IsNotBlank() && ValidateChannelId(regularMatch))
             {
                 channelId = regularMatch;

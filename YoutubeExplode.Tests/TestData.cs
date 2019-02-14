@@ -133,7 +133,6 @@ namespace YoutubeExplode.Tests
         public static IEnumerable GetUserUrls_Invalid()
         {
             yield return new TestCaseData("https://www.youtube.com/user/P_roZD/"); // username cannot contain anything other than A-Z, a-z, 0-9
-            yield return new TestCaseData("http://www.youtube.com/user/Pr?-0oZD/");
             yield return new TestCaseData("www.youtube.com/user/ProZD1234567890ABCDEF/"); // max allowed username is 20 character
             yield return new TestCaseData("youtube.com/user//asdaz");
             yield return new TestCaseData("https://www.example.com/user/ProZD/");
