@@ -1,3 +1,8 @@
+### v4.6.5 (16-Feb-2019)
+
+- Fixed an issue where parser methods for channel ID and username failed if the URL contained query parameters.
+- Fixed some inconsistencies with how links in video descriptions are extracted.
+
 ### v4.6.4 (16-Jan-2019)
 
 - Pinned AngleSharp dependency to version 0.9.11 because newer versions contain breaking changes that are currently incompatible with YoutubeExplode.
