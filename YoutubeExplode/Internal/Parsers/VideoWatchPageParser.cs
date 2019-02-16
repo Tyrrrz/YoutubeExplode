@@ -30,28 +30,45 @@ namespace YoutubeExplode.Internal.Parsers
 
             foreach (var childNode in childNodes)
             {
+                // If it's a text node - display text content
                 if (childNode.NodeType == NodeType.Text)
                 {
                     buffer.Append(childNode.TextContent);
                 }
+                // If it's an anchor node - perform some special transformation
                 else if (childNode is IHtmlAnchorElement anchorNode)
                 {
-                    // If it uses YouTube redirect - get the actual link
-                    if (anchorNode.PathName.Equals("/redirect", StringComparison.OrdinalIgnoreCase))
+                    // If it's a hashtag - just get it as text
+                    if (anchorNode.InnerText.StartsWith("#", StringComparison.OrdinalIgnoreCase))
+                    {
+                        buffer.Append(anchorNode.TextContent);
+                    }
+                    // If it's a relative link that goes through YouTube redirect - extract the actual link
+                    else if (anchorNode.GetAttribute("href").StartsWith("/redirect", StringComparison.OrdinalIgnoreCase))
                     {
                         // Get query parameters
                         var queryParams = UrlEx.SplitQuery(anchorNode.Search);
 
                         // Get the actual href
-                        var actualHref = queryParams["q"].UrlDecode();
+                        var actualHref = queryParams["q"];
 
                         buffer.Append(actualHref);
                     }
+                    // If it's a relative link to YouTube - prepend host
+                    else if (anchorNode.GetAttribute("href").StartsWith("/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Prepend host to the link to make it absolute
+                        var actualHref = "https://youtube.com" + anchorNode.GetAttribute("href");
+
+                        buffer.Append(actualHref);
+                    }
+                    // Otherwise - display as it is
                     else
                     {
-                        buffer.Append(anchorNode.TextContent);
+                        buffer.Append(anchorNode.GetAttribute("href"));
                     }
                 }
+                // If it's a break row node - append new line
                 else if (childNode is IHtmlBreakRowElement)
                 {
                     buffer.AppendLine();
