@@ -5,7 +5,7 @@
     <Version>4.6.5</Version>
     <Company>Tyrrrz</Company>
     <Authors>$(Company)</Authors>
-    <Copyright>Copyright (C) 2016-2018 Alexey Golub</Copyright>
+    <Copyright>Copyright (C) Alexey Golub</Copyright>
     <Description>The ultimate dirty YouTube library. Parses public metadata on YouTube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
