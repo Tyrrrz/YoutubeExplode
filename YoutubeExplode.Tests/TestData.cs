@@ -56,6 +56,7 @@ namespace YoutubeExplode.Tests
         public static IEnumerable GetVideoIds_Valid_Available_Unplayable()
         {
             yield return new TestCaseData("p3dDcKOFXQg"); // requires purchase
+            yield return new TestCaseData("iX-QaNzd-0Y"); // blocked by copyright
         }
 
         public static IEnumerable GetVideoIds_Valid_Available_Playable()

@@ -68,6 +68,17 @@ namespace YoutubeExplode
             {
                 // Get player response parser via watch page (this works for some other videos)
                 var watchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
+
+                // If the config is not available - throw exception
+                if (!watchPageParser.ParseIsConfigAvailable())
+                {
+                    // Get error reason from previous player response
+                    var errorReason = playerResponseParser.ParseErrorReason();
+                    throw new VideoUnplayableException(videoId,
+                        $"Video [{videoId}] is unplayable. (Reason: {errorReason})");
+                }
+
+                // Get config and player response parser
                 var watchPageConfigParser = watchPageParser.GetConfig();
                 playerResponseParser = watchPageConfigParser.GetPlayerResponse();
 
@@ -79,7 +90,7 @@ namespace YoutubeExplode
                     // If the video is not playable because it requires purchase - throw specific exception
                     var previewVideoId = watchPageConfigParser.ParsePreviewVideoId();
                     if (previewVideoId.IsNotBlank())
-                    {                        
+                    {
                         throw new VideoRequiresPurchaseException(previewVideoId, videoId,
                             $"Video [{videoId}] is unplayable because it requires purchase. (Reason: {errorReason})");
                     }

@@ -87,11 +87,15 @@ namespace YoutubeExplode.Internal.Parsers
         public long ParseDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text()
             .StripNonDigit().ParseLongOrDefault() ?? 0;
 
+        private string ParseConfigRaw() => Regex.Match(_root.Source.Text,
+                @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+            .Groups["Json"].Value;
+
+        public bool ParseIsConfigAvailable() => ParseConfigRaw().IsNotBlank();
+
         public ConfigParser GetConfig()
         {
-            var configRaw = Regex.Match(_root.Source.Text,
-                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                .Groups["Json"].Value;
+            var configRaw = ParseConfigRaw();
             var configJson = JToken.Parse(configRaw);
 
             return new ConfigParser(configJson);
