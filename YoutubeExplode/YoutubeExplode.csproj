@@ -10,8 +10,8 @@
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/Tyrrrz/YoutubeExplode/blob/master/Changelog.md</PackageReleaseNotes>
-    <PackageLicenseUrl>https://github.com/Tyrrrz/YoutubeExplode/blob/master/License.txt</PackageLicenseUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/favicon.png</PackageIconUrl>
+    <PackageLicenseExpression>LGPL-3.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Tyrrrz/YoutubeExplode</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
