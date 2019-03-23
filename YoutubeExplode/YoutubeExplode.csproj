@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/Tyrrrz/YoutubeExplode/blob/master/Changelog.md</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/favicon.png</PackageIconUrl>
-    <PackageLicenseExpression>LGPL-3.0</PackageLicenseExpression>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Tyrrrz/YoutubeExplode</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
