@@ -39,7 +39,7 @@ namespace YoutubeExplode.Internal.Parsers
                 else if (childNode is IHtmlAnchorElement anchorNode)
                 {
                     // If the link appears shortened - get full link
-                    if (anchorNode.InnerText.EndsWith("...", StringComparison.OrdinalIgnoreCase))
+                    if (anchorNode.TextContent.EndsWith("...", StringComparison.OrdinalIgnoreCase))
                     {
                         // Get href
                         var href = anchorNode.GetAttribute("href");
