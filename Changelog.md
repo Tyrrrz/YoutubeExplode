@@ -1,3 +1,7 @@
+### v4.6.8 (30-Mar-2019)
+
+- Improved performance in `GetVideoAsync` by optimizing description parser.
+
 ### v4.6.7 (16-Mar-2019)
 
 - Fixed some more inconsistencies with how links in video descriptions are rendered.
