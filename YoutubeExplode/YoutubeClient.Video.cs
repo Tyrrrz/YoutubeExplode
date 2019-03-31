@@ -21,7 +21,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get player response parser
-            var playerResponseParser = await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
+            var playerResponseParser = await GetPlayerResponseParserAsync(videoId);
 
             // Parse info
             var author = playerResponseParser.ParseAuthor();
@@ -30,7 +30,7 @@ namespace YoutubeExplode
             var keywords = playerResponseParser.ParseKeywords();
 
             // Get video watch page parser
-            var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
+            var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId);
 
             // Parse info
             var uploadDate = videoWatchPageParser.ParseUploadDate();
@@ -55,13 +55,13 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get player response parser
-            var playerResponseParser = await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
+            var playerResponseParser = await GetPlayerResponseParserAsync(videoId);
 
             // Get channel ID
             var id = playerResponseParser.ParseChannelId();
 
             // Get channel page parser
-            var channelPageParser = await GetChannelPageParserAsync(id).ConfigureAwait(false);
+            var channelPageParser = await GetChannelPageParserAsync(id);
 
             // Parse info
             var title = channelPageParser.ParseChannelTitle();
@@ -82,7 +82,7 @@ namespace YoutubeExplode
             var requestedAt = DateTimeOffset.Now;
 
             // Get parser
-            var parser = await GetPlayerResponseParserAsync(videoId, true).ConfigureAwait(false);
+            var parser = await GetPlayerResponseParserAsync(videoId, true);
 
             // Prepare stream info maps
             var muxedStreamInfoMap = new Dictionary<int, MuxedStreamInfo>();
@@ -101,7 +101,7 @@ namespace YoutubeExplode
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
-                    contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
+                    contentLength = await _httpClient.GetContentLengthAsync(url, false) ?? -1;
 
                     // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0) continue;
@@ -147,7 +147,7 @@ namespace YoutubeExplode
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
-                    contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? -1;
+                    contentLength = await _httpClient.GetContentLengthAsync(url, false) ?? -1;
 
                     // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0) continue;
@@ -199,7 +199,7 @@ namespace YoutubeExplode
             if (dashManifestUrl.IsNotBlank())
             {
                 // Get the dash manifest parser
-                var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl).ConfigureAwait(false);
+                var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl);
 
                 // Parse dash stream infos
                 foreach (var streamInfoParser in dashManifestParser.GetStreamInfos())
@@ -280,7 +280,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get parser
-            var parser = await GetPlayerResponseParserAsync(videoId).ConfigureAwait(false);
+            var parser = await GetPlayerResponseParserAsync(videoId);
 
             // Parse closed caption track infos
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();

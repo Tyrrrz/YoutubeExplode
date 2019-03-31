@@ -60,13 +60,11 @@ namespace YoutubeExplode.Internal
             // If current stream is not set - resolve it
             if (_currentStream == null)
             {
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1)
-                    .ConfigureAwait(false);
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
             }
 
             // Read from current stream
-            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken)
-                .ConfigureAwait(false);
+            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken);
 
             // Advance the position (using field directly to avoid clearing stream)
             _position += bytesRead;
@@ -78,14 +76,14 @@ namespace YoutubeExplode.Internal
                 ClearCurrentStream();
 
                 // Recursively read again
-                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken);
             }
 
             return bytesRead;
         }
 
         public override int Read(byte[] buffer, int offset, int count) =>
-            ReadAsync(buffer, offset, count).ConfigureAwait(false).GetAwaiter().GetResult();
+            ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
 
         private long GetNewPosition(long offset, SeekOrigin origin)
         {

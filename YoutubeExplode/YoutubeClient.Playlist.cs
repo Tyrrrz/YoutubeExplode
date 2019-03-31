@@ -18,7 +18,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
             // Get parser for the first page
-            var parser = await GetPlaylistAjaxParserAsync(playlistId, 0).ConfigureAwait(false);
+            var parser = await GetPlaylistAjaxParserAsync(playlistId, 0);
 
             // Parse info
             var author = parser.ParseAuthor();
@@ -77,7 +77,7 @@ namespace YoutubeExplode
                 index += countTotal;
 
                 // Get parser for the next page
-                parser = await GetPlaylistAjaxParserAsync(playlistId, index).ConfigureAwait(false);
+                parser = await GetPlaylistAjaxParserAsync(playlistId, index);
             } while (page < maxPages);
 
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);

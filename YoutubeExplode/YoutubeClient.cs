@@ -33,7 +33,7 @@ namespace YoutubeExplode
         private async Task<VideoWatchPageParser> GetVideoWatchPageParserAsync(string videoId)
         {
             var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(url);
 
             return VideoWatchPageParser.Initialize(raw);
         }
@@ -44,7 +44,7 @@ namespace YoutubeExplode
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
 
             var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&eurl={eurl}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(url);
 
             return VideoInfoParser.Initialize(raw);
         }
@@ -52,7 +52,7 @@ namespace YoutubeExplode
         private async Task<PlayerResponseParser> GetPlayerResponseParserAsync(string videoId, bool ensureIsPlayable = false)
         {
             // Get player response parser via video info (this works for most videos)
-            var videoInfoParser = await GetVideoInfoParserAsync(videoId).ConfigureAwait(false);
+            var videoInfoParser = await GetVideoInfoParserAsync(videoId);
             var playerResponseParser = videoInfoParser.GetPlayerResponse();
 
             // If the video is not available - throw exception
@@ -67,7 +67,7 @@ namespace YoutubeExplode
             if (ensureIsPlayable && !playerResponseParser.ParseIsPlayable())
             {
                 // Get player response parser via watch page (this works for some other videos)
-                var watchPageParser = await GetVideoWatchPageParserAsync(videoId).ConfigureAwait(false);
+                var watchPageParser = await GetVideoWatchPageParserAsync(videoId);
 
                 // If the config is not available - throw exception
                 if (!watchPageParser.ParseIsConfigAvailable())
@@ -108,13 +108,13 @@ namespace YoutubeExplode
 
         private async Task<DashManifestParser> GetDashManifestParserAsync(string dashManifestUrl)
         {
-            var raw = await _httpClient.GetStringAsync(dashManifestUrl).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(dashManifestUrl);
             return DashManifestParser.Initialize(raw);
         }
 
         private async Task<ClosedCaptionTrackAjaxParser> GetClosedCaptionTrackAjaxParserAsync(string url)
         {
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(url);
             return ClosedCaptionTrackAjaxParser.Initialize(raw);
         }
 
@@ -125,7 +125,7 @@ namespace YoutubeExplode
             // Retry up to 5 times because sometimes the response has random errors
             for (var retry = 0; retry < 5; retry++)
             {
-                var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+                var raw = await _httpClient.GetStringAsync(url);
                 var parser = ChannelPageParser.Initialize(raw);
 
                 // If successful - return
@@ -133,7 +133,7 @@ namespace YoutubeExplode
                     return parser;
 
                 // Otherwise put a delay before trying again
-                await Task.Delay(150).ConfigureAwait(false);
+                await Task.Delay(150);
             }
 
             // Throw exception
@@ -149,7 +149,7 @@ namespace YoutubeExplode
             // Retry up to 5 times because sometimes the response has random errors
             for (var retry = 0; retry < 5; retry++)
             {
-                var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+                var raw = await _httpClient.GetStringAsync(url);
                 var parser = ChannelPageParser.Initialize(raw);
 
                 // If successful - return
@@ -157,7 +157,7 @@ namespace YoutubeExplode
                     return parser;
 
                 // Otherwise put a delay before trying again
-                await Task.Delay(150).ConfigureAwait(false);
+                await Task.Delay(150);
             }
 
             // Throw exception
@@ -167,7 +167,7 @@ namespace YoutubeExplode
         private async Task<PlaylistAjaxParser> GetPlaylistAjaxParserAsync(string playlistId, int index)
         {
             var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(url);
 
             return PlaylistAjaxParser.Initialize(raw);
         }
@@ -179,7 +179,7 @@ namespace YoutubeExplode
             // Don't ensure success here so that empty pages could be parsed
 
             var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url, false).ConfigureAwait(false);
+            var raw = await _httpClient.GetStringAsync(url, false);
 
             return PlaylistAjaxParser.Initialize(raw);
         }

@@ -32,19 +32,18 @@ namespace YoutubeExplode.Internal
         public static async Task<HttpResponseMessage> HeadAsync(this HttpClient client, string requestUri)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Head, requestUri))
-                return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         }
 
         public static async Task<string> GetStringAsync(this HttpClient client, string requestUri,
             bool ensureSuccess = true)
         {
-            using (var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead)
-                .ConfigureAwait(false))
+            using (var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead))
             {
                 if (ensureSuccess)
                     response.EnsureSuccessStatusCode();
 
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return await response.Content.ReadAsStringAsync();
             }
         }
 
@@ -56,20 +55,19 @@ namespace YoutubeExplode.Internal
 
             using (request)
             {
-                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
-                    .ConfigureAwait(false);
+                var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
                 if (ensureSuccess)
                     response.EnsureSuccessStatusCode();
 
-                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await response.Content.ReadAsStreamAsync();
             }
         }
 
         public static async Task<long?> GetContentLengthAsync(this HttpClient client, string requestUri,
             bool ensureSuccess = true)
         {
-            using (var response = await client.HeadAsync(requestUri).ConfigureAwait(false))
+            using (var response = await client.HeadAsync(requestUri))
             {
                 if (ensureSuccess)
                     response.EnsureSuccessStatusCode();

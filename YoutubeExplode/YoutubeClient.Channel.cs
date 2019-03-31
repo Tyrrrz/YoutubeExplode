@@ -17,7 +17,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
             // Get parser
-            var parser = await GetChannelPageParserByUsernameAsync(username).ConfigureAwait(false);
+            var parser = await GetChannelPageParserByUsernameAsync(username);
 
             // Parse info
             var channelId = parser.ParseChannelId();
@@ -34,7 +34,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
             // Get parser
-            var parser = await GetChannelPageParserAsync(channelId).ConfigureAwait(false);
+            var parser = await GetChannelPageParserAsync(channelId);
 
             // Parse info
             var title = parser.ParseChannelTitle();
@@ -56,7 +56,7 @@ namespace YoutubeExplode
             var playlistId = "UU" + channelId.SubstringAfter("UC");
 
             // Get playlist
-            var playlist = await GetPlaylistAsync(playlistId, maxPages).ConfigureAwait(false);
+            var playlist = await GetPlaylistAsync(playlistId, maxPages);
 
             return playlist.Videos;
         }

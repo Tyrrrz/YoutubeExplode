@@ -18,7 +18,7 @@ namespace YoutubeExplode
             for (var page = 1; page <= maxPages; page++)
             {
                 // Get parser
-                var parser = await GetPlaylistAjaxParserForSearchAsync(query, page).ConfigureAwait(false);
+                var parser = await GetPlaylistAjaxParserForSearchAsync(query, page);
 
                 // Parse videos
                 var countDelta = 0;
