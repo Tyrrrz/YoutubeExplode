@@ -9,7 +9,7 @@ YoutubeExplode is a library that provides an interface to query metadata of YouT
 
 ## Download
 
-- [NuGet](https://nuget.org/packages/YoutubeExplode): `Install-Package YoutubeExplode`
+- [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
 - [Continuous integration](https://ci.appveyor.com/project/Tyrrrz/YoutubeExplode)
 
 ## Features
