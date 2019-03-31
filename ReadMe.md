@@ -23,7 +23,7 @@ YoutubeExplode is a library that provides an interface to query metadata of YouT
 - All metadata properties are exposed using strong types and enums
 - Provides static methods to validate IDs and to parse IDs from URLs
 - Fully asynchronous API
-- Targets .NET Framework 4.5+, .NET Core 1.0+ and .NET Standard 1.1+
+- Targets .NET Framework 4.5+ and .NET Standard 1.1+
 - No need for an API key and no usage quotas
 
 ## Screenshots
