@@ -82,7 +82,7 @@ namespace YoutubeExplode
             }
         }
 
-#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45
 
         /// <inheritdoc />
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,

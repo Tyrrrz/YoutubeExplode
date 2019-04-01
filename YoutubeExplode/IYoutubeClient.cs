@@ -106,7 +106,7 @@ namespace YoutubeExplode
         Task DownloadMediaStreamAsync(MediaStreamInfo info, Stream output,
             IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
-#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45
 
         /// <summary>
         /// Downloads the stream associated with given metadata to a file.
@@ -131,7 +131,7 @@ namespace YoutubeExplode
         Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, Stream output,
             IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
 
-#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45
 
         /// <summary>
         /// Downloads the closed caption track associated with given metadata to a file.

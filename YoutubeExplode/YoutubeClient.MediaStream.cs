@@ -41,7 +41,7 @@ namespace YoutubeExplode
                 await input.CopyToAsync(output, progress, cancellationToken);
         }
 
-#if NETSTANDARD2_0 || NET45 || NETCOREAPP1_0
+#if NETSTANDARD2_0 || NET45
 
         /// <inheritdoc />
         public async Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath,
