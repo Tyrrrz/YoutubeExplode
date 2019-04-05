@@ -11,7 +11,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool ValidateVideoId(string videoId)
         {
-            if (videoId.IsBlank())
+            if (videoId == null || videoId.IsWhiteSpace())
                 return false;
 
             // Video IDs are always 11 characters
@@ -28,12 +28,12 @@ namespace YoutubeExplode
         {
             videoId = default(string);
 
-            if (videoUrl.IsBlank())
+            if (videoUrl == null || videoUrl.IsWhiteSpace())
                 return false;
 
             // https://www.youtube.com/watch?v=yIVRs6YSbOM
             var regularMatch = Regex.Match(videoUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
-            if (regularMatch.IsNotBlank() && ValidateVideoId(regularMatch))
+            if (!regularMatch.IsEmpty() && ValidateVideoId(regularMatch))
             {
                 videoId = regularMatch;
                 return true;
@@ -41,7 +41,7 @@ namespace YoutubeExplode
 
             // https://youtu.be/yIVRs6YSbOM
             var shortMatch = Regex.Match(videoUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
-            if (shortMatch.IsNotBlank() && ValidateVideoId(shortMatch))
+            if (!shortMatch.IsEmpty() && ValidateVideoId(shortMatch))
             {
                 videoId = shortMatch;
                 return true;
@@ -49,7 +49,7 @@ namespace YoutubeExplode
 
             // https://www.youtube.com/embed/yIVRs6YSbOM
             var embedMatch = Regex.Match(videoUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
-            if (embedMatch.IsNotBlank() && ValidateVideoId(embedMatch))
+            if (!embedMatch.IsEmpty() && ValidateVideoId(embedMatch))
             {
                 videoId = embedMatch;
                 return true;
@@ -75,7 +75,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool ValidatePlaylistId(string playlistId)
         {
-            if (playlistId.IsBlank())
+            if (playlistId == null || playlistId.IsWhiteSpace())
                 return false;
 
             // Watch later playlist is special
@@ -107,12 +107,12 @@ namespace YoutubeExplode
         {
             playlistId = default(string);
 
-            if (playlistUrl.IsBlank())
+            if (playlistUrl == null || playlistUrl.IsWhiteSpace())
                 return false;
 
             // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
             var regularMatch = Regex.Match(playlistUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
-            if (regularMatch.IsNotBlank() && ValidatePlaylistId(regularMatch))
+            if (!regularMatch.IsEmpty() && ValidatePlaylistId(regularMatch))
             {
                 playlistId = regularMatch;
                 return true;
@@ -120,7 +120,7 @@ namespace YoutubeExplode
 
             // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
             var compositeMatch = Regex.Match(playlistUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
-            if (compositeMatch.IsNotBlank() && ValidatePlaylistId(compositeMatch))
+            if (!compositeMatch.IsEmpty() && ValidatePlaylistId(compositeMatch))
             {
                 playlistId = compositeMatch;
                 return true;
@@ -128,7 +128,7 @@ namespace YoutubeExplode
 
             // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
             var shortCompositeMatch = Regex.Match(playlistUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
-            if (shortCompositeMatch.IsNotBlank() && ValidatePlaylistId(shortCompositeMatch))
+            if (!shortCompositeMatch.IsEmpty() && ValidatePlaylistId(shortCompositeMatch))
             {
                 playlistId = shortCompositeMatch;
                 return true;
@@ -137,7 +137,7 @@ namespace YoutubeExplode
             // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
             var embedCompositeMatch = Regex.Match(playlistUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)")
                 .Groups[1].Value;
-            if (embedCompositeMatch.IsNotBlank() && ValidatePlaylistId(embedCompositeMatch))
+            if (!embedCompositeMatch.IsEmpty() && ValidatePlaylistId(embedCompositeMatch))
             {
                 playlistId = embedCompositeMatch;
                 return true;
@@ -163,7 +163,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool ValidateUsername(string username)
         {
-            if (username.IsBlank())
+            if (username == null || username.IsWhiteSpace())
                 return false;
 
             // Usernames can't be longer than 20 characters
@@ -180,12 +180,12 @@ namespace YoutubeExplode
         {
             username = default(string);
 
-            if (userUrl.IsBlank())
+            if (userUrl == null || userUrl.IsWhiteSpace())
                 return false;
 
             // https://www.youtube.com/user/TheTyrrr
             var regularMatch = Regex.Match(userUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
-            if (regularMatch.IsNotBlank() && ValidateUsername(regularMatch))
+            if (!regularMatch.IsEmpty() && ValidateUsername(regularMatch))
             {
                 username = regularMatch;
                 return true;
@@ -211,7 +211,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool ValidateChannelId(string channelId)
         {
-            if (channelId.IsBlank())
+            if (channelId == null || channelId.IsWhiteSpace())
                 return false;
 
             // Channel IDs should start with these characters
@@ -232,12 +232,12 @@ namespace YoutubeExplode
         {
             channelId = default(string);
 
-            if (channelUrl.IsBlank())
+            if (channelUrl == null || channelUrl.IsWhiteSpace())
                 return false;
 
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
             var regularMatch = Regex.Match(channelUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
-            if (regularMatch.IsNotBlank() && ValidateChannelId(regularMatch))
+            if (!regularMatch.IsEmpty() && ValidateChannelId(regularMatch))
             {
                 channelId = regularMatch;
                 return true;

@@ -89,7 +89,7 @@ namespace YoutubeExplode
 
                     // If the video is not playable because it requires purchase - throw specific exception
                     var previewVideoId = watchPageConfigParser.ParsePreviewVideoId();
-                    if (previewVideoId.IsNotBlank())
+                    if (previewVideoId != null)
                     {
                         throw new VideoRequiresPurchaseException(previewVideoId, videoId,
                             $"Video [{videoId}] is unplayable because it requires purchase. (Reason: {errorReason})");

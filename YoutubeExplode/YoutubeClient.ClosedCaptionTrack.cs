@@ -27,7 +27,7 @@ namespace YoutubeExplode
                 var text = closedCaptionParser.ParseText();
 
                 // Skip caption tracks without text
-                if (text.IsBlank())
+                if (text == null || text.IsEmpty())
                     continue;
 
                 var offset = closedCaptionParser.ParseOffset();

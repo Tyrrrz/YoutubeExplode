@@ -64,7 +64,7 @@ namespace YoutubeExplode.Internal.Parsers
                 return Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                     .Cast<Match>()
                     .Select(m => m.Value)
-                    .Where(s => s.IsNotBlank())
+                    .Where(s => !s.IsEmpty())
                     .ToArray();
             }
 
