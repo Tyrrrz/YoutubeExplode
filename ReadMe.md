@@ -53,6 +53,7 @@ var id = YoutubeClient.ParseVideoId(url); // "bnsUkE8i0tU"
 
 ```c#
 var client = new YoutubeClient();
+
 var video = await client.GetVideoAsync("bnsUkE8i0tU");
 
 var title = video.Title; // "Infected Mushroom - Spitfire [Monstercat Release]"
@@ -64,10 +65,27 @@ var duration = video.Duration; // 00:07:14
 
 ```c#
 var client = new YoutubeClient();
+
+// Get metadata for all streams in this video
 var streamInfoSet = await client.GetVideoMediaStreamInfosAsync("bnsUkE8i0tU");
 
+// Select one of the streams, e.g. highest quality muxed stream
 var streamInfo = streamInfoSet.Muxed.WithHighestVideoQuality();
+
+// ...or highest bitrate audio stream
+// var streamInfo = streamInfoSet.Audio.WithHighestBitrate();
+
+// ...or highest quality & highest framerate MP4 video stream
+// var streamInfo = streamInfoSet.Video
+//    .Where(s => s.Container == Container.Mp4)
+//    .OrderByDescending(s => s.VideoQuality)
+//    .ThenByDescending(s => s.Framerate)
+//    .First();
+
+// Get file extension based on stream's container
 var ext = streamInfo.Container.GetFileExtension();
+
+// Download stream to file
 await client.DownloadMediaStreamAsync(streamInfo, $"downloaded_video.{ext}");
 ```
 
@@ -75,11 +93,17 @@ await client.DownloadMediaStreamAsync(streamInfo, $"downloaded_video.{ext}");
 
 ```c#
 var client = new YoutubeClient();
+
+// Get metadata for all closed caption tracks in this video
 var trackInfos = await client.GetVideoClosedCaptionTrackInfosAsync("_QdPW8JrYzQ");
 
+// Select a closed caption track in English (assuming it exists)
 var trackInfo = trackInfos.First(t => t.Language.Code == "en");
+
+// Resolve the closed caption track
 var track = await client.GetClosedCaptionTrackAsync(trackInfo);
 
+// Get the caption displayed at 1:01
 var caption = track.GetByTime(TimeSpan.FromSeconds(61));
 var text = caption.Text; // "And the game was afoot."
 ```
@@ -88,6 +112,7 @@ var text = caption.Text; // "And the game was afoot."
 
 ```c#
 var client = new YoutubeClient();
+
 var playlist = await client.GetPlaylistAsync("PLQLqnnnfa_fAkUmMFw5xh8Kv0S5voEjC9");
 
 var title = playlist.Title; // "Igorrr - Hallelujah"
