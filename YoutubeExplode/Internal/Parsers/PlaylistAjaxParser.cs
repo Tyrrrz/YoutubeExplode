@@ -27,7 +27,7 @@ namespace YoutubeExplode.Internal.Parsers
 
         public long ParseDislikeCount() => _root.SelectToken("dislikes")?.Value<long>() ?? 0; // system playlists don't have dislikes
 
-        public IEnumerable<VideoParser> GetVideos() 
+        public IEnumerable<VideoParser> GetVideos()
             => _root.SelectToken("video").EmptyIfNull().Select(t => new VideoParser(t));
     }
 
@@ -64,7 +64,7 @@ namespace YoutubeExplode.Internal.Parsers
                 return Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                     .Cast<Match>()
                     .Select(m => m.Value)
-                    .Where(s => !s.IsEmpty())
+                    .Where(s => !s.IsNullOrWhiteSpace())
                     .ToArray();
             }
 

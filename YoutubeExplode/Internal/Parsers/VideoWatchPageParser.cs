@@ -91,7 +91,7 @@ namespace YoutubeExplode.Internal.Parsers
                 @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
             .Groups["Json"].Value;
 
-        public bool ParseIsConfigAvailable() => !ParseConfigRaw().IsEmpty();
+        public bool ParseIsConfigAvailable() => !ParseConfigRaw().IsNullOrWhiteSpace();
 
         public ConfigParser GetConfig()
         {

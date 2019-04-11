@@ -112,7 +112,7 @@ namespace DemoWpf.ViewModels
 
             // Commands
             PullDataCommand = new RelayCommand(PullData,
-                () => !IsBusy && Query != null && !Query.IsWhiteSpace());
+                () => !IsBusy && !Query.IsNullOrWhiteSpace());
             DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStream,
                 _ => !IsBusy);
             DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(
@@ -174,7 +174,7 @@ namespace DemoWpf.ViewModels
                 // Exit busy state
                 IsBusy = false;
                 IsProgressIndeterminate = false;
-            }            
+            }
         }
 
         private async void DownloadMediaStream(MediaStreamInfo info)
@@ -191,7 +191,7 @@ namespace DemoWpf.ViewModels
 
                 // Prompt file path
                 var filePath = PromptSaveFilePath(defaultFileName, $"{fileExt} files|*.{fileExt}|All Files|*.*");
-                if (filePath == null)
+                if (filePath.IsNullOrWhiteSpace())
                     return;
 
                 // Set up progress handler
@@ -221,7 +221,7 @@ namespace DemoWpf.ViewModels
 
                 // Prompt file path
                 var filePath = PromptSaveFilePath(defaultFileName, "SRT Files|*.srt|All Files|*.*");
-                if (filePath == null)
+                if (filePath.IsNullOrWhiteSpace())
                     return;
 
                 // Set up progress handler

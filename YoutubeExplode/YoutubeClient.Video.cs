@@ -196,7 +196,7 @@ namespace YoutubeExplode
 
             // Parse dash manifest
             var dashManifestUrl = parser.ParseDashManifestUrl();
-            if (dashManifestUrl != null)
+            if (!dashManifestUrl.IsNullOrWhiteSpace())
             {
                 // Get the dash manifest parser
                 var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl);
