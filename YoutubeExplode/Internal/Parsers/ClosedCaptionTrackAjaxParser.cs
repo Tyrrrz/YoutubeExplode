@@ -14,10 +14,7 @@ namespace YoutubeExplode.Internal.Parsers
             _root = root;
         }
 
-        public IEnumerable<ClosedCaptionParser> GetClosedCaptions()
-        {
-            return _root.Descendants("p").Select(x => new ClosedCaptionParser(x));
-        }
+        public IEnumerable<ClosedCaptionParser> GetClosedCaptions() => _root.Descendants("p").Select(x => new ClosedCaptionParser(x));
     }
 
     internal partial class ClosedCaptionTrackAjaxParser

@@ -3,10 +3,71 @@ using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Internal.Helpers
+namespace YoutubeExplode.Internal
 {
-    internal static class VideoQualityHelper
+    internal static class Heuristics
     {
+        public static AudioEncoding AudioEncodingFromString(string str)
+        {
+            if (str.StartsWith("mp4a", StringComparison.OrdinalIgnoreCase))
+                return AudioEncoding.Aac;
+
+            if (str.StartsWith("vorbis", StringComparison.OrdinalIgnoreCase))
+                return AudioEncoding.Vorbis;
+
+            if (str.StartsWith("opus", StringComparison.OrdinalIgnoreCase))
+                return AudioEncoding.Opus;
+
+            // Unknown
+            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown encoding [{str}].");
+        }
+
+        public static VideoEncoding VideoEncodingFromString(string str)
+        {
+            if (str.StartsWith("mp4v", StringComparison.OrdinalIgnoreCase))
+                return VideoEncoding.Mp4V;
+
+            if (str.StartsWith("avc1", StringComparison.OrdinalIgnoreCase))
+                return VideoEncoding.H264;
+
+            if (str.StartsWith("vp8", StringComparison.OrdinalIgnoreCase))
+                return VideoEncoding.Vp8;
+
+            if (str.StartsWith("vp9", StringComparison.OrdinalIgnoreCase))
+                return VideoEncoding.Vp9;
+
+            if (str.StartsWith("av01", StringComparison.OrdinalIgnoreCase))
+                return VideoEncoding.Av1;
+
+            // Unknown
+            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown encoding [{str}].");
+        }
+
+        public static Container ContainerFromString(string str)
+        {
+            if (str.Equals("mp4", StringComparison.OrdinalIgnoreCase))
+                return Container.Mp4;
+
+            if (str.Equals("webm", StringComparison.OrdinalIgnoreCase))
+                return Container.WebM;
+
+            if (str.Equals("3gpp", StringComparison.OrdinalIgnoreCase))
+                return Container.Tgpp;
+
+            // Unknown
+            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown container [{str}].");
+        }
+
+        public static string ContainerToFileExtension(Container container)
+        {
+            // Tgpp gets special treatment
+            if (container == Container.Tgpp)
+                return "3gpp";
+
+            // Convert to lower case string
+            return container.ToString().ToLowerInvariant();
+        }
+
         private static readonly Dictionary<int, VideoQuality> HeightToVideoQualityMap =
             Enum.GetValues(typeof(VideoQuality)).Cast<VideoQuality>().ToDictionary(
                 v => v.ToString().StripNonDigit().ParseInt(), // High1080 => 1080
@@ -110,6 +171,7 @@ namespace YoutubeExplode.Internal.Helpers
             if (itag == 151)
                 return VideoQuality.Low144;
 
+            // Unknown
             throw new ArgumentException($"Unknown itag [{itag}].", nameof(itag));
         }
 
@@ -184,6 +246,7 @@ namespace YoutubeExplode.Internal.Helpers
             if (quality == VideoQuality.High4320)
                 return new VideoResolution(7680, 4320);
 
+            // Unknown
             throw new ArgumentOutOfRangeException(nameof(quality), $"Unknown video quality [{quality}].");
         }
     }

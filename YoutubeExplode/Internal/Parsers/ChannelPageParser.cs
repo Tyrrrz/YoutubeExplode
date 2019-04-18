@@ -14,16 +14,13 @@ namespace YoutubeExplode.Internal.Parsers
 
         public bool ParseIsAvailable() => _root.QuerySelector("meta[property=\"og:url\"]") != null;
 
-        public string ParseChannelUrl() => _root.QuerySelector("meta[property=\"og:url\"]")
-            .GetAttribute("content");
+        public string ParseChannelUrl() => _root.QuerySelector("meta[property=\"og:url\"]").GetAttribute("content");
 
         public string ParseChannelId() => ParseChannelUrl().SubstringAfter("channel/");
 
-        public string ParseChannelTitle() => _root.QuerySelector("meta[property=\"og:title\"]")
-            .GetAttribute("content");
+        public string ParseChannelTitle() => _root.QuerySelector("meta[property=\"og:title\"]").GetAttribute("content");
 
-        public string ParseChannelLogoUrl() => _root.QuerySelector("meta[property=\"og:image\"]")
-            .GetAttribute("content");
+        public string ParseChannelLogoUrl() => _root.QuerySelector("meta[property=\"og:image\"]").GetAttribute("content");
     }
 
     internal partial class ChannelPageParser

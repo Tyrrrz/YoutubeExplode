@@ -20,8 +20,7 @@ namespace YoutubeExplode.Internal.Parsers
 
             // Filter out partial streams
             streamInfosXml = streamInfosXml.Where(s =>
-                s.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value.Contains("sq/") !=
-                true);
+                s.Descendants("Initialization").FirstOrDefault()?.Attribute("sourceURL")?.Value.Contains("sq/") != true);
 
             return streamInfosXml.Select(x => new StreamInfoParser(x));
         }

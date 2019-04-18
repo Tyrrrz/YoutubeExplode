@@ -17,9 +17,9 @@ namespace YoutubeExplode.Internal.Parsers
 
         public IReadOnlyList<ICipherOperation> ParseCipherOperations()
         {
-            // Original code credit:
+            // Originally based on:
             // https://github.com/flagbug/YoutubeExtractor/blob/3106efa1063994fd19c0e967793315f6962b2d3c/YoutubeExtractor/YoutubeExtractor/Decipherer.cs
-            // No copyright, MIT license
+            // MIT license
             // Regexes found in this method have been sourced by contributors and from other projects
 
             // Find the name of the function that handles deciphering

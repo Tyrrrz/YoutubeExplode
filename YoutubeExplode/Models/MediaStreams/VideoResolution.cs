@@ -6,7 +6,7 @@ namespace YoutubeExplode.Models.MediaStreams
     /// <summary>
     /// Width and height of a video.
     /// </summary>
-    public partial struct VideoResolution : IEquatable<VideoResolution>
+    public readonly partial struct VideoResolution : IEquatable<VideoResolution>
     {
         /// <summary>
         /// Viewport width.

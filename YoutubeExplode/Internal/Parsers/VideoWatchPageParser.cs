@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
@@ -17,6 +19,8 @@ namespace YoutubeExplode.Internal.Parsers
         {
             _root = root;
         }
+
+        public string ParseErrorReason() => _root.QuerySelector("div#unavailable-submessage")?.TextContent;
 
         public DateTimeOffset ParseUploadDate() => _root.QuerySelector("meta[itemprop=\"datePublished\"]")
             .GetAttribute("content").ParseDateTimeOffset("yyyy-MM-dd");
@@ -84,19 +88,65 @@ namespace YoutubeExplode.Internal.Parsers
         public long ParseDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text()
             .StripNonDigit().ParseLongOrDefault() ?? 0;
 
-        public PlayerResponseParser GetPlayerResponse()
+        public ConfigParser GetConfig()
         {
-            // Get player config
-            var playerConfigRaw = Regex.Match(_root.Source.Text,
+            var configRaw = Regex.Match(_root.Source.Text,
                     @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                 .Groups["Json"].Value;
-            var playerConfigJson = JToken.Parse(playerConfigRaw);
+            var configJson = JToken.Parse(configRaw);
 
-            // Player response is a json, which is stored as a string, inside json
-            var playerResponseRaw = playerConfigJson.SelectToken("args.player_response").Value<string>();
-            var playerResponseJson = JToken.Parse(playerResponseRaw);
+            return new ConfigParser(configJson);
+        }
+    }
 
-            return new PlayerResponseParser(playerResponseJson);
+    internal partial class VideoWatchPageParser
+    {
+        public class ConfigParser
+        {
+            private readonly JToken _root;
+
+            public ConfigParser(JToken root)
+            {
+                _root = root;
+            }
+
+            public string ParsePreviewVideoId() => _root.SelectToken("args.ypc_vid")?.Value<string>();
+
+            public string ParsePlayerSourceUrl()
+            {
+                var relativeUrl = _root.SelectToken("assets.js").Value<string>();
+
+                if (!relativeUrl.IsNullOrWhiteSpace())
+                    relativeUrl = "https://www.youtube.com" + relativeUrl;
+
+                return relativeUrl;
+            }
+
+            public string ParseSts() => _root.SelectToken("sts").Value<string>();
+
+            public IEnumerable<UrlEncodedStreamInfoParser> GetMuxedStreamInfos()
+            {
+                var streamInfosEncoded = _root.SelectToken("args.url_encoded_fmt_stream_map").Value<string>();
+
+                if (streamInfosEncoded.IsNullOrWhiteSpace())
+                    return Enumerable.Empty<UrlEncodedStreamInfoParser>();
+
+                return streamInfosEncoded.Split(",")
+                    .Select(UrlEx.SplitQuery)
+                    .Select(d => new UrlEncodedStreamInfoParser(d));
+            }
+
+            public IEnumerable<UrlEncodedStreamInfoParser> GetAdaptiveStreamInfos()
+            {
+                var streamInfosEncoded = _root.SelectToken("args.adaptive_fmts").Value<string>();
+
+                if (streamInfosEncoded.IsNullOrWhiteSpace())
+                    return Enumerable.Empty<UrlEncodedStreamInfoParser>();
+
+                return streamInfosEncoded.Split(",")
+                    .Select(UrlEx.SplitQuery)
+                    .Select(d => new UrlEncodedStreamInfoParser(d));
+            }
         }
     }
 

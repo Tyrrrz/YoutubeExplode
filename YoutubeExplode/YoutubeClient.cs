@@ -46,51 +46,23 @@ namespace YoutubeExplode
             return VideoWatchPageParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string el, string sts)
+        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string sts = null)
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
 
-            var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el={el}&sts={sts}&eurl={eurl}&hl=en";
+            // Execute request
+            var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=embedded&sts={sts}&eurl={eurl}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            return VideoInfoParser.Initialize(raw);
-        }
+            // Initialize parser
+            var parser = VideoInfoParser.Initialize(raw);
 
-        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string sts = null)
-        {
-            // Get video info parser with "el=embedded"
-            var videoInfoParser = await GetVideoInfoParserAsync(videoId, "embedded", sts);
-
-            // If video info doesn't contain video ID, which means it's unavailable - throw
-            if (videoInfoParser.ParseId().IsNullOrWhiteSpace())
+            // If the video is unavailable - throw
+            if (!parser.ParseIsAvailable())
                 throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
 
-            // If the video is playable - return
-            if (videoInfoParser.ParseErrorReason().IsNullOrWhiteSpace())
-                return videoInfoParser;
-
-            // If we don't need to ensure that the video is playable - return
-            if (sts.IsNullOrWhiteSpace())
-                return videoInfoParser;
-
-            // If video requires purchase - throw
-            var previewVideoId = videoInfoParser.ParsePreviewVideoId();
-            if (!previewVideoId.IsNullOrWhiteSpace())
-            {
-                throw new VideoRequiresPurchaseException(videoId, previewVideoId,
-                    $"Video [{videoId}] is unplayable because it requires purchase.");
-            }
-
-            // Get video info parser with "el=detailpage"
-            videoInfoParser = await GetVideoInfoParserAsync(videoId, "detailpage", sts);
-
-            // If the video is still unplayable - throw
-            var errorReason = videoInfoParser.ParseErrorReason();
-            if (!errorReason.IsNullOrWhiteSpace())
-                throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. (Reason: {errorReason})");
-
-            return videoInfoParser;
+            return parser;
         }
 
         private async Task<PlayerSourceParser> GetPlayerSourceParserAsync(string sourceUrl)
