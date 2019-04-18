@@ -55,7 +55,6 @@ namespace YoutubeExplode
         }
 
         /// <inheritdoc />
-        public Task<IReadOnlyList<Video>> SearchVideosAsync(string query)
-            => SearchVideosAsync(query, int.MaxValue);
+        public Task<IReadOnlyList<Video>> SearchVideosAsync(string query) => SearchVideosAsync(query, int.MaxValue);
     }
 }

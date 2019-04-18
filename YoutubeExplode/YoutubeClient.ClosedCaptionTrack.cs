@@ -42,7 +42,7 @@ namespace YoutubeExplode
 
         /// <inheritdoc />
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, Stream output,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+            IProgress<double> progress = null, CancellationToken cancellationToken = default)
         {
             info.GuardNotNull(nameof(info));
             output.GuardNotNull(nameof(output));
@@ -86,7 +86,7 @@ namespace YoutubeExplode
 
         /// <inheritdoc />
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken))
+            IProgress<double> progress = null, CancellationToken cancellationToken = default)
         {
             filePath.GuardNotNull(nameof(filePath));
 

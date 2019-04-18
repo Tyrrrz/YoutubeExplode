@@ -86,7 +86,6 @@ namespace YoutubeExplode
         }
 
         /// <inheritdoc />
-        public Task<Playlist> GetPlaylistAsync(string playlistId)
-            => GetPlaylistAsync(playlistId, int.MaxValue);
+        public Task<Playlist> GetPlaylistAsync(string playlistId) => GetPlaylistAsync(playlistId, int.MaxValue);
     }
 }

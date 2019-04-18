@@ -25,10 +25,7 @@ namespace YoutubeExplode.Internal.Parsers
         {
             var buffer = new StringBuilder();
 
-            var descriptionNode = _root.QuerySelector("p#eow-description");
-            var childNodes = descriptionNode.ChildNodes;
-
-            foreach (var childNode in childNodes)
+            foreach (var childNode in _root.QuerySelector("p#eow-description").ChildNodes)
             {
                 // If it's a text node - display text content
                 if (childNode.NodeType == NodeType.Text)
@@ -87,42 +84,19 @@ namespace YoutubeExplode.Internal.Parsers
         public long ParseDislikeCount() => _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text()
             .StripNonDigit().ParseLongOrDefault() ?? 0;
 
-        private string ParseConfigRaw() => Regex.Match(_root.Source.Text,
-                @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-            .Groups["Json"].Value;
-
-        public bool ParseIsConfigAvailable() => !ParseConfigRaw().IsNullOrWhiteSpace();
-
-        public ConfigParser GetConfig()
+        public PlayerResponseParser GetPlayerResponse()
         {
-            var configRaw = ParseConfigRaw();
-            var configJson = JToken.Parse(configRaw);
+            // Get player config
+            var playerConfigRaw = Regex.Match(_root.Source.Text,
+                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                .Groups["Json"].Value;
+            var playerConfigJson = JToken.Parse(playerConfigRaw);
 
-            return new ConfigParser(configJson);
-        }
-    }
+            // Player response is a json, which is stored as a string, inside json
+            var playerResponseRaw = playerConfigJson.SelectToken("args.player_response").Value<string>();
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
 
-    internal partial class VideoWatchPageParser
-    {
-        public class ConfigParser
-        {
-            private readonly JToken _root;
-
-            public ConfigParser(JToken root)
-            {
-                _root = root;
-            }
-
-            public string ParsePreviewVideoId() => _root.SelectToken("args.ypc_vid")?.Value<string>();
-
-            public PlayerResponseParser GetPlayerResponse()
-            {
-                // Player response is a json, which is stored as a string, inside json
-                var playerResponseRaw = _root.SelectToken("args.player_response").Value<string>();
-                var playerResponseJson = JToken.Parse(playerResponseRaw);
-
-                return new PlayerResponseParser(playerResponseJson);
-            }
+            return new PlayerResponseParser(playerResponseJson);
         }
     }
 

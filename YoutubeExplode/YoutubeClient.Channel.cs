@@ -19,10 +19,7 @@ namespace YoutubeExplode
             // Get parser
             var parser = await GetChannelPageParserByUsernameAsync(username);
 
-            // Parse info
-            var channelId = parser.ParseChannelId();
-
-            return channelId;
+            return parser.ParseChannelId();
         }
 
         /// <inheritdoc />
@@ -62,7 +59,6 @@ namespace YoutubeExplode
         }
 
         /// <inheritdoc />
-        public Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId)
-            => GetChannelUploadsAsync(channelId, int.MaxValue);
+        public Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId) => GetChannelUploadsAsync(channelId, int.MaxValue);
     }
 }

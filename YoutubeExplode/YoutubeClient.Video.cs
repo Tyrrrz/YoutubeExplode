@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Helpers;
@@ -12,6 +13,8 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private readonly Dictionary<string, PlayerSource> _playerSourceCache = new Dictionary<string, PlayerSource>();
+
         /// <inheritdoc />
         public async Task<Video> GetVideoAsync(string videoId)
         {
@@ -20,19 +23,20 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
+            // Get video info parser
+            var videoInfoParser = await GetVideoInfoParserAsync(videoId);
+
             // Get player response parser
-            var playerResponseParser = await GetPlayerResponseParserAsync(videoId);
+            var playerResponseParser = videoInfoParser.GetPlayerResponse();
+
+            // Get video watch page parser
+            var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId);
 
             // Parse info
             var author = playerResponseParser.ParseAuthor();
             var title = playerResponseParser.ParseTitle();
             var duration = playerResponseParser.ParseDuration();
             var keywords = playerResponseParser.ParseKeywords();
-
-            // Get video watch page parser
-            var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId);
-
-            // Parse info
             var uploadDate = videoWatchPageParser.ParseUploadDate();
             var description = videoWatchPageParser.ParseDescription();
             var viewCount = videoWatchPageParser.ParseViewCount();
@@ -54,8 +58,11 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
+            // Get video info parser
+            var videoInfoParser = await GetVideoInfoParserAsync(videoId);
+
             // Get player response parser
-            var playerResponseParser = await GetPlayerResponseParserAsync(videoId);
+            var playerResponseParser = videoInfoParser.GetPlayerResponse();
 
             // Get channel ID
             var id = playerResponseParser.ParseChannelId();
@@ -70,6 +77,38 @@ namespace YoutubeExplode
             return new Channel(id, title, logoUrl);
         }
 
+        private async Task<PlayerContext> GetVideoPlayerContextAsync(string videoId)
+        {
+            // Get parser
+            var parser = await GetVideoEmbedPageParserAsync(videoId);
+
+            // Extract info
+            var playerSourceUrl = parser.ParsePlayerSourceUrl();
+            var sts = parser.ParseSts();
+
+            // Check if successful
+            if (playerSourceUrl.IsNullOrWhiteSpace() || sts.IsNullOrWhiteSpace())
+                throw new Exception("Could not parse player context.");
+
+            return new PlayerContext(playerSourceUrl, sts);
+        }
+
+        private async Task<PlayerSource> GetVideoPlayerSourceAsync(string sourceUrl)
+        {
+            // Try to resolve from cache first
+            var playerSource = _playerSourceCache.GetValueOrDefault(sourceUrl);
+            if (playerSource != null)
+                return playerSource;
+
+            // Get parser
+            var parser = await GetPlayerSourceParserAsync(sourceUrl);
+
+            // Extract cipher operations
+            var operations = parser.ParseCipherOperations();
+
+            return _playerSourceCache[sourceUrl] = new PlayerSource(operations);
+        }
+
         /// <inheritdoc />
         public async Task<MediaStreamInfoSet> GetVideoMediaStreamInfosAsync(string videoId)
         {
@@ -78,11 +117,11 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Register the time at which the request was made to calculate expiry date later on
-            var requestedAt = DateTimeOffset.Now;
+            // Get video player context
+            var videoPlayerContext = await GetVideoPlayerContextAsync(videoId);
 
-            // Get parser
-            var parser = await GetPlayerResponseParserAsync(videoId, true);
+            // Get video info parser
+            var videoInfoParser = await GetVideoInfoParserAsync(videoId, videoPlayerContext.Sts);
 
             // Prepare stream info maps
             var muxedStreamInfoMap = new Dictionary<int, MuxedStreamInfo>();
@@ -90,11 +129,20 @@ namespace YoutubeExplode
             var videoStreamInfoMap = new Dictionary<int, VideoStreamInfo>();
 
             // Parse muxed stream infos
-            foreach (var streamInfoParser in parser.GetMuxedStreamInfos())
+            foreach (var streamInfoParser in videoInfoParser.GetMuxedStreamInfos())
             {
                 // Parse info
                 var itag = streamInfoParser.ParseItag();
                 var url = streamInfoParser.ParseUrl();
+
+                // Decipher signature if needed
+                var signature = streamInfoParser.ParseSignature();
+                if (!signature.IsNullOrWhiteSpace())
+                {
+                    var playerSource = await GetVideoPlayerSourceAsync(videoPlayerContext.SourceUrl);
+                    signature = playerSource.Decipher(signature);
+                    url = UrlEx.SetQueryParameter(url, "signature", signature);
+                }
 
                 // Try to parse content length, otherwise get it manually
                 var contentLength = streamInfoParser.ParseContentLength();
@@ -104,7 +152,8 @@ namespace YoutubeExplode
                     contentLength = await _httpClient.GetContentLengthAsync(url, false) ?? -1;
 
                     // If content length is still not available - stream is gone or faulty
-                    if (contentLength <= 0) continue;
+                    if (contentLength <= 0)
+                        continue;
                 }
 
                 // Parse container
@@ -119,38 +168,36 @@ namespace YoutubeExplode
                 var videoEncodingStr = streamInfoParser.ParseVideoEncoding();
                 var videoEncoding = VideoEncodingHelper.VideoEncodingFromString(videoEncodingStr);
 
-                // Parse video quality label and video quality
-                var videoQualityLabel = streamInfoParser.ParseVideoQualityLabel();
-                var videoQuality = VideoQualityHelper.VideoQualityFromLabel(videoQualityLabel);
+                // Determine video quality from itag
+                var videoQuality = VideoQualityHelper.VideoQualityFromItag(itag);
 
-                // Parse resolution
-                var width = streamInfoParser.ParseWidth();
-                var height = streamInfoParser.ParseHeight();
-                var resolution = new VideoResolution(width, height);
+                // Determine video quality label from video quality
+                var videoQualityLabel = VideoQualityHelper.VideoQualityToLabel(videoQuality);
+
+                // Determine video resolution from video quality
+                var resolution = VideoQualityHelper.VideoQualityToResolution(videoQuality);
 
                 // Add stream
-                var streamInfo = new MuxedStreamInfo(itag, url, container, contentLength, audioEncoding, videoEncoding,
+                muxedStreamInfoMap[itag] = new MuxedStreamInfo(itag, url, container, contentLength, audioEncoding, videoEncoding,
                     videoQualityLabel, videoQuality, resolution);
-                muxedStreamInfoMap[itag] = streamInfo;
             }
 
             // Parse adaptive stream infos
-            foreach (var streamInfoParser in parser.GetAdaptiveStreamInfos())
+            foreach (var streamInfoParser in videoInfoParser.GetAdaptiveStreamInfos())
             {
                 // Parse info
                 var itag = streamInfoParser.ParseItag();
                 var url = streamInfoParser.ParseUrl();
                 var bitrate = streamInfoParser.ParseBitrate();
-
-                // Try to parse content length, otherwise get it manually
                 var contentLength = streamInfoParser.ParseContentLength();
-                if (contentLength <= 0)
-                {
-                    // Send HEAD request and get content length
-                    contentLength = await _httpClient.GetContentLengthAsync(url, false) ?? -1;
 
-                    // If content length is still not available - stream is gone or faulty
-                    if (contentLength <= 0) continue;
+                // Decipher signature if needed
+                var signature = streamInfoParser.ParseSignature();
+                if (!signature.IsNullOrWhiteSpace())
+                {
+                    var playerSource = await GetVideoPlayerSourceAsync(videoPlayerContext.SourceUrl);
+                    signature = playerSource.Decipher(signature);
+                    url = UrlEx.SetQueryParameter(url, "signature", signature);
                 }
 
                 // Parse container
@@ -165,8 +212,7 @@ namespace YoutubeExplode
                     var audioEncoding = AudioEncodingHelper.AudioEncodingFromString(audioEncodingStr);
 
                     // Add stream
-                    var streamInfo = new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
-                    audioStreamInfoMap[itag] = streamInfo;
+                    audioStreamInfoMap[itag] = new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
                 }
                 // If video-only
                 else
@@ -188,16 +234,26 @@ namespace YoutubeExplode
                     var framerate = streamInfoParser.ParseFramerate();
 
                     // Add stream
-                    var streamInfo = new VideoStreamInfo(itag, url, container, contentLength, bitrate, videoEncoding,
+                    videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate, videoEncoding,
                         videoQualityLabel, videoQuality, resolution, framerate);
-                    videoStreamInfoMap[itag] = streamInfo;
                 }
             }
 
             // Parse dash manifest
-            var dashManifestUrl = parser.ParseDashManifestUrl();
+            var dashManifestUrl = videoInfoParser.ParseDashManifestUrl();
             if (!dashManifestUrl.IsNullOrWhiteSpace())
             {
+                // Parse signature
+                var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+
+                // Decipher signature if needed
+                if (!signature.IsNullOrWhiteSpace())
+                {
+                    var playerSource = await GetVideoPlayerSourceAsync(videoPlayerContext.SourceUrl);
+                    signature = playerSource.Decipher(signature);
+                    dashManifestUrl = UrlEx.SetRouteParameter(dashManifestUrl, "signature", signature);
+                }
+
                 // Get the dash manifest parser
                 var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl);
 
@@ -222,9 +278,7 @@ namespace YoutubeExplode
                         var audioEncoding = AudioEncodingHelper.AudioEncodingFromString(audioEncodingStr);
 
                         // Add stream
-                        var streamInfo =
-                            new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
-                        audioStreamInfoMap[itag] = streamInfo;
+                        audioStreamInfoMap[itag] = new AudioStreamInfo(itag, url, container, contentLength, bitrate, audioEncoding);
                     }
                     // If video-only
                     else
@@ -248,9 +302,8 @@ namespace YoutubeExplode
                         var videoQualityLabel = VideoQualityHelper.VideoQualityToLabel(videoQuality, framerate);
 
                         // Add stream
-                        var streamInfo = new VideoStreamInfo(itag, url, container, contentLength, bitrate,
-                            videoEncoding, videoQualityLabel, videoQuality, resolution, framerate);
-                        videoStreamInfoMap[itag] = streamInfo;
+                        videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate, videoEncoding,
+                            videoQualityLabel, videoQuality, resolution, framerate);
                     }
                 }
             }
@@ -261,11 +314,11 @@ namespace YoutubeExplode
             var videoStreamInfos = videoStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
 
             // Get the HLS manifest URL if available
-            var hlsManifestUrl = parser.ParseHlsManifestUrl();
+            var hlsManifestUrl = videoInfoParser.ParseHlsManifestUrl();
 
             // Get expiry date
-            var expiresIn = parser.ParseStreamInfoSetExpiresIn();
-            var validUntil = requestedAt.Add(expiresIn);
+            // TODO
+            var validUntil = DateTimeOffset.Now;
 
             return new MediaStreamInfoSet(muxedStreamInfos, audioStreamInfos, videoStreamInfos, hlsManifestUrl,
                 validUntil);
@@ -279,12 +332,15 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get parser
-            var parser = await GetPlayerResponseParserAsync(videoId);
+            // Get video info parser
+            var videoInfoParser = await GetVideoInfoParserAsync(videoId);
+
+            // Get player response parser
+            var playerResponseParser = videoInfoParser.GetPlayerResponse();
 
             // Parse closed caption track infos
             var closedCaptionTrackInfos = new List<ClosedCaptionTrackInfo>();
-            foreach (var closedCaptionTrackInfoParser in parser.GetClosedCaptionTrackInfos())
+            foreach (var closedCaptionTrackInfoParser in playerResponseParser.GetClosedCaptionTrackInfos())
             {
                 // Parse info
                 var url = closedCaptionTrackInfoParser.ParseUrl();
