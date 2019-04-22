@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
+using YoutubeExplode.Internal.Parsers;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
@@ -100,37 +100,50 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // TODO
+            string videoPlayerSourceUrl;
+            IEnumerable<UrlEncodedStreamInfoParser> muxedStreamInfoParsers;
+            IEnumerable<UrlEncodedStreamInfoParser> adaptiveStreamInfoParsers;
+            string dashManifestUrl;
+            string hlsManifestUrl;
+
             // Get video watch page parser
             var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId);
-            var videoWatchPageConfigParser = videoWatchPageParser.GetConfig();
 
-            // Get player source URL
-            var videoPlayerSourceUrl = videoWatchPageConfigParser.ParsePlayerSourceUrl();
-
-            // Get stream info parsers
-            var muxedStreamInfoParsers = videoWatchPageConfigParser.GetMuxedStreamInfos();
-            var adaptiveStreamInfoParsers = videoWatchPageConfigParser.GetAdaptiveStreamInfos();
-
-            // If failed - retry with video info
-            if (!videoWatchPageParser.ParseErrorReason().IsNullOrWhiteSpace())
+            // If successful - extract stuff
+            if (videoWatchPageParser.ParseErrorReason().IsNullOrWhiteSpace())
             {
-                var sts = videoWatchPageConfigParser.ParseSts();
+                var videoWatchPageConfigParser = videoWatchPageParser.GetConfig();
 
-                // Get video info parser
+                // Get player source URL
+                videoPlayerSourceUrl = videoWatchPageConfigParser.ParsePlayerSourceUrl();
+
+                // Get stream parsers
+                muxedStreamInfoParsers = videoWatchPageConfigParser.GetMuxedStreamInfos();
+                adaptiveStreamInfoParsers = videoWatchPageConfigParser.GetAdaptiveStreamInfos();
+
+                // Get DASH manifest URL
+                dashManifestUrl = "";
+
+                // Get HLS manifest URL
+                hlsManifestUrl = "";
+            }
+            else
+            {
+                var videoEmbedPageParser = await GetVideoEmbedPageParserAsync(videoId);
+                var videoEmbedPageConfigParser = videoEmbedPageParser.GetConfig();
+
+                var sts = videoEmbedPageConfigParser.ParseSts();
+                videoPlayerSourceUrl = videoEmbedPageConfigParser.ParsePlayerSourceUrl();
+
+                //
                 var videoInfoParser = await GetVideoInfoParserAsync(videoId, sts);
 
-                // Get stream info parsers
                 muxedStreamInfoParsers = videoInfoParser.GetMuxedStreamInfos();
                 adaptiveStreamInfoParsers = videoInfoParser.GetAdaptiveStreamInfos();
-            }
 
-            // If the video requires purchase - throw
-            var previewVideoId = videoWatchPageConfigParser.ParsePreviewVideoId();
-            if (!previewVideoId.IsNullOrWhiteSpace())
-            {
-                throw new VideoRequiresPurchaseException(videoId, previewVideoId,
-                    $"Video [{videoId}] is unplayable because it requires purchase.");
+                dashManifestUrl = videoInfoParser.ParseDashManifestUrl();
+
+                hlsManifestUrl = videoInfoParser.ParseHlsManifestUrl();
             }
 
             // Prepare stream info maps
@@ -261,7 +274,6 @@ namespace YoutubeExplode
             }
 
             // Parse dash manifest
-            var dashManifestUrl = ""; // TODO
             if (!dashManifestUrl.IsNullOrWhiteSpace())
             {
                 // Parse signature
@@ -333,9 +345,6 @@ namespace YoutubeExplode
             var muxedStreamInfos = muxedStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
             var audioStreamInfos = audioStreamInfoMap.Values.OrderByDescending(s => s.Bitrate).ToArray();
             var videoStreamInfos = videoStreamInfoMap.Values.OrderByDescending(s => s.VideoQuality).ToArray();
-
-            // Get the HLS manifest URL if available
-            var hlsManifestUrl = ""; // TODO
 
             // Get expiry date
             // TODO

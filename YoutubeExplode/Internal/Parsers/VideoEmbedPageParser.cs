@@ -36,6 +36,18 @@ namespace YoutubeExplode.Internal.Parsers
                 _root = root;
             }
 
+            public string ParseSts() => _root.SelectToken("sts").Value<string>();
+
+            public string ParsePlayerSourceUrl()
+            {
+                var relativeUrl = _root.SelectToken("assets.js").Value<string>();
+
+                if (!relativeUrl.IsNullOrWhiteSpace())
+                    relativeUrl = "https://www.youtube.com" + relativeUrl;
+
+                return relativeUrl;
+            }
+
             public string ParseChannelId()
             {
                 var channelPath = _root.SelectToken("args.channel_path").Value<string>();
