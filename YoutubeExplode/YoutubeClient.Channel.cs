@@ -16,10 +16,10 @@ namespace YoutubeExplode
             if (!ValidateUsername(username))
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
-            // Get parser
-            var parser = await GetChannelPageParserByUsernameAsync(username);
+            // Get channel page
+            var channelPage = await GetUserChannelPageAsync(username);
 
-            return parser.ParseChannelId();
+            return channelPage.GetChannelId();
         }
 
         /// <inheritdoc />
@@ -30,14 +30,14 @@ namespace YoutubeExplode
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
-            // Get parser
-            var parser = await GetChannelPageParserAsync(channelId);
+            // Get channel page
+            var channelPage = await GetChannelPageAsync(channelId);
 
-            // Parse info
-            var title = parser.ParseChannelTitle();
-            var logoUrl = parser.ParseChannelLogoUrl();
+            // Parse
+            var channelTitle = channelPage.GetChannelTitle();
+            var channelLogoUrl = channelPage.GetChannelLogoUrl();
 
-            return new Channel(channelId, title, logoUrl);
+            return new Channel(channelId, channelTitle, channelLogoUrl);
         }
 
         /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Internal.CipherOperations
+﻿namespace YoutubeExplode.Internal.Abstractions.CipherOperations
 {
     internal interface ICipherOperation
     {

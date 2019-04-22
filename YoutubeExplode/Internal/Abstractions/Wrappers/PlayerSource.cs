@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.CipherOperations;
+using YoutubeExplode.Internal.Abstractions.CipherOperations;
 
-namespace YoutubeExplode.Internal.Parsers
+namespace YoutubeExplode.Internal.Abstractions.Wrappers
 {
-    internal partial class PlayerSourceParser
+    internal partial class PlayerSource
     {
         private readonly string _raw;
 
-        public PlayerSourceParser(string raw)
+        public PlayerSource(string raw)
         {
             _raw = raw;
         }
 
-        public IReadOnlyList<ICipherOperation> ParseCipherOperations()
+        public IReadOnlyList<ICipherOperation> GetCipherOperations()
         {
             // Originally based on:
             // https://github.com/flagbug/YoutubeExtractor/blob/3106efa1063994fd19c0e967793315f6962b2d3c/YoutubeExtractor/YoutubeExtractor/Decipherer.cs
@@ -102,11 +102,8 @@ namespace YoutubeExplode.Internal.Parsers
         }
     }
 
-    internal partial class PlayerSourceParser
+    internal partial class PlayerSource
     {
-        public static PlayerSourceParser Initialize(string raw)
-        {
-            return new PlayerSourceParser(raw);
-        }
+        public static PlayerSource Initialize(string raw) => new PlayerSource(raw);
     }
 }

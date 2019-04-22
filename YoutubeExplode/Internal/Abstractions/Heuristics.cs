@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace YoutubeExplode.Internal
+namespace YoutubeExplode.Internal.Abstractions
 {
     internal static class Heuristics
     {

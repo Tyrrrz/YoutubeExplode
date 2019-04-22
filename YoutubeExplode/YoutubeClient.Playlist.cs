@@ -17,16 +17,16 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
-            // Get parser for the first page
-            var parser = await GetPlaylistAjaxParserAsync(playlistId, 0);
+            // Get playlist AJAX for the first page
+            var playlistAjax = await GetPlaylistAjaxAsync(playlistId, 0);
 
             // Parse info
-            var author = parser.ParseAuthor();
-            var title = parser.ParseTitle();
-            var description = parser.ParseDescription();
-            var viewCount = parser.ParseViewCount();
-            var likeCount = parser.ParseLikeCount();
-            var dislikeCount = parser.ParseDislikeCount();
+            var author = playlistAjax.TryGetAuthor() ?? "";
+            var title = playlistAjax.GetTitle();
+            var description = playlistAjax.TryGetDescription() ?? "";
+            var viewCount = playlistAjax.TryGetViewCount() ?? 0;
+            var likeCount = playlistAjax.TryGetLikeCount() ?? 0;
+            var dislikeCount = playlistAjax.TryGetDislikeCount() ?? 0;
 
             // Parse videos from all pages
             var page = 0;
@@ -38,30 +38,29 @@ namespace YoutubeExplode
                 // Parse videos
                 var countTotal = 0;
                 var countDelta = 0;
-                foreach (var videoParser in parser.GetVideos())
+                foreach (var videoParser in playlistAjax.GetVideos())
                 {
                     // Parse info
-                    var videoId = videoParser.ParseId();
-                    var videoAuthor = videoParser.ParseAuthor();
-                    var videoUploadDate = videoParser.ParseUploadDate();
-                    var videoTitle = videoParser.ParseTitle();
-                    var videoDescription = videoParser.ParseDescription();
-                    var videoDuration = videoParser.ParseDuration();
-                    var videoKeywords = videoParser.ParseKeywords();
-                    var videoViewCount = videoParser.ParseViewCount();
-                    var videoLikeCount = videoParser.ParseLikeCount();
-                    var videoDislikeCount = videoParser.ParseDislikeCount();
+                    var videoId = videoParser.GetVideoId();
+                    var videoAuthor = videoParser.GetVideoAuthor();
+                    var videoUploadDate = videoParser.GetVideoUploadDate();
+                    var videoTitle = videoParser.GetVideoTitle();
+                    var videoDescription = videoParser.GetVideoDescription();
+                    var videoDuration = videoParser.GetVideoDuration();
+                    var videoKeywords = videoParser.GetVideoKeywords();
+                    var videoViewCount = videoParser.GetVideoViewCount();
+                    var videoLikeCount = videoParser.GetVideoLikeCount();
+                    var videoDislikeCount = videoParser.GetVideoDislikeCount();
 
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
 
-                    var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
-                        videoThumbnails, videoDuration, videoKeywords, videoStatistics);
-
                     // Add video to the list if it's not already there
-                    if (videoIds.Add(video.Id))
+                    if (videoIds.Add(videoId))
                     {
-                        videos.Add(video);
+                        videos.Add(new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
+                            videoThumbnails, videoDuration, videoKeywords, videoStatistics));
+
                         countDelta++;
                     }
 
@@ -76,8 +75,8 @@ namespace YoutubeExplode
                 page++;
                 index += countTotal;
 
-                // Get parser for the next page
-                parser = await GetPlaylistAjaxParserAsync(playlistId, index);
+                // Get playlist AJAX for the next page
+                playlistAjax = await GetPlaylistAjaxAsync(playlistId, index);
             } while (page < maxPages);
 
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);

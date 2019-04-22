@@ -17,32 +17,31 @@ namespace YoutubeExplode
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
             {
-                // Get parser
-                var parser = await GetPlaylistAjaxParserForSearchAsync(query, page);
+                // Get search playlist AJAX
+                var playlistAjax = await GetSearchPlaylistAjaxAsync(query, page);
 
                 // Parse videos
                 var countDelta = 0;
-                foreach (var videoParser in parser.GetVideos())
+                foreach (var videoParser in playlistAjax.GetVideos())
                 {
                     // Parse info
-                    var videoId = videoParser.ParseId();
-                    var videoAuthor = videoParser.ParseAuthor();
-                    var videoUploadDate = videoParser.ParseUploadDate();
-                    var videoTitle = videoParser.ParseTitle();
-                    var videoDescription = videoParser.ParseDescription();
-                    var videoDuration = videoParser.ParseDuration();
-                    var videoKeywords = videoParser.ParseKeywords();
-                    var videoViewCount = videoParser.ParseViewCount();
-                    var videoLikeCount = videoParser.ParseLikeCount();
-                    var videoDislikeCount = videoParser.ParseDislikeCount();
+                    var videoId = videoParser.GetVideoId();
+                    var videoAuthor = videoParser.GetVideoAuthor();
+                    var videoUploadDate = videoParser.GetVideoUploadDate();
+                    var videoTitle = videoParser.GetVideoTitle();
+                    var videoDescription = videoParser.GetVideoDescription();
+                    var videoDuration = videoParser.GetVideoDuration();
+                    var videoKeywords = videoParser.GetVideoKeywords();
+                    var videoViewCount = videoParser.GetVideoViewCount();
+                    var videoLikeCount = videoParser.GetVideoLikeCount();
+                    var videoDislikeCount = videoParser.GetVideoDislikeCount();
 
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
 
-                    var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
-                        videoThumbnails, videoDuration, videoKeywords, videoStatistics);
+                    videos.Add(new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
+                        videoThumbnails, videoDuration, videoKeywords, videoStatistics));
 
-                    videos.Add(video);
                     countDelta++;
                 }
 
