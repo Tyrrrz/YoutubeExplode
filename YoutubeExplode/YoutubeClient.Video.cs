@@ -46,8 +46,7 @@ namespace YoutubeExplode
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);
             var thumbnails = new ThumbnailSet(videoId);
 
-            return new Video(videoId, author, uploadDate, title, description, thumbnails, duration, keywords,
-                statistics);
+            return new Video(videoId, author, uploadDate, title, description, thumbnails, duration, keywords, statistics);
         }
 
         /// <inheritdoc />

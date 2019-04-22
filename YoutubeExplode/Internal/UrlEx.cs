@@ -11,7 +11,7 @@ namespace YoutubeExplode.Internal
             value = value ?? string.Empty;
 
             // Find existing parameter
-            var existingMatch = Regex.Match(url, $@"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
+            var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
 
             // Parameter already set to something
             if (existingMatch.Success)
@@ -45,7 +45,7 @@ namespace YoutubeExplode.Internal
             value = value ?? string.Empty;
 
             // Find existing parameter
-            var existingMatch = Regex.Match(url, $@"/({Regex.Escape(key)}/?.*?)(?:/|$)");
+            var existingMatch = Regex.Match(url, $"/({Regex.Escape(key)}/?.*?)(?:/|$)");
 
             // Parameter already set to something
             if (existingMatch.Success)
