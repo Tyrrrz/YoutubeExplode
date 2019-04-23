@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Abstractions.CipherOperations;
+using YoutubeExplode.Internal.CipherOperations;
 
-namespace YoutubeExplode.Internal.Abstractions.Wrappers
+namespace YoutubeExplode.Internal.Decoders
 {
-    internal partial class PlayerSource
+    internal partial class PlayerSourceDecoder : DecoderBase
     {
         private readonly string _raw;
 
-        public PlayerSource(string raw)
+        public PlayerSourceDecoder(string raw)
         {
             _raw = raw;
         }
 
-        public IReadOnlyList<ICipherOperation> GetCipherOperations()
+        public IReadOnlyList<ICipherOperation> GetCipherOperations() => Cache(() =>
         {
             // Originally based on:
             // https://github.com/flagbug/YoutubeExtractor/blob/3106efa1063994fd19c0e967793315f6962b2d3c/YoutubeExtractor/YoutubeExtractor/Decipherer.cs
@@ -23,7 +23,8 @@ namespace YoutubeExplode.Internal.Abstractions.Wrappers
             // Regexes found in this method have been sourced by contributors and from other projects
 
             // Find the name of the function that handles deciphering
-            var entryPoint = Regex.Match(_raw, @"\bc\s*&&\s*d\.set\([^,]+\s*,\s*(?:encodeURIComponent\s*\()?\s*([a-zA-Z0-9$]+)\(").Groups[1].Value;
+            var entryPoint = Regex.Match(_raw, @"\bc\s*&&\s*d\.set\([^,]+\s*,\s*(?:encodeURIComponent\s*\()?\s*([a-zA-Z0-9$]+)\(").Groups[1]
+                .Value;
             if (entryPoint.IsNullOrWhiteSpace())
                 throw new Exception("Could not find the entry function for signature deciphering.");
 
@@ -99,11 +100,11 @@ namespace YoutubeExplode.Internal.Abstractions.Wrappers
             }
 
             return operations;
-        }
+        });
     }
 
-    internal partial class PlayerSource
+    internal partial class PlayerSourceDecoder
     {
-        public static PlayerSource Initialize(string raw) => new PlayerSource(raw);
+        public static PlayerSourceDecoder Initialize(string raw) => new PlayerSourceDecoder(raw);
     }
 }

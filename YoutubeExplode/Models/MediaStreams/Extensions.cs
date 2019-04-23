@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Abstractions;
 
 namespace YoutubeExplode.Models.MediaStreams
 {

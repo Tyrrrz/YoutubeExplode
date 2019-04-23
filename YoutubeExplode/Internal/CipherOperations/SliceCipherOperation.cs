@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Internal.Abstractions.CipherOperations
+﻿namespace YoutubeExplode.Internal.CipherOperations
 {
     internal class SliceCipherOperation : ICipherOperation
     {

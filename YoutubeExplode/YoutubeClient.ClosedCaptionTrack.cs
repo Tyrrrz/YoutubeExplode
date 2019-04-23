@@ -16,23 +16,25 @@ namespace YoutubeExplode
         {
             info.GuardNotNull(nameof(info));
 
-            // Get closed caption track AJAX
-            var closedCaptionTrackAjax = await GetClosedCaptionTrackAjaxAsync(info.Url);
+            // Get closed caption track decoder
+            var closedCaptionTrackDecoder = await GetClosedCaptionTrackDecoderAsync(info.Url);
 
-            // Parse captions
+            // Extract closed captions
             var closedCaptions = new List<ClosedCaption>();
-            foreach (var closedCaptionParser in closedCaptionTrackAjax.GetClosedCaptions())
+            foreach (var closedCaptionDecoder in closedCaptionTrackDecoder.GetClosedCaptions())
             {
-                // Parse info
-                var text = closedCaptionParser.GetText();
+                // Extract text
+                var text = closedCaptionDecoder.GetText();
 
-                // Skip empty or whitespace captions
+                // Skip captions with empty text
                 if (text.IsNullOrWhiteSpace())
                     continue;
 
-                var offset = closedCaptionParser.GetOffset();
-                var duration = closedCaptionParser.GetDuration();
+                // Extract timing info
+                var offset = closedCaptionDecoder.GetOffset();
+                var duration = closedCaptionDecoder.GetDuration();
 
+                // Add to list
                 closedCaptions.Add(new ClosedCaption(text, offset, duration));
             }
 

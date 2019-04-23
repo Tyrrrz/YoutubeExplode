@@ -17,40 +17,39 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
-            // Get playlist AJAX for the first page
-            var playlistAjax = await GetPlaylistAjaxAsync(playlistId, 0);
+            // Get playlist info decoder for the first page
+            var playlistInfoDecoder = await GetPlaylistInfoDecoderAsync(playlistId, 0);
 
-            // Parse info
-            var author = playlistAjax.TryGetAuthor() ?? "";
-            var title = playlistAjax.GetTitle();
-            var description = playlistAjax.TryGetDescription() ?? "";
-            var viewCount = playlistAjax.TryGetViewCount() ?? 0;
-            var likeCount = playlistAjax.TryGetLikeCount() ?? 0;
-            var dislikeCount = playlistAjax.TryGetDislikeCount() ?? 0;
+            // Extract info
+            var author = playlistInfoDecoder.TryGetAuthor() ?? "";
+            var title = playlistInfoDecoder.GetTitle();
+            var description = playlistInfoDecoder.TryGetDescription() ?? "";
+            var viewCount = playlistInfoDecoder.TryGetViewCount() ?? 0;
+            var likeCount = playlistInfoDecoder.TryGetLikeCount() ?? 0;
+            var dislikeCount = playlistInfoDecoder.TryGetDislikeCount() ?? 0;
 
-            // Parse videos from all pages
+            // Process videos from all pages
             var page = 0;
             var index = 0;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             do
             {
-                // Parse videos
                 var countTotal = 0;
                 var countDelta = 0;
-                foreach (var videoParser in playlistAjax.GetVideos())
+                foreach (var videoInfoDecoder in playlistInfoDecoder.GetVideos())
                 {
-                    // Parse info
-                    var videoId = videoParser.GetVideoId();
-                    var videoAuthor = videoParser.GetVideoAuthor();
-                    var videoUploadDate = videoParser.GetVideoUploadDate();
-                    var videoTitle = videoParser.GetVideoTitle();
-                    var videoDescription = videoParser.GetVideoDescription();
-                    var videoDuration = videoParser.GetVideoDuration();
-                    var videoKeywords = videoParser.GetVideoKeywords();
-                    var videoViewCount = videoParser.GetVideoViewCount();
-                    var videoLikeCount = videoParser.GetVideoLikeCount();
-                    var videoDislikeCount = videoParser.GetVideoDislikeCount();
+                    // Extract info
+                    var videoId = videoInfoDecoder.GetVideoId();
+                    var videoAuthor = videoInfoDecoder.GetVideoAuthor();
+                    var videoUploadDate = videoInfoDecoder.GetVideoUploadDate();
+                    var videoTitle = videoInfoDecoder.GetVideoTitle();
+                    var videoDescription = videoInfoDecoder.GetVideoDescription();
+                    var videoDuration = videoInfoDecoder.GetVideoDuration();
+                    var videoKeywords = videoInfoDecoder.GetVideoKeywords();
+                    var videoViewCount = videoInfoDecoder.GetVideoViewCount();
+                    var videoLikeCount = videoInfoDecoder.GetVideoLikeCount();
+                    var videoDislikeCount = videoInfoDecoder.GetVideoDislikeCount();
 
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
@@ -75,8 +74,8 @@ namespace YoutubeExplode
                 page++;
                 index += countTotal;
 
-                // Get playlist AJAX for the next page
-                playlistAjax = await GetPlaylistAjaxAsync(playlistId, index);
+                // Get playlist info decoder for the next page
+                playlistInfoDecoder = await GetPlaylistInfoDecoderAsync(playlistId, index);
             } while (page < maxPages);
 
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);

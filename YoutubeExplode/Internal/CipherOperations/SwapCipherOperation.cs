@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace YoutubeExplode.Internal.Abstractions.CipherOperations
+namespace YoutubeExplode.Internal.CipherOperations
 {
     internal class SwapCipherOperation : ICipherOperation
     {
