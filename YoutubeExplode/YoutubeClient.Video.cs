@@ -127,9 +127,6 @@ namespace YoutubeExplode
 
             // If video requires purchase - throw
             var previewVideoId = videoInfoParser.TryGetPreviewVideoId();
-#if NET45
-            Console.WriteLine($"Preview video ID: {previewVideoId}");
-#endif
             if (!previewVideoId.IsNullOrWhiteSpace())
             {
                 throw new VideoRequiresPurchaseException(videoId, previewVideoId,
@@ -138,9 +135,6 @@ namespace YoutubeExplode
 
             // Try to get error reason
             var errorReason = videoInfoParser.TryGetErrorReason();
-#if NET45
-            Console.WriteLine($"Error reason: {errorReason}");
-#endif
 
             // If there is no error - proceed
             if (errorReason.IsNullOrWhiteSpace())

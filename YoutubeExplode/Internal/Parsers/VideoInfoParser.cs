@@ -82,6 +82,10 @@ namespace YoutubeExplode.Internal.Parsers
     {
         public static VideoInfoParser Initialize(string raw)
         {
+#if NET45
+            Console.WriteLine($"VideoInfo:{Environment.NewLine}{raw}{Environment.NewLine}");
+#endif
+
             var root = UrlEx.SplitQuery(raw);
             return new VideoInfoParser(root);
         }
