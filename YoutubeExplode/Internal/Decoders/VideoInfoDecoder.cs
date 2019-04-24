@@ -18,7 +18,9 @@ namespace YoutubeExplode.Internal.Decoders
 
         public string TryGetErrorReason() => Cache(() => _root.GetValueOrDefault("reason"));
 
-        public string TryGetPreviewVideoId() => Cache(() => _root.GetValueOrDefault("ypc_vid"));
+        public string TryGetPreviewVideoId() => Cache(() =>
+            GetPlayerResponse().SelectToken("playabilityStatus.errorScreen.playerLegacyDesktopYpcTrailerRenderer.trailerVideoId")
+                ?.Value<string>());
 
         public string GetVideoAuthor() => Cache(() => GetPlayerResponse().SelectToken("videoDetails.author").Value<string>());
 
