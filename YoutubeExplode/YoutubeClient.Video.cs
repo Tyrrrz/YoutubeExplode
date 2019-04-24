@@ -125,14 +125,6 @@ namespace YoutubeExplode
             var requestedAt = DateTimeOffset.Now;
             var videoInfoParser = await GetVideoInfoParserAsync(videoId, sts);
 
-            // If video requires purchase - throw
-            var previewVideoId = videoInfoParser.TryGetPreviewVideoId();
-            if (!previewVideoId.IsNullOrWhiteSpace())
-            {
-                throw new VideoRequiresPurchaseException(videoId, previewVideoId,
-                    $"Video [{videoId}] is unplayable because it requires purchase.");
-            }
-
             // Try to get error reason
             var errorReason = videoInfoParser.TryGetErrorReason();
 
@@ -153,7 +145,15 @@ namespace YoutubeExplode
                 requestedAt = DateTimeOffset.Now;
                 var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId);
 
-                // If video is still unplayable - throw
+                // If video requires purchase - throw
+                var previewVideoId = videoWatchPageParser.TryGetPreviewVideoId();
+                if (!previewVideoId.IsNullOrWhiteSpace())
+                {
+                    throw new VideoRequiresPurchaseException(videoId, previewVideoId,
+                        $"Video [{videoId}] is unplayable because it requires purchase.");
+                }
+
+                // If video is unplayable for other reasons - throw
                 if (!videoWatchPageParser.TryGetErrorReason().IsNullOrWhiteSpace())
                 {
                     throw new VideoUnplayableException(videoId,

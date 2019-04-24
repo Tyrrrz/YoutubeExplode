@@ -37,6 +37,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string TryGetErrorReason() => Cache(() => _root.QuerySelector("div#unavailable-submessage")?.TextContent);
 
+        public string TryGetPreviewVideoId() => Cache(() => GetPlayerConfig().SelectToken("args.ypc_vid")?.Value<string>());
+
         public DateTimeOffset GetVideoUploadDate() => Cache(() =>
             _root.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content").ParseDateTimeOffset("yyyy-MM-dd"));
 

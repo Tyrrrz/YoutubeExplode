@@ -22,11 +22,7 @@ namespace YoutubeExplode.Internal.Parsers
 
         public bool Validate() => Cache(() => !_root.GetValueOrDefault("video_id").IsNullOrWhiteSpace());
 
-        public string TryGetErrorReason() => Cache(() => _root.GetValueOrDefault("reason"));
-
-        public string TryGetPreviewVideoId() => Cache(() =>
-            GetPlayerResponse().SelectToken("playabilityStatus.errorScreen.playerLegacyDesktopYpcTrailerRenderer.trailerVideoId")
-                ?.Value<string>());
+        public string TryGetErrorReason() => Cache(() => GetPlayerResponse().SelectToken("playabilityStatus.reason")?.Value<string>());
 
         public string GetVideoAuthor() => Cache(() => GetPlayerResponse().SelectToken("videoDetails.author").Value<string>());
 
@@ -82,10 +78,6 @@ namespace YoutubeExplode.Internal.Parsers
     {
         public static VideoInfoParser Initialize(string raw)
         {
-#if NET45
-            Console.WriteLine($"VideoInfo:{Environment.NewLine}{raw}{Environment.NewLine}");
-#endif
-
             var root = UrlEx.SplitQuery(raw);
             return new VideoInfoParser(root);
         }
