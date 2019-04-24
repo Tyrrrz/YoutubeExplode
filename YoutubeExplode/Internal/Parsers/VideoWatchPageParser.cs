@@ -35,9 +35,20 @@ namespace YoutubeExplode.Internal.Parsers
             return JToken.Parse(raw);
         });
 
-        public string TryGetErrorReason() => Cache(() => _root.QuerySelector("div#unavailable-submessage")?.TextContent);
+        public string TryGetErrorReason() => Cache(() => GetPlayerResponse().SelectToken("playabilityStatus.reason")?.Value<string>());
 
-        public string TryGetPreviewVideoId() => Cache(() => GetPlayerConfig().SelectToken("args.ypc_vid")?.Value<string>());
+        public string TryGetPreviewVideoId() => Cache(() =>
+        {
+            var previewVideoInfoRaw = GetPlayerResponse().SelectToken("playabilityStatus.errorScreen.ypcTrailerRenderer.playerVars")
+                ?.Value<string>();
+
+            if (previewVideoInfoRaw.IsNullOrWhiteSpace())
+                return null;
+
+            var previewVideoInfo = UrlEx.SplitQuery(previewVideoInfoRaw);
+
+            return previewVideoInfo.GetValueOrDefault("video_id");
+        });
 
         public DateTimeOffset GetVideoUploadDate() => Cache(() =>
             _root.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content").ParseDateTimeOffset("yyyy-MM-dd"));

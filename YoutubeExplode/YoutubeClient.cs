@@ -42,11 +42,6 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-#if NET45
-            if (videoId == "p3dDcKOFXQg")
-                System.Console.WriteLine(raw);
-#endif
-
             return VideoWatchPageParser.Initialize(raw);
         }
 
