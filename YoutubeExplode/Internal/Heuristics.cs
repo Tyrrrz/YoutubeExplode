@@ -42,14 +42,6 @@ namespace YoutubeExplode.Internal
             throw new ArgumentException($"Unknown encoding [{str}].", nameof(str));
         }
 
-        private static readonly Dictionary<Container, string> ContainerToFileExtensionMap =
-            new Dictionary<Container, string>
-            {
-                {Container.Mp4, "mp4"},
-                {Container.WebM, "webm"},
-                {Container.Tgpp, "3gpp"}
-            };
-
         public static Container ContainerFromString(string str)
         {
             if (str.Equals("mp4", StringComparison.OrdinalIgnoreCase))
@@ -64,6 +56,14 @@ namespace YoutubeExplode.Internal
             // Unknown
             throw new ArgumentException($"Unknown container [{str}].", nameof(str));
         }
+
+        private static readonly Dictionary<Container, string> ContainerToFileExtensionMap =
+            new Dictionary<Container, string>
+            {
+                {Container.Mp4, "mp4"},
+                {Container.WebM, "webm"},
+                {Container.Tgpp, "3gpp"}
+            };
 
         public static string ContainerToFileExtension(Container container)
         {
