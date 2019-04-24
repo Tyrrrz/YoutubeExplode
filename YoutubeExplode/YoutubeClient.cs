@@ -1,9 +1,8 @@
-﻿using System.IO;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Decoders;
+using YoutubeExplode.Internal.Parsers;
 
 namespace YoutubeExplode
 {
@@ -30,23 +29,23 @@ namespace YoutubeExplode
         {
         }
 
-        private async Task<VideoEmbedPageDecoder> GetVideoEmbedPageDecoderAsync(string videoId)
+        private async Task<VideoEmbedPageParser> GetVideoEmbedPageParserAsync(string videoId)
         {
             var url = $"https://www.youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            return VideoEmbedPageDecoder.Initialize(raw);
+            return VideoEmbedPageParser.Initialize(raw);
         }
 
-        private async Task<VideoWatchPageDecoder> GetVideoWatchPageDecoderAsync(string videoId)
+        private async Task<VideoWatchPageParser> GetVideoWatchPageParserAsync(string videoId)
         {
             var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            return VideoWatchPageDecoder.Initialize(raw);
+            return VideoWatchPageParser.Initialize(raw);
         }
 
-        private async Task<VideoInfoDecoder> GetVideoInfoDecoderAsync(string videoId, string sts = null)
+        private async Task<VideoInfoParser> GetVideoInfoParserAsync(string videoId, string sts = null)
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
@@ -56,34 +55,34 @@ namespace YoutubeExplode
             var raw = await _httpClient.GetStringAsync(url);
 
             // Initialize
-            var decoder = VideoInfoDecoder.Initialize(raw);
+            var parser = VideoInfoParser.Initialize(raw);
 
             // If invalid - throw
-            if (!decoder.Validate())
+            if (!parser.Validate())
                 throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
 
-            return decoder;
+            return parser;
         }
 
-        private async Task<PlayerSourceDecoder> GetPlayerSourceDecoderAsync(string sourceUrl)
+        private async Task<PlayerSourceParser> GetPlayerSourceParserAsync(string sourceUrl)
         {
             var raw = await _httpClient.GetStringAsync(sourceUrl);
-            return PlayerSourceDecoder.Initialize(raw);
+            return PlayerSourceParser.Initialize(raw);
         }
 
-        private async Task<DashManifestDecoder> GetDashManifestDecoderAsync(string dashManifestUrl)
+        private async Task<DashManifestParser> GetDashManifestParserAsync(string dashManifestUrl)
         {
             var raw = await _httpClient.GetStringAsync(dashManifestUrl);
-            return DashManifestDecoder.Initialize(raw);
+            return DashManifestParser.Initialize(raw);
         }
 
-        private async Task<ClosedCaptionTrackDecoder> GetClosedCaptionTrackDecoderAsync(string url)
+        private async Task<ClosedCaptionTrackParser> GetClosedCaptionTrackParserAsync(string url)
         {
             var raw = await _httpClient.GetStringAsync(url);
-            return ClosedCaptionTrackDecoder.Initialize(raw);
+            return ClosedCaptionTrackParser.Initialize(raw);
         }
 
-        private async Task<ChannelPageDecoder> GetChannelPageDecoderAsync(string channelId)
+        private async Task<ChannelPageParser> GetChannelPageParserAsync(string channelId)
         {
             var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
 
@@ -91,21 +90,21 @@ namespace YoutubeExplode
             for (var retry = 0; retry < 5; retry++)
             {
                 var raw = await _httpClient.GetStringAsync(url);
-                var decoder = ChannelPageDecoder.Initialize(raw);
+                var parser = ChannelPageParser.Initialize(raw);
 
                 // If successful - return
-                if (decoder.Validate())
-                    return decoder;
+                if (parser.Validate())
+                    return parser;
 
                 // Otherwise put a delay before trying again
                 await Task.Delay(150);
             }
 
             // Throw exception
-            throw new InvalidDataException("Could not get channel page.");
+            throw new ParserException("Could not get channel page.");
         }
 
-        private async Task<ChannelPageDecoder> GetChannelPageDecoderForUserAsync(string username)
+        private async Task<ChannelPageParser> GetChannelPageParserForUserAsync(string username)
         {
             username = username.UrlEncode();
 
@@ -115,29 +114,29 @@ namespace YoutubeExplode
             for (var retry = 0; retry < 5; retry++)
             {
                 var raw = await _httpClient.GetStringAsync(url);
-                var decoder = ChannelPageDecoder.Initialize(raw);
+                var parser = ChannelPageParser.Initialize(raw);
 
                 // If successful - return
-                if (decoder.Validate())
-                    return decoder;
+                if (parser.Validate())
+                    return parser;
 
                 // Otherwise put a delay before trying again
                 await Task.Delay(150);
             }
 
             // Throw exception
-            throw new InvalidDataException("Could not get channel page.");
+            throw new ParserException("Could not get channel page.");
         }
 
-        private async Task<PlaylistInfoDecoder> GetPlaylistInfoDecoderAsync(string playlistId, int index)
+        private async Task<PlaylistInfoParser> GetPlaylistInfoParserAsync(string playlistId, int index)
         {
             var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            return PlaylistInfoDecoder.Initialize(raw);
+            return PlaylistInfoParser.Initialize(raw);
         }
 
-        private async Task<PlaylistInfoDecoder> GetPlaylistInfoDecoderForSearchAsync(string query, int page)
+        private async Task<PlaylistInfoParser> GetPlaylistInfoParserForSearchAsync(string query, int page)
         {
             query = query.UrlEncode();
 
@@ -146,7 +145,7 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
             var raw = await _httpClient.GetStringAsync(url, false);
 
-            return PlaylistInfoDecoder.Initialize(raw);
+            return PlaylistInfoParser.Initialize(raw);
         }
     }
 }

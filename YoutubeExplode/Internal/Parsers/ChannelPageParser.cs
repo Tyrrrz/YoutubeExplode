@@ -1,13 +1,13 @@
 ﻿using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 
-namespace YoutubeExplode.Internal.Decoders
+namespace YoutubeExplode.Internal.Parsers
 {
-    internal partial class ChannelPageDecoder : DecoderBase
+    internal partial class ChannelPageParser : Cached
     {
         private readonly IHtmlDocument _root;
 
-        public ChannelPageDecoder(IHtmlDocument root)
+        public ChannelPageParser(IHtmlDocument root)
         {
             _root = root;
         }
@@ -23,12 +23,12 @@ namespace YoutubeExplode.Internal.Decoders
         public string GetChannelLogoUrl() => Cache(() => _root.QuerySelector("meta[property=\"og:image\"]").GetAttribute("content"));
     }
 
-    internal partial class ChannelPageDecoder
+    internal partial class ChannelPageParser
     {
-        public static ChannelPageDecoder Initialize(string raw)
+        public static ChannelPageParser Initialize(string raw)
         {
             var root = new HtmlParser().Parse(raw);
-            return new ChannelPageDecoder(root);
+            return new ChannelPageParser(root);
         }
     }
 }

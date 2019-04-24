@@ -3,13 +3,13 @@ using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using Newtonsoft.Json.Linq;
 
-namespace YoutubeExplode.Internal.Decoders
+namespace YoutubeExplode.Internal.Parsers
 {
-    internal partial class VideoEmbedPageDecoder : DecoderBase
+    internal partial class VideoEmbedPageParser : Cached
     {
         private readonly IHtmlDocument _root;
 
-        public VideoEmbedPageDecoder(IHtmlDocument root)
+        public VideoEmbedPageParser(IHtmlDocument root)
         {
             _root = root;
         }
@@ -24,15 +24,8 @@ namespace YoutubeExplode.Internal.Decoders
 
         public string GetSts() => Cache(() => GetPlayerConfig().SelectToken("sts").Value<string>());
 
-        public string GetPlayerSourceUrl() => Cache(() =>
-        {
-            var relativeUrl = GetPlayerConfig().SelectToken("assets.js").Value<string>();
-
-            if (!relativeUrl.IsNullOrWhiteSpace())
-                relativeUrl = "https://www.youtube.com" + relativeUrl;
-
-            return relativeUrl;
-        });
+        public string GetPlayerSourceUrl() =>
+            Cache(() => "https://www.youtube.com" + GetPlayerConfig().SelectToken("assets.js").Value<string>());
 
         public string GetChannelId() =>
             Cache(() => GetPlayerConfig().SelectToken("args.channel_path").Value<string>().SubstringAfter("channel/"));
@@ -42,12 +35,12 @@ namespace YoutubeExplode.Internal.Decoders
         public string GetChannelLogoUrl() => Cache(() => GetPlayerConfig().SelectToken("args.profile_picture").Value<string>());
     }
 
-    internal partial class VideoEmbedPageDecoder
+    internal partial class VideoEmbedPageParser
     {
-        public static VideoEmbedPageDecoder Initialize(string raw)
+        public static VideoEmbedPageParser Initialize(string raw)
         {
             var root = new HtmlParser().Parse(raw);
-            return new VideoEmbedPageDecoder(root);
+            return new VideoEmbedPageParser(root);
         }
     }
 }

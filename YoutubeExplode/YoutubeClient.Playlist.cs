@@ -17,16 +17,16 @@ namespace YoutubeExplode
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
-            // Get playlist info decoder for the first page
-            var playlistInfoDecoder = await GetPlaylistInfoDecoderAsync(playlistId, 0);
+            // Get playlist info parser for the first page
+            var playlistInfoParser = await GetPlaylistInfoParserAsync(playlistId, 0);
 
             // Extract info
-            var author = playlistInfoDecoder.TryGetAuthor() ?? "";
-            var title = playlistInfoDecoder.GetTitle();
-            var description = playlistInfoDecoder.TryGetDescription() ?? "";
-            var viewCount = playlistInfoDecoder.TryGetViewCount() ?? 0;
-            var likeCount = playlistInfoDecoder.TryGetLikeCount() ?? 0;
-            var dislikeCount = playlistInfoDecoder.TryGetDislikeCount() ?? 0;
+            var author = playlistInfoParser.TryGetAuthor() ?? "";
+            var title = playlistInfoParser.GetTitle();
+            var description = playlistInfoParser.TryGetDescription() ?? "";
+            var viewCount = playlistInfoParser.TryGetViewCount() ?? 0;
+            var likeCount = playlistInfoParser.TryGetLikeCount() ?? 0;
+            var dislikeCount = playlistInfoParser.TryGetDislikeCount() ?? 0;
 
             // Process videos from all pages
             var page = 0;
@@ -37,19 +37,19 @@ namespace YoutubeExplode
             {
                 var countTotal = 0;
                 var countDelta = 0;
-                foreach (var videoInfoDecoder in playlistInfoDecoder.GetVideos())
+                foreach (var videoInfoParser in playlistInfoParser.GetVideos())
                 {
                     // Extract info
-                    var videoId = videoInfoDecoder.GetVideoId();
-                    var videoAuthor = videoInfoDecoder.GetVideoAuthor();
-                    var videoUploadDate = videoInfoDecoder.GetVideoUploadDate();
-                    var videoTitle = videoInfoDecoder.GetVideoTitle();
-                    var videoDescription = videoInfoDecoder.GetVideoDescription();
-                    var videoDuration = videoInfoDecoder.GetVideoDuration();
-                    var videoKeywords = videoInfoDecoder.GetVideoKeywords();
-                    var videoViewCount = videoInfoDecoder.GetVideoViewCount();
-                    var videoLikeCount = videoInfoDecoder.GetVideoLikeCount();
-                    var videoDislikeCount = videoInfoDecoder.GetVideoDislikeCount();
+                    var videoId = videoInfoParser.GetVideoId();
+                    var videoAuthor = videoInfoParser.GetVideoAuthor();
+                    var videoUploadDate = videoInfoParser.GetVideoUploadDate();
+                    var videoTitle = videoInfoParser.GetVideoTitle();
+                    var videoDescription = videoInfoParser.GetVideoDescription();
+                    var videoDuration = videoInfoParser.GetVideoDuration();
+                    var videoKeywords = videoInfoParser.GetVideoKeywords();
+                    var videoViewCount = videoInfoParser.GetVideoViewCount();
+                    var videoLikeCount = videoInfoParser.GetVideoLikeCount();
+                    var videoDislikeCount = videoInfoParser.GetVideoDislikeCount();
 
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
@@ -74,8 +74,8 @@ namespace YoutubeExplode
                 page++;
                 index += countTotal;
 
-                // Get playlist info decoder for the next page
-                playlistInfoDecoder = await GetPlaylistInfoDecoderAsync(playlistId, index);
+                // Get playlist info parser for the next page
+                playlistInfoParser = await GetPlaylistInfoParserAsync(playlistId, index);
             } while (page < maxPages);
 
             var statistics = new Statistics(viewCount, likeCount, dislikeCount);

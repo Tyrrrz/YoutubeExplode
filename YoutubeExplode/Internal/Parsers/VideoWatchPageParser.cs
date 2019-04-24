@@ -9,16 +9,31 @@ using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
 using Newtonsoft.Json.Linq;
 
-namespace YoutubeExplode.Internal.Decoders
+namespace YoutubeExplode.Internal.Parsers
 {
-    internal partial class VideoWatchPageDecoder : DecoderBase
+    internal partial class VideoWatchPageParser : Cached
     {
         private readonly IHtmlDocument _root;
 
-        public VideoWatchPageDecoder(IHtmlDocument root)
+        public VideoWatchPageParser(IHtmlDocument root)
         {
             _root = root;
         }
+
+        private JToken GetPlayerConfig() => Cache(() =>
+        {
+            var raw = Regex.Match(_root.Source.Text,
+                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                .Groups["Json"].Value;
+            return JToken.Parse(raw);
+        });
+
+        private JToken GetPlayerResponse() => Cache(() =>
+        {
+            // Player response is a json, which is stored as a string, inside json
+            var raw = GetPlayerConfig().SelectToken("args.player_response").Value<string>();
+            return JToken.Parse(raw);
+        });
 
         public string TryGetErrorReason() => Cache(() => _root.QuerySelector("div#unavailable-submessage")?.TextContent);
 
@@ -88,67 +103,48 @@ namespace YoutubeExplode.Internal.Decoders
         public long? TryGetVideoDislikeCount() => Cache(() =>
             _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text().StripNonDigit().ParseLongOrDefault());
 
-        private JToken GetPlayerConfig() => Cache(() =>
-        {
-            var raw = Regex.Match(_root.Source.Text,
-                    @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                .Groups["Json"].Value;
-            return JToken.Parse(raw);
-        });
-
-        private JToken GetPlayerResponse() => Cache(() =>
-        {
-            // Player response is a json, which is stored as a string, inside json
-            var raw = GetPlayerConfig().SelectToken("args.player_response").Value<string>();
-            return JToken.Parse(raw);
-        });
-
         public TimeSpan GetExpiresIn() => Cache(() =>
-        {
-            var expiresInSeconds = GetPlayerResponse().SelectToken("streamingData.expiresInSeconds").Value<double>();
-            return TimeSpan.FromSeconds(expiresInSeconds);
-        });
+            TimeSpan.FromSeconds(GetPlayerResponse().SelectToken("streamingData.expiresInSeconds").Value<double>()));
 
         public string TryGetDashManifestUrl() =>
             Cache(() => GetPlayerResponse().SelectToken("streamingData.dashManifestUrl")?.Value<string>());
 
-        public string TryGetHlsManifestUrl() => Cache(() => GetPlayerResponse().SelectToken("streamingData.hlsManifestUrl")?.Value<string>());
+        public string TryGetHlsManifestUrl() =>
+            Cache(() => GetPlayerResponse().SelectToken("streamingData.hlsManifestUrl")?.Value<string>());
 
-        public string GetSts() => Cache(() => GetPlayerConfig().SelectToken("sts").Value<string>());
-
-        public IReadOnlyList<StreamInfoDecoder> GetMuxedStreamInfos() => Cache(() =>
+        public IReadOnlyList<UrlEncodedStreamInfoParser> GetMuxedStreamInfos() => Cache(() =>
         {
             var streamInfosEncoded = GetPlayerConfig().SelectToken("args.url_encoded_fmt_stream_map").Value<string>();
 
             if (streamInfosEncoded.IsNullOrWhiteSpace())
-                return new StreamInfoDecoder[0];
+                return new UrlEncodedStreamInfoParser[0];
 
             return streamInfosEncoded.Split(",")
                 .Select(UrlEx.SplitQuery)
-                .Select(d => new StreamInfoDecoder(d))
+                .Select(d => new UrlEncodedStreamInfoParser(d))
                 .ToArray();
         });
 
-        public IReadOnlyList<StreamInfoDecoder> GetAdaptiveStreamInfos() => Cache(() =>
+        public IReadOnlyList<UrlEncodedStreamInfoParser> GetAdaptiveStreamInfos() => Cache(() =>
         {
             var streamInfosEncoded = GetPlayerConfig().SelectToken("args.adaptive_fmts").Value<string>();
 
             if (streamInfosEncoded.IsNullOrWhiteSpace())
-                return new StreamInfoDecoder[0];
+                return new UrlEncodedStreamInfoParser[0];
 
             return streamInfosEncoded.Split(",")
                 .Select(UrlEx.SplitQuery)
-                .Select(d => new StreamInfoDecoder(d))
+                .Select(d => new UrlEncodedStreamInfoParser(d))
                 .ToArray();
         });
     }
 
-    internal partial class VideoWatchPageDecoder
+    internal partial class VideoWatchPageParser
     {
-        public static VideoWatchPageDecoder Initialize(string raw)
+        public static VideoWatchPageParser Initialize(string raw)
         {
             var root = new HtmlParser().Parse(raw);
-            return new VideoWatchPageDecoder(root);
+            return new VideoWatchPageParser(root);
         }
     }
 }

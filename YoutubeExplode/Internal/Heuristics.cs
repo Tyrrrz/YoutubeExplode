@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.Internal
@@ -19,7 +18,7 @@ namespace YoutubeExplode.Internal
                 return AudioEncoding.Opus;
 
             // Unknown
-            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown encoding [{str}].");
+            throw new ArgumentException($"Unknown encoding [{str}].", nameof(str));
         }
 
         public static VideoEncoding VideoEncodingFromString(string str)
@@ -40,8 +39,16 @@ namespace YoutubeExplode.Internal
                 return VideoEncoding.Av1;
 
             // Unknown
-            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown encoding [{str}].");
+            throw new ArgumentException($"Unknown encoding [{str}].", nameof(str));
         }
+
+        private static readonly Dictionary<Container, string> ContainerToFileExtensionMap =
+            new Dictionary<Container, string>
+            {
+                {Container.Mp4, "mp4"},
+                {Container.WebM, "webm"},
+                {Container.Tgpp, "3gpp"}
+            };
 
         public static Container ContainerFromString(string str)
         {
@@ -55,143 +62,148 @@ namespace YoutubeExplode.Internal
                 return Container.Tgpp;
 
             // Unknown
-            throw new ArgumentOutOfRangeException(nameof(str), $"Unknown container [{str}].");
+            throw new ArgumentException($"Unknown container [{str}].", nameof(str));
         }
 
         public static string ContainerToFileExtension(Container container)
         {
-            // Tgpp gets special treatment
-            if (container == Container.Tgpp)
-                return "3gpp";
-
-            // Convert to lower case string
-            return container.ToString().ToLowerInvariant();
+            return ContainerToFileExtensionMap.TryGetValue(container, out var extension)
+                ? extension
+                : throw new ArgumentException($"Unknown container [{container}].", nameof(container));
         }
 
-        private static readonly Dictionary<int, VideoQuality> HeightToVideoQualityMap =
-            Enum.GetValues(typeof(VideoQuality)).Cast<VideoQuality>().ToDictionary(
-                v => v.ToString().StripNonDigit().ParseInt(), // High1080 => 1080
-                v => v);
+        private static readonly Dictionary<int, VideoQuality> ItagToVideoQualityMap =
+            new Dictionary<int, VideoQuality>
+            {
+                {5, VideoQuality.Low144},
+                {6, VideoQuality.Low240},
+                {13, VideoQuality.Low144},
+                {17, VideoQuality.Low144},
+                {18, VideoQuality.Medium360},
+                {22, VideoQuality.High720},
+                {34, VideoQuality.Medium360},
+                {35, VideoQuality.Medium480},
+                {36, VideoQuality.Low240},
+                {37, VideoQuality.High1080},
+                {38, VideoQuality.High3072},
+                {43, VideoQuality.Medium360},
+                {44, VideoQuality.Medium480},
+                {45, VideoQuality.High720},
+                {46, VideoQuality.High1080},
+                {59, VideoQuality.Medium480},
+                {78, VideoQuality.Medium480},
+                {82, VideoQuality.Medium360},
+                {83, VideoQuality.Medium480},
+                {84, VideoQuality.High720},
+                {85, VideoQuality.High1080},
+                {91, VideoQuality.Low144},
+                {92, VideoQuality.Low240},
+                {93, VideoQuality.Medium360},
+                {94, VideoQuality.Medium480},
+                {95, VideoQuality.High720},
+                {96, VideoQuality.High1080},
+                {100, VideoQuality.Medium360},
+                {101, VideoQuality.Medium480},
+                {102, VideoQuality.High720},
+                {132, VideoQuality.Low240},
+                {151, VideoQuality.Low144},
+                {133, VideoQuality.Low240},
+                {134, VideoQuality.Medium360},
+                {135, VideoQuality.Medium480},
+                {136, VideoQuality.High720},
+                {137, VideoQuality.High1080},
+                {138, VideoQuality.High4320},
+                {160, VideoQuality.Low144},
+                {212, VideoQuality.Medium480},
+                {213, VideoQuality.Medium480},
+                {214, VideoQuality.High720},
+                {215, VideoQuality.High720},
+                {216, VideoQuality.High1080},
+                {217, VideoQuality.High1080},
+                {264, VideoQuality.High1440},
+                {266, VideoQuality.High2160},
+                {298, VideoQuality.High720},
+                {299, VideoQuality.High1080},
+                {399, VideoQuality.High1080},
+                {398, VideoQuality.High720},
+                {397, VideoQuality.Medium480},
+                {396, VideoQuality.Medium360},
+                {395, VideoQuality.Low240},
+                {394, VideoQuality.Low144},
+                {167, VideoQuality.Medium360},
+                {168, VideoQuality.Medium480},
+                {169, VideoQuality.High720},
+                {170, VideoQuality.High1080},
+                {218, VideoQuality.Medium480},
+                {219, VideoQuality.Medium480},
+                {242, VideoQuality.Low240},
+                {243, VideoQuality.Medium360},
+                {244, VideoQuality.Medium480},
+                {245, VideoQuality.Medium480},
+                {246, VideoQuality.Medium480},
+                {247, VideoQuality.High720},
+                {248, VideoQuality.High1080},
+                {271, VideoQuality.High1440},
+                {272, VideoQuality.High2160},
+                {278, VideoQuality.Low144},
+                {302, VideoQuality.High720},
+                {303, VideoQuality.High1080},
+                {308, VideoQuality.High1440},
+                {313, VideoQuality.High2160},
+                {315, VideoQuality.High2160},
+                {330, VideoQuality.Low144},
+                {331, VideoQuality.Low240},
+                {332, VideoQuality.Medium360},
+                {333, VideoQuality.Medium480},
+                {334, VideoQuality.High720},
+                {335, VideoQuality.High1080},
+                {336, VideoQuality.High1440},
+                {337, VideoQuality.High2160}
+            };
 
         public static VideoQuality VideoQualityFromItag(int itag)
         {
-            if (itag == 5)
-                return VideoQuality.Low144;
-
-            if (itag == 6)
-                return VideoQuality.Low240;
-
-            if (itag == 13)
-                return VideoQuality.Low144;
-
-            if (itag == 17)
-                return VideoQuality.Low144;
-
-            if (itag == 18)
-                return VideoQuality.Medium360;
-
-            if (itag == 22)
-                return VideoQuality.High720;
-
-            if (itag == 34)
-                return VideoQuality.Medium360;
-
-            if (itag == 35)
-                return VideoQuality.Medium480;
-
-            if (itag == 36)
-                return VideoQuality.Low240;
-
-            if (itag == 37)
-                return VideoQuality.High1080;
-
-            if (itag == 38)
-                return VideoQuality.High3072;
-
-            if (itag == 43)
-                return VideoQuality.Medium360;
-
-            if (itag == 44)
-                return VideoQuality.Medium480;
-
-            if (itag == 45)
-                return VideoQuality.High720;
-
-            if (itag == 46)
-                return VideoQuality.High1080;
-
-            if (itag == 59)
-                return VideoQuality.Medium480;
-
-            if (itag == 78)
-                return VideoQuality.Medium480;
-
-            if (itag == 82)
-                return VideoQuality.Medium360;
-
-            if (itag == 83)
-                return VideoQuality.Medium480;
-
-            if (itag == 84)
-                return VideoQuality.High720;
-
-            if (itag == 85)
-                return VideoQuality.High1080;
-
-            if (itag == 91)
-                return VideoQuality.Low144;
-
-            if (itag == 92)
-                return VideoQuality.Low240;
-
-            if (itag == 93)
-                return VideoQuality.Medium360;
-
-            if (itag == 94)
-                return VideoQuality.Medium480;
-
-            if (itag == 95)
-                return VideoQuality.High720;
-
-            if (itag == 96)
-                return VideoQuality.High1080;
-
-            if (itag == 100)
-                return VideoQuality.Medium360;
-
-            if (itag == 101)
-                return VideoQuality.Medium480;
-
-            if (itag == 102)
-                return VideoQuality.High720;
-
-            if (itag == 132)
-                return VideoQuality.Low240;
-
-            if (itag == 151)
-                return VideoQuality.Low144;
-
-            // Unknown
-            throw new ArgumentException($"Unknown itag [{itag}].", nameof(itag));
-        }
-
-        public static VideoQuality VideoQualityFromHeight(int height)
-        {
-            // Find the video quality by height (highest video quality that has height below or equal to given)
-            var matchingHeight = HeightToVideoQualityMap.Keys.LastOrDefault(h => h <= height);
-
-            // Return video quality
-            return matchingHeight > 0
-                ? HeightToVideoQualityMap[matchingHeight] // if found - return matching quality
-                : HeightToVideoQualityMap.Values.First(); // otherwise return lowest available quality
+            return ItagToVideoQualityMap.TryGetValue(itag, out var quality)
+                ? quality
+                : throw new ArgumentException($"Unknown itag [{itag}].", nameof(itag));
         }
 
         public static VideoQuality VideoQualityFromLabel(string label)
         {
-            // Strip "p" and framerate to get height (e.g. 1080p60 => 1080)
-            var height = label.SubstringUntil("p").ParseInt();
+            if (label.StartsWith("144p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.Low144;
 
-            return VideoQualityFromHeight(height);
+            if (label.StartsWith("240p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.Low240;
+
+            if (label.StartsWith("360p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.Medium360;
+
+            if (label.StartsWith("480p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.Medium480;
+
+            if (label.StartsWith("720p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High720;
+
+            if (label.StartsWith("1080p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High1080;
+
+            if (label.StartsWith("1440p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High1440;
+
+            if (label.StartsWith("2160p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High2160;
+
+            if (label.StartsWith("2880p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High2880;
+
+            if (label.StartsWith("3072p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High3072;
+
+            if (label.StartsWith("4320p", StringComparison.OrdinalIgnoreCase))
+                return VideoQuality.High4320;
+
+            throw new ArgumentException($"Unknown video quality label [{label}].", nameof(label));
         }
 
         public static string VideoQualityToLabel(VideoQuality quality)
@@ -211,43 +223,27 @@ namespace YoutubeExplode.Internal
             return VideoQualityToLabel(quality) + framerateRounded;
         }
 
+        private static readonly Dictionary<VideoQuality, VideoResolution> VideoQualityToResolutionMap =
+            new Dictionary<VideoQuality, VideoResolution>
+            {
+                {VideoQuality.Low144, new VideoResolution(256, 144)},
+                {VideoQuality.Low240, new VideoResolution(426, 240)},
+                {VideoQuality.Medium360, new VideoResolution(640, 360)},
+                {VideoQuality.Medium480, new VideoResolution(854, 480)},
+                {VideoQuality.High720, new VideoResolution(1280, 720)},
+                {VideoQuality.High1080, new VideoResolution(1920, 1080)},
+                {VideoQuality.High1440, new VideoResolution(2560, 1440)},
+                {VideoQuality.High2160, new VideoResolution(3840, 2160)},
+                {VideoQuality.High2880, new VideoResolution(5120, 2880)},
+                {VideoQuality.High3072, new VideoResolution(4096, 3072)},
+                {VideoQuality.High4320, new VideoResolution(7680, 4320)}
+            };
+
         public static VideoResolution VideoQualityToResolution(VideoQuality quality)
         {
-            if (quality == VideoQuality.Low144)
-                return new VideoResolution(256, 144);
-
-            if (quality == VideoQuality.Low240)
-                return new VideoResolution(426, 240);
-
-            if (quality == VideoQuality.Medium360)
-                return new VideoResolution(640, 360);
-
-            if (quality == VideoQuality.Medium480)
-                return new VideoResolution(854, 480);
-
-            if (quality == VideoQuality.High720)
-                return new VideoResolution(1280, 720);
-
-            if (quality == VideoQuality.High1080)
-                return new VideoResolution(1920, 1080);
-
-            if (quality == VideoQuality.High1440)
-                return new VideoResolution(2560, 1440);
-
-            if (quality == VideoQuality.High2160)
-                return new VideoResolution(3840, 2160);
-
-            if (quality == VideoQuality.High2880)
-                return new VideoResolution(5120, 2880);
-
-            if (quality == VideoQuality.High3072)
-                return new VideoResolution(4096, 3072);
-
-            if (quality == VideoQuality.High4320)
-                return new VideoResolution(7680, 4320);
-
-            // Unknown
-            throw new ArgumentOutOfRangeException(nameof(quality), $"Unknown video quality [{quality}].");
+            return VideoQualityToResolutionMap.TryGetValue(quality, out var resolution)
+                ? resolution
+                : throw new ArgumentException($"Unknown video quality [{quality}].", nameof(quality));
         }
     }
 }

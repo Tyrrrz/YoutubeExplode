@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace YoutubeExplode.Internal.Decoders
+namespace YoutubeExplode.Internal.Parsers
 {
-    internal class StreamInfoDecoder : DecoderBase
+    internal class UrlEncodedStreamInfoParser : Cached
     {
         private readonly IReadOnlyDictionary<string, string> _root;
 
-        public StreamInfoDecoder(IReadOnlyDictionary<string, string> root)
+        public UrlEncodedStreamInfoParser(IReadOnlyDictionary<string, string> root)
         {
             _root = root;
         }

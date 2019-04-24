@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Media stream container type.
@@ -13,12 +11,6 @@ namespace YoutubeExplode.Models.MediaStreams
         Mp4,
 
         /// <summary>
-        /// MPEG-4 Part 14 audio-only (.m4a).
-        /// </summary>
-        [Obsolete("Use Mp4 instead.")]
-        M4A = Mp4,
-
-        /// <summary>
         /// Web Media (.webm).
         /// </summary>
         WebM,
@@ -26,12 +18,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// 3rd Generation Partnership Project (.3gpp).
         /// </summary>
-        Tgpp,
-
-        /// <summary>
-        /// Flash Video (.flv).
-        /// </summary>
-        [Obsolete("Not available anymore.")]
-        Flv
+        Tgpp
     }
 }
