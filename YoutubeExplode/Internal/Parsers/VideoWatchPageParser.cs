@@ -39,15 +39,22 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string TryGetPreviewVideoId() => Cache(() =>
         {
+            // Try to get preview video ID directly
+            var previewVideoId = GetPlayerResponse()
+                .SelectToken("playabilityStatus.errorScreen.playerLegacyDesktopYpcTrailerRenderer.trailerVideoId")?.Value<string>();
+
+            if (!previewVideoId.IsNullOrWhiteSpace())
+                return previewVideoId;
+
+            // Try to get preview video ID from inner video info
             var previewVideoInfoRaw = GetPlayerResponse().SelectToken("playabilityStatus.errorScreen.ypcTrailerRenderer.playerVars")
                 ?.Value<string>();
 
-            if (previewVideoInfoRaw.IsNullOrWhiteSpace())
-                return null;
+            if (!previewVideoInfoRaw.IsNullOrWhiteSpace())
+                return UrlEx.SplitQuery(previewVideoInfoRaw).GetValueOrDefault("video_id");
 
-            var previewVideoInfo = UrlEx.SplitQuery(previewVideoInfoRaw);
-
-            return previewVideoInfo.GetValueOrDefault("video_id");
+            // Not found
+            return null;
         });
 
         public DateTimeOffset GetVideoUploadDate() => Cache(() =>
