@@ -174,22 +174,23 @@ namespace YoutubeExplode
             var videoStreamInfoMap = new Dictionary<int, VideoStreamInfo>();
 
             // Extract muxed stream infos
-            foreach (var streamInfo in muxedStreamInfoParsers)
+            foreach (var streamInfoParser in muxedStreamInfoParsers)
             {
                 // Extract info
-                var itag = streamInfo.GetItag();
-                var url = streamInfo.GetUrl();
+                var itag = streamInfoParser.GetItag();
+                var url = streamInfoParser.GetUrl();
 
                 // Decipher signature if needed
-                var signature = streamInfo.TryGetSignature();
+                var signature = streamInfoParser.TryGetSignature();
                 if (!signature.IsNullOrWhiteSpace())
                 {
                     signature = await DecipherSignatureAsync(playerSourceUrl, signature);
-                    url = UrlEx.SetQueryParameter(url, "signature", signature);
+                    var signatureParameterName = streamInfoParser.TryGetSignatureParameterName() ?? "signature";
+                    url = UrlEx.SetQueryParameter(url, signatureParameterName, signature);
                 }
 
                 // Try to extract content length, otherwise get it manually
-                var contentLength = streamInfo.TryGetContentLength() ?? -1;
+                var contentLength = streamInfoParser.TryGetContentLength() ?? -1;
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
@@ -201,15 +202,15 @@ namespace YoutubeExplode
                 }
 
                 // Extract container
-                var containerStr = streamInfo.GetContainer();
+                var containerStr = streamInfoParser.GetContainer();
                 var container = Heuristics.ContainerFromString(containerStr);
 
                 // Extract audio encoding
-                var audioEncodingStr = streamInfo.GetAudioEncoding();
+                var audioEncodingStr = streamInfoParser.GetAudioEncoding();
                 var audioEncoding = Heuristics.AudioEncodingFromString(audioEncodingStr);
 
                 // Extract video encoding
-                var videoEncodingStr = streamInfo.GetVideoEncoding();
+                var videoEncodingStr = streamInfoParser.GetVideoEncoding();
                 var videoEncoding = Heuristics.VideoEncodingFromString(videoEncodingStr);
 
                 // Determine video quality from itag
@@ -227,23 +228,24 @@ namespace YoutubeExplode
             }
 
             // Extract adaptive stream infos
-            foreach (var streamInfo in adaptiveStreamInfoParsers)
+            foreach (var streamInfoParser in adaptiveStreamInfoParsers)
             {
                 // Extract info
-                var itag = streamInfo.GetItag();
-                var url = streamInfo.GetUrl();
-                var bitrate = streamInfo.GetBitrate();
+                var itag = streamInfoParser.GetItag();
+                var url = streamInfoParser.GetUrl();
+                var bitrate = streamInfoParser.GetBitrate();
 
                 // Decipher signature if needed
-                var signature = streamInfo.TryGetSignature();
+                var signature = streamInfoParser.TryGetSignature();
                 if (!signature.IsNullOrWhiteSpace())
                 {
                     signature = await DecipherSignatureAsync(playerSourceUrl, signature);
-                    url = UrlEx.SetQueryParameter(url, "signature", signature);
+                    var signatureParameterName = streamInfoParser.TryGetSignatureParameterName() ?? "signature";
+                    url = UrlEx.SetQueryParameter(url, signatureParameterName, signature);
                 }
 
                 // Try to extract content length, otherwise get it manually
-                var contentLength = streamInfo.TryGetContentLength() ?? -1;
+                var contentLength = streamInfoParser.TryGetContentLength() ?? -1;
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
@@ -255,14 +257,14 @@ namespace YoutubeExplode
                 }
 
                 // Extract container
-                var containerStr = streamInfo.GetContainer();
+                var containerStr = streamInfoParser.GetContainer();
                 var container = Heuristics.ContainerFromString(containerStr);
 
                 // If audio-only
-                if (streamInfo.GetIsAudioOnly())
+                if (streamInfoParser.GetIsAudioOnly())
                 {
                     // Extract audio encoding
-                    var audioEncodingStr = streamInfo.GetAudioEncoding();
+                    var audioEncodingStr = streamInfoParser.GetAudioEncoding();
                     var audioEncoding = Heuristics.AudioEncodingFromString(audioEncodingStr);
 
                     // Add stream
@@ -272,20 +274,20 @@ namespace YoutubeExplode
                 else
                 {
                     // Extract video encoding
-                    var videoEncodingStr = streamInfo.GetVideoEncoding();
+                    var videoEncodingStr = streamInfoParser.GetVideoEncoding();
                     var videoEncoding = Heuristics.VideoEncodingFromString(videoEncodingStr);
 
                     // Extract video quality label and video quality
-                    var videoQualityLabel = streamInfo.GetVideoQualityLabel();
+                    var videoQualityLabel = streamInfoParser.GetVideoQualityLabel();
                     var videoQuality = Heuristics.VideoQualityFromLabel(videoQualityLabel);
 
                     // Extract resolution
-                    var width = streamInfo.GetWidth();
-                    var height = streamInfo.GetHeight();
+                    var width = streamInfoParser.GetWidth();
+                    var height = streamInfoParser.GetHeight();
                     var resolution = new VideoResolution(width, height);
 
                     // Extract framerate
-                    var framerate = streamInfo.GetFramerate();
+                    var framerate = streamInfoParser.GetFramerate();
 
                     // Add to list
                     videoStreamInfoMap[itag] = new VideoStreamInfo(itag, url, container, contentLength, bitrate, videoEncoding,
@@ -310,23 +312,23 @@ namespace YoutubeExplode
                 var dashManifestParser = await GetDashManifestParserAsync(dashManifestUrl);
 
                 // Extract dash stream infos
-                foreach (var streamInfo in dashManifestParser.GetStreamInfos())
+                foreach (var streamInfoParser in dashManifestParser.GetStreamInfos())
                 {
                     // Extract info
-                    var itag = streamInfo.GetItag();
-                    var url = streamInfo.GetUrl();
-                    var contentLength = streamInfo.GetContentLength();
-                    var bitrate = streamInfo.GetBitrate();
+                    var itag = streamInfoParser.GetItag();
+                    var url = streamInfoParser.GetUrl();
+                    var contentLength = streamInfoParser.GetContentLength();
+                    var bitrate = streamInfoParser.GetBitrate();
 
                     // Extract container
-                    var containerStr = streamInfo.GetContainer();
+                    var containerStr = streamInfoParser.GetContainer();
                     var container = Heuristics.ContainerFromString(containerStr);
 
                     // If audio-only
-                    if (streamInfo.GetIsAudioOnly())
+                    if (streamInfoParser.GetIsAudioOnly())
                     {
                         // Extract audio encoding
-                        var audioEncodingStr = streamInfo.GetEncoding();
+                        var audioEncodingStr = streamInfoParser.GetEncoding();
                         var audioEncoding = Heuristics.AudioEncodingFromString(audioEncodingStr);
 
                         // Add to list
@@ -336,16 +338,16 @@ namespace YoutubeExplode
                     else
                     {
                         // Extract video encoding
-                        var videoEncodingStr = streamInfo.GetEncoding();
+                        var videoEncodingStr = streamInfoParser.GetEncoding();
                         var videoEncoding = Heuristics.VideoEncodingFromString(videoEncodingStr);
 
                         // Extract resolution
-                        var width = streamInfo.GetWidth();
-                        var height = streamInfo.GetHeight();
+                        var width = streamInfoParser.GetWidth();
+                        var height = streamInfoParser.GetHeight();
                         var resolution = new VideoResolution(width, height);
 
                         // Extract framerate
-                        var framerate = streamInfo.GetFramerate();
+                        var framerate = streamInfoParser.GetFramerate();
 
                         // Determine video quality from itag
                         var videoQuality = Heuristics.VideoQualityFromItag(itag);

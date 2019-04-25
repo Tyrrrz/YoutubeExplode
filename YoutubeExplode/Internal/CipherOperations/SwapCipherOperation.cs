@@ -20,5 +20,7 @@ namespace YoutubeExplode.Internal.CipherOperations
             };
             return sb.ToString();
         }
+
+        public override string ToString() => $"Swap [{_index}]";
     }
 }

@@ -13,5 +13,7 @@
         {
             return input.Substring(_index);
         }
+
+        public override string ToString() => $"Slice [{_index}]";
     }
 }

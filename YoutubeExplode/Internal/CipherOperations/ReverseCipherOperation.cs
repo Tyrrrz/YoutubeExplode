@@ -6,5 +6,7 @@
         {
             return input.Reverse();
         }
+
+        public override string ToString() => "Reverse";
     }
 }

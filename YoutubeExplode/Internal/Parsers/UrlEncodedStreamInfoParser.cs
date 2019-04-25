@@ -20,6 +20,8 @@ namespace YoutubeExplode.Internal.Parsers
 
         public string TryGetSignature() => Cache(() => _root.GetValueOrDefault("s"));
 
+        public string TryGetSignatureParameterName() => Cache(() => _root.GetValueOrDefault("sp"));
+
         public long? TryGetContentLength() => Cache<long?>(() =>
         {
             // Try to get content length from dictionary
