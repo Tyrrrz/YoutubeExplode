@@ -126,8 +126,15 @@ namespace YoutubeExplode.Internal.Parsers
         public TimeSpan GetExpiresIn() => Cache(() =>
             TimeSpan.FromSeconds(GetPlayerResponse().SelectToken("streamingData.expiresInSeconds").Value<double>()));
 
-        public string TryGetDashManifestUrl() =>
-            Cache(() => GetPlayerResponse().SelectToken("streamingData.dashManifestUrl")?.Value<string>());
+        public bool GetIsLiveStream() => Cache(() => GetPlayerResponse().SelectToken("videoDetails.isLive")?.Value<bool>() == true);
+
+        public string TryGetDashManifestUrl() => Cache(() =>
+        {
+            if (GetIsLiveStream())
+                return null;
+
+            return GetPlayerResponse().SelectToken("streamingData.dashManifestUrl")?.Value<string>();
+        });
 
         public string TryGetHlsManifestUrl() =>
             Cache(() => GetPlayerResponse().SelectToken("streamingData.hlsManifestUrl")?.Value<string>());

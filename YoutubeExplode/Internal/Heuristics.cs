@@ -18,7 +18,7 @@ namespace YoutubeExplode.Internal
                 return AudioEncoding.Opus;
 
             // Unknown
-            throw new ArgumentException($"Unknown encoding [{str}].", nameof(str));
+            throw new ArgumentException($"Unknown audio encoding [{str}].", nameof(str));
         }
 
         public static VideoEncoding VideoEncodingFromString(string str)
@@ -39,7 +39,7 @@ namespace YoutubeExplode.Internal
                 return VideoEncoding.Av1;
 
             // Unknown
-            throw new ArgumentException($"Unknown encoding [{str}].", nameof(str));
+            throw new ArgumentException($"Unknown video encoding [{str}].", nameof(str));
         }
 
         public static Container ContainerFromString(string str)

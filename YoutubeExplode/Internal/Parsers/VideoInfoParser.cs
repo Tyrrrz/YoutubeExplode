@@ -36,15 +36,27 @@ namespace YoutubeExplode.Internal.Parsers
         public IReadOnlyList<string> GetVideoKeywords() =>
             Cache(() => GetPlayerResponse().SelectToken("videoDetails.keywords").EmptyIfNull().Values<string>().ToArray());
 
-        public string TryGetDashManifestUrl() => Cache(() => _root.GetValueOrDefault("dashmpd"));
-
-        public string TryGetHlsManifestUrl() => Cache(() => _root.GetValueOrDefault("hlsvp"));
-
         public TimeSpan GetExpiresIn() => Cache(() =>
             TimeSpan.FromSeconds(GetPlayerResponse().SelectToken("streamingData.expiresInSeconds").Value<double>()));
 
+        public bool GetIsLiveStream() => Cache(() => GetPlayerResponse().SelectToken("videoDetails.isLive")?.Value<bool>() == true);
+
+        public string TryGetDashManifestUrl() => Cache(() =>
+        {
+            if (GetIsLiveStream())
+                return null;
+
+            return GetPlayerResponse().SelectToken("streamingData.dashManifestUrl")?.Value<string>();
+        });
+
+        public string TryGetHlsManifestUrl() =>
+            Cache(() => GetPlayerResponse().SelectToken("streamingData.hlsManifestUrl")?.Value<string>());
+
         public IReadOnlyList<UrlEncodedStreamInfoParser> GetMuxedStreamInfos() => Cache(() =>
         {
+            if (GetIsLiveStream())
+                return new UrlEncodedStreamInfoParser[0];
+
             var streamInfosEncoded = _root.GetValueOrDefault("url_encoded_fmt_stream_map");
 
             if (streamInfosEncoded.IsNullOrWhiteSpace())
@@ -58,6 +70,9 @@ namespace YoutubeExplode.Internal.Parsers
 
         public IReadOnlyList<UrlEncodedStreamInfoParser> GetAdaptiveStreamInfos() => Cache(() =>
         {
+            if (GetIsLiveStream())
+                return new UrlEncodedStreamInfoParser[0];
+
             var streamInfosEncoded = _root.GetValueOrDefault("adaptive_fmts");
 
             if (streamInfosEncoded.IsNullOrWhiteSpace())
