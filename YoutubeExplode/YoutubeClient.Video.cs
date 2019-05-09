@@ -39,9 +39,9 @@ namespace YoutubeExplode
             var videoKeywords = videoInfoParser.GetVideoKeywords();
             var videoUploadDate = videoWatchPageParser.GetVideoUploadDate();
             var videoDescription = videoWatchPageParser.GetVideoDescription();
-            var videoViewCount = videoWatchPageParser.TryGetVideoViewCount() ?? 0;
-            var videoLikeCount = videoWatchPageParser.TryGetVideoLikeCount() ?? 0;
-            var videoDislikeCount = videoWatchPageParser.TryGetVideoDislikeCount() ?? 0;
+            var videoViewCount = videoWatchPageParser.GetVideoViewCount();
+            var videoLikeCount = videoWatchPageParser.GetVideoLikeCount();
+            var videoDislikeCount = videoWatchPageParser.GetVideoDislikeCount();
 
             var statistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
             var thumbnails = new ThumbnailSet(videoId);

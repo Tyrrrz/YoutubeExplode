@@ -20,7 +20,7 @@ namespace YoutubeExplode.Internal.Parsers
             return JToken.Parse(playerResponseRaw);
         });
 
-        public bool Validate() => Cache(() => !_root.GetValueOrDefault("video_id").IsNullOrWhiteSpace());
+        public string GetVideoId() => Cache(() => _root.GetValueOrDefault("video_id"));
 
         public string TryGetErrorReason() => Cache(() => GetPlayerResponse().SelectToken("playabilityStatus.reason")?.Value<string>());
 

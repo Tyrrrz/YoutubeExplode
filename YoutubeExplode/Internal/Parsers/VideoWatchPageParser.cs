@@ -114,14 +114,14 @@ namespace YoutubeExplode.Internal.Parsers
             return buffer.ToString();
         });
 
-        public long? TryGetVideoViewCount() => Cache(() =>
-            _root.QuerySelector("meta[itemprop=\"interactionCount\"]")?.GetAttribute("content").ParseLongOrDefault());
+        public long GetVideoViewCount() => Cache(() =>
+            _root.QuerySelector("meta[itemprop=\"interactionCount\"]")?.GetAttribute("content").ParseLong() ?? 0);
 
-        public long? TryGetVideoLikeCount() => Cache(() =>
-            _root.QuerySelector("button.like-button-renderer-like-button")?.Text().StripNonDigit().ParseLongOrDefault());
+        public long GetVideoLikeCount() => Cache(() =>
+            _root.QuerySelector("button.like-button-renderer-like-button")?.Text().StripNonDigit().ParseLong() ?? 0);
 
-        public long? TryGetVideoDislikeCount() => Cache(() =>
-            _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text().StripNonDigit().ParseLongOrDefault());
+        public long GetVideoDislikeCount() => Cache(() =>
+            _root.QuerySelector("button.like-button-renderer-dislike-button")?.Text().StripNonDigit().ParseLong() ?? 0);
 
         public TimeSpan GetExpiresIn() => Cache(() =>
             TimeSpan.FromSeconds(GetPlayerResponse().SelectToken("streamingData.expiresInSeconds").Value<double>()));

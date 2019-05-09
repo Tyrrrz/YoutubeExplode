@@ -31,17 +31,21 @@ namespace YoutubeExplode
 
         private async Task<VideoEmbedPageParser> GetVideoEmbedPageParserAsync(string videoId)
         {
+            // Execute request
             var url = $"https://www.youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+            // Initialize parser
             return VideoEmbedPageParser.Initialize(raw);
         }
 
         private async Task<VideoWatchPageParser> GetVideoWatchPageParserAsync(string videoId)
         {
+            // Execute request
             var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+            // Initialize parser
             return VideoWatchPageParser.Initialize(raw);
         }
 
@@ -54,11 +58,11 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=embedded&sts={sts}&eurl={eurl}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            // Initialize
+            // Initialize parser
             var parser = VideoInfoParser.Initialize(raw);
 
-            // If invalid - throw
-            if (!parser.Validate())
+            // If video ID is not set - video is unavailable
+            if (parser.GetVideoId().IsNullOrWhiteSpace())
                 throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
 
             return parser;
@@ -66,19 +70,27 @@ namespace YoutubeExplode
 
         private async Task<PlayerSourceParser> GetPlayerSourceParserAsync(string sourceUrl)
         {
+            // Execute request
             var raw = await _httpClient.GetStringAsync(sourceUrl);
+
+            // Initialize parser
             return PlayerSourceParser.Initialize(raw);
         }
 
         private async Task<DashManifestParser> GetDashManifestParserAsync(string dashManifestUrl)
         {
+            // Execute request
             var raw = await _httpClient.GetStringAsync(dashManifestUrl);
+
+            // Initialize parser
             return DashManifestParser.Initialize(raw);
         }
 
         private async Task<ClosedCaptionTrackParser> GetClosedCaptionTrackParserAsync(string url)
         {
             var raw = await _httpClient.GetStringAsync(url);
+
+            // Initialize parser
             return ClosedCaptionTrackParser.Initialize(raw);
         }
 
@@ -89,7 +101,10 @@ namespace YoutubeExplode
             // Retry up to 5 times because sometimes the response has random errors
             for (var retry = 0; retry < 5; retry++)
             {
+                // Execute request
                 var raw = await _httpClient.GetStringAsync(url);
+
+                // Initialize parser
                 var parser = ChannelPageParser.Initialize(raw);
 
                 // If successful - return
@@ -113,7 +128,10 @@ namespace YoutubeExplode
             // Retry up to 5 times because sometimes the response has random errors
             for (var retry = 0; retry < 5; retry++)
             {
+                // Execute request
                 var raw = await _httpClient.GetStringAsync(url);
+
+                // Initialize parser
                 var parser = ChannelPageParser.Initialize(raw);
 
                 // If successful - return
@@ -130,9 +148,11 @@ namespace YoutubeExplode
 
         private async Task<PlaylistInfoParser> GetPlaylistInfoParserAsync(string playlistId, int index)
         {
+            // Execute request
             var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+            // Initialize parser
             return PlaylistInfoParser.Initialize(raw);
         }
 
@@ -140,11 +160,11 @@ namespace YoutubeExplode
         {
             query = query.UrlEncode();
 
-            // Don't ensure success here so that empty pages can be parsed
-
+            // Execute request (don't ensure success so that it can return even if non-existing page is given)
             var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
             var raw = await _httpClient.GetStringAsync(url, false);
 
+            // Initialize parser
             return PlaylistInfoParser.Initialize(raw);
         }
     }
