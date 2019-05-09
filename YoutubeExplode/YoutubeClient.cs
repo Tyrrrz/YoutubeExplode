@@ -85,57 +85,5 @@ namespace YoutubeExplode
             // Initialize parser
             return DashManifestParser.Initialize(raw);
         }
-
-        private async Task<ChannelPageParser> GetChannelPageParserAsync(string channelId)
-        {
-            var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
-
-            // Retry up to 5 times because sometimes the response has random errors
-            for (var retry = 0; retry < 5; retry++)
-            {
-                // Execute request
-                var raw = await _httpClient.GetStringAsync(url);
-
-                // Initialize parser
-                var parser = ChannelPageParser.Initialize(raw);
-
-                // If successful - return
-                if (parser.Validate())
-                    return parser;
-
-                // Otherwise put a delay before trying again
-                await Task.Delay(150);
-            }
-
-            // Throw exception
-            throw new ParserException("Could not get channel page.");
-        }
-
-        private async Task<ChannelPageParser> GetChannelPageParserForUserAsync(string username)
-        {
-            username = username.UrlEncode();
-
-            var url = $"https://www.youtube.com/user/{username}?hl=en";
-
-            // Retry up to 5 times because sometimes the response has random errors
-            for (var retry = 0; retry < 5; retry++)
-            {
-                // Execute request
-                var raw = await _httpClient.GetStringAsync(url);
-
-                // Initialize parser
-                var parser = ChannelPageParser.Initialize(raw);
-
-                // If successful - return
-                if (parser.Validate())
-                    return parser;
-
-                // Otherwise put a delay before trying again
-                await Task.Delay(150);
-            }
-
-            // Throw exception
-            throw new ParserException("Could not get channel page.");
-        }
     }
 }

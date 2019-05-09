@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AngleSharp.Parser.Html;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
 
@@ -16,10 +17,15 @@ namespace YoutubeExplode
             if (!ValidateUsername(username))
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
-            // Get channel page parser
-            var channelPageParser = await GetChannelPageParserForUserAsync(username);
+            // Get channel page
+            var url = $"https://www.youtube.com/user/{username}?hl=en";
+            var channelPageRaw = await _httpClient.GetStringAsync(url);
+            var channelPageHtml = new HtmlParser().Parse(channelPageRaw);
 
-            return channelPageParser.GetChannelId();
+            // Get channel URL
+            var channelUrl = channelPageHtml.QuerySelector("meta[property=\"og:url\"]").GetAttribute("content");
+
+            return channelUrl.SubstringAfter("channel/");
         }
 
         /// <inheritdoc />
@@ -30,12 +36,14 @@ namespace YoutubeExplode
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
-            // Get channel page parser
-            var channelPageParser = await GetChannelPageParserAsync(channelId);
+            // Get channel page
+            var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
+            var channelPageRaw = await _httpClient.GetStringAsync(url);
+            var channelPageHtml = new HtmlParser().Parse(channelPageRaw);
 
             // Extract info
-            var channelTitle = channelPageParser.GetChannelTitle();
-            var channelLogoUrl = channelPageParser.GetChannelLogoUrl();
+            var channelTitle = channelPageHtml.QuerySelector("meta[property=\"og:title\"]").GetAttribute("content");
+            var channelLogoUrl = channelPageHtml.QuerySelector("meta[property=\"og:image\"]").GetAttribute("content");
 
             return new Channel(channelId, channelTitle, channelLogoUrl);
         }

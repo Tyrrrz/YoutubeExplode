@@ -78,20 +78,16 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info parser
-            var videoInfoParser = await GetVideoInfoParserAsync(videoId);
+            // Get video info
+            var videoInfo = await GetVideoInfoAsync(videoId);
 
-            // Extract channel ID
-            var channelId = videoInfoParser.GetChannelId();
+            // Get player response
+            var playerResponseJson = JToken.Parse(videoInfo["player_response"]);
 
-            // Get channel page parser
-            var channelPageParser = await GetChannelPageParserAsync(channelId);
+            // Get channel ID
+            var channelId = playerResponseJson.SelectToken("videoDetails.channelId").Value<string>();
 
-            // Extract info
-            var channelTitle = channelPageParser.GetChannelTitle();
-            var channelLogoUrl = channelPageParser.GetChannelLogoUrl();
-
-            return new Channel(channelId, channelTitle, channelLogoUrl);
+            return await GetChannelAsync(channelId);
         }
 
         private async Task<string> DecipherSignatureAsync(string playerSourceUrl, string signature)
