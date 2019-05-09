@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
 
@@ -17,35 +21,47 @@ namespace YoutubeExplode
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
             {
-                // Get playlist info parser
-                var playlistInfoParser = await GetPlaylistInfoParserForSearchAsync(query, page);
+                // Get JSON-encoded result page
+                var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
+                var resultPageRaw = await _httpClient.GetStringAsync(url, false);
+                var resultPageJson = JToken.Parse(resultPageRaw);
 
-                // Extract videos
+                // Get videos
                 var countDelta = 0;
-                foreach (var videoInfoParser in playlistInfoParser.GetVideos())
+                foreach (var videoJson in resultPageJson.SelectToken("video").EmptyIfNull())
                 {
-                    // Extract info
-                    var videoId = videoInfoParser.GetVideoId();
-                    var videoAuthor = videoInfoParser.GetVideoAuthor();
-                    var videoUploadDate = videoInfoParser.GetVideoUploadDate();
-                    var videoTitle = videoInfoParser.GetVideoTitle();
-                    var videoDescription = videoInfoParser.GetVideoDescription();
-                    var videoDuration = videoInfoParser.GetVideoDuration();
-                    var videoKeywords = videoInfoParser.GetVideoKeywords();
-                    var videoViewCount = videoInfoParser.GetVideoViewCount();
-                    var videoLikeCount = videoInfoParser.GetVideoLikeCount();
-                    var videoDislikeCount = videoInfoParser.GetVideoDislikeCount();
+                    // Get video info
+                    var videoId = videoJson.SelectToken("encrypted_id").Value<string>();
+                    var videoAuthor = videoJson.SelectToken("author").Value<string>();
+                    var videoUploadDate = videoJson.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
+                    var videoTitle = videoJson.SelectToken("title").Value<string>();
+                    var videoDescription = videoJson.SelectToken("description").Value<string>();
+                    var videoDuration = TimeSpan.FromSeconds(videoJson.SelectToken("length_seconds").Value<double>());
+                    var videoViewCount = videoJson.SelectToken("views").Value<string>().StripNonDigit().ParseLong();
+                    var videoLikeCount = videoJson.SelectToken("likes").Value<long>();
+                    var videoDislikeCount = videoJson.SelectToken("dislikes").Value<long>();
 
+                    // Get video keywords
+                    var videoKeywordsJoined = videoJson.SelectToken("keywords").Value<string>();
+                    var videoKeywords = Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .Where(s => !s.IsNullOrWhiteSpace())
+                        .ToArray();
+
+                    // Create statistics and thumbnails
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
 
+                    // Add to list
                     videos.Add(new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
                         videoThumbnails, videoDuration, videoKeywords, videoStatistics));
 
+                    // Increment delta
                     countDelta++;
                 }
 
-                // Break if no distinct videos were added to the list
+                // If no distinct videos were added to the list - break
                 if (countDelta <= 0)
                     break;
             }

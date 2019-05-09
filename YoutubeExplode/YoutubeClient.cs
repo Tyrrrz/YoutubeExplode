@@ -137,27 +137,5 @@ namespace YoutubeExplode
             // Throw exception
             throw new ParserException("Could not get channel page.");
         }
-
-        private async Task<PlaylistInfoParser> GetPlaylistInfoParserAsync(string playlistId, int index)
-        {
-            // Execute request
-            var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
-
-            // Initialize parser
-            return PlaylistInfoParser.Initialize(raw);
-        }
-
-        private async Task<PlaylistInfoParser> GetPlaylistInfoParserForSearchAsync(string query, int page)
-        {
-            query = query.UrlEncode();
-
-            // Execute request (don't ensure success so that it can return even if non-existing page is given)
-            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query}&page={page}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url, false);
-
-            // Initialize parser
-            return PlaylistInfoParser.Initialize(raw);
-        }
     }
 }

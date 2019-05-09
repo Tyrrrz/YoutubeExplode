@@ -17,26 +17,24 @@ namespace YoutubeExplode
         {
             info.GuardNotNull(nameof(info));
 
-            // Get raw content
-            var raw = await _httpClient.GetStringAsync(info.Url);
+            // Get XML-encoded content
+            var contentRaw = await _httpClient.GetStringAsync(info.Url);
+            var contentXml = XElement.Parse(contentRaw, LoadOptions.PreserveWhitespace).StripNamespaces();
 
-            // Parse content as XML
-            var closedCaptionTrackXml = XElement.Parse(raw, LoadOptions.PreserveWhitespace).StripNamespaces();
-
-            // Extract closed captions
+            // Get closed captions
             var closedCaptions = new List<ClosedCaption>();
-            foreach (var closedCaptionXml in closedCaptionTrackXml.Descendants("p"))
+            foreach (var captionXml in contentXml.Descendants("p"))
             {
                 // Get text
-                var text = (string) closedCaptionXml;
+                var text = (string) captionXml;
 
                 // Skip captions with empty text
                 if (text.IsNullOrWhiteSpace())
                     continue;
 
                 // Get timing info
-                var offset = TimeSpan.FromMilliseconds((double) closedCaptionXml.Attribute("t"));
-                var duration = TimeSpan.FromMilliseconds((double)closedCaptionXml.Attribute("d"));
+                var offset = TimeSpan.FromMilliseconds((double) captionXml.Attribute("t"));
+                var duration = TimeSpan.FromMilliseconds((double) captionXml.Attribute("d"));
 
                 // Add to list
                 closedCaptions.Add(new ClosedCaption(text, offset, duration));
