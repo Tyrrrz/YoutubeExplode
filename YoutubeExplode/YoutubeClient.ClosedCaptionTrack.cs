@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models.ClosedCaptions;
 
@@ -16,23 +17,26 @@ namespace YoutubeExplode
         {
             info.GuardNotNull(nameof(info));
 
-            // Get closed caption track parser
-            var closedCaptionTrackParser = await GetClosedCaptionTrackParserAsync(info.Url);
+            // Get raw content
+            var raw = await _httpClient.GetStringAsync(info.Url);
+
+            // Parse content as XML
+            var closedCaptionTrackXml = XElement.Parse(raw, LoadOptions.PreserveWhitespace).StripNamespaces();
 
             // Extract closed captions
             var closedCaptions = new List<ClosedCaption>();
-            foreach (var closedCaptionParser in closedCaptionTrackParser.GetClosedCaptions())
+            foreach (var closedCaptionXml in closedCaptionTrackXml.Descendants("p"))
             {
-                // Extract text
-                var text = closedCaptionParser.GetText();
+                // Get text
+                var text = (string) closedCaptionXml;
 
                 // Skip captions with empty text
                 if (text.IsNullOrWhiteSpace())
                     continue;
 
-                // Extract timing info
-                var offset = closedCaptionParser.GetOffset();
-                var duration = closedCaptionParser.GetDuration();
+                // Get timing info
+                var offset = TimeSpan.FromMilliseconds((double) closedCaptionXml.Attribute("t"));
+                var duration = TimeSpan.FromMilliseconds((double)closedCaptionXml.Attribute("d"));
 
                 // Add to list
                 closedCaptions.Add(new ClosedCaption(text, offset, duration));

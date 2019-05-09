@@ -51,7 +51,7 @@ namespace YoutubeExplode.Internal.Parsers
                 ?.Value<string>();
 
             if (!previewVideoInfoRaw.IsNullOrWhiteSpace())
-                return UrlEx.SplitQuery(previewVideoInfoRaw).GetValueOrDefault("video_id");
+                return Url.SplitQuery(previewVideoInfoRaw).GetValueOrDefault("video_id");
 
             // Not found
             return null;
@@ -84,7 +84,7 @@ namespace YoutubeExplode.Internal.Parsers
                         if (href.StartsWith("/redirect", StringComparison.OrdinalIgnoreCase))
                         {
                             // Get query parameters
-                            var queryParams = UrlEx.SplitQuery(anchorNode.Search);
+                            var queryParams = Url.SplitQuery(anchorNode.Search);
 
                             // Get the actual href
                             href = queryParams["q"];
@@ -147,7 +147,7 @@ namespace YoutubeExplode.Internal.Parsers
                 return new UrlEncodedStreamInfoParser[0];
 
             return streamInfosEncoded.Split(",")
-                .Select(UrlEx.SplitQuery)
+                .Select(Url.SplitQuery)
                 .Select(d => new UrlEncodedStreamInfoParser(d))
                 .ToArray();
         });
@@ -160,7 +160,7 @@ namespace YoutubeExplode.Internal.Parsers
                 return new UrlEncodedStreamInfoParser[0];
 
             return streamInfosEncoded.Split(",")
-                .Select(UrlEx.SplitQuery)
+                .Select(Url.SplitQuery)
                 .Select(d => new UrlEncodedStreamInfoParser(d))
                 .ToArray();
         });

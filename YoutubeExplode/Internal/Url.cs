@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Internal
 {
-    internal static class UrlEx
+    internal static class Url
     {
         public static string SetQueryParameter(string url, string key, string value)
         {

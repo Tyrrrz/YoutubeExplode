@@ -63,7 +63,7 @@ namespace YoutubeExplode.Internal.Parsers
                 return new UrlEncodedStreamInfoParser[0];
 
             return streamInfosEncoded.Split(",")
-                .Select(UrlEx.SplitQuery)
+                .Select(Url.SplitQuery)
                 .Select(d => new UrlEncodedStreamInfoParser(d))
                 .ToArray();
         });
@@ -79,21 +79,20 @@ namespace YoutubeExplode.Internal.Parsers
                 return new UrlEncodedStreamInfoParser[0];
 
             return streamInfosEncoded.Split(",")
-                .Select(UrlEx.SplitQuery)
+                .Select(Url.SplitQuery)
                 .Select(d => new UrlEncodedStreamInfoParser(d))
                 .ToArray();
         });
 
-        public IEnumerable<ClosedCaptionTrackInfoParser> GetClosedCaptionTrackInfos() =>
-            Cache(() => GetPlayerResponse().SelectToken("captions.playerCaptionsTracklistRenderer.captionTracks").EmptyIfNull()
-                .Select(t => new ClosedCaptionTrackInfoParser(t)));
+        public JToken GetClosedCaptionTrackInfosJson() =>
+            Cache(() => GetPlayerResponse().SelectToken("captions.playerCaptionsTracklistRenderer.captionTracks"));
     }
 
     internal partial class VideoInfoParser
     {
         public static VideoInfoParser Initialize(string raw)
         {
-            var root = UrlEx.SplitQuery(raw);
+            var root = Url.SplitQuery(raw);
             return new VideoInfoParser(root);
         }
     }

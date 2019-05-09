@@ -86,14 +86,6 @@ namespace YoutubeExplode
             return DashManifestParser.Initialize(raw);
         }
 
-        private async Task<ClosedCaptionTrackParser> GetClosedCaptionTrackParserAsync(string url)
-        {
-            var raw = await _httpClient.GetStringAsync(url);
-
-            // Initialize parser
-            return ClosedCaptionTrackParser.Initialize(raw);
-        }
-
         private async Task<ChannelPageParser> GetChannelPageParserAsync(string channelId)
         {
             var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
