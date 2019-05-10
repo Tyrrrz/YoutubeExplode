@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AngleSharp.Dom.Html;
+using AngleSharp.Extensions;
+using AngleSharp.Parser.Html;
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -19,7 +22,7 @@ namespace YoutubeExplode
         private readonly Dictionary<string, IReadOnlyList<ICipherOperation>> _cipherOperationsCache =
             new Dictionary<string, IReadOnlyList<ICipherOperation>>();
 
-        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoAsync(string videoId, string sts = null)
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoDicAsync(string videoId, string sts = null)
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
@@ -28,14 +31,22 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/get_video_info?video_id={videoId}&el=embedded&sts={sts}&eurl={eurl}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            // URL-decode the response into a dictionary
+            // Parse response as a URL-encoded dictionary
             var result = Url.SplitQuery(raw);
 
-            // If video ID is not set - video is unavailable
+            // If video ID is not set - throw
             if (result.GetValueOrDefault("video_id").IsNullOrWhiteSpace())
                 throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
 
             return result;
+        }
+
+        private async Task<IHtmlDocument> GetVideoWatchPageHtmlAsync(string videoId)
+        {
+            var url = $"https://www.youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
+            var raw = await _httpClient.GetStringAsync(url);
+
+            return new HtmlParser().Parse(raw);
         }
 
         /// <inheritdoc />
@@ -46,23 +57,37 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info parser
-            var videoInfoParser = await GetVideoInfoParserAsync(videoId);
+            // Get video info dictionary
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId);
 
-            // Get video watch page parser
-            var videoWatchPageParser = await GetVideoWatchPageParserAsync(videoId);
+            // Get player response JSON
+            var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
 
-            // Extract info
-            var videoAuthor = videoInfoParser.GetVideoAuthor();
-            var videoTitle = videoInfoParser.GetVideoTitle();
-            var videoDuration = videoInfoParser.GetVideoDuration();
-            var videoKeywords = videoInfoParser.GetVideoKeywords();
-            var videoUploadDate = videoWatchPageParser.GetVideoUploadDate();
-            var videoDescription = videoWatchPageParser.GetVideoDescription();
-            var videoViewCount = videoWatchPageParser.GetVideoViewCount();
-            var videoLikeCount = videoWatchPageParser.GetVideoLikeCount();
-            var videoDislikeCount = videoWatchPageParser.GetVideoDislikeCount();
+            // Extract video info
+            var videoAuthor = playerResponseJson.SelectToken("videoDetails.author").Value<string>();
+            var videoTitle = playerResponseJson.SelectToken("videoDetails.title").Value<string>();
+            var videoDuration = TimeSpan.FromSeconds(playerResponseJson.SelectToken("videoDetails.lengthSeconds").Value<double>());
+            var videoKeywords = playerResponseJson.SelectToken("videoDetails.keywords").EmptyIfNull().Values<string>().ToArray();
+            var videoDescription = playerResponseJson.SelectToken("videoDetails.shortDescription").Value<string>();
+            var videoViewCount = playerResponseJson.SelectToken("videoDetails.viewCount")?.Value<long>() ?? 0; // some videos have no views
 
+            // Get video watch page HTML
+            var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId);
+
+            // Extract upload date
+            var videoUploadDate = videoWatchPageHtml.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content")
+                .ParseDateTimeOffset("yyyy-MM-dd");
+
+            // Extract like count
+            var videoLikeCountRaw = videoWatchPageHtml.QuerySelector("button.like-button-renderer-like-button")?.Text().StripNonDigit();
+            var videoLikeCount = !videoLikeCountRaw.IsNullOrWhiteSpace() ? videoLikeCountRaw.ParseLong() : 0;
+
+            // Extract dislike count
+            var videoDislikeCountRaw =
+                videoWatchPageHtml.QuerySelector("button.like-button-renderer-dislike-button")?.Text().StripNonDigit();
+            var videoDislikeCount = !videoDislikeCountRaw.IsNullOrWhiteSpace() ? videoDislikeCountRaw.ParseLong() : 0;
+
+            // Create statistics and thumbnails
             var statistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
             var thumbnails = new ThumbnailSet(videoId);
 
@@ -78,13 +103,13 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info
-            var videoInfo = await GetVideoInfoAsync(videoId);
+            // Get video info dictionary
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId);
 
-            // Get player response
-            var playerResponseJson = JToken.Parse(videoInfo["player_response"]);
+            // Get player response JSON
+            var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
 
-            // Get channel ID
+            // Extract channel ID
             var channelId = playerResponseJson.SelectToken("videoDetails.channelId").Value<string>();
 
             return await GetChannelAsync(channelId);
@@ -394,36 +419,36 @@ namespace YoutubeExplode
             if (!ValidateVideoId(videoId))
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
-            // Get video info
-            var videoInfo = await GetVideoInfoAsync(videoId);
+            // Get video info dictionary
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId);
 
-            // Get player response
-            var playerResponseJson = JToken.Parse(videoInfo["player_response"]);
+            // Get player response JSON
+            var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
 
             // Get closed caption track infos
-            var result = new List<ClosedCaptionTrackInfo>();
-            foreach (var captionTrackJson in playerResponseJson.SelectToken("..captionTracks").EmptyIfNull())
+            var trackInfos = new List<ClosedCaptionTrackInfo>();
+            foreach (var trackJson in playerResponseJson.SelectToken("..captionTracks").EmptyIfNull())
             {
                 // Get URL
-                var url = captionTrackJson.SelectToken("baseUrl").Value<string>();
+                var url = trackJson.SelectToken("baseUrl").Value<string>();
 
                 // Set format to the one we know how to deal with
                 url = Url.SetQueryParameter(url, "format", "3");
 
                 // Get language
-                var languageCode = captionTrackJson.SelectToken("languageCode").Value<string>();
-                var languageName = captionTrackJson.SelectToken("name.simpleText").Value<string>();
+                var languageCode = trackJson.SelectToken("languageCode").Value<string>();
+                var languageName = trackJson.SelectToken("name.simpleText").Value<string>();
                 var language = new Language(languageCode, languageName);
 
                 // Get whether the track is autogenerated
-                var isAutoGenerated = captionTrackJson.SelectToken("vssId").Value<string>()
+                var isAutoGenerated = trackJson.SelectToken("vssId").Value<string>()
                     .StartsWith("a.", StringComparison.OrdinalIgnoreCase);
 
                 // Add to list
-                result.Add(new ClosedCaptionTrackInfo(url, language, isAutoGenerated));
+                trackInfos.Add(new ClosedCaptionTrackInfo(url, language, isAutoGenerated));
             }
 
-            return result;
+            return trackInfos;
         }
     }
 }

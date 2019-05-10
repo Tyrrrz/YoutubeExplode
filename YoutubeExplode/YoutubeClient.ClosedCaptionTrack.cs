@@ -12,35 +12,40 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private async Task<XElement> GetClosedCaptionTrackXmlAsync(string url)
+        {
+            var raw = await _httpClient.GetStringAsync(url);
+            return XElement.Parse(raw, LoadOptions.PreserveWhitespace).StripNamespaces();
+        }
+
         /// <inheritdoc />
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo info)
         {
             info.GuardNotNull(nameof(info));
 
-            // Get XML-encoded content
-            var contentRaw = await _httpClient.GetStringAsync(info.Url);
-            var contentXml = XElement.Parse(contentRaw, LoadOptions.PreserveWhitespace).StripNamespaces();
+            // Get closed caption track XML
+            var trackXml = await GetClosedCaptionTrackXmlAsync(info.Url);
 
-            // Get closed captions
-            var closedCaptions = new List<ClosedCaption>();
-            foreach (var captionXml in contentXml.Descendants("p"))
+            // Extract closed captions
+            var captions = new List<ClosedCaption>();
+            foreach (var captionXml in trackXml.Descendants("p"))
             {
-                // Get text
+                // Extract text
                 var text = (string) captionXml;
 
                 // Skip captions with empty text
                 if (text.IsNullOrWhiteSpace())
                     continue;
 
-                // Get timing info
+                // Extract timing info
                 var offset = TimeSpan.FromMilliseconds((double) captionXml.Attribute("t"));
                 var duration = TimeSpan.FromMilliseconds((double) captionXml.Attribute("d"));
 
                 // Add to list
-                closedCaptions.Add(new ClosedCaption(text, offset, duration));
+                captions.Add(new ClosedCaption(text, offset, duration));
             }
 
-            return new ClosedCaptionTrack(info, closedCaptions);
+            return new ClosedCaptionTrack(info, captions);
         }
 
         /// <inheritdoc />

@@ -11,6 +11,14 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private async Task<JToken> GetPlaylistJsonAsync(string playlistId, int index)
+        {
+            var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
+            var raw = await _httpClient.GetStringAsync(url);
+
+            return JToken.Parse(raw);
+        }
+
         /// <inheritdoc />
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
         {
@@ -28,17 +36,15 @@ namespace YoutubeExplode
             var videos = new List<Video>();
             do
             {
-                // Get JSON-encoded playlist
-                var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-                var playlistRaw = await _httpClient.GetStringAsync(url, false);
-                playlistJson = JToken.Parse(playlistRaw);
+                // Get playlist JSON
+                playlistJson = await GetPlaylistJsonAsync(playlistId, index);
 
-                // Get videos
+                // Extract videos
                 var countTotal = 0;
                 var countDelta = 0;
                 foreach (var videoJson in playlistJson.SelectToken("video").EmptyIfNull())
                 {
-                    // Get video info
+                    // Extract video info
                     var videoId = videoJson.SelectToken("encrypted_id").Value<string>();
                     var videoAuthor = videoJson.SelectToken("author").Value<string>();
                     var videoUploadDate = videoJson.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
@@ -49,7 +55,7 @@ namespace YoutubeExplode
                     var videoLikeCount = videoJson.SelectToken("likes").Value<long>();
                     var videoDislikeCount = videoJson.SelectToken("dislikes").Value<long>();
 
-                    // Get video keywords
+                    // Extract video keywords
                     var videoKeywordsJoined = videoJson.SelectToken("keywords").Value<string>();
                     var videoKeywords = Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                         .Cast<Match>()
@@ -84,7 +90,7 @@ namespace YoutubeExplode
                 page++;
             } while (page <= maxPages);
 
-            // Get playlist info
+            // Extract playlist info
             var author = playlistJson.SelectToken("author")?.Value<string>() ?? ""; // system playlists have no author
             var title = playlistJson.SelectToken("title").Value<string>();
             var description = playlistJson.SelectToken("description")?.Value<string>() ?? "";

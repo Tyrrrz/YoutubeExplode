@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
@@ -9,6 +10,22 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private async Task<IHtmlDocument> GetUserPageHtmlAsync(string username)
+        {
+            var url = $"https://www.youtube.com/user/{username}?hl=en";
+            var raw = await _httpClient.GetStringAsync(url);
+
+            return new HtmlParser().Parse(raw);
+        }
+
+        private async Task<IHtmlDocument> GetChannelPageHtmlAsync(string channelId)
+        {
+            var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
+            var raw = await _httpClient.GetStringAsync(url);
+
+            return new HtmlParser().Parse(raw);
+        }
+
         /// <inheritdoc />
         public async Task<string> GetChannelIdAsync(string username)
         {
@@ -17,13 +34,11 @@ namespace YoutubeExplode
             if (!ValidateUsername(username))
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
-            // Get channel page
-            var url = $"https://www.youtube.com/user/{username}?hl=en";
-            var channelPageRaw = await _httpClient.GetStringAsync(url);
-            var channelPageHtml = new HtmlParser().Parse(channelPageRaw);
+            // Get user page HTML
+            var userPageHtml = await GetUserPageHtmlAsync(username);
 
-            // Get channel URL
-            var channelUrl = channelPageHtml.QuerySelector("meta[property=\"og:url\"]").GetAttribute("content");
+            // Extract channel URL
+            var channelUrl = userPageHtml.QuerySelector("meta[property=\"og:url\"]").GetAttribute("content");
 
             return channelUrl.SubstringAfter("channel/");
         }
@@ -36,10 +51,8 @@ namespace YoutubeExplode
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
-            // Get channel page
-            var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
-            var channelPageRaw = await _httpClient.GetStringAsync(url);
-            var channelPageHtml = new HtmlParser().Parse(channelPageRaw);
+            // Get channel page HTML
+            var channelPageHtml = await GetChannelPageHtmlAsync(channelId);
 
             // Extract info
             var channelTitle = channelPageHtml.QuerySelector("meta[property=\"og:title\"]").GetAttribute("content");

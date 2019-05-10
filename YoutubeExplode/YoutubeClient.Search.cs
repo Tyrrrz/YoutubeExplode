@@ -11,6 +11,14 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private async Task<JToken> GetSearchResultsJsonAsync(string query, int page)
+        {
+            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
+            var raw = await _httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
+
+            return JToken.Parse(raw);
+        }
+
         /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> SearchVideosAsync(string query, int maxPages)
         {
@@ -21,16 +29,14 @@ namespace YoutubeExplode
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
             {
-                // Get results page
-                var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
-                var resultPageRaw = await _httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
-                var resultPageJson = JToken.Parse(resultPageRaw);
+                // Get search results JSON
+                var resultsJson = await GetSearchResultsJsonAsync(query, page);
 
-                // Get videos
+                // Extract videos
                 var countDelta = 0;
-                foreach (var videoJson in resultPageJson.SelectToken("video").EmptyIfNull())
+                foreach (var videoJson in resultsJson.SelectToken("video").EmptyIfNull())
                 {
-                    // Get video info
+                    // Extract video info
                     var videoId = videoJson.SelectToken("encrypted_id").Value<string>();
                     var videoAuthor = videoJson.SelectToken("author").Value<string>();
                     var videoUploadDate = videoJson.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
@@ -41,7 +47,7 @@ namespace YoutubeExplode
                     var videoLikeCount = videoJson.SelectToken("likes").Value<long>();
                     var videoDislikeCount = videoJson.SelectToken("dislikes").Value<long>();
 
-                    // Get video keywords
+                    // Extract video keywords
                     var videoKeywordsJoined = videoJson.SelectToken("keywords").Value<string>();
                     var videoKeywords = Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
                         .Cast<Match>()
