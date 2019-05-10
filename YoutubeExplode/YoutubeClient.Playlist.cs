@@ -88,7 +88,7 @@ namespace YoutubeExplode
             var author = playlistJson.SelectToken("author")?.Value<string>() ?? ""; // system playlists have no author
             var title = playlistJson.SelectToken("title").Value<string>();
             var description = playlistJson.SelectToken("description")?.Value<string>() ?? "";
-            var viewCount = playlistJson.SelectToken("views")?.Value<long>() ?? 0; // system playslists have no views
+            var viewCount = playlistJson.SelectToken("views")?.Value<long>() ?? 0; // system playlists have no views
             var likeCount = playlistJson.SelectToken("likes")?.Value<long>() ?? 0; // system playlists have no likes
             var dislikeCount = playlistJson.SelectToken("dislikes")?.Value<long>() ?? 0; // system playlists have no dislikes
 

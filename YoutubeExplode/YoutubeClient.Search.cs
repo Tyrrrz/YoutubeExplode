@@ -21,9 +21,9 @@ namespace YoutubeExplode
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
             {
-                // Get JSON-encoded result page
+                // Get results page
                 var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
-                var resultPageRaw = await _httpClient.GetStringAsync(url, false);
+                var resultPageRaw = await _httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
                 var resultPageJson = JToken.Parse(resultPageRaw);
 
                 // Get videos
