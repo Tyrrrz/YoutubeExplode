@@ -13,7 +13,7 @@ namespace YoutubeExplode
     {
         private async Task<JToken> GetSearchResultsJsonAsync(string query, int page)
         {
-            var url = $"https://www.youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
+            var url = $"https://youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
             var raw = await _httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
 
             return JToken.Parse(raw);

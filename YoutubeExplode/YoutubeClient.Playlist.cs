@@ -13,7 +13,7 @@ namespace YoutubeExplode
     {
         private async Task<JToken> GetPlaylistJsonAsync(string playlistId, int index)
         {
-            var url = $"https://www.youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
+            var url = $"https://youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
             return JToken.Parse(raw);
