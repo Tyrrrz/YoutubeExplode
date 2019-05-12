@@ -371,10 +371,6 @@ namespace YoutubeExplode
                 }
 
                 // Try to extract content length, otherwise get it manually
-#if NET45
-                if (streamInfoDic.ContainsKey("clen"))
-                    Console.WriteLine("Muxed stream with clen");
-#endif
                 var contentLength = Regex.Match(url, @"clen=(\d+)").Groups[1].Value.ParseLongOrDefault();
                 if (contentLength <= 0)
                 {
@@ -431,11 +427,7 @@ namespace YoutubeExplode
                 }
 
                 // Try to extract content length, otherwise get it manually
-#if NET45
-                if (streamInfoDic.ContainsKey("clen"))
-                    Console.WriteLine("Adaptive stream with clen");
-#endif
-                var contentLength = Regex.Match(url, @"clen=(\d+)").Groups[1].Value.ParseLongOrDefault();
+                var contentLength = streamInfoDic.GetValueOrDefault("clen").ParseLongOrDefault();
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
