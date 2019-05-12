@@ -127,7 +127,7 @@ namespace YoutubeExplode
 
                 // If the video requires purchase - throw (approach two)
                 {
-                    var previewVideoInfoRaw = playerConfigJson.SelectToken("playabilityStatus.errorScreen.ypcTrailerRenderer.playerVars")
+                    var previewVideoInfoRaw = playerResponseJson.SelectToken("playabilityStatus.errorScreen.ypcTrailerRenderer.playerVars")
                         ?.Value<string>();
                     if (!previewVideoInfoRaw.IsNullOrWhiteSpace())
                     {
