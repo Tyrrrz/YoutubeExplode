@@ -105,13 +105,13 @@
       <Version>1.1.3</Version>
     </PackageReference>
     <PackageReference Include="MaterialDesignThemes">
-      <Version>2.5.0.1205</Version>
+      <Version>2.5.1</Version>
     </PackageReference>
     <PackageReference Include="MvvmLightLibs">
       <Version>5.4.1.1</Version>
     </PackageReference>
     <PackageReference Include="Tyrrrz.Extensions">
-      <Version>1.6.1</Version>
+      <Version>1.6.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
