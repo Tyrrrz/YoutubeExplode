@@ -16,6 +16,8 @@ namespace YoutubeExplode.Internal
     {
         public static bool IsNullOrWhiteSpace(this string s) => string.IsNullOrWhiteSpace(s);
 
+        public static string EmptyIfNull(this string s) => s ?? string.Empty;
+
         public static string SubstringUntil(this string s, string sub,
             StringComparison comparison = StringComparison.Ordinal)
         {
