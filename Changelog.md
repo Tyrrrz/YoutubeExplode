@@ -1,3 +1,7 @@
+### v4.7 (12-May-2019)
+
+- Fixed an issue where YoutubeExplode always failed to extract media streams due to recent YouTube changes.
+
 ### v4.6.8 (30-Mar-2019)
 
 - Improved performance in `GetVideoAsync` by optimizing description parser.
