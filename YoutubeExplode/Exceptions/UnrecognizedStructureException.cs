@@ -3,15 +3,15 @@
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when a parser fails to extract required information.
+    /// Thrown when YoutubeExplode fails to extract required information.
     /// This usually happens when YouTube makes changes that break YoutubeExplode.
     /// </summary>
-    public class ParserException : Exception
+    public class UnrecognizedStructureException : Exception
     {
         /// <summary>
-        /// Initializes an instance of <see cref="ParserException"/>.
+        /// Initializes an instance of <see cref="UnrecognizedStructureException"/>.
         /// </summary>
-        public ParserException(string message)
+        public UnrecognizedStructureException(string message)
             : base(message)
         {
         }

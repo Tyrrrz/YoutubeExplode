@@ -17,8 +17,8 @@ namespace YoutubeExplode.Internal
             if (str.StartsWith("opus", StringComparison.OrdinalIgnoreCase))
                 return AudioEncoding.Opus;
 
-            // Unknown
-            throw new ArgumentException($"Unknown audio encoding [{str}].", nameof(str));
+            // Unrecognized
+            throw new ArgumentException($"Unrecognized audio encoding [{str}].", nameof(str));
         }
 
         public static VideoEncoding VideoEncodingFromString(string str)
@@ -38,8 +38,8 @@ namespace YoutubeExplode.Internal
             if (str.StartsWith("av01", StringComparison.OrdinalIgnoreCase))
                 return VideoEncoding.Av1;
 
-            // Unknown
-            throw new ArgumentException($"Unknown video encoding [{str}].", nameof(str));
+            // Unrecognized
+            throw new ArgumentException($"Unrecognized video encoding [{str}].", nameof(str));
         }
 
         public static Container ContainerFromString(string str)
@@ -53,8 +53,8 @@ namespace YoutubeExplode.Internal
             if (str.Equals("3gpp", StringComparison.OrdinalIgnoreCase))
                 return Container.Tgpp;
 
-            // Unknown
-            throw new ArgumentException($"Unknown container [{str}].", nameof(str));
+            // Unrecognized
+            throw new ArgumentException($"Unrecognized container [{str}].", nameof(str));
         }
 
         private static readonly Dictionary<Container, string> ContainerToFileExtensionMap =
@@ -69,7 +69,7 @@ namespace YoutubeExplode.Internal
         {
             return ContainerToFileExtensionMap.TryGetValue(container, out var extension)
                 ? extension
-                : throw new ArgumentException($"Unknown container [{container}].", nameof(container));
+                : throw new ArgumentException($"Unrecognized container [{container}].", nameof(container));
         }
 
         private static readonly Dictionary<int, VideoQuality> ItagToVideoQualityMap =
@@ -165,7 +165,7 @@ namespace YoutubeExplode.Internal
         {
             return ItagToVideoQualityMap.TryGetValue(itag, out var quality)
                 ? quality
-                : throw new ArgumentException($"Unknown itag [{itag}].", nameof(itag));
+                : throw new ArgumentException($"Unrecognized itag [{itag}].", nameof(itag));
         }
 
         public static VideoQuality VideoQualityFromLabel(string label)
@@ -203,7 +203,8 @@ namespace YoutubeExplode.Internal
             if (label.StartsWith("4320p", StringComparison.OrdinalIgnoreCase))
                 return VideoQuality.High4320;
 
-            throw new ArgumentException($"Unknown video quality label [{label}].", nameof(label));
+            // Unrecognized
+            throw new ArgumentException($"Unrecognized video quality label [{label}].", nameof(label));
         }
 
         public static string VideoQualityToLabel(VideoQuality quality)
@@ -243,7 +244,7 @@ namespace YoutubeExplode.Internal
         {
             return VideoQualityToResolutionMap.TryGetValue(quality, out var resolution)
                 ? resolution
-                : throw new ArgumentException($"Unknown video quality [{quality}].", nameof(quality));
+                : throw new ArgumentException($"Unrecognized video quality [{quality}].", nameof(quality));
         }
     }
 }
