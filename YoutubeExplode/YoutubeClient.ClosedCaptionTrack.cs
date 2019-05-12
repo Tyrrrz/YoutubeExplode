@@ -26,14 +26,14 @@ namespace YoutubeExplode
             // Get closed caption track XML
             var trackXml = await GetClosedCaptionTrackXmlAsync(info.Url);
 
-            // Extract closed captions
+            // Get closed captions
             var captions = new List<ClosedCaption>();
             foreach (var captionXml in trackXml.Descendants("p"))
             {
                 // Extract text
                 var text = (string) captionXml;
 
-                // Skip captions with empty text
+                // Skip captions with no text
                 if (text.IsNullOrWhiteSpace())
                     continue;
 

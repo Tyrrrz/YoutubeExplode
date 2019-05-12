@@ -39,7 +39,7 @@ namespace YoutubeExplode
                 // Get playlist JSON
                 playlistJson = await GetPlaylistJsonAsync(playlistId, index);
 
-                // Extract videos
+                // Get videos
                 var countTotal = 0;
                 var countDelta = 0;
                 foreach (var videoJson in playlistJson.SelectToken("video").EmptyIfNull())

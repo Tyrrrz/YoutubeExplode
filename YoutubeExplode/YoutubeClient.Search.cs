@@ -32,7 +32,7 @@ namespace YoutubeExplode
                 // Get search results JSON
                 var resultsJson = await GetSearchResultsJsonAsync(query, page);
 
-                // Extract videos
+                // Get videos
                 var countDelta = 0;
                 foreach (var videoJson in resultsJson.SelectToken("video").EmptyIfNull())
                 {

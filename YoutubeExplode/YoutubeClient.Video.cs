@@ -31,7 +31,7 @@ namespace YoutubeExplode
             var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&sts={sts}&eurl={eurl}&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
-            // Parse response as a URL-encoded dictionary
+            // Parse response as URL-encoded dictionary
             var result = Url.SplitQuery(raw);
 
             // If video ID is not set - throw

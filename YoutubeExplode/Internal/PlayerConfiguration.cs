@@ -15,6 +15,7 @@ namespace YoutubeExplode.Internal
         public string AdaptiveStreamInfosUrlEncoded { get; }
 
         public DateTimeOffset ValidUntil { get; }
+
         public PlayerConfiguration(string playerSourceUrl, string dashManifestUrl, string hlsManifestUrl,
             string muxedStreamInfosUrlEncoded, string adaptiveStreamInfosUrlEncoded, DateTimeOffset validUntil)
         {

@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace YoutubeExplode.Internal.CipherOperations
+﻿namespace YoutubeExplode.Internal.CipherOperations
 {
     internal class SwapCipherOperation : ICipherOperation
     {
@@ -11,15 +9,7 @@ namespace YoutubeExplode.Internal.CipherOperations
             _index = index;
         }
 
-        public string Decipher(string input)
-        {
-            var sb = new StringBuilder(input)
-            {
-                [0] = input[_index],
-                [_index] = input[0]
-            };
-            return sb.ToString();
-        }
+        public string Decipher(string input) => input.SwapChars(0, _index);
 
         public override string ToString() => $"Swap [{_index}]";
     }
