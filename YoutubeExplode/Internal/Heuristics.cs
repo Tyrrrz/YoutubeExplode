@@ -209,7 +209,7 @@ namespace YoutubeExplode.Internal
         public static string VideoQualityToLabel(VideoQuality quality)
         {
             // Convert to string, strip non-digits and add "p"
-            return quality.ToString().StripNonDigit() + "p";
+            return quality.ToString().StripNonDigit() + 'p';
         }
 
         public static string VideoQualityToLabel(VideoQuality quality, int framerate)
@@ -218,7 +218,7 @@ namespace YoutubeExplode.Internal
             if (framerate <= 30)
                 return VideoQualityToLabel(quality);
 
-            // YouTube rounds framerate to nearest next ten
+            // YouTube rounds framerate to nearest next decimal
             var framerateRounded = (int) Math.Ceiling(framerate / 10.0) * 10;
             return VideoQualityToLabel(quality) + framerateRounded;
         }

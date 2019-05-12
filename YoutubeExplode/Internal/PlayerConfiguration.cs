@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using YoutubeExplode.Internal.CipherOperations;
 
 namespace YoutubeExplode.Internal
 {
     internal class PlayerConfiguration
     {
-        public IReadOnlyList<ICipherOperation> CipherOperations { get; }
+        public string PlayerSourceUrl { get; }
 
         public string DashManifestUrl { get; }
 
@@ -17,10 +15,10 @@ namespace YoutubeExplode.Internal
         public string AdaptiveStreamInfosUrlEncoded { get; }
 
         public DateTimeOffset ValidUntil { get; }
-        public PlayerConfiguration(IReadOnlyList<ICipherOperation> cipherOperations, string dashManifestUrl, string hlsManifestUrl,
+        public PlayerConfiguration(string playerSourceUrl, string dashManifestUrl, string hlsManifestUrl,
             string muxedStreamInfosUrlEncoded, string adaptiveStreamInfosUrlEncoded, DateTimeOffset validUntil)
         {
-            CipherOperations = cipherOperations;
+            PlayerSourceUrl = playerSourceUrl;
             DashManifestUrl = dashManifestUrl;
             HlsManifestUrl = hlsManifestUrl;
             MuxedStreamInfosUrlEncoded = muxedStreamInfosUrlEncoded;

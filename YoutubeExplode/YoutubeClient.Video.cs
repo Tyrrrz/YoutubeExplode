@@ -187,9 +187,6 @@ namespace YoutubeExplode
                     // Extract whether the video is a live stream
                     var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
 
-                    // Get cipher operations (TODO: do it only when needed)
-                    var cipherOperations = await GetCipherOperationsAsync(playerSourceUrl);
-
                     // Extract valid until date
                     var expiresIn = TimeSpan.FromSeconds(playerResponseJson.SelectToken("streamingData.expiresInSeconds").Value<double>());
                     var validUntil = requestedAt + expiresIn;
@@ -204,7 +201,7 @@ namespace YoutubeExplode
                     var adaptiveStreamInfosUrlEncoded =
                         !isLiveStream ? videoInfoDic.GetValueOrDefault("adaptive_fmts") : null;
 
-                    return new PlayerConfiguration(cipherOperations, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
+                    return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
                         adaptiveStreamInfosUrlEncoded, validUntil);
                 }
 
@@ -244,9 +241,6 @@ namespace YoutubeExplode
                     // Extract whether the video is a live stream
                     var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
 
-                    // Get cipher operations (TODO: do it only when needed)
-                    var cipherOperations = await GetCipherOperationsAsync(playerSourceUrl);
-
                     // Extract valid until date
                     var expiresIn = TimeSpan.FromSeconds(playerResponseJson.SelectToken("streamingData.expiresInSeconds").Value<double>());
                     var validUntil = requestedAt + expiresIn;
@@ -261,7 +255,7 @@ namespace YoutubeExplode
                     var adaptiveStreamInfosUrlEncoded =
                         !isLiveStream ? playerConfigJson.SelectToken("args.adaptive_fmts")?.Value<string>() : null;
 
-                    return new PlayerConfiguration(cipherOperations, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
+                    return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
                         adaptiveStreamInfosUrlEncoded, validUntil);
                 }
 
@@ -365,7 +359,13 @@ namespace YoutubeExplode
                 var signature = streamInfoDic.GetValueOrDefault("s");
                 if (!signature.IsNullOrWhiteSpace())
                 {
-                    signature = playerConfiguration.CipherOperations.Decipher(signature);
+                    // Get cipher operations (cached)
+                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl);
+
+                    // Decipher signature
+                    signature = cipherOperations.Decipher(signature);
+
+                    // Set the corresponding parameter in the URL
                     var signatureParameter = streamInfoDic.GetValueOrDefault("sp") ?? "signature";
                     url = Url.SetQueryParameter(url, signatureParameter, signature);
                 }
@@ -421,7 +421,13 @@ namespace YoutubeExplode
                 var signature = streamInfoDic.GetValueOrDefault("s");
                 if (!signature.IsNullOrWhiteSpace())
                 {
-                    signature = playerConfiguration.CipherOperations.Decipher(signature);
+                    // Get cipher operations (cached)
+                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl);
+
+                    // Decipher signature
+                    signature = cipherOperations.Decipher(signature);
+
+                    // Set the corresponding parameter in the URL
                     var signatureParameter = streamInfoDic.GetValueOrDefault("sp") ?? "signature";
                     url = Url.SetQueryParameter(url, signatureParameter, signature);
                 }
@@ -487,7 +493,13 @@ namespace YoutubeExplode
                 // Decipher signature if needed
                 if (!signature.IsNullOrWhiteSpace())
                 {
-                    signature = playerConfiguration.CipherOperations.Decipher(signature);
+                    // Get cipher operations (cached)
+                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl);
+
+                    // Decipher signature
+                    signature = cipherOperations.Decipher(signature);
+
+                    // Set the corresponding parameter in the URL
                     dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", signature);
                 }
 
