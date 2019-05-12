@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
 
@@ -7,6 +11,14 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        private async Task<JToken> GetSearchResultsJsonAsync(string query, int page)
+        {
+            var url = $"https://youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
+            var raw = await _httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
+
+            return JToken.Parse(raw);
+        }
+
         /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> SearchVideosAsync(string query, int maxPages)
         {
@@ -17,36 +29,45 @@ namespace YoutubeExplode
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
             {
-                // Get parser
-                var parser = await GetPlaylistAjaxParserForSearchAsync(query, page);
+                // Get search results JSON
+                var resultsJson = await GetSearchResultsJsonAsync(query, page);
 
-                // Parse videos
+                // Get videos
                 var countDelta = 0;
-                foreach (var videoParser in parser.GetVideos())
+                foreach (var videoJson in resultsJson.SelectToken("video").EmptyIfNull())
                 {
-                    // Parse info
-                    var videoId = videoParser.ParseId();
-                    var videoAuthor = videoParser.ParseAuthor();
-                    var videoUploadDate = videoParser.ParseUploadDate();
-                    var videoTitle = videoParser.ParseTitle();
-                    var videoDescription = videoParser.ParseDescription();
-                    var videoDuration = videoParser.ParseDuration();
-                    var videoKeywords = videoParser.ParseKeywords();
-                    var videoViewCount = videoParser.ParseViewCount();
-                    var videoLikeCount = videoParser.ParseLikeCount();
-                    var videoDislikeCount = videoParser.ParseDislikeCount();
+                    // Extract video info
+                    var videoId = videoJson.SelectToken("encrypted_id").Value<string>();
+                    var videoAuthor = videoJson.SelectToken("author").Value<string>();
+                    var videoUploadDate = videoJson.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
+                    var videoTitle = videoJson.SelectToken("title").Value<string>();
+                    var videoDescription = videoJson.SelectToken("description").Value<string>();
+                    var videoDuration = TimeSpan.FromSeconds(videoJson.SelectToken("length_seconds").Value<double>());
+                    var videoViewCount = videoJson.SelectToken("views").Value<string>().StripNonDigit().ParseLong();
+                    var videoLikeCount = videoJson.SelectToken("likes").Value<long>();
+                    var videoDislikeCount = videoJson.SelectToken("dislikes").Value<long>();
 
+                    // Extract video keywords
+                    var videoKeywordsJoined = videoJson.SelectToken("keywords").Value<string>();
+                    var videoKeywords = Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .Where(s => !s.IsNullOrWhiteSpace())
+                        .ToArray();
+
+                    // Create statistics and thumbnails
                     var videoStatistics = new Statistics(videoViewCount, videoLikeCount, videoDislikeCount);
                     var videoThumbnails = new ThumbnailSet(videoId);
 
-                    var video = new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
-                        videoThumbnails, videoDuration, videoKeywords, videoStatistics);
+                    // Add to list
+                    videos.Add(new Video(videoId, videoAuthor, videoUploadDate, videoTitle, videoDescription,
+                        videoThumbnails, videoDuration, videoKeywords, videoStatistics));
 
-                    videos.Add(video);
+                    // Increment delta
                     countDelta++;
                 }
 
-                // Break if no distinct videos were added to the list
+                // If no distinct videos were added to the list - break
                 if (countDelta <= 0)
                     break;
             }
@@ -55,7 +76,6 @@ namespace YoutubeExplode
         }
 
         /// <inheritdoc />
-        public Task<IReadOnlyList<Video>> SearchVideosAsync(string query)
-            => SearchVideosAsync(query, int.MaxValue);
+        public Task<IReadOnlyList<Video>> SearchVideosAsync(string query) => SearchVideosAsync(query, int.MaxValue);
     }
 }

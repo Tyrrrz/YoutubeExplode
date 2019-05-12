@@ -26,7 +26,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool TryParseVideoId(string videoUrl, out string videoId)
         {
-            videoId = default(string);
+            videoId = default;
 
             if (videoUrl.IsNullOrWhiteSpace())
                 return false;
@@ -105,7 +105,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool TryParsePlaylistId(string playlistUrl, out string playlistId)
         {
-            playlistId = default(string);
+            playlistId = default;
 
             if (playlistUrl.IsNullOrWhiteSpace())
                 return false;
@@ -178,7 +178,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool TryParseUsername(string userUrl, out string username)
         {
-            username = default(string);
+            username = default;
 
             if (userUrl.IsNullOrWhiteSpace())
                 return false;
@@ -230,7 +230,7 @@ namespace YoutubeExplode
         /// </summary>
         public static bool TryParseChannelId(string channelUrl, out string channelId)
         {
-            channelId = default(string);
+            channelId = default;
 
             if (channelUrl.IsNullOrWhiteSpace())
                 return false;

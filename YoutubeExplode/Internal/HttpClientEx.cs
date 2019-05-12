@@ -76,10 +76,7 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static SegmentedHttpStream CreateSegmentedStream(this HttpClient httpClient, string url, long length,
-            long segmentSize)
-        {
-            return new SegmentedHttpStream(httpClient, url, length, segmentSize);
-        }
+        public static SegmentedHttpStream CreateSegmentedStream(this HttpClient httpClient, string url, long length, long segmentSize) =>
+            new SegmentedHttpStream(httpClient, url, length, segmentSize);
     }
 }

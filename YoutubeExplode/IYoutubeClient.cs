@@ -104,7 +104,7 @@ namespace YoutubeExplode
         /// Downloads the stream associated with given metadata to the output stream.
         /// </summary>
         Task DownloadMediaStreamAsync(MediaStreamInfo info, Stream output,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+            IProgress<double> progress = null, CancellationToken cancellationToken = default);
 
 #if NETSTANDARD2_0 || NET45
 
@@ -112,7 +112,7 @@ namespace YoutubeExplode
         /// Downloads the stream associated with given metadata to a file.
         /// </summary>
         Task DownloadMediaStreamAsync(MediaStreamInfo info, string filePath,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+            IProgress<double> progress = null, CancellationToken cancellationToken = default);
 
 #endif
 
@@ -129,7 +129,7 @@ namespace YoutubeExplode
         /// Downloads the closed caption track associated with given metadata to the output stream.
         /// </summary>
         Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, Stream output,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+            IProgress<double> progress = null, CancellationToken cancellationToken = default);
 
 #if NETSTANDARD2_0 || NET45
 
@@ -137,7 +137,7 @@ namespace YoutubeExplode
         /// Downloads the closed caption track associated with given metadata to a file.
         /// </summary>
         Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default(CancellationToken));
+            IProgress<double> progress = null, CancellationToken cancellationToken = default);
 
 #endif
 

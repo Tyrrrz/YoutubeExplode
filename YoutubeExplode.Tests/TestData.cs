@@ -55,7 +55,14 @@ namespace YoutubeExplode.Tests
 
         public static IEnumerable GetVideoIds_Valid_Available_Unplayable()
         {
-            yield return new TestCaseData("p3dDcKOFXQg"); // requires purchase
+            // Include nested
+            foreach (var testCaseData in GetVideoIds_Valid_Available_Unplayable_RequiresPurchase())
+                yield return testCaseData;
+        }
+
+        public static IEnumerable GetVideoIds_Valid_Available_Unplayable_RequiresPurchase()
+        {
+            yield return new TestCaseData("p3dDcKOFXQg");
         }
 
         public static IEnumerable GetVideoIds_Valid_Available_Playable()

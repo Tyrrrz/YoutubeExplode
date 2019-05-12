@@ -15,7 +15,7 @@ namespace YoutubeExplode.Exceptions
         /// <summary>
         /// Initializes an instance of <see cref="VideoRequiresPurchaseException"/>.
         /// </summary>
-        public VideoRequiresPurchaseException(string previewVideoId, string videoId, string message)
+        public VideoRequiresPurchaseException(string videoId, string previewVideoId, string message)
             : base(videoId, message)
         {
             PreviewVideoId = previewVideoId.GuardNotNull(nameof(previewVideoId));
