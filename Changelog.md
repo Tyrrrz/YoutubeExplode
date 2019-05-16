@@ -1,3 +1,7 @@
+### v4.7.1 (17-May-2019)
+
+- Improved exception messages for cases when a video is blocked in user's country or is age-restricted and unembeddable.
+
 ### v4.7 (12-May-2019)
 
 - Fixed an issue where YoutubeExplode always failed to extract media streams due to recent YouTube changes.
