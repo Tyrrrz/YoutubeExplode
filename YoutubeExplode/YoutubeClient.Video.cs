@@ -70,7 +70,7 @@ namespace YoutubeExplode
                 // Get video embed page HTML
                 var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId);
 
-                // Extract player config JSON
+                // Get player config JSON
                 var playerConfigRaw = Regex.Match(videoEmbedPageHtml.Source.Text,
                         @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                     .Groups["Json"].Value;
@@ -146,46 +146,49 @@ namespace YoutubeExplode
                 var requestedAt = DateTimeOffset.Now;
                 var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId);
 
-                // Get player config JSON
+                // Extract player config
                 var playerConfigRaw = Regex.Match(videoWatchPageHtml.Source.Text,
                         @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                     .Groups["Json"].Value;
+
+                // If player config is not available - throw
+                if (playerConfigRaw.IsNullOrWhiteSpace())
+                {
+                    var errorReason =
+                        (videoWatchPageHtml.QuerySelector("#unavailable-submessage button") ??
+                         videoWatchPageHtml.QuerySelector("#unavailable-message"))?.TextContent.Trim();
+                    throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
+                }
+
+                // Get player config JSON
                 var playerConfigJson = JToken.Parse(playerConfigRaw);
 
-                // Get player source URL
+                // Extract player source URL
                 var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
 
                 // Get player response JSON
                 var playerResponseRaw = playerConfigJson.SelectToken("args.player_response").Value<string>();
                 var playerResponseJson = JToken.Parse(playerResponseRaw);
 
-                // If there is no error - extract info and return
-                var errorReason = playerResponseJson.SelectToken("playabilityStatus.reason")?.Value<string>();
-                if (errorReason.IsNullOrWhiteSpace())
-                {
-                    // Extract whether the video is a live stream
-                    var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
+                // Extract whether the video is a live stream
+                var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
 
-                    // Extract valid until date
-                    var expiresIn = TimeSpan.FromSeconds(playerResponseJson.SelectToken("streamingData.expiresInSeconds").Value<double>());
-                    var validUntil = requestedAt + expiresIn;
+                // Extract valid until date
+                var expiresIn = TimeSpan.FromSeconds(playerResponseJson.SelectToken("streamingData.expiresInSeconds").Value<double>());
+                var validUntil = requestedAt + expiresIn;
 
-                    // Extract stream info
-                    var hlsManifestUrl =
-                        isLiveStream ? playerResponseJson.SelectToken("streamingData.hlsManifestUrl")?.Value<string>() : null;
-                    var dashManifestUrl =
-                        !isLiveStream ? playerResponseJson.SelectToken("streamingData.dashManifestUrl")?.Value<string>() : null;
-                    var muxedStreamInfosUrlEncoded =
-                        !isLiveStream ? playerConfigJson.SelectToken("args.url_encoded_fmt_stream_map")?.Value<string>() : null;
-                    var adaptiveStreamInfosUrlEncoded =
-                        !isLiveStream ? playerConfigJson.SelectToken("args.adaptive_fmts")?.Value<string>() : null;
+                // Extract stream info
+                var hlsManifestUrl =
+                    isLiveStream ? playerResponseJson.SelectToken("streamingData.hlsManifestUrl")?.Value<string>() : null;
+                var dashManifestUrl =
+                    !isLiveStream ? playerResponseJson.SelectToken("streamingData.dashManifestUrl")?.Value<string>() : null;
+                var muxedStreamInfosUrlEncoded =
+                    !isLiveStream ? playerConfigJson.SelectToken("args.url_encoded_fmt_stream_map")?.Value<string>() : null;
+                var adaptiveStreamInfosUrlEncoded =
+                    !isLiveStream ? playerConfigJson.SelectToken("args.adaptive_fmts")?.Value<string>() : null;
 
-                    return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
-                        adaptiveStreamInfosUrlEncoded, validUntil);
-                }
-
-                // If the video is still unplayable - throw
-                throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
+                return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
+                    adaptiveStreamInfosUrlEncoded, validUntil);
             }
         }
 
