@@ -37,8 +37,8 @@ namespace YoutubeExplode
             info.GuardNotNull(nameof(info));
             output.GuardNotNull(nameof(output));
 
-            using (var input = await GetMediaStreamAsync(info))
-                await input.CopyToAsync(output, progress, cancellationToken);
+            using (var input = await GetMediaStreamAsync(info).ConfigureAwait(false))
+                await input.CopyToAsync(output, progress, cancellationToken).ConfigureAwait(false);
         }
 
 #if NETSTANDARD2_0 || NET45
@@ -50,7 +50,7 @@ namespace YoutubeExplode
             filePath.GuardNotNull(nameof(filePath));
 
             using (var output = File.Create(filePath))
-                await DownloadMediaStreamAsync(info, output, progress, cancellationToken);
+                await DownloadMediaStreamAsync(info, output, progress, cancellationToken).ConfigureAwait(false);
         }
 
 #endif

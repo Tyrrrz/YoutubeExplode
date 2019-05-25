@@ -14,7 +14,7 @@ namespace YoutubeExplode
         private async Task<JToken> GetPlaylistJsonAsync(string playlistId, int index)
         {
             var url = $"https://youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return JToken.Parse(raw);
         }
@@ -37,7 +37,7 @@ namespace YoutubeExplode
             do
             {
                 // Get playlist JSON
-                playlistJson = await GetPlaylistJsonAsync(playlistId, index);
+                playlistJson = await GetPlaylistJsonAsync(playlistId, index).ConfigureAwait(false);
 
                 // Get videos
                 var countTotal = 0;

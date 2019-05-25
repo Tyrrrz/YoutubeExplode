@@ -29,7 +29,7 @@ namespace YoutubeExplode
 
             // Execute request
             var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&sts={sts}&eurl={eurl}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse response as URL-encoded dictionary
             var result = Url.SplitQuery(raw);
@@ -44,7 +44,7 @@ namespace YoutubeExplode
         private async Task<IHtmlDocument> GetVideoWatchPageHtmlAsync(string videoId)
         {
             var url = $"https://youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return new HtmlParser().Parse(raw);
         }
@@ -52,14 +52,14 @@ namespace YoutubeExplode
         private async Task<IHtmlDocument> GetVideoEmbedPageHtmlAsync(string videoId)
         {
             var url = $"https://youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return new HtmlParser().Parse(raw);
         }
 
         private async Task<XElement> GetDashManifestXmlAsync(string url)
         {
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
             return XElement.Parse(raw).StripNamespaces();
         }
 
@@ -68,7 +68,7 @@ namespace YoutubeExplode
             // Try to get from video info
             {
                 // Get video embed page HTML
-                var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId);
+                var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId).ConfigureAwait(false);
 
                 // Get player config JSON
                 var playerConfigRaw = Regex.Match(videoEmbedPageHtml.Source.Text,
@@ -84,7 +84,7 @@ namespace YoutubeExplode
 
                 // Get video info dictionary
                 var requestedAt = DateTimeOffset.Now;
-                var videoInfoDic = await GetVideoInfoDicAsync(videoId, sts);
+                var videoInfoDic = await GetVideoInfoDicAsync(videoId, sts).ConfigureAwait(false);
 
                 // Get player response JSON
                 var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
@@ -144,7 +144,7 @@ namespace YoutubeExplode
             {
                 // Get video watch page HTML
                 var requestedAt = DateTimeOffset.Now;
-                var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId);
+                var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
                 // Extract player config
                 var playerConfigRaw = Regex.Match(videoWatchPageHtml.Source.Text,
@@ -199,7 +199,7 @@ namespace YoutubeExplode
                 return cached;
 
             // Get player source
-            var raw = await _httpClient.GetStringAsync(playerSourceUrl);
+            var raw = await _httpClient.GetStringAsync(playerSourceUrl).ConfigureAwait(false);
 
             // Find the name of the function that handles deciphering
             var deciphererFuncName = Regex.Match(raw,
@@ -292,7 +292,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get video info dictionary
-            var videoInfoDic = await GetVideoInfoDicAsync(videoId);
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
 
             // Get player response JSON
             var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
@@ -306,7 +306,7 @@ namespace YoutubeExplode
             var videoViewCount = playerResponseJson.SelectToken("videoDetails.viewCount")?.Value<long>() ?? 0; // some videos have no views
 
             // Get video watch page HTML
-            var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId);
+            var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
             // Extract upload date
             var videoUploadDate = videoWatchPageHtml.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content")
@@ -339,7 +339,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get video info dictionary
-            var videoInfoDic = await GetVideoInfoDicAsync(videoId);
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
 
             // Get player response JSON
             var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
@@ -347,7 +347,7 @@ namespace YoutubeExplode
             // Extract channel ID
             var channelId = playerResponseJson.SelectToken("videoDetails.channelId").Value<string>();
 
-            return await GetChannelAsync(channelId);
+            return await GetChannelAsync(channelId).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -359,7 +359,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get player configuration
-            var playerConfiguration = await GetPlayerConfigurationAsync(videoId);
+            var playerConfiguration = await GetPlayerConfigurationAsync(videoId).ConfigureAwait(false);
 
             // Prepare stream info maps
             var muxedStreamInfoMap = new Dictionary<int, MuxedStreamInfo>();
@@ -379,7 +379,7 @@ namespace YoutubeExplode
                 if (!signature.IsNullOrWhiteSpace())
                 {
                     // Get cipher operations (cached)
-                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl);
+                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl).ConfigureAwait(false);
 
                     // Decipher signature
                     signature = cipherOperations.Decipher(signature);
@@ -394,7 +394,7 @@ namespace YoutubeExplode
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
-                    contentLength = await _httpClient.GetContentLengthAsync(url, false) ?? 0;
+                    contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? 0;
 
                     // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0)
@@ -441,7 +441,7 @@ namespace YoutubeExplode
                 if (!signature.IsNullOrWhiteSpace())
                 {
                     // Get cipher operations (cached)
-                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl);
+                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl).ConfigureAwait(false);
 
                     // Decipher signature
                     signature = cipherOperations.Decipher(signature);
@@ -456,7 +456,7 @@ namespace YoutubeExplode
                 if (contentLength <= 0)
                 {
                     // Send HEAD request and get content length
-                    contentLength = await _httpClient.GetContentLengthAsync(url, false) ?? 0;
+                    contentLength = await _httpClient.GetContentLengthAsync(url, false).ConfigureAwait(false) ?? 0;
 
                     // If content length is still not available - stream is gone or faulty
                     if (contentLength <= 0)
@@ -513,7 +513,7 @@ namespace YoutubeExplode
                 if (!signature.IsNullOrWhiteSpace())
                 {
                     // Get cipher operations (cached)
-                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl);
+                    var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl).ConfigureAwait(false);
 
                     // Decipher signature
                     signature = cipherOperations.Decipher(signature);
@@ -523,7 +523,7 @@ namespace YoutubeExplode
                 }
 
                 // Get DASH manifest XML
-                var dashManifestXml = await GetDashManifestXmlAsync(dashManifestUrl);
+                var dashManifestXml = await GetDashManifestXmlAsync(dashManifestUrl).ConfigureAwait(false);
 
                 // Get representation nodes (skip partial streams)
                 var streamInfoXmls = dashManifestXml.Descendants("Representation").Where(s =>
@@ -598,7 +598,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube video ID [{videoId}].", nameof(videoId));
 
             // Get video info dictionary
-            var videoInfoDic = await GetVideoInfoDicAsync(videoId);
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
 
             // Get player response JSON
             var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);

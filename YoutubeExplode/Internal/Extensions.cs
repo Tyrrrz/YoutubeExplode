@@ -159,10 +159,10 @@ namespace YoutubeExplode.Internal
             do
             {
                 // Read
-                bytesCopied = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                bytesCopied = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
 
                 // Write
-                await destination.WriteAsync(buffer, 0, bytesCopied, cancellationToken);
+                await destination.WriteAsync(buffer, 0, bytesCopied, cancellationToken).ConfigureAwait(false);
 
                 // Report progress
                 totalBytesCopied += bytesCopied;

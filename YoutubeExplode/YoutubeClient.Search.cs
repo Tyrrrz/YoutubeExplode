@@ -14,7 +14,7 @@ namespace YoutubeExplode
         private async Task<JToken> GetSearchResultsJsonAsync(string query, int page)
         {
             var url = $"https://youtube.com/search_ajax?style=json&search_query={query.UrlEncode()}&page={page}&hl=en";
-            var raw = await _httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
+            var raw = await _httpClient.GetStringAsync(url, false).ConfigureAwait(false); // don't ensure success but rather return empty list
 
             return JToken.Parse(raw);
         }
@@ -30,7 +30,7 @@ namespace YoutubeExplode
             for (var page = 1; page <= maxPages; page++)
             {
                 // Get search results JSON
-                var resultsJson = await GetSearchResultsJsonAsync(query, page);
+                var resultsJson = await GetSearchResultsJsonAsync(query, page).ConfigureAwait(false);
 
                 // Get videos
                 var countDelta = 0;
