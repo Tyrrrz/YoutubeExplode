@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1;netstandard1.3;netstandard2.0</TargetFrameworks>
     <Version>4.7.1</Version>
     <Company>Tyrrrz</Company>
     <Authors>$(Company)</Authors>
@@ -18,19 +18,26 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'net45'">$(DefineConstants);LEGACY_ANGLE_SHARP</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(DefineConstants.Contains(LEGACY_ANGLE_SHARP))">
+    <PackageReference Include="AngleSharp" Version="[0.9.11]" />
+  </ItemGroup>
+  <ItemGroup Condition="!$(DefineConstants.Contains(LEGACY_ANGLE_SHARP))">
+    <PackageReference Include="AngleSharp" Version="0.12.1" />
+  </ItemGroup>
+  
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.1'">
     <PackageReference Include="ConfigureAwait.Fody" Version="3.1.0" PrivateAssets="all" />
     <PackageReference Include="Fody" Version="4.2.1" PrivateAssets="all" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="[0.9.11]" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 

@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+#if LEGACY_ANGLE_SHARP
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
+#else
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+#endif
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
 
@@ -15,7 +20,11 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/user/{username}?hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+#if LEGACY_ANGLE_SHARP
             return new HtmlParser().Parse(raw);
+#else
+            return new HtmlParser().ParseDocument(raw);
+#endif
         }
 
         private async Task<IHtmlDocument> GetChannelPageHtmlAsync(string channelId)
@@ -23,7 +32,11 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+#if LEGACY_ANGLE_SHARP
             return new HtmlParser().Parse(raw);
+#else
+            return new HtmlParser().ParseDocument(raw);
+#endif
         }
 
         /// <inheritdoc />

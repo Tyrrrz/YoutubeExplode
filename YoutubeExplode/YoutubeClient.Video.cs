@@ -4,9 +4,15 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+#if LEGACY_ANGLE_SHARP
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
+#else
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
+#endif
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -46,7 +52,11 @@ namespace YoutubeExplode
             var url = $"https://youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+#if LEGACY_ANGLE_SHARP
             return new HtmlParser().Parse(raw);
+#else
+            return new HtmlParser().ParseDocument(raw);
+#endif
         }
 
         private async Task<IHtmlDocument> GetVideoEmbedPageHtmlAsync(string videoId)
@@ -54,7 +64,11 @@ namespace YoutubeExplode
             var url = $"https://youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
             var raw = await _httpClient.GetStringAsync(url);
 
+#if LEGACY_ANGLE_SHARP
             return new HtmlParser().Parse(raw);
+#else
+            return new HtmlParser().ParseDocument(raw);
+#endif
         }
 
         private async Task<XElement> GetDashManifestXmlAsync(string url)
