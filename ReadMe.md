@@ -127,7 +127,6 @@ var videoAuthor = video.Author; // "Igorrr Official"
 
 - [AngleSharp](https://github.com/AngleSharp/AngleSharp)
 - [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
-- [ConfigureAwait.Fody](https://github.com/Fody/ConfigureAwait)
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [NUnit](https://github.com/nunit/nunit)
