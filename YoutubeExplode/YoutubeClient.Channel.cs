@@ -18,7 +18,7 @@ namespace YoutubeExplode
         private async Task<IHtmlDocument> GetUserPageHtmlAsync(string username)
         {
             var url = $"https://www.youtube.com/user/{username}?hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
 #if LEGACY_ANGLE_SHARP
             return new HtmlParser().Parse(raw);
@@ -30,7 +30,7 @@ namespace YoutubeExplode
         private async Task<IHtmlDocument> GetChannelPageHtmlAsync(string channelId)
         {
             var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
-            var raw = await _httpClient.GetStringAsync(url);
+            var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
 #if LEGACY_ANGLE_SHARP
             return new HtmlParser().Parse(raw);
@@ -48,7 +48,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
             // Get user page HTML
-            var userPageHtml = await GetUserPageHtmlAsync(username);
+            var userPageHtml = await GetUserPageHtmlAsync(username).ConfigureAwait(false);
 
             // Extract channel URL
             var channelUrl = userPageHtml.QuerySelector("meta[property=\"og:url\"]").GetAttribute("content");
@@ -65,7 +65,7 @@ namespace YoutubeExplode
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
             // Get channel page HTML
-            var channelPageHtml = await GetChannelPageHtmlAsync(channelId);
+            var channelPageHtml = await GetChannelPageHtmlAsync(channelId).ConfigureAwait(false);
 
             // Extract info
             var channelTitle = channelPageHtml.QuerySelector("meta[property=\"og:title\"]").GetAttribute("content");
@@ -87,7 +87,7 @@ namespace YoutubeExplode
             var playlistId = "UU" + channelId.SubstringAfter("UC");
 
             // Get playlist
-            var playlist = await GetPlaylistAsync(playlistId, maxPages);
+            var playlist = await GetPlaylistAsync(playlistId, maxPages).ConfigureAwait(false);
 
             return playlist.Videos;
         }

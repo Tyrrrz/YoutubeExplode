@@ -60,11 +60,11 @@ namespace YoutubeExplode.Internal
             // If current stream is not set - resolve it
             if (_currentStream == null)
             {
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1).ConfigureAwait(false);
             }
 
             // Read from current stream
-            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken);
+            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
 
             // Advance the position (using field directly to avoid clearing stream)
             _position += bytesRead;
@@ -76,7 +76,7 @@ namespace YoutubeExplode.Internal
                 ClearCurrentStream();
 
                 // Recursively read again
-                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken);
+                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
             }
 
             return bytesRead;
