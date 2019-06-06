@@ -206,14 +206,20 @@ namespace YoutubeExplode
                 @"\bc\s*&&\s*d\.set\([^,]+,\s*(?:encodeURIComponent\s*\()?\s*([\w$]+)\(").Groups[1].Value;
 
             if (deciphererFuncName.IsNullOrWhiteSpace())
-                throw new UnrecognizedStructureException("Could not find signature decipherer function name.");
+            {
+                throw new UnrecognizedStructureException(
+                    "Could not find signature decipherer function name. Please report this issue on GitHub.");
+            }
 
             // Find the body of the function
             var deciphererFuncBody = Regex.Match(raw,
                 @"(?!h\.)" + Regex.Escape(deciphererFuncName) + @"=function\(\w+\)\{(.*?)\}", RegexOptions.Singleline).Groups[1].Value;
 
             if (deciphererFuncBody.IsNullOrWhiteSpace())
-                throw new UnrecognizedStructureException("Could not find signature decipherer function body.");
+            {
+                throw new UnrecognizedStructureException(
+                    "Could not find signature decipherer function body. Please report this issue on GitHub.");
+            }
 
             // Split the function body into statements
             var deciphererFuncBodyStatements = deciphererFuncBody.Split(";");
