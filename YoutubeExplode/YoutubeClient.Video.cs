@@ -488,7 +488,9 @@ namespace YoutubeExplode
                 {
                     // Extract video encoding
                     var videoEncodingRaw = streamInfoDic["type"].SubstringAfter("codecs=\"").SubstringUntil("\"");
-                    var videoEncoding = Heuristics.VideoEncodingFromString(videoEncodingRaw);
+                    var videoEncoding = !videoEncodingRaw.Equals("unknown", StringComparison.OrdinalIgnoreCase)
+                        ? Heuristics.VideoEncodingFromString(videoEncodingRaw)
+                        : VideoEncoding.Av1; // HACK: issue 246
 
                     // Extract video quality label and video quality
                     var videoQualityLabel = streamInfoDic["quality_label"];
