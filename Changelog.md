@@ -1,3 +1,7 @@
+### v4.7.3 (21-Jun-2019)
+
+- Updated signature deciphering to match recent YouTube changes.
+
 ### v4.7.2 (13-Jun-2019)
 
 - Fixed an issue where `ArgumentException` was thrown on some videos due to recent YouTube changes.
