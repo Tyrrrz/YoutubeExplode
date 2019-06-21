@@ -203,7 +203,7 @@ namespace YoutubeExplode
 
             // Find the name of the function that handles deciphering
             var deciphererFuncName = Regex.Match(raw,
-                @"\bc\s*&&\s*d\.set\([^,]+,\s*(?:encodeURIComponent\s*\()?\s*([\w$]+)\(").Groups[1].Value;
+                @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}").Groups[1].Value;
 
             if (deciphererFuncName.IsNullOrWhiteSpace())
             {
