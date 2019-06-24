@@ -1,3 +1,7 @@
+### v4.7.4 (24-Jun-2019)
+
+- Updated how videos in a playlist are resolved to match recent YouTube changes.
+
 ### v4.7.3 (21-Jun-2019)
 
 - Updated signature deciphering to match recent YouTube changes.
