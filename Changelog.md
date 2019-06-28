@@ -1,3 +1,16 @@
+### v4.7.4 (24-Jun-2019)
+
+- Updated how videos in a playlist are resolved to match recent YouTube changes.
+
+### v4.7.3 (21-Jun-2019)
+
+- Updated signature deciphering to match recent YouTube changes.
+
+### v4.7.2 (13-Jun-2019)
+
+- Fixed an issue where `ArgumentException` was thrown on some videos due to recent YouTube changes.
+- Improved exception messages to make them slightly more user-friendly.
+
 ### v4.7.1 (17-May-2019)
 
 - Improved exception messages for cases when a video is blocked in user's country or is age-restricted and unembeddable.

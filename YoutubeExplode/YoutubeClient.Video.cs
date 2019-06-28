@@ -217,17 +217,23 @@ namespace YoutubeExplode
 
             // Find the name of the function that handles deciphering
             var deciphererFuncName = Regex.Match(raw,
-                @"\bc\s*&&\s*d\.set\([^,]+,\s*(?:encodeURIComponent\s*\()?\s*([\w$]+)\(").Groups[1].Value;
+                @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}").Groups[1].Value;
 
             if (deciphererFuncName.IsNullOrWhiteSpace())
-                throw new UnrecognizedStructureException("Could not find signature decipherer function name.");
+            {
+                throw new UnrecognizedStructureException(
+                    "Could not find signature decipherer function name. Please report this issue on GitHub.");
+            }
 
             // Find the body of the function
             var deciphererFuncBody = Regex.Match(raw,
                 @"(?!h\.)" + Regex.Escape(deciphererFuncName) + @"=function\(\w+\)\{(.*?)\}", RegexOptions.Singleline).Groups[1].Value;
 
             if (deciphererFuncBody.IsNullOrWhiteSpace())
-                throw new UnrecognizedStructureException("Could not find signature decipherer function body.");
+            {
+                throw new UnrecognizedStructureException(
+                    "Could not find signature decipherer function body. Please report this issue on GitHub.");
+            }
 
             // Split the function body into statements
             var deciphererFuncBodyStatements = deciphererFuncBody.Split(";");
@@ -496,7 +502,9 @@ namespace YoutubeExplode
                 {
                     // Extract video encoding
                     var videoEncodingRaw = streamInfoDic["type"].SubstringAfter("codecs=\"").SubstringUntil("\"");
-                    var videoEncoding = Heuristics.VideoEncodingFromString(videoEncodingRaw);
+                    var videoEncoding = !videoEncodingRaw.Equals("unknown", StringComparison.OrdinalIgnoreCase)
+                        ? Heuristics.VideoEncodingFromString(videoEncodingRaw)
+                        : VideoEncoding.Av1; // HACK: issue 246
 
                     // Extract video quality label and video quality
                     var videoQualityLabel = streamInfoDic["quality_label"];

@@ -31,7 +31,7 @@ namespace YoutubeExplode
             // Get all videos across pages
             JToken playlistJson;
             var page = 1;
-            var index = 0;
+            var index = 101;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             do
@@ -40,7 +40,6 @@ namespace YoutubeExplode
                 playlistJson = await GetPlaylistJsonAsync(playlistId, index).ConfigureAwait(false);
 
                 // Get videos
-                var countTotal = 0;
                 var countDelta = 0;
                 foreach (var videoJson in playlistJson.SelectToken("video").EmptyIfNull())
                 {
@@ -76,9 +75,6 @@ namespace YoutubeExplode
                         // Increment delta
                         countDelta++;
                     }
-
-                    // Increment total count
-                    countTotal++;
                 }
 
                 // If no distinct videos were added to the list - break
@@ -86,7 +82,7 @@ namespace YoutubeExplode
                     break;
 
                 // Advance index and page
-                index += countTotal;
+                index += 100;
                 page++;
             } while (page <= maxPages);
 
