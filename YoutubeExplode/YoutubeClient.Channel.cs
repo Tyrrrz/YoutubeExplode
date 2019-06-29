@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
+using LtGt;
+using LtGt.Models;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
 
@@ -10,20 +11,20 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
-        private async Task<IHtmlDocument> GetUserPageHtmlAsync(string username)
+        private async Task<HtmlDocument> GetUserPageHtmlAsync(string username)
         {
             var url = $"https://www.youtube.com/user/{username}?hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
-            return new HtmlParser().Parse(raw);
+            return HtmlParser.Default.ParseDocument(raw);
         }
 
-        private async Task<IHtmlDocument> GetChannelPageHtmlAsync(string channelId)
+        private async Task<HtmlDocument> GetChannelPageHtmlAsync(string channelId)
         {
             var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
-            return new HtmlParser().Parse(raw);
+            return HtmlParser.Default.ParseDocument(raw);
         }
 
         /// <inheritdoc />
@@ -38,7 +39,9 @@ namespace YoutubeExplode
             var userPageHtml = await GetUserPageHtmlAsync(username).ConfigureAwait(false);
 
             // Extract channel URL
-            var channelUrl = userPageHtml.QuerySelector("meta[property=\"og:url\"]").GetAttribute("content");
+            var channelUrl = userPageHtml.GetElementsByTagName("meta")
+                .First(e => e.GetAttribute("property")?.Value == "og:url")
+                .GetAttribute("content")?.Value;
 
             return channelUrl.SubstringAfter("channel/");
         }
@@ -55,8 +58,13 @@ namespace YoutubeExplode
             var channelPageHtml = await GetChannelPageHtmlAsync(channelId).ConfigureAwait(false);
 
             // Extract info
-            var channelTitle = channelPageHtml.QuerySelector("meta[property=\"og:title\"]").GetAttribute("content");
-            var channelLogoUrl = channelPageHtml.QuerySelector("meta[property=\"og:image\"]").GetAttribute("content");
+            var channelTitle = channelPageHtml.GetElementsByTagName("meta")
+                .First(e => e.GetAttribute("property")?.Value == "og:title")
+                .GetAttribute("content")?.Value;
+
+            var channelLogoUrl = channelPageHtml.GetElementsByTagName("meta")
+                .First(e => e.GetAttribute("property")?.Value == "og:image")
+                .GetAttribute("content")?.Value;
 
             return new Channel(channelId, channelTitle, channelLogoUrl);
         }

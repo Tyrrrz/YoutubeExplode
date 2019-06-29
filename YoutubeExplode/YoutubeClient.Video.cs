@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using AngleSharp.Dom.Html;
-using AngleSharp.Extensions;
-using AngleSharp.Parser.Html;
+using LtGt;
+using LtGt.Models;
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -41,20 +40,20 @@ namespace YoutubeExplode
             return result;
         }
 
-        private async Task<IHtmlDocument> GetVideoWatchPageHtmlAsync(string videoId)
+        private async Task<HtmlDocument> GetVideoWatchPageHtmlAsync(string videoId)
         {
             var url = $"https://youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
-            return new HtmlParser().Parse(raw);
+            return HtmlParser.Default.ParseDocument(raw);
         }
 
-        private async Task<IHtmlDocument> GetVideoEmbedPageHtmlAsync(string videoId)
+        private async Task<HtmlDocument> GetVideoEmbedPageHtmlAsync(string videoId)
         {
             var url = $"https://youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
-            return new HtmlParser().Parse(raw);
+            return HtmlParser.Default.ParseDocument(raw);
         }
 
         private async Task<XElement> GetDashManifestXmlAsync(string url)
@@ -71,9 +70,13 @@ namespace YoutubeExplode
                 var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId).ConfigureAwait(false);
 
                 // Get player config JSON
-                var playerConfigRaw = Regex.Match(videoEmbedPageHtml.Source.Text,
-                        @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                    .Groups["Json"].Value;
+                var playerConfigRaw = videoEmbedPageHtml.GetElementsByTagName("script")
+                    .Select(e => e.GetInnerText())
+                    .Select(s =>
+                        Regex.Match(s,
+                                @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                            .Groups["Json"].Value)
+                    .First(s => !s.IsNullOrWhiteSpace());
                 var playerConfigJson = JToken.Parse(playerConfigRaw);
 
                 // Extract STS
@@ -147,16 +150,20 @@ namespace YoutubeExplode
                 var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
                 // Extract player config
-                var playerConfigRaw = Regex.Match(videoWatchPageHtml.Source.Text,
-                        @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                    .Groups["Json"].Value;
+                var playerConfigRaw = videoWatchPageHtml.GetElementsByTagName("script")
+                    .Select(e => e.GetInnerText())
+                    .Select(s =>
+                        Regex.Match(s,
+                                @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                            .Groups["Json"].Value)
+                    .First(s => !s.IsNullOrWhiteSpace());
 
                 // If player config is not available - throw
                 if (playerConfigRaw.IsNullOrWhiteSpace())
                 {
                     var errorReason =
-                        (videoWatchPageHtml.QuerySelector("#unavailable-submessage button") ??
-                         videoWatchPageHtml.QuerySelector("#unavailable-message"))?.TextContent.Trim();
+                        (videoWatchPageHtml.GetElementById("unavailable-submessage button") ??
+                         videoWatchPageHtml.GetElementById("unavailable-message"))?.GetInnerText().Trim();
                     throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
                 }
 
@@ -315,17 +322,19 @@ namespace YoutubeExplode
             var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
             // Extract upload date
-            var videoUploadDate = videoWatchPageHtml.QuerySelector("meta[itemprop=\"datePublished\"]").GetAttribute("content")
+            var videoUploadDate = videoWatchPageHtml.GetElementsByTagName("meta")
+                .First(e => e.GetAttribute("itemprop")?.Value == "datePublished")
+                .GetAttribute("content").Value
                 .ParseDateTimeOffset("yyyy-MM-dd");
 
             // Extract like count
             var videoLikeCountRaw =
-                videoWatchPageHtml.QuerySelector("button.like-button-renderer-like-button")?.Text().StripNonDigit();
+                videoWatchPageHtml.GetElementByClassName("like-button-renderer-like-button")?.GetInnerText().StripNonDigit();
             var videoLikeCount = !videoLikeCountRaw.IsNullOrWhiteSpace() ? videoLikeCountRaw.ParseLong() : 0;
 
             // Extract dislike count
             var videoDislikeCountRaw =
-                videoWatchPageHtml.QuerySelector("button.like-button-renderer-dislike-button")?.Text().StripNonDigit();
+                videoWatchPageHtml.GetElementByClassName("like-button-renderer-dislike-button")?.GetInnerText().StripNonDigit();
             var videoDislikeCount = !videoDislikeCountRaw.IsNullOrWhiteSpace() ? videoDislikeCountRaw.ParseLong() : 0;
 
             // Create statistics and thumbnails

@@ -137,7 +137,7 @@ var videoAuthor = video.Author; // "Igorrr Official"
 
 ## Libraries used
 
-- [AngleSharp](https://github.com/AngleSharp/AngleSharp)
+- [LtGt](https://github.com/Tyrrrz/LtGt)
 - [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
