@@ -156,13 +156,13 @@ namespace YoutubeExplode
                         Regex.Match(s,
                                 @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                             .Groups["Json"].Value)
-                    .First(s => !s.IsNullOrWhiteSpace());
+                    .FirstOrDefault(s => !s.IsNullOrWhiteSpace());
 
                 // If player config is not available - throw
                 if (playerConfigRaw.IsNullOrWhiteSpace())
                 {
                     var errorReason =
-                        (videoWatchPageHtml.GetElementById("unavailable-submessage button") ??
+                        (videoWatchPageHtml.GetElementById("unavailable-submessage") ??
                          videoWatchPageHtml.GetElementById("unavailable-message"))?.GetInnerText().Trim();
                     throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
                 }
