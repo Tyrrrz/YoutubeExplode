@@ -322,19 +322,19 @@ namespace YoutubeExplode
             var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
             // Extract upload date
-            var videoUploadDate = videoWatchPageHtml.GetElementsByTagName("meta")
-                .First(e => e.GetAttribute("itemprop")?.Value == "datePublished")
-                .GetAttribute("content").Value
-                .ParseDateTimeOffset("yyyy-MM-dd");
+            var videoUploadDate = videoWatchPageHtml.GetElementsBySelector("meta[itemprop=\"datePublished\"]")
+                .First().GetAttribute("content").Value.ParseDateTimeOffset("yyyy-MM-dd");
 
             // Extract like count
-            var videoLikeCountRaw =
-                videoWatchPageHtml.GetElementByClassName("like-button-renderer-like-button")?.GetInnerText().StripNonDigit();
+            var videoLikeCountRaw = videoWatchPageHtml.GetElementsByClassName("like-button-renderer-like-button")
+                .FirstOrDefault()?.GetInnerText().StripNonDigit();
+
             var videoLikeCount = !videoLikeCountRaw.IsNullOrWhiteSpace() ? videoLikeCountRaw.ParseLong() : 0;
 
             // Extract dislike count
-            var videoDislikeCountRaw =
-                videoWatchPageHtml.GetElementByClassName("like-button-renderer-dislike-button")?.GetInnerText().StripNonDigit();
+            var videoDislikeCountRaw = videoWatchPageHtml.GetElementsByClassName("like-button-renderer-dislike-button")
+                .FirstOrDefault()?.GetInnerText().StripNonDigit();
+
             var videoDislikeCount = !videoDislikeCountRaw.IsNullOrWhiteSpace() ? videoDislikeCountRaw.ParseLong() : 0;
 
             // Create statistics and thumbnails

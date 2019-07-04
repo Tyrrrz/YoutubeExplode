@@ -39,9 +39,8 @@ namespace YoutubeExplode
             var userPageHtml = await GetUserPageHtmlAsync(username).ConfigureAwait(false);
 
             // Extract channel URL
-            var channelUrl = userPageHtml.GetElementsByTagName("meta")
-                .First(e => e.GetAttribute("property")?.Value == "og:url")
-                .GetAttribute("content")?.Value;
+            var channelUrl = userPageHtml.GetElementsBySelector("meta[property=\"og:url\"]")
+                .First().GetAttribute("content").Value;
 
             return channelUrl.SubstringAfter("channel/");
         }
@@ -58,13 +57,11 @@ namespace YoutubeExplode
             var channelPageHtml = await GetChannelPageHtmlAsync(channelId).ConfigureAwait(false);
 
             // Extract info
-            var channelTitle = channelPageHtml.GetElementsByTagName("meta")
-                .First(e => e.GetAttribute("property")?.Value == "og:title")
-                .GetAttribute("content")?.Value;
+            var channelTitle = channelPageHtml.GetElementsBySelector("meta[property=\"og:title\"]")
+                .First().GetAttribute("content").Value;
 
-            var channelLogoUrl = channelPageHtml.GetElementsByTagName("meta")
-                .First(e => e.GetAttribute("property")?.Value == "og:image")
-                .GetAttribute("content")?.Value;
+            var channelLogoUrl = channelPageHtml.GetElementsBySelector("meta[property=\"og:image\"]")
+                .First().GetAttribute("content").Value;
 
             return new Channel(channelId, channelTitle, channelLogoUrl);
         }
