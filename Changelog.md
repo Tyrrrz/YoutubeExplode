@@ -1,3 +1,8 @@
+### v4.7.5 (04-Jul-2019)
+
+- Dropped dependency on AngleSharp and replaced it with LtGt.
+- Fixed an issue where `GetChannelUploadsAsync` always returned empty result.
+
 ### v4.7.4 (24-Jun-2019)
 
 - Updated how videos in a playlist are resolved to match recent YouTube changes.
