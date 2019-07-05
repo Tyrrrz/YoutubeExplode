@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Internal
 {
-    internal static class Url
+    internal class Url:IUrl
     {
-        public static string SetQueryParameter(string url, string key, string value)
+        public string SetQueryParameter(string url, string key, string value)
         {
             value = value ?? string.Empty;
 
@@ -40,7 +40,7 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static string SetRouteParameter(string url, string key, string value)
+        public string SetRouteParameter(string url, string key, string value)
         {
             value = value ?? string.Empty;
 
@@ -68,7 +68,7 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public static Dictionary<string, string> SplitQuery(string query)
+        public Dictionary<string, string> SplitQuery(string query)
         {
             var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var paramsEncoded = query.TrimStart('?').Split("&");

@@ -20,6 +20,16 @@ namespace YoutubeExplode
     {
         private readonly Dictionary<string, IReadOnlyList<ICipherOperation>> _cipherOperationsCache =
             new Dictionary<string, IReadOnlyList<ICipherOperation>>();
+        private IUrl _url;
+
+        public IUrl Url
+        {
+            get {
+                if (_url == null)
+                    _url = new Url();
+                return _url;
+            }
+        }
 
         private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoDicAsync(string videoId, string sts = null)
         {
