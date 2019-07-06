@@ -11,6 +11,9 @@ namespace YoutubeExplode
 {
     public partial class YoutubeClient
     {
+        /// <remarks>double quotes are silently stripped from keywords so it's safe to pair them</remarks>
+        private const string KeywordRegex = "(\"[^\"]+\"|[^ ]+)";
+
         private async Task<JToken> GetPlaylistJsonAsync(string playlistId, int index)
         {
             var url = $"https://youtube.com/list_ajax?style=json&action_get_list=1&list={playlistId}&index={index}&hl=en";
@@ -56,10 +59,11 @@ namespace YoutubeExplode
 
                     // Extract video keywords
                     var videoKeywordsJoined = videoJson.SelectToken("keywords").Value<string>();
-                    var videoKeywords = Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
+                    var videoKeywords = Regex.Matches(videoKeywordsJoined, KeywordRegex)
                         .Cast<Match>()
                         .Select(m => m.Value)
                         .Where(s => !s.IsNullOrWhiteSpace())
+                        .Select(s => s.StartsWith("\"") ? s.Substring(1, s.Length - 2) : s)
                         .ToArray();
 
                     // Create statistics and thumbnails
