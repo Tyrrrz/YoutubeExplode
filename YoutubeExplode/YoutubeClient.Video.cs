@@ -75,16 +75,13 @@ namespace YoutubeExplode
                         @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                     .Groups["Json"].Value;
                 var playerConfigJson = JToken.Parse(playerConfigRaw);
-
-                // Extract STS
-                var sts = playerConfigJson.SelectToken("sts").Value<string>();
-
+                
                 // Extract player source URL
                 var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
 
                 // Get video info dictionary
                 var requestedAt = DateTimeOffset.Now;
-                var videoInfoDic = await GetVideoInfoDicAsync(videoId, sts).ConfigureAwait(false);
+                var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
 
                 // Get player response JSON
                 var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
