@@ -21,13 +21,13 @@ namespace YoutubeExplode
         private readonly Dictionary<string, IReadOnlyList<ICipherOperation>> _cipherOperationsCache =
             new Dictionary<string, IReadOnlyList<ICipherOperation>>();
 
-        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoDicAsync(string videoId, string sts = null)
+        private async Task<IReadOnlyDictionary<string, string>> GetVideoInfoDicAsync(string videoId)
         {
             // This parameter does magic and a lot of videos don't work without it
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
 
             // Execute request
-            var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&sts={sts}&eurl={eurl}&hl=en";
+            var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&eurl={eurl}&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse response as URL-encoded dictionary
@@ -78,16 +78,13 @@ namespace YoutubeExplode
                             .Groups["Json"].Value)
                     .First(s => !s.IsNullOrWhiteSpace());
                 var playerConfigJson = JToken.Parse(playerConfigRaw);
-
-                // Extract STS
-                var sts = playerConfigJson.SelectToken("sts").Value<string>();
-
+                
                 // Extract player source URL
                 var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
 
                 // Get video info dictionary
                 var requestedAt = DateTimeOffset.Now;
-                var videoInfoDic = await GetVideoInfoDicAsync(videoId, sts).ConfigureAwait(false);
+                var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
 
                 // Get player response JSON
                 var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
