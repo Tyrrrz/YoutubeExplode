@@ -1,3 +1,8 @@
+### v4.7.6 (10-Jul-2019)
+
+- Fixed an issue where `GetVideoMediaStreamInfosAsync` threw an exception due to recent YouTube changes.
+- Fixed how error reason is extracted from the watch page when a video is unavailable.
+
 ### v4.7.5 (04-Jul-2019)
 
 - Dropped dependency on AngleSharp and replaced it with LtGt.
