@@ -9,8 +9,11 @@ before_build:
 build:
   verbosity: minimal
 
+after_test:
+- choco install codecov && codecov -f "YoutubeExplode.Tests/bin/%CONFIGURATION%/Coverage.xml" --required
+
 artifacts:
-- path: YoutubeExplode\bin\$(configuration)\YoutubeExplode*.nupkg
+- path: YoutubeExplode/bin/$(configuration)/YoutubeExplode*.nupkg
   name: YoutubeExplode.nupkg
 
 deploy:
