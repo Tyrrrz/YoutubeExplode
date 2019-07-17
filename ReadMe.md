@@ -143,6 +143,7 @@ var videoAuthor = video.Author; // "Igorrr Official"
 - [GalaSoft.MVVMLight](http://www.mvvmlight.net)
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [NUnit](https://github.com/nunit/nunit)
+- [Coverlet](https://github.com/tonerdo/coverlet)
 - [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 
 ## Donate
