@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using LtGt;
-using LtGt.Models;
 using Newtonsoft.Json.Linq;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
@@ -13,6 +11,13 @@ using YoutubeExplode.Internal.CipherOperations;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
+
+#if NETSTANDARD1_1
+using LtGt;
+using LtGt.Models;
+#else
+using HtmlAgilityPack;
+#endif
 
 namespace YoutubeExplode
 {
@@ -45,7 +50,13 @@ namespace YoutubeExplode
             var url = $"https://youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
+#if NETSTANDARD1_1
             return HtmlParser.Default.ParseDocument(raw);
+#else
+            var doc = new HtmlDocument();
+            doc.LoadHtml(raw);
+            return doc;
+#endif
         }
 
         private async Task<HtmlDocument> GetVideoEmbedPageHtmlAsync(string videoId)
@@ -53,7 +64,13 @@ namespace YoutubeExplode
             var url = $"https://youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
+#if NETSTANDARD1_1
             return HtmlParser.Default.ParseDocument(raw);
+#else
+            var doc = new HtmlDocument();
+            doc.LoadHtml(raw);
+            return doc;
+#endif
         }
 
         private async Task<XElement> GetDashManifestXmlAsync(string url)
@@ -69,16 +86,38 @@ namespace YoutubeExplode
                 // Get video embed page HTML
                 var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId).ConfigureAwait(false);
 
+#if NETSTANDARD1_1
                 // Get player config JSON
                 var playerConfigRaw = videoEmbedPageHtml.GetElementsByTagName("script")
-                    .Select(e => e.GetInnerText())
                     .Select(s =>
-                        Regex.Match(s,
+                        Regex.Match(s.GetInnerText(),
                                 @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                             .Groups["Json"].Value)
                     .First(s => !s.IsNullOrWhiteSpace());
-                var playerConfigJson = JToken.Parse(playerConfigRaw);
+
+#else
+                var scriptNodes = videoEmbedPageHtml.DocumentNode.Descendants("script").ToList();
+                string playerConfigRaw = "";
+                for (int i = 0; i < scriptNodes.Count && playerConfigRaw.IsNullOrWhiteSpace(); i++)
+                {
+                    playerConfigRaw = Regex.Match(scriptNodes[i].InnerText,
+                                @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                            .Groups["Json"].Value;
+                }
+
+                //slower
+                /*
+                playerConfigRaw = scriptNodes
+                    .Select(s =>
+                        Regex.Match(s.InnerText,
+                                @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                            .Groups["Json"].Value)
+                    .First(s => !s.IsNullOrWhiteSpace());
+                */
                 
+#endif
+                var playerConfigJson = JToken.Parse(playerConfigRaw);
+
                 // Extract player source URL
                 var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
 
@@ -147,18 +186,42 @@ namespace YoutubeExplode
                 var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
                 // Extract player config
+#if NETSTANDARD1_1
                 var playerConfigRaw = videoWatchPageHtml.GetElementsByTagName("script")
-                    .Select(e => e.GetInnerText())
                     .Select(s =>
-                        Regex.Match(s,
+                        Regex.Match(s.GetInnerText(),
                                 @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                             .Groups["Json"].Value)
                     .FirstOrDefault(s => !s.IsNullOrWhiteSpace());
+#else
+                var scriptNodes = videoWatchPageHtml.DocumentNode.Descendants("script").ToList();
+                string playerConfigRaw = "";
+                for (int i = 0; i < scriptNodes.Count && playerConfigRaw.IsNullOrWhiteSpace(); i++)
+                {
+                    playerConfigRaw = Regex.Match(scriptNodes[i].InnerText,
+                                @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                            .Groups["Json"].Value;
+                }
+
+                //slower
+                /*
+                playerConfigRaw = videoWatchPageHtml.DocumentNode.Descendants("script")
+                    .Select(s =>
+                        Regex.Match(s.InnerText,
+                                @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                            .Groups["Json"].Value)
+                    .FirstOrDefault(s => !s.IsNullOrWhiteSpace());
+                */
+#endif
 
                 // If player config is not available - throw
                 if (playerConfigRaw.IsNullOrWhiteSpace())
                 {
+#if NETSTANDARD1_1
                     var errorReason = videoWatchPageHtml.GetElementById("unavailable-message")?.GetInnerText().Trim();
+#else
+                    var errorReason = videoWatchPageHtml.GetElementbyId("unavailable-message")?.InnerText.Trim();
+#endif
                     throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
                 }
 
@@ -317,6 +380,8 @@ namespace YoutubeExplode
             var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
 
             // Extract upload date
+#if NETSTANDARD1_1
+            // Extract upload date
             var videoUploadDate = videoWatchPageHtml.GetElementsBySelector("meta[itemprop=\"datePublished\"]")
                 .First().GetAttribute("content").Value.ParseDateTimeOffset("yyyy-MM-dd");
 
@@ -324,12 +389,28 @@ namespace YoutubeExplode
             var videoLikeCountRaw = videoWatchPageHtml.GetElementsByClassName("like-button-renderer-like-button")
                 .FirstOrDefault()?.GetInnerText().StripNonDigit();
 
-            var videoLikeCount = !videoLikeCountRaw.IsNullOrWhiteSpace() ? videoLikeCountRaw.ParseLong() : 0;
-
             // Extract dislike count
             var videoDislikeCountRaw = videoWatchPageHtml.GetElementsByClassName("like-button-renderer-dislike-button")
                 .FirstOrDefault()?.GetInnerText().StripNonDigit();
+#else
+            // Extract upload date
+            var videoUploadDate = videoWatchPageHtml.DocumentNode.Descendants("meta")
+                .First(e => e.GetAttributeValue("itemprop", "") == "datePublished")
+                .GetAttributeValue("content", "")
+                .ParseDateTimeOffset("yyyy-MM-dd");
 
+            // Extract buttons
+            var buttons = videoWatchPageHtml.DocumentNode.Descendants("button").ToList();
+
+            // Extract like count
+            var videoLikeCountRaw = buttons.FirstOrDefault(x => x.HasClass("like-button-renderer-like-button"))?
+                .InnerText.StripNonDigit();
+
+            // Extract dislike count
+            var videoDislikeCountRaw = buttons.FirstOrDefault(x => x.HasClass("like-button-renderer-dislike-button"))?
+                .InnerText.StripNonDigit();
+#endif
+            var videoLikeCount = !videoLikeCountRaw.IsNullOrWhiteSpace() ? videoLikeCountRaw.ParseLong() : 0;
             var videoDislikeCount = !videoDislikeCountRaw.IsNullOrWhiteSpace() ? videoDislikeCountRaw.ParseLong() : 0;
 
             // Create statistics and thumbnails

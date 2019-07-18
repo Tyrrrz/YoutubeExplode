@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LtGt;
-using LtGt.Models;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Models;
+
+#if NETSTANDARD1_1
+using LtGt;
+using LtGt.Models;
+#else
+using HtmlAgilityPack;
+#endif
+
 
 namespace YoutubeExplode
 {
@@ -16,7 +22,13 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/user/{username}?hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
+#if NETSTANDARD1_1
             return HtmlParser.Default.ParseDocument(raw);
+#else
+            var doc = new HtmlDocument();
+            doc.LoadHtml(raw);
+            return doc;
+#endif
         }
 
         private async Task<HtmlDocument> GetChannelPageHtmlAsync(string channelId)
@@ -24,7 +36,13 @@ namespace YoutubeExplode
             var url = $"https://www.youtube.com/channel/{channelId}?hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
+#if NETSTANDARD1_1
             return HtmlParser.Default.ParseDocument(raw);
+#else
+            var doc = new HtmlDocument();
+            doc.LoadHtml(raw);
+            return doc;
+#endif
         }
 
         /// <inheritdoc />
@@ -39,8 +57,14 @@ namespace YoutubeExplode
             var userPageHtml = await GetUserPageHtmlAsync(username).ConfigureAwait(false);
 
             // Extract channel URL
+#if NETSTANDARD1_1
             var channelUrl = userPageHtml.GetElementsBySelector("meta[property=\"og:url\"]")
                 .First().GetAttribute("content").Value;
+#else
+            var channelUrl = userPageHtml.DocumentNode.Descendants("meta")
+                .First(e => e.GetAttributeValue("property", "") == "og:url")
+                .GetAttributeValue("content", "");
+#endif
 
             return channelUrl.SubstringAfter("channel/");
         }
@@ -57,11 +81,40 @@ namespace YoutubeExplode
             var channelPageHtml = await GetChannelPageHtmlAsync(channelId).ConfigureAwait(false);
 
             // Extract info
+#if NETSTANDARD1_1
             var channelTitle = channelPageHtml.GetElementsBySelector("meta[property=\"og:title\"]")
                 .First().GetAttribute("content").Value;
 
             var channelLogoUrl = channelPageHtml.GetElementsBySelector("meta[property=\"og:image\"]")
                 .First().GetAttribute("content").Value;
+#else
+            var metaNodes = channelPageHtml.DocumentNode.Descendants("meta").ToList();
+
+            string channelTitle = "";
+            string channelLogoUrl = "";
+            for (int i = 0; i < metaNodes.Count && (channelTitle == "" || channelLogoUrl == ""); i++)
+            {
+                var prop = metaNodes[i].GetAttributeValue("property", "");
+                if (prop == "og:title")
+                {
+                    channelTitle = metaNodes[i].GetAttributeValue("content", "");
+                }
+                else if (prop == "og:image")
+                {
+                    channelLogoUrl = metaNodes[i].GetAttributeValue("content", "");
+                }
+            }
+
+            // linq is beautiful, but slower (4000 ticks vs 48 ticks)
+            /*
+            channelTitle = metaNodes.First(e => e.GetAttributeValue("property", "") == "og:title")
+                .GetAttributeValue("content", "");
+
+            channelLogoUrl = metaNodes.First(e => e.GetAttributeValue("property", "") == "og:image")
+                .GetAttributeValue("content", "");
+            */
+
+#endif
 
             return new Channel(channelId, channelTitle, channelLogoUrl);
         }
