@@ -49,10 +49,11 @@ namespace YoutubeExplode
 
                     // Extract video keywords
                     var videoKeywordsJoined = videoJson.SelectToken("keywords").Value<string>();
-                    var videoKeywords = Regex.Matches(videoKeywordsJoined, @"(?<=(^|\s)(?<q>""?))([^""]|(""""))*?(?=\<q>(?=\s|$))")
+                    var videoKeywords = Regex.Matches(videoKeywordsJoined, "\"[^\"]+\"|\\S+")
                         .Cast<Match>()
                         .Select(m => m.Value)
                         .Where(s => !s.IsNullOrWhiteSpace())
+                        .Select(s => s.Trim('"'))
                         .ToArray();
 
                     // Create statistics and thumbnails
