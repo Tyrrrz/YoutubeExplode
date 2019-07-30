@@ -1,3 +1,7 @@
+### v4.7.7 (30-Jul-2019)
+
+- Fixed an issue where most methods threw `VideoUnavailableException` on all videos due to recent YouTube changes.
+
 ### v4.7.6 (10-Jul-2019)
 
 - Fixed an issue where `GetVideoMediaStreamInfosAsync` threw an exception due to recent YouTube changes.
