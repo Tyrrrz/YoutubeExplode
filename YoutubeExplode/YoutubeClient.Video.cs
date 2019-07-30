@@ -33,10 +33,6 @@ namespace YoutubeExplode
             // Parse response as URL-encoded dictionary
             var result = Url.SplitQuery(raw);
 
-            // If video ID is not set - throw
-            if (result.GetValueOrDefault("video_id").IsNullOrWhiteSpace())
-                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
-
             return result;
         }
 
@@ -88,6 +84,13 @@ namespace YoutubeExplode
 
                 // Get player response JSON
                 var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
+
+                // If video is unavailable - throw
+                if (string.Equals(playerResponseJson.SelectToken("playabilityStatus.status")?.Value<string>(), "error",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
+                }
 
                 // If there is no error - extract info and return
                 var errorReason = playerResponseJson.SelectToken("playabilityStatus.reason")?.Value<string>();
@@ -305,6 +308,13 @@ namespace YoutubeExplode
             // Get player response JSON
             var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
 
+            // If video is unavailable - throw
+            if (string.Equals(playerResponseJson.SelectToken("playabilityStatus.status")?.Value<string>(), "error",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
+            }
+
             // Extract video info
             var videoAuthor = playerResponseJson.SelectToken("videoDetails.author").Value<string>();
             var videoTitle = playerResponseJson.SelectToken("videoDetails.title").Value<string>();
@@ -353,6 +363,13 @@ namespace YoutubeExplode
 
             // Get player response JSON
             var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
+
+            // If video is unavailable - throw
+            if (string.Equals(playerResponseJson.SelectToken("playabilityStatus.status")?.Value<string>(), "error",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
+            }
 
             // Extract channel ID
             var channelId = playerResponseJson.SelectToken("videoDetails.channelId").Value<string>();
@@ -614,6 +631,13 @@ namespace YoutubeExplode
 
             // Get player response JSON
             var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
+
+            // If video is unavailable - throw
+            if (string.Equals(playerResponseJson.SelectToken("playabilityStatus.status")?.Value<string>(), "error",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
+            }
 
             // Get closed caption track infos
             var trackInfos = new List<ClosedCaptionTrackInfo>();
