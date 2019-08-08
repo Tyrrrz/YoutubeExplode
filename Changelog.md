@@ -1,3 +1,7 @@
+### v4.7.8 (08-Aug-2019)
+
+- Fixed an issue where `UploadDate` was incorrect on videos returned from `GetPlaylistAsync`, `SearchVideosAsync` and `GetChannelUploadsAsync`.
+
 ### v4.7.7 (30-Jul-2019)
 
 - Fixed an issue where most methods threw `VideoUnavailableException` on all videos due to recent YouTube changes.
