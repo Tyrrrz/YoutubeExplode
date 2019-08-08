@@ -36,10 +36,12 @@ namespace YoutubeExplode
                 var countDelta = 0;
                 foreach (var videoJson in resultsJson.SelectToken("video").EmptyIfNull())
                 {
+                    var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
                     // Extract video info
                     var videoId = videoJson.SelectToken("encrypted_id").Value<string>();
                     var videoAuthor = videoJson.SelectToken("author").Value<string>();
-                    var videoUploadDate = videoJson.SelectToken("added").Value<string>().ParseDateTimeOffset("M/d/yy");
+                    var videoUploadDate = epoch + TimeSpan.FromSeconds(videoJson.SelectToken("time_created").Value<long>());
                     var videoTitle = videoJson.SelectToken("title").Value<string>();
                     var videoDescription = videoJson.SelectToken("description").Value<string>();
                     var videoDuration = TimeSpan.FromSeconds(videoJson.SelectToken("length_seconds").Value<double>());
