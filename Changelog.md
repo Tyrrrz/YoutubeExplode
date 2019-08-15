@@ -1,3 +1,7 @@
+### v4.7.9 (15-Aug-2019)
+
+- Updated signature deciphering to match recent YouTube changes.
+
 ### v4.7.8 (08-Aug-2019)
 
 - Fixed an issue where `UploadDate` was incorrect on videos returned from `GetPlaylistAsync`, `SearchVideosAsync` and `GetChannelUploadsAsync`.
