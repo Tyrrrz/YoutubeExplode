@@ -231,63 +231,33 @@ namespace YoutubeExplode
 
             // Identify cipher functions
             var operations = new List<ICipherOperation>();
-            var reverseFuncName = "";
-            var sliceFuncName = "";
-            var swapFuncName = "";
 
             // Analyze statements to determine cipher function names
             foreach (var statement in deciphererFuncBodyStatements)
             {
-                // Break when all functions are found
-                if (!reverseFuncName.IsNullOrWhiteSpace() &&
-                    !sliceFuncName.IsNullOrWhiteSpace() &&
-                    !swapFuncName.IsNullOrWhiteSpace())
-                    break;
-
                 // Get the name of the function called in this statement
                 var calledFuncName = Regex.Match(statement, @"\w+(?:.|\[)(\""?\w+(?:\"")?)\]?\(").Groups[1].Value;
                 if (calledFuncName.IsNullOrWhiteSpace())
                     continue;
 
-                // Determine cipher function names by signature
-                if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
-                {
-                    reverseFuncName = calledFuncName;
-                }
-                else if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
-                {
-                    sliceFuncName = calledFuncName;
-                }
-                else if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
-                {
-                    swapFuncName = calledFuncName;
-                }
-            }
-
-            // Analyze cipher function calls to determine their order and parameters
-            foreach (var statement in deciphererFuncBodyStatements)
-            {
-                // Get the name of the function called in this statement
-                var calledFuncName = Regex.Match(statement, @"\w+(?:.|\[)(\""?\w+(?:\"")?)\]?\(").Groups[1].Value;
-                if (calledFuncName.IsNullOrWhiteSpace())
-                    continue;
-
-                // Reverse operation
-                if (calledFuncName == reverseFuncName)
-                {
-                    operations.Add(new ReverseCipherOperation());
-                }
-                // Slice operation
-                else if (calledFuncName == sliceFuncName)
+                // Slice
+                if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
                 {
                     var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
                     operations.Add(new SliceCipherOperation(index));
                 }
-                // Swap operation
-                else if (calledFuncName == swapFuncName)
+
+                // Swap
+                else if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
                 {
                     var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
                     operations.Add(new SwapCipherOperation(index));
+                }
+
+                // Reverse
+                else if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
+                {
+                    operations.Add(new ReverseCipherOperation());
                 }
             }
 
