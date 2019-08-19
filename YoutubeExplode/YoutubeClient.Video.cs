@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -74,7 +75,7 @@ namespace YoutubeExplode
                             .Groups["Json"].Value)
                     .First(s => !s.IsNullOrWhiteSpace());
                 var playerConfigJson = JToken.Parse(playerConfigRaw);
-                
+
                 // Extract player source URL
                 var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
 
@@ -226,6 +227,17 @@ namespace YoutubeExplode
                     "Could not find signature decipherer function body. Please report this issue on GitHub.");
             }
 
+            // Get decipher functions block name
+            var deciphererFuncBodyNames = Regex.Match(deciphererFuncBody, "(\\w+).\\w+\\(\\w+,\\d+\\);").Groups[1].Value;
+            // Get decipher functions block
+            var deciphererFuncs = Regex.Match(raw,
+                @"var\s" + deciphererFuncBodyNames + @"=\{(\w+:function\(\w+(,\w+)?\)\{(.*?)\}),?\};", RegexOptions.Singleline);
+
+            if (deciphererFuncs.Success)
+            {
+                Debug.WriteLine("Using decipherer functions instead of raw player source ");
+                raw = deciphererFuncs.Groups[0].Value;
+            }
             // Split the function body into statements
             var deciphererFuncBodyStatements = deciphererFuncBody.Split(";");
 
@@ -532,10 +544,10 @@ namespace YoutubeExplode
                 foreach (var streamInfoXml in streamInfoXmls)
                 {
                     // Extract info
-                    var itag = (int) streamInfoXml.Attribute("id");
-                    var url = (string) streamInfoXml.Element("BaseURL");
+                    var itag = (int)streamInfoXml.Attribute("id");
+                    var url = (string)streamInfoXml.Element("BaseURL");
                     var contentLength = Regex.Match(url, @"clen[/=](\d+)").Groups[1].Value.ParseLong();
-                    var bitrate = (long) streamInfoXml.Attribute("bandwidth");
+                    var bitrate = (long)streamInfoXml.Attribute("bandwidth");
 
                     // Extract container
                     var containerRaw = Regex.Match(url, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value.UrlDecode();
@@ -545,7 +557,7 @@ namespace YoutubeExplode
                     if (streamInfoXml.Element("AudioChannelConfiguration") != null)
                     {
                         // Extract audio encoding
-                        var audioEncodingRaw = (string) streamInfoXml.Attribute("codecs");
+                        var audioEncodingRaw = (string)streamInfoXml.Attribute("codecs");
                         var audioEncoding = Heuristics.AudioEncodingFromString(audioEncodingRaw);
 
                         // Add to list
@@ -555,16 +567,16 @@ namespace YoutubeExplode
                     else
                     {
                         // Extract video encoding
-                        var videoEncodingRaw = (string) streamInfoXml.Attribute("codecs");
+                        var videoEncodingRaw = (string)streamInfoXml.Attribute("codecs");
                         var videoEncoding = Heuristics.VideoEncodingFromString(videoEncodingRaw);
 
                         // Extract resolution
-                        var width = (int) streamInfoXml.Attribute("width");
-                        var height = (int) streamInfoXml.Attribute("height");
+                        var width = (int)streamInfoXml.Attribute("width");
+                        var height = (int)streamInfoXml.Attribute("height");
                         var resolution = new VideoResolution(width, height);
 
                         // Extract framerate
-                        var framerate = (int) streamInfoXml.Attribute("frameRate");
+                        var framerate = (int)streamInfoXml.Attribute("frameRate");
 
                         // Determine video quality from itag
                         var videoQuality = Heuristics.VideoQualityFromItag(itag);
