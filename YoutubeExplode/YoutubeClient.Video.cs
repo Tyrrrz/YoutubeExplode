@@ -226,18 +226,17 @@ namespace YoutubeExplode
                     "Could not find signature decipherer function body. Please report this issue on GitHub.");
             }
 
-            // Get decipher functions block name
-            var deciphererFuncBodyNames = Regex.Match(deciphererFuncBody, "(\\w+).\\w+\\(\\w+,\\d+\\);").Groups[1].Value;
-
-            // Get decipher functions block
-            var deciphererFuncs = Regex.Match(raw,
-                @"var\s" + deciphererFuncBodyNames + @"=\{(\w+:function\(\w+(,\w+)?\)\{(.*?)\}),?\};", RegexOptions.Singleline);
-
-            //Using decipherer functions instead of raw player source 
-            raw = deciphererFuncs.Groups[0].Value;
-
             // Split the function body into statements
             var deciphererFuncBodyStatements = deciphererFuncBody.Split(";");
+
+            // Find the name of block that defines functions used in decipherer
+            var deciphererDefinitionName = Regex.Match(deciphererFuncBody, "(\\w+).\\w+\\(\\w+,\\d+\\);").Groups[1].Value;
+
+            // Find the body of the function
+            var deciphererDefinitionBody = Regex.Match(raw,
+                @"var\s+" +
+                Regex.Escape(deciphererDefinitionName) +
+                @"=\{(\w+:function\(\w+(,\w+)?\)\{(.*?)\}),?\};", RegexOptions.Singleline).Groups[0].Value;
 
             // Identify cipher functions
             var operations = new List<ICipherOperation>();
@@ -251,21 +250,21 @@ namespace YoutubeExplode
                     continue;
 
                 // Slice
-                if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
+                if (Regex.IsMatch(deciphererDefinitionBody, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
                 {
                     var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
                     operations.Add(new SliceCipherOperation(index));
                 }
 
                 // Swap
-                else if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
+                else if (Regex.IsMatch(deciphererDefinitionBody, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
                 {
                     var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
                     operations.Add(new SwapCipherOperation(index));
                 }
 
                 // Reverse
-                else if (Regex.IsMatch(raw, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
+                else if (Regex.IsMatch(deciphererDefinitionBody, $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
                 {
                     operations.Add(new ReverseCipherOperation());
                 }
