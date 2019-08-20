@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -225,6 +225,16 @@ namespace YoutubeExplode
                 throw new UnrecognizedStructureException(
                     "Could not find signature decipherer function body. Please report this issue on GitHub.");
             }
+
+            // Get decipher functions block name
+            var deciphererFuncBodyNames = Regex.Match(deciphererFuncBody, "(\\w+).\\w+\\(\\w+,\\d+\\);").Groups[1].Value;
+
+            // Get decipher functions block
+            var deciphererFuncs = Regex.Match(raw,
+                @"var\s" + deciphererFuncBodyNames + @"=\{(\w+:function\(\w+(,\w+)?\)\{(.*?)\}),?\};", RegexOptions.Singleline);
+
+            //Using decipherer functions instead of raw player source 
+            raw = deciphererFuncs.Groups[0].Value;
 
             // Split the function body into statements
             var deciphererFuncBodyStatements = deciphererFuncBody.Split(";");
