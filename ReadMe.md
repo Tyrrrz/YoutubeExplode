@@ -31,7 +31,7 @@ YoutubeExplode is a library that provides an interface to query metadata of YouT
 
 ## Screenshots
 
-![](http://www.tyrrrz.me/Projects/YoutubeExplode/Images/1.png)
+![demo](.screenshots/demo.png)
 
 ## Usage
 
