@@ -74,7 +74,6 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("MeJVWBSsPAY"); // embed not allowed (type 2)
             yield return new TestCaseData("5VGm0dczmHc"); // rating not allowed
             yield return new TestCaseData("ZGdLIwrGHG8"); // unlisted
-            yield return new TestCaseData("H1O_-JVbl_k"); // very large video
             yield return new TestCaseData("rsAAeyAr-9Y"); // recording of a live stream
 
             // Include nested
