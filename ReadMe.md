@@ -7,6 +7,7 @@
 [![NuGet](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![Donate](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://patreon.com/tyrrrz)
 [![Donate](https://img.shields.io/badge/buymeacoffee-donate-yellow.svg)](https://buymeacoffee.com/tyrrrz)
+[![Financial Contributors on Open Collective](https://opencollective.com/youtubeexplode/all/badge.svg?label=financial+contributors)](https://opencollective.com/youtubeexplode) 
 
 YoutubeExplode is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks. Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered AJAX requests to retrieve information. As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
 
@@ -153,3 +154,26 @@ The "Explode" in YoutubeExplode comes from the name of a PHP function that split
 ## Donate
 
 If you really like my projects and want to support me, consider donating to me on [Patreon](https://patreon.com/tyrrrz) or [BuyMeACoffee](https://buymeacoffee.com/tyrrrz). All donations are optional and are greatly appreciated. 🙏
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+
+<a href="https://github.com/Tyrrrz/YoutubeExplode/graphs/contributors"><img src="https://opencollective.com/youtubeexplode/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/youtubeexplode/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/youtubeexplode"><img src="https://opencollective.com/youtubeexplode/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/youtubeexplode/contribute)]
+
+<a href="https://opencollective.com/youtubeexplode/organization/0/website"><img src="https://opencollective.com/youtubeexplode/organization/0/avatar.svg"></a>
+
