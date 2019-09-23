@@ -68,13 +68,10 @@ namespace YoutubeExplode
                 // Get player config JSON
                 var playerConfigRaw = videoEmbedPageHtml.GetElementsByTagName("script")
                     .Select(e => e.GetInnerText())
-                    .Select(s =>
-                        Regex.Match(s,
-                                @"yt\.setConfig\({'PLAYER_CONFIG': (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                            .Groups["Json"].Value)
+                    .Select(s => Regex.Match(s, @"yt\.setConfig\({'PLAYER_CONFIG':(.*)}\);").Groups[1].Value)
                     .First(s => !s.IsNullOrWhiteSpace());
                 var playerConfigJson = JToken.Parse(playerConfigRaw);
-                
+
                 // Extract player source URL
                 var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
 
