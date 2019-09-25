@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace DemoWpf.Converters
+namespace YoutubeExplode.DemoWpf.Converters
 {
     [ValueConversion(typeof(bool), typeof(string))]
     public class BoolToStringConverter : IValueConverter

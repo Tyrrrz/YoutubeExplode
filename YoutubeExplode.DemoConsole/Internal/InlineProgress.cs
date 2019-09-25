@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DemoConsole.Internal
+namespace YoutubeExplode.DemoConsole.Internal
 {
     internal class InlineProgress : IProgress<double>, IDisposable
     {

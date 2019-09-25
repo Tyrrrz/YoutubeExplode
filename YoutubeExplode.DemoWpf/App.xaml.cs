@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 
-namespace DemoWpf
+namespace YoutubeExplode.DemoWpf
 {
     public partial class App
     {

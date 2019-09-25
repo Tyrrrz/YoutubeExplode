@@ -1,8 +1,8 @@
 ﻿<Window
-    x:Class="DemoWpf.Views.MainWindow"
+    x:Class="YoutubeExplode.DemoWpf.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:DemoWpf.Converters"
+    xmlns:converters="clr-namespace:YoutubeExplode.DemoWpf.Converters"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     Title="YoutubeExplode Demo"
     Width="700"
@@ -10,7 +10,7 @@
     Background="{DynamicResource MaterialDesignPaper}"
     DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
     FocusManager.FocusedElement="{Binding ElementName=QueryTextBox}"
-    Icon="/DemoWpf;component/favicon.ico"
+    Icon="/YoutubeExplode.DemoWpf;component/favicon.ico"
     Style="{DynamicResource MaterialDesignRoot}"
     WindowStartupLocation="CenterScreen">
     <DockPanel>

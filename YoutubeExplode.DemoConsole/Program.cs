@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DemoConsole.Internal;
-using YoutubeExplode;
+using YoutubeExplode.DemoConsole.Internal;
 using YoutubeExplode.Models.MediaStreams;
 
-namespace DemoConsole
+namespace YoutubeExplode.DemoConsole
 {
     public static class Program
     {

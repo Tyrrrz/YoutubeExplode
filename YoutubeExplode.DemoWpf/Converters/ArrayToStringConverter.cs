@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace DemoWpf.Converters
+namespace YoutubeExplode.DemoWpf.Converters
 {
     [ValueConversion(typeof(IEnumerable), typeof(string))]
     public class ArrayToStringConverter : IValueConverter
