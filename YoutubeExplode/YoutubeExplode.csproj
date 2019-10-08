@@ -10,7 +10,7 @@
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/Tyrrrz/YoutubeExplode/blob/master/Changelog.md</PackageReleaseNotes>
-    <PackageIconUrl>https://raw.githubusercontent.com/Tyrrrz/YoutubeExplode/master/favicon.png</PackageIconUrl>
+    <PackageIcon>favicon.png</PackageIcon>
     <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Tyrrrz/YoutubeExplode</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -21,6 +21,10 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../favicon.png" Pack="True" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
