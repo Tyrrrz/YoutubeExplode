@@ -81,6 +81,10 @@ namespace YoutubeExplode
             // Watch later playlist is special
             if (playlistId == "WL")
                 return true;
+            
+            // My Mix playlist is special
+            if (playlistId == "RDMM")
+                return true;
 
             // Other playlist IDs should start with these two characters
             if (!playlistId.StartsWith("PL", StringComparison.Ordinal) &&
