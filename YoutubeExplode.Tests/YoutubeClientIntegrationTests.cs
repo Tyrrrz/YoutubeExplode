@@ -138,13 +138,11 @@ namespace YoutubeExplode.Tests
 
             foreach (var streamInfo in mediaStreamInfos)
             {
-                using (var stream = await client.GetMediaStreamAsync(streamInfo))
-                {
-                    Assert.That(stream, Is.Not.Null);
+                using var stream = await client.GetMediaStreamAsync(streamInfo);
+                Assert.That(stream, Is.Not.Null);
 
-                    var buffer = new byte[100];
-                    await stream.ReadAsync(buffer, 0, buffer.Length);
-                }
+                var buffer = new byte[100];
+                await stream.ReadAsync(buffer, 0, buffer.Length);
             }
         }
 

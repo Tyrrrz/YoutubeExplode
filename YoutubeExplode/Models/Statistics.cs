@@ -1,6 +1,4 @@
-﻿using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models
+﻿namespace YoutubeExplode.Models
 {
     /// <summary>
     /// User activity statistics.
@@ -39,9 +37,9 @@ namespace YoutubeExplode.Models
         /// </summary>
         public Statistics(long viewCount, long likeCount, long dislikeCount)
         {
-            ViewCount = viewCount.GuardNotNegative(nameof(viewCount));
-            LikeCount = likeCount.GuardNotNegative(nameof(likeCount));
-            DislikeCount = dislikeCount.GuardNotNegative(nameof(dislikeCount));
+            ViewCount = viewCount;
+            LikeCount = likeCount;
+            DislikeCount = dislikeCount;
         }
     }
 }

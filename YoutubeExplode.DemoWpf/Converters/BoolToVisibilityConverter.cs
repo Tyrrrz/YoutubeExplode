@@ -12,12 +12,12 @@ namespace YoutubeExplode.DemoWpf.Converters
 
         public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is null)
-                throw new ArgumentNullException(nameof(value));
-
             var falseVisibility = Visibility.Hidden;
             if (parameter is Visibility parameterVisibility)
                 falseVisibility = parameterVisibility;
+
+            if (value is null)
+                return falseVisibility;
 
             var valueBool = (bool) value;
             return valueBool ? Visibility.Visible : falseVisibility;

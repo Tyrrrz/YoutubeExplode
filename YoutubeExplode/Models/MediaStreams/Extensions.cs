@@ -19,8 +19,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public static IEnumerable<MediaStreamInfo> GetAll(this MediaStreamInfoSet streamInfoSet)
         {
-            streamInfoSet.GuardNotNull(nameof(streamInfoSet));
-
             foreach (var streamInfo in streamInfoSet.Muxed)
                 yield return streamInfo;
             foreach (var streamInfo in streamInfoSet.Audio)
@@ -34,8 +32,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public static IEnumerable<VideoQuality> GetAllVideoQualities(this MediaStreamInfoSet streamInfoSet)
         {
-            streamInfoSet.GuardNotNull(nameof(streamInfoSet));
-
             var qualities = new HashSet<VideoQuality>();
 
             foreach (var streamInfo in streamInfoSet.Muxed)
@@ -51,8 +47,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public static IEnumerable<string> GetAllVideoQualityLabels(this MediaStreamInfoSet streamInfoSet)
         {
-            streamInfoSet.GuardNotNull(nameof(streamInfoSet));
-
             var labels = new HashSet<string>();
 
             foreach (var streamInfo in streamInfoSet.Muxed)
@@ -67,40 +61,28 @@ namespace YoutubeExplode.Models.MediaStreams
         /// Gets the muxed stream with highest video quality.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static MuxedStreamInfo WithHighestVideoQuality(this IEnumerable<MuxedStreamInfo> streamInfos)
-        {
-            streamInfos.GuardNotNull(nameof(streamInfos));
-            return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
-        }
+        public static MuxedStreamInfo? WithHighestVideoQuality(this IEnumerable<MuxedStreamInfo> streamInfos) =>
+            streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
 
         /// <summary>
         /// Gets the video stream with highest video quality.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static VideoStreamInfo WithHighestVideoQuality(this IEnumerable<VideoStreamInfo> streamInfos)
-        {
-            streamInfos.GuardNotNull(nameof(streamInfos));
-            return streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
-        }
+        public static VideoStreamInfo? WithHighestVideoQuality(this IEnumerable<VideoStreamInfo> streamInfos) =>
+            streamInfos.OrderByDescending(s => s.VideoQuality).FirstOrDefault();
 
         /// <summary>
         /// Gets the audio stream with highest bitrate.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static AudioStreamInfo WithHighestBitrate(this IEnumerable<AudioStreamInfo> streamInfos)
-        {
-            streamInfos.GuardNotNull(nameof(streamInfos));
-            return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
-        }
+        public static AudioStreamInfo? WithHighestBitrate(this IEnumerable<AudioStreamInfo> streamInfos) =>
+            streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
 
         /// <summary>
         /// Gets the video stream with highest bitrate.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static VideoStreamInfo WithHighestBitrate(this IEnumerable<VideoStreamInfo> streamInfos)
-        {
-            streamInfos.GuardNotNull(nameof(streamInfos));
-            return streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
-        }
+        public static VideoStreamInfo? WithHighestBitrate(this IEnumerable<VideoStreamInfo> streamInfos) =>
+            streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
     }
 }

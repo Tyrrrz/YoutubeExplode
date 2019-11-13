@@ -50,7 +50,7 @@ namespace YoutubeExplode.Tests
             var caption = captionTrack.GetByTime(TimeSpan.FromSeconds(0.5));
 
             Assert.That(caption, Is.Not.Null);
-            Assert.That(caption.Text, Is.EqualTo("Hello"));
+            Assert.That(caption!.Text, Is.EqualTo("Hello"));
         }
 
         [Test]

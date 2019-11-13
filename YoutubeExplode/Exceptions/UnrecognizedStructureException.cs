@@ -11,7 +11,7 @@ namespace YoutubeExplode.Exceptions
         /// <summary>
         /// Initializes an instance of <see cref="UnrecognizedStructureException"/>.
         /// </summary>
-        public UnrecognizedStructureException(string message)
+        public UnrecognizedStructureException(string? message)
             : base(message)
         {
         }

@@ -12,7 +12,7 @@ namespace YoutubeExplode.Internal
         private readonly string _url;
         private readonly long _segmentSize;
 
-        private Stream _currentStream;
+        private Stream? _currentStream;
         private long _position;
 
         public SegmentedHttpStream(HttpClient httpClient, string url, long length, long segmentSize)
@@ -36,9 +36,11 @@ namespace YoutubeExplode.Internal
             get => _position;
             set
             {
-                value.GuardNotNegative(nameof(value));
+                if (value < 0)
+                    throw new IOException("An attempt was made to move the position before the beginning of the stream.");
 
-                if (_position == value) return;
+                if (_position == value)
+                    return;
 
                 _position = value;
                 ClearCurrentStream();
@@ -100,16 +102,7 @@ namespace YoutubeExplode.Internal
             }
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            // Get new position
-            var newPosition = GetNewPosition(offset, origin);
-            if (newPosition < 0)
-                throw new IOException("An attempt was made to move the position before the beginning of the stream.");
-
-            // Change position
-            return Position = newPosition;
-        }
+        public override long Seek(long offset, SeekOrigin origin) => Position = GetNewPosition(offset, origin);
 
         #region Not supported
 

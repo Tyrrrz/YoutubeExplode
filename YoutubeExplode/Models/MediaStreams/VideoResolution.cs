@@ -1,5 +1,4 @@
 ﻿using System;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -23,24 +22,15 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public VideoResolution(int width, int height)
         {
-            Width = width.GuardNotNegative(nameof(width));
-            Height = height.GuardNotNegative(nameof(height));
+            Width = width;
+            Height = height;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (obj is VideoResolution other)
-                return Equals(other);
-
-            return false;
-        }
+        public override bool Equals(object obj) => obj is VideoResolution other && Equals(other);
 
         /// <inheritdoc />
-        public bool Equals(VideoResolution other)
-        {
-            return Width == other.Width && Height == other.Height;
-        }
+        public bool Equals(VideoResolution other) => Width == other.Width && Height == other.Height;
 
         /// <inheritdoc />
         public override int GetHashCode()

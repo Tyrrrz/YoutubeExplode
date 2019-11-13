@@ -22,9 +22,6 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public async Task<Playlist> GetPlaylistAsync(string playlistId, int maxPages)
         {
-            playlistId.GuardNotNull(nameof(playlistId));
-            maxPages.GuardPositive(nameof(maxPages));
-
             if (!ValidatePlaylistId(playlistId))
                 throw new ArgumentException($"Invalid YouTube playlist ID [{playlistId}].", nameof(playlistId));
 
@@ -41,7 +38,7 @@ namespace YoutubeExplode
 
                 // Get videos
                 var countDelta = 0;
-                foreach (var videoJson in playlistJson.SelectToken("video").EmptyIfNull())
+                foreach (var videoJson in playlistJson.SelectTokens("video[*]"))
                 {
                     var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
@@ -61,7 +58,7 @@ namespace YoutubeExplode
                     var videoKeywords = Regex.Matches(videoKeywordsJoined, "\"[^\"]+\"|\\S+")
                         .Cast<Match>()
                         .Select(m => m.Value)
-                        .Where(s => !s.IsNullOrWhiteSpace())
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
                         .Select(s => s.Trim('"'))
                         .ToArray();
 

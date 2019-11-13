@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models
 {
@@ -13,7 +11,6 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// ID of this playlist.
         /// </summary>
-        [NotNull]
         public string Id { get; }
 
         /// <summary>
@@ -24,31 +21,26 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Author of this playlist.
         /// </summary>
-        [NotNull]
         public string Author { get; }
 
         /// <summary>
         /// Title of this playlist.
         /// </summary>
-        [NotNull]
         public string Title { get; }
 
         /// <summary>
         /// Description of this playlist.
         /// </summary>
-        [NotNull]
         public string Description { get; }
 
         /// <summary>
         /// Statistics of this playlist.
         /// </summary>
-        [NotNull]
         public Statistics Statistics { get; }
 
         /// <summary>
         /// Collection of videos contained in this playlist.
         /// </summary>
-        [NotNull, ItemNotNull]
         public IReadOnlyList<Video> Videos { get; }
 
         /// <summary>
@@ -57,13 +49,13 @@ namespace YoutubeExplode.Models
         public Playlist(string id, string author, string title, string description, Statistics statistics,
             IReadOnlyList<Video> videos)
         {
-            Id = id.GuardNotNull(nameof(id));
+            Id = id;
             Type = GetPlaylistType(id);
-            Author = author.GuardNotNull(nameof(author));
-            Title = title.GuardNotNull(nameof(title));
-            Description = description.GuardNotNull(nameof(description));
-            Statistics = statistics.GuardNotNull(nameof(statistics));
-            Videos = videos.GuardNotNull(nameof(videos));
+            Author = author;
+            Title = title;
+            Description = description;
+            Statistics = statistics;
+            Videos = videos;
         }
 
         /// <inheritdoc />
@@ -77,8 +69,6 @@ namespace YoutubeExplode.Models
         /// </summary>
         protected static PlaylistType GetPlaylistType(string id)
         {
-            id.GuardNotNull(nameof(id));
-
             if (id.StartsWith("PL", StringComparison.Ordinal))
                 return PlaylistType.Normal;
 

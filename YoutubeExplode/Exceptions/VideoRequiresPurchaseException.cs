@@ -1,6 +1,4 @@
-﻿using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Exceptions
+﻿namespace YoutubeExplode.Exceptions
 {
     /// <summary>
     /// Thrown when a video is not playable because it requires purchase.
@@ -15,10 +13,10 @@ namespace YoutubeExplode.Exceptions
         /// <summary>
         /// Initializes an instance of <see cref="VideoRequiresPurchaseException"/>.
         /// </summary>
-        public VideoRequiresPurchaseException(string videoId, string previewVideoId, string message)
+        public VideoRequiresPurchaseException(string videoId, string previewVideoId, string? message)
             : base(videoId, message)
         {
-            PreviewVideoId = previewVideoId.GuardNotNull(nameof(previewVideoId));
+            PreviewVideoId = previewVideoId;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models
 {
@@ -13,13 +11,11 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// ID of this video.
         /// </summary>
-        [NotNull]
         public string Id { get; }
 
         /// <summary>
         /// Author of this video.
         /// </summary>
-        [NotNull]
         public string Author { get; }
 
         /// <summary>
@@ -30,19 +26,16 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Title of this video.
         /// </summary>
-        [NotNull]
         public string Title { get; }
 
         /// <summary>
         /// Description of this video.
         /// </summary>
-        [NotNull]
         public string Description { get; }
 
         /// <summary>
         /// Thumbnails of this video.
         /// </summary>
-        [NotNull]
         public ThumbnailSet Thumbnails { get; }
 
         /// <summary>
@@ -53,13 +46,11 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// Search keywords of this video.
         /// </summary>
-        [NotNull, ItemNotNull]
         public IReadOnlyList<string> Keywords { get; }
 
         /// <summary>
         /// Statistics of this video.
         /// </summary>
-        [NotNull]
         public Statistics Statistics { get; }
 
         /// <summary>
@@ -68,15 +59,15 @@ namespace YoutubeExplode.Models
         public Video(string id, string author, DateTimeOffset uploadDate, string title, string description,
             ThumbnailSet thumbnails, TimeSpan duration, IReadOnlyList<string> keywords, Statistics statistics)
         {
-            Id = id.GuardNotNull(nameof(id));
-            Author = author.GuardNotNull(nameof(author));
+            Id = id;
+            Author = author;
             UploadDate = uploadDate;
-            Title = title.GuardNotNull(nameof(title));
-            Description = description.GuardNotNull(nameof(description));
-            Thumbnails = thumbnails.GuardNotNull(nameof(thumbnails));
-            Duration = duration.GuardNotNegative(nameof(duration));
-            Keywords = keywords.GuardNotNull(nameof(keywords));
-            Statistics = statistics.GuardNotNull(nameof(statistics));
+            Title = title;
+            Description = description;
+            Thumbnails = thumbnails;
+            Duration = duration;
+            Keywords = keywords;
+            Statistics = statistics;
         }
 
         /// <inheritdoc />

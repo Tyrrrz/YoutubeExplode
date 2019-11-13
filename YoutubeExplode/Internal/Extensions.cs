@@ -14,10 +14,6 @@ namespace YoutubeExplode.Internal
 {
     internal static class Extensions
     {
-        public static bool IsNullOrWhiteSpace(this string s) => string.IsNullOrWhiteSpace(s);
-
-        public static string EmptyIfNull(this string s) => s ?? string.Empty;
-
         public static string SubstringUntil(this string s, string sub,
             StringComparison comparison = StringComparison.Ordinal)
         {
@@ -124,9 +120,6 @@ namespace YoutubeExplode.Internal
         public static string[] Split(this string input, params string[] separators) =>
             input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
-        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> enumerable) =>
-            enumerable ?? Enumerable.Empty<T>();
-
         public static XElement StripNamespaces(this XElement element)
         {
             // Original code credit: http://stackoverflow.com/a/1147012
@@ -149,7 +142,7 @@ namespace YoutubeExplode.Internal
             dic.TryGetValue(key, out var result) ? result : default;
 
         public static async Task CopyToAsync(this Stream source, Stream destination,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default,
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default,
             int bufferSize = 81920)
         {
             var buffer = new byte[bufferSize];

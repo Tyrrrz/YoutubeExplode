@@ -1,6 +1,4 @@
-﻿using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains only audio.
@@ -20,11 +18,10 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Initializes an instance of <see cref="AudioStreamInfo"/>.
         /// </summary>
-        public AudioStreamInfo(int itag, string url, Container container, long size, long bitrate,
-            AudioEncoding audioEncoding)
+        public AudioStreamInfo(int itag, string url, Container container, long size, long bitrate, AudioEncoding audioEncoding)
             : base(itag, url, container, size)
         {
-            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
+            Bitrate = bitrate;
             AudioEncoding = audioEncoding;
         }
 

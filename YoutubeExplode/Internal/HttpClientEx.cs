@@ -8,7 +8,7 @@ namespace YoutubeExplode.Internal
 {
     internal static class HttpClientEx
     {
-        private static HttpClient _singleton;
+        private static HttpClient? _singleton;
 
         public static HttpClient GetSingleton()
         {
@@ -31,20 +31,19 @@ namespace YoutubeExplode.Internal
 
         public static async Task<HttpResponseMessage> HeadAsync(this HttpClient client, string requestUri)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Head, requestUri))
-                return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
+            return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         }
 
         public static async Task<string> GetStringAsync(this HttpClient client, string requestUri,
             bool ensureSuccess = true)
         {
-            using (var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
-            {
-                if (ensureSuccess)
-                    response.EnsureSuccessStatusCode();
+            using var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            }
+            if (ensureSuccess)
+                response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         public static async Task<Stream> GetStreamAsync(this HttpClient client, string requestUri,
@@ -67,13 +66,12 @@ namespace YoutubeExplode.Internal
         public static async Task<long?> GetContentLengthAsync(this HttpClient client, string requestUri,
             bool ensureSuccess = true)
         {
-            using (var response = await client.HeadAsync(requestUri).ConfigureAwait(false))
-            {
-                if (ensureSuccess)
-                    response.EnsureSuccessStatusCode();
+            using var response = await client.HeadAsync(requestUri).ConfigureAwait(false);
 
-                return response.Content.Headers.ContentLength;
-            }
+            if (ensureSuccess)
+                response.EnsureSuccessStatusCode();
+
+            return response.Content.Headers.ContentLength;
         }
 
         public static SegmentedHttpStream CreateSegmentedStream(this HttpClient httpClient, string url, long length, long segmentSize) =>

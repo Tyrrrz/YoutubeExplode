@@ -30,8 +30,6 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public async Task<string> GetChannelIdAsync(string username)
         {
-            username.GuardNotNull(nameof(username));
-
             if (!ValidateUsername(username))
                 throw new ArgumentException($"Invalid YouTube username [{username}].");
 
@@ -48,8 +46,6 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public async Task<Channel> GetChannelAsync(string channelId)
         {
-            channelId.GuardNotNull(nameof(channelId));
-
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 
@@ -69,9 +65,6 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> GetChannelUploadsAsync(string channelId, int maxPages)
         {
-            channelId.GuardNotNull(nameof(channelId));
-            maxPages.GuardPositive(nameof(maxPages));
-
             if (!ValidateChannelId(channelId))
                 throw new ArgumentException($"Invalid YouTube channel ID [{channelId}].", nameof(channelId));
 

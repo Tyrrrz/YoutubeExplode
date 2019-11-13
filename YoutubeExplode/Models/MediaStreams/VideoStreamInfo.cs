@@ -1,7 +1,4 @@
-﻿using JetBrains.Annotations;
-using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/> that contains only video.
@@ -21,7 +18,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Video quality label of the associated stream.
         /// </summary>
-        [NotNull]
         public string VideoQualityLabel { get; }
 
         /// <summary>
@@ -47,12 +43,12 @@ namespace YoutubeExplode.Models.MediaStreams
             VideoResolution resolution, int framerate)
             : base(itag, url, container, size)
         {
-            Bitrate = bitrate.GuardNotNegative(nameof(bitrate));
+            Bitrate = bitrate;
             VideoEncoding = videoEncoding;
-            VideoQualityLabel = videoQualityLabel.GuardNotNull(nameof(videoQualityLabel));
+            VideoQualityLabel = videoQualityLabel;
             VideoQuality = videoQuality;
             Resolution = resolution;
-            Framerate = framerate.GuardNotNegative(nameof(framerate));
+            Framerate = framerate;
         }
 
         /// <inheritdoc />

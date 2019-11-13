@@ -21,8 +21,6 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public async Task<ClosedCaptionTrack> GetClosedCaptionTrackAsync(ClosedCaptionTrackInfo info)
         {
-            info.GuardNotNull(nameof(info));
-
             // Get closed caption track XML
             var trackXml = await GetClosedCaptionTrackXmlAsync(info.Url).ConfigureAwait(false);
 
@@ -34,7 +32,7 @@ namespace YoutubeExplode
                 var text = (string) captionXml;
 
                 // Skip captions with no text
-                if (text.IsNullOrWhiteSpace())
+                if (string.IsNullOrWhiteSpace(text))
                     continue;
 
                 // Extract timing info
@@ -50,43 +48,38 @@ namespace YoutubeExplode
 
         /// <inheritdoc />
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, Stream output,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default)
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
-            info.GuardNotNull(nameof(info));
-            output.GuardNotNull(nameof(output));
-
             // Get the track
             var track = await GetClosedCaptionTrackAsync(info).ConfigureAwait(false);
 
             // Save to file as SRT
-            using (var writer = new StreamWriter(output, Encoding.UTF8, 1024, true))
+            using var writer = new StreamWriter(output, Encoding.UTF8, 1024, true);
+            for (var i = 0; i < track.Captions.Count; i++)
             {
-                for (var i = 0; i < track.Captions.Count; i++)
-                {
-                    // Make sure cancellation was not requested
-                    cancellationToken.ThrowIfCancellationRequested();
+                // Make sure cancellation was not requested
+                cancellationToken.ThrowIfCancellationRequested();
 
-                    var caption = track.Captions[i];
-                    var buffer = new StringBuilder();
+                var caption = track.Captions[i];
+                var buffer = new StringBuilder();
 
-                    // Line number
-                    buffer.AppendLine((i + 1).ToString());
+                // Line number
+                buffer.AppendLine((i + 1).ToString());
 
-                    // Time start --> time end
-                    buffer.Append(caption.Offset.ToString(@"hh\:mm\:ss\,fff"));
-                    buffer.Append(" --> ");
-                    buffer.Append((caption.Offset + caption.Duration).ToString(@"hh\:mm\:ss\,fff"));
-                    buffer.AppendLine();
+                // Time start --> time end
+                buffer.Append(caption.Offset.ToString(@"hh\:mm\:ss\,fff"));
+                buffer.Append(" --> ");
+                buffer.Append((caption.Offset + caption.Duration).ToString(@"hh\:mm\:ss\,fff"));
+                buffer.AppendLine();
 
-                    // Actual text
-                    buffer.AppendLine(caption.Text);
+                // Actual text
+                buffer.AppendLine(caption.Text);
 
-                    // Write to stream
-                    await writer.WriteLineAsync(buffer.ToString()).ConfigureAwait(false);
+                // Write to stream
+                await writer.WriteLineAsync(buffer.ToString()).ConfigureAwait(false);
 
-                    // Report progress
-                    progress?.Report((i + 1.0) / track.Captions.Count);
-                }
+                // Report progress
+                progress?.Report((i + 1.0) / track.Captions.Count);
             }
         }
 
@@ -94,12 +87,10 @@ namespace YoutubeExplode
 
         /// <inheritdoc />
         public async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo info, string filePath,
-            IProgress<double> progress = null, CancellationToken cancellationToken = default)
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
-            filePath.GuardNotNull(nameof(filePath));
-
-            using (var output = File.Create(filePath))
-                await DownloadClosedCaptionTrackAsync(info, output, progress, cancellationToken).ConfigureAwait(false);
+            using var output = File.Create(filePath);
+            await DownloadClosedCaptionTrackAsync(info, output, progress, cancellationToken).ConfigureAwait(false);
         }
 
 #endif

@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.MediaStreams
 {
@@ -16,7 +14,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// Metadata associated with this stream.
         /// </summary>
-        [NotNull]
         public MediaStreamInfo Info { get; }
 
         /// <inheritdoc />
@@ -43,8 +40,8 @@ namespace YoutubeExplode.Models.MediaStreams
         /// </summary>
         public MediaStream(MediaStreamInfo info, Stream stream)
         {
-            Info = info.GuardNotNull(nameof(info));
-            _stream = stream.GuardNotNull(nameof(stream));
+            Info = info;
+            _stream = stream;
         }
 
         /// <inheritdoc />

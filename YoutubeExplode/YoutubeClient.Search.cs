@@ -22,9 +22,6 @@ namespace YoutubeExplode
         /// <inheritdoc />
         public async Task<IReadOnlyList<Video>> SearchVideosAsync(string query, int maxPages)
         {
-            query.GuardNotNull(nameof(query));
-            maxPages.GuardPositive(nameof(maxPages));
-
             // Get all videos across pages
             var videos = new List<Video>();
             for (var page = 1; page <= maxPages; page++)
@@ -34,7 +31,7 @@ namespace YoutubeExplode
 
                 // Get videos
                 var countDelta = 0;
-                foreach (var videoJson in resultsJson.SelectToken("video").EmptyIfNull())
+                foreach (var videoJson in resultsJson.SelectTokens("video[*]"))
                 {
                     var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
@@ -54,7 +51,7 @@ namespace YoutubeExplode
                     var videoKeywords = Regex.Matches(videoKeywordsJoined, "\"[^\"]+\"|\\S+")
                         .Cast<Match>()
                         .Select(m => m.Value)
-                        .Where(s => !s.IsNullOrWhiteSpace())
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
                         .Select(s => s.Trim('"'))
                         .ToArray();
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Exceptions
 {
@@ -17,10 +16,10 @@ namespace YoutubeExplode.Exceptions
         /// <summary>
         /// Initializes an instance of <see cref="VideoUnplayableException"/>.
         /// </summary>
-        public VideoUnplayableException(string videoId, string message)
+        public VideoUnplayableException(string videoId, string? message)
             : base(message)
         {
-            VideoId = videoId.GuardNotNull(nameof(videoId));
+            VideoId = videoId;
         }
     }
 }

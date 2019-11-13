@@ -1,7 +1,4 @@
-﻿using JetBrains.Annotations;
-using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models.MediaStreams
+﻿namespace YoutubeExplode.Models.MediaStreams
 {
     /// <summary>
     /// Metadata associated with a certain <see cref="MediaStream"/>.
@@ -16,7 +13,6 @@ namespace YoutubeExplode.Models.MediaStreams
         /// <summary>
         /// URL of the endpoint that serves the associated stream.
         /// </summary>
-        [NotNull]
         public string Url { get; }
 
         /// <summary>
@@ -35,9 +31,9 @@ namespace YoutubeExplode.Models.MediaStreams
         protected MediaStreamInfo(int itag, string url, Container container, long size)
         {
             Itag = itag;
-            Url = url.GuardNotNull(nameof(url));
+            Url = url;
             Container = container;
-            Size = size.GuardNotNegative(nameof(size));
+            Size = size;
         }
 
         /// <inheritdoc />

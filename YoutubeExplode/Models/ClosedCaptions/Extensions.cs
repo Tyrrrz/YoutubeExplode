@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -13,10 +12,7 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// Gets caption displayed at the given point in time.
         /// Returns null if not found.
         /// </summary>
-        [CanBeNull]
-        public static ClosedCaption GetByTime(this ClosedCaptionTrack track, TimeSpan time)
-        {
-            return track.Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
-        }
+        public static ClosedCaption? GetByTime(this ClosedCaptionTrack track, TimeSpan time) =>
+            track.Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
     }
 }

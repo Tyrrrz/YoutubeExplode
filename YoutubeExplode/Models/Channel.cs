@@ -1,7 +1,4 @@
-﻿using JetBrains.Annotations;
-using YoutubeExplode.Internal;
-
-namespace YoutubeExplode.Models
+﻿namespace YoutubeExplode.Models
 {
     /// <summary>
     /// Information about a YouTube channel.
@@ -11,19 +8,16 @@ namespace YoutubeExplode.Models
         /// <summary>
         /// ID of this channel.
         /// </summary>
-        [NotNull]
         public string Id { get; }
 
         /// <summary>
         /// Title of this channel.
         /// </summary>
-        [NotNull]
         public string Title { get; }
 
         /// <summary>
         /// Logo image URL of this channel.
         /// </summary>
-        [NotNull]
         public string LogoUrl { get; }
 
         /// <summary>
@@ -31,9 +25,9 @@ namespace YoutubeExplode.Models
         /// </summary>
         public Channel(string id, string title, string logoUrl)
         {
-            Id = id.GuardNotNull(nameof(id));
-            Title = title.GuardNotNull(nameof(title));
-            LogoUrl = logoUrl.GuardNotNull(nameof(logoUrl));
+            Id = id;
+            Title = title;
+            LogoUrl = logoUrl;
         }
 
         /// <inheritdoc />

@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Tyrrrz.Extensions" Version="1.6.3" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\YoutubeExplode\YoutubeExplode.csproj" />

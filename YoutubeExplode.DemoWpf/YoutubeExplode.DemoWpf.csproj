@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

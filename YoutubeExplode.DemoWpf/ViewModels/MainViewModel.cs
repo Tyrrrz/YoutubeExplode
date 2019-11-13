@@ -16,11 +16,11 @@ namespace YoutubeExplode.DemoWpf.ViewModels
         private readonly YoutubeClient _client;
 
         private bool _isBusy;
-        private string _query;
-        private Video _video;
-        private Channel _channel;
-        private MediaStreamInfoSet _mediaStreamInfos;
-        private IReadOnlyList<ClosedCaptionTrackInfo> _closedCaptionTrackInfos;
+        private string? _query;
+        private Video? _video;
+        private Channel? _channel;
+        private MediaStreamInfoSet? _mediaStreamInfos;
+        private IReadOnlyList<ClosedCaptionTrackInfo>? _closedCaptionTrackInfos;
         private double _progress;
         private bool _isProgressIndeterminate;
 
@@ -35,7 +35,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
         }
 
-        public string Query
+        public string? Query
         {
             get => _query;
             set
@@ -45,7 +45,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
         }
 
-        public Video Video
+        public Video? Video
         {
             get => _video;
             private set
@@ -55,7 +55,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
         }
 
-        public Channel Channel
+        public Channel? Channel
         {
             get => _channel;
             private set
@@ -65,7 +65,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
         }
 
-        public MediaStreamInfoSet MediaStreamInfos
+        public MediaStreamInfoSet? MediaStreamInfos
         {
             get => _mediaStreamInfos;
             private set
@@ -75,7 +75,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
         }
 
-        public IReadOnlyList<ClosedCaptionTrackInfo> ClosedCaptionTrackInfos
+        public IReadOnlyList<ClosedCaptionTrackInfo>? ClosedCaptionTrackInfos
         {
             get => _closedCaptionTrackInfos;
             private set
@@ -118,12 +118,10 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 DownloadClosedCaptionTrack, _ => !IsBusy);
         }
 
-        private static string NormalizeVideoId(string input)
-        {
-            return YoutubeClient.TryParseVideoId(input, out var videoId)
-                ? videoId
+        private static string NormalizeVideoId(string input) =>
+            YoutubeClient.TryParseVideoId(input, out var videoId)
+                ? videoId!
                 : input;
-        }
 
         private static string SanitizeFileName(string fileName)
         {
@@ -133,7 +131,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             return fileName;
         }
 
-        private static string PromptSaveFilePath(string defaultFileName, string filter)
+        private static string? PromptSaveFilePath(string defaultFileName, string filter)
         {
             var dialog = new SaveFileDialog
             {
@@ -160,7 +158,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 ClosedCaptionTrackInfos = null;
 
                 // Normalize video id
-                var videoId = NormalizeVideoId(Query);
+                var videoId = NormalizeVideoId(Query!);
 
                 // Get data
                 Video = await _client.GetVideoAsync(videoId);
@@ -186,11 +184,11 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
                 // Generate default file name
                 var fileExt = info.Container.GetFileExtension();
-                var defaultFileName = SanitizeFileName($"{Video.Title}.{fileExt}");
+                var defaultFileName = SanitizeFileName($"{Video!.Title}.{fileExt}");
 
                 // Prompt file path
                 var filePath = PromptSaveFilePath(defaultFileName, $"{fileExt} files|*.{fileExt}|All Files|*.*");
-                if (filePath.IsNullOrWhiteSpace())
+                if (string.IsNullOrWhiteSpace(filePath))
                     return;
 
                 // Set up progress handler
@@ -216,11 +214,11 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 Progress = 0;
 
                 // Generate default file name
-                var defaultFileName = SanitizeFileName($"{Video.Title}.{info.Language.Name}.srt");
+                var defaultFileName = SanitizeFileName($"{Video!.Title}.{info.Language.Name}.srt");
 
                 // Prompt file path
                 var filePath = PromptSaveFilePath(defaultFileName, "SRT Files|*.srt|All Files|*.*");
-                if (filePath.IsNullOrWhiteSpace())
+                if (string.IsNullOrWhiteSpace(filePath))
                     return;
 
                 // Set up progress handler

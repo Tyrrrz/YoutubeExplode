@@ -15,7 +15,7 @@ namespace YoutubeExplode
         /// </summary>
         public YoutubeClient(HttpClient httpClient)
         {
-            _httpClient = httpClient.GuardNotNull(nameof(httpClient));
+            _httpClient = httpClient;
         }
 
         /// <summary>

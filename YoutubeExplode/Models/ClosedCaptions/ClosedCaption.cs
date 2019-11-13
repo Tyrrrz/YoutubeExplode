@@ -1,6 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models.ClosedCaptions
 {
@@ -12,7 +10,6 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// <summary>
         /// Text displayed by this caption.
         /// </summary>
-        [NotNull]
         public string Text { get; }
 
         /// <summary>
@@ -30,9 +27,9 @@ namespace YoutubeExplode.Models.ClosedCaptions
         /// </summary>
         public ClosedCaption(string text, TimeSpan offset, TimeSpan duration)
         {
-            Text = text.GuardNotNull(nameof(text));
-            Offset = offset.GuardNotNegative(nameof(offset));
-            Duration = duration.GuardNotNegative(nameof(duration));
+            Text = text;
+            Offset = offset;
+            Duration = duration;
         }
 
         /// <inheritdoc />
