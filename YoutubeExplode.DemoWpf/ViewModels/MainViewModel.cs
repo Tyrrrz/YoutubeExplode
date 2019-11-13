@@ -7,7 +7,6 @@ using Microsoft.Win32;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
-using Tyrrrz.Extensions;
 
 namespace YoutubeExplode.DemoWpf.ViewModels
 {
@@ -111,7 +110,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
             // Commands
             PullDataCommand = new RelayCommand(PullData,
-                () => !IsBusy && !Query.IsNullOrWhiteSpace());
+                () => !IsBusy && !string.IsNullOrWhiteSpace(Query));
             DownloadMediaStreamCommand = new RelayCommand<MediaStreamInfo>(DownloadMediaStream,
                 _ => !IsBusy);
             DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(

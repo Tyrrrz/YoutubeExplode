@@ -146,7 +146,6 @@ The "Explode" in YoutubeExplode comes from the name of a PHP function that split
 - [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
 - [NUnit](https://github.com/nunit/nunit)
 - [Coverlet](https://github.com/tonerdo/coverlet)
-- [Tyrrrz.Extensions](https://github.com/Tyrrrz/Extensions)
 
 ## Donate
 
