@@ -136,12 +136,3 @@ var videoAuthor = video.Author; // "Igorrr Official"
 ## Etymology
 
 The "Explode" in YoutubeExplode comes from the name of a PHP function that splits up strings, [`explode()`](https://www.php.net/manual/en/function.explode.php). When I was just starting development on this library, most of the reference source code I read was written in PHP, hence the inspiration for the name.
-
-## Libraries used
-
-- [LtGt](https://github.com/Tyrrrz/LtGt)
-- [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
-- [GalaSoft.MVVMLight](http://www.mvvmlight.net)
-- [MaterialDesignInXamlToolkit](https://github.com/ButchersBoy/MaterialDesignInXamlToolkit)
-- [NUnit](https://github.com/nunit/nunit)
-- [Coverlet](https://github.com/tonerdo/coverlet)
