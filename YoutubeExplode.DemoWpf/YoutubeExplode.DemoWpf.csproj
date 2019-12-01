@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <Import Project="../YoutubeExplode.props" />
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

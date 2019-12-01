@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../YoutubeExplode.props" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>..\favicon.ico</ApplicationIcon>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

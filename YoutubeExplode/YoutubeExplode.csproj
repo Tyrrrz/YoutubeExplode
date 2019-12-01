@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../YoutubeExplode.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.1;netstandard2.0</TargetFrameworks>
-    <Version>4.7.10</Version>
-    <Company>Tyrrrz</Company>
     <Authors>$(Company)</Authors>
-    <Copyright>Copyright (C) Alexey Golub</Copyright>
     <Description>The ultimate dirty YouTube library. Parses public metadata on YouTube videos, lets you download them and much more. Does not require an API key and does not impose usage quotas.</Description>
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
@@ -18,8 +16,6 @@
     <EmbedUntrackedSources>True</EmbedUntrackedSources>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
