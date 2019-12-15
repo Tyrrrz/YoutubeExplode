@@ -128,7 +128,6 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("UUTMt7iMWa7jy0fNXIktwyLA"); // user uploads
             yield return new TestCaseData("PUTMt7iMWa7jy0fNXIktwyLA"); // popular user uploads
             yield return new TestCaseData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM"); // music album
-            yield return new TestCaseData("LLEnBXANsKmyj2r9xVyKoDiQ"); // liked
             yield return new TestCaseData("FLEnBXANsKmyj2r9xVyKoDiQ"); // favorites
         }
 
