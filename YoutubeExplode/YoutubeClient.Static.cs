@@ -76,7 +76,7 @@ namespace YoutubeExplode
             // Watch later playlist is special
             if (playlistId == "WL")
                 return true;
-            
+
             // My Mix playlist is special
             if (playlistId == "RDMM")
                 return true;
@@ -92,8 +92,8 @@ namespace YoutubeExplode
                 !playlistId.StartsWith("FL", StringComparison.Ordinal))
                 return false;
 
-            // Playlist IDs vary a lot in lengths, so we will just compare with the extremes
-            if (playlistId.Length < 13 || playlistId.Length > 42)
+            // Playlist IDs vary a lot in lengths
+            if (playlistId.Length < 13)
                 return false;
 
             return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");

@@ -113,17 +113,17 @@ namespace YoutubeExplode.Tests
         {
             yield return new TestCaseData("");
             yield return new TestCaseData("PLm_3vnTS-pvmZFuF L1Pyhqf8kTTYVKjW");
-            yield return new TestCaseData("PLm_3vnTS-pvmZFuF3L1Pyhqf8kTTYVKjWzWefI32jU");
             yield return new TestCaseData("PLm_3vnTS-pvmZFuF3L=Pyhqf8kTTYVKjW");
         }
 
         public static IEnumerable GetPlaylistIds_Valid()
         {
-            yield return new TestCaseData("PL601B2E69B03FAB9D"); // short??
+            yield return new TestCaseData("PL601B2E69B03FAB9D"); // not sure
             yield return new TestCaseData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e"); // normal
             yield return new TestCaseData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk"); // large
             yield return new TestCaseData("RD1hu8-y6fKg0"); // video mix
             yield return new TestCaseData("RDMMU-ty-2B02VY"); // my mix
+            yield return new TestCaseData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs"); // music mix
             yield return new TestCaseData("ULl6WWX-BgIiE"); // channel video mix
             yield return new TestCaseData("UUTMt7iMWa7jy0fNXIktwyLA"); // user uploads
             yield return new TestCaseData("PUTMt7iMWa7jy0fNXIktwyLA"); // popular user uploads
