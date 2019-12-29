@@ -1,3 +1,7 @@
+### v4.7.12 (29-Dec-2019)
+
+- Fixed an issue where some playlist IDs were incorrectly considered invalid.
+
 ### v4.7.11 (15-Dec-2019)
 
 - Fixed an issue where `GetVideoMediaStreamInfosAsync` sometimes returned a set without any streams due to recent YouTube changes.
