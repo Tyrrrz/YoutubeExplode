@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.Models
 {
@@ -50,7 +50,7 @@ namespace YoutubeExplode.Models
             IReadOnlyList<Video> videos)
         {
             Id = id;
-            Type = GetPlaylistType(id);
+            Type = PlaylistTypeParser.GetPlaylistType(id);
             Author = author;
             Title = title;
             Description = description;
@@ -60,43 +60,5 @@ namespace YoutubeExplode.Models
 
         /// <inheritdoc />
         public override string ToString() => Title;
-    }
-
-    public partial class Playlist
-    {
-        /// <summary>
-        /// Get playlist type by ID.
-        /// </summary>
-        protected static PlaylistType GetPlaylistType(string id)
-        {
-            if (id.StartsWith("PL", StringComparison.Ordinal))
-                return PlaylistType.Normal;
-
-            if (id.StartsWith("RD", StringComparison.Ordinal))
-                return PlaylistType.VideoMix;
-
-            if (id.StartsWith("UL", StringComparison.Ordinal))
-                return PlaylistType.ChannelVideoMix;
-
-            if (id.StartsWith("UU", StringComparison.Ordinal))
-                return PlaylistType.ChannelVideos;
-
-            if (id.StartsWith("PU", StringComparison.Ordinal))
-                return PlaylistType.PopularChannelVideos;
-
-            if (id.StartsWith("OL", StringComparison.Ordinal))
-                return PlaylistType.MusicAlbum;
-
-            if (id.StartsWith("LL", StringComparison.Ordinal))
-                return PlaylistType.LikedVideos;
-
-            if (id.StartsWith("FL", StringComparison.Ordinal))
-                return PlaylistType.Favorites;
-
-            if (id.StartsWith("WL", StringComparison.Ordinal))
-                return PlaylistType.WatchLater;
-
-            throw new ArgumentOutOfRangeException(nameof(id), $"Unexpected playlist ID [{id}].");
-        }
     }
 }
