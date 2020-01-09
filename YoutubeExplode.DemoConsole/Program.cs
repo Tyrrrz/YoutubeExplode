@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using YoutubeExplode.ChanelHandler;
 using YoutubeExplode.DemoConsole.Internal;
+using YoutubeExplode.Models;
 using YoutubeExplode.Models.MediaStreams;
 
 namespace YoutubeExplode.DemoConsole
@@ -20,6 +23,35 @@ namespace YoutubeExplode.DemoConsole
         {
             // Client
             var client = new YoutubeClient();
+
+            Console.WriteLine("Channel ID");
+            var channelId = Console.ReadLine();
+            //var channel = await client.GetChannelAsync(channelId);
+            var cp = new ChannelParser();
+            string? continuationToken = null;
+            do
+            {
+                ChannelPlaylists channel;
+                if (continuationToken != null)
+                {
+                    channel = await cp.GetPlaylistJson(channelId, continuationToken);
+                }
+                else
+                {
+                    channel = await cp.GetPlaylistJson(channelId);
+                }
+                
+                foreach (var channelPlaylist in channel.Playlists)
+                {
+                    Console.WriteLine(channelPlaylist.Title);
+                }
+
+                continuationToken = channel.ContinuationToken;
+            } while (continuationToken != null);
+
+            //var res = await cp.GetPlaylistJson(channelId);
+            //var res2 = await cp.GetPlaylistJson(res.Id, res.ContinuationToken);
+            //var channelVideos = await client.GetChannelUploadsAsync(channelId);
 
             // Get the video ID
             Console.Write("Enter YouTube video ID or URL: ");
