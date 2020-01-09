@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using YoutubeExplode.ChanelHandler.ChannelPageModels;
 using YoutubeExplode.ChanelHandler.Converters;
 using YoutubeExplode.ChanelHandler.Exceptions;
-using YoutubeExplode.ChanelHandler.YoutubeChannelPageModels;
+using YoutubeExplode.ChanelHandler.JsonApiModels;
 using YoutubeExplode.Models;
 
 namespace YoutubeExplode.ChanelHandler

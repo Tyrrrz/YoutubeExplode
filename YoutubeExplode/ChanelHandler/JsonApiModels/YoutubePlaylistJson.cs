@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-using YoutubeExplode.ChanelHandler.YoutubeChannelPageModels;
+﻿using Newtonsoft.Json;
+using YoutubeExplode.ChanelHandler.ChannelPageModels;
 
-namespace YoutubeExplode.ChanelHandler.ChannelPageModels
+namespace YoutubeExplode.ChanelHandler.JsonApiModels
 {
     internal class YoutubePlaylistJson
     {
@@ -13,7 +12,7 @@ namespace YoutubeExplode.ChanelHandler.ChannelPageModels
         public Timing Timing { get; set; }
 
         [JsonProperty("endpoint")]
-        public Endpoint Endpoint { get; set; }
+        public ChannelPageModels.Endpoint Endpoint { get; set; }
 
         [JsonProperty("page")]
         public string Page { get; set; }
