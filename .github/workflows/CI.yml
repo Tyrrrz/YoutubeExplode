@@ -7,8 +7,9 @@ on:
   pull_request:
     branches:
       - '*'
-  schedule:
-    - cron: '0 0 * * *'
+# Disable schedule triggers until the CI can run consistently
+#  schedule:
+#    - cron: '0 0 * * *'
 
 jobs:
   build:
