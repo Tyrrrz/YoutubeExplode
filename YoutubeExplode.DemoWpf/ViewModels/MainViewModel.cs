@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
+using YoutubeExplode.DemoWpf.ViewModels.Framework;
 using YoutubeExplode.Models;
 using YoutubeExplode.Models.ClosedCaptions;
 using YoutubeExplode.Models.MediaStreams;
@@ -50,7 +49,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             private set
             {
                 Set(ref _video, value);
-                RaisePropertyChanged(() => IsDataAvailable);
+                RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
 
@@ -60,7 +59,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             private set
             {
                 Set(ref _channel, value);
-                RaisePropertyChanged(() => IsDataAvailable);
+                RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
 
@@ -70,7 +69,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             private set
             {
                 Set(ref _mediaStreamInfos, value);
-                RaisePropertyChanged(() => IsDataAvailable);
+                RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
 
@@ -80,7 +79,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             private set
             {
                 Set(ref _closedCaptionTrackInfos, value);
-                RaisePropertyChanged(() => IsDataAvailable);
+                RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
 
