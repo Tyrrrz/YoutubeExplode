@@ -82,7 +82,7 @@ namespace YoutubeExplode
                     break;
 
                 // Advance index and page
-                index += 100;
+                index += countDelta;
                 page++;
             } while (page <= maxPages);
 
