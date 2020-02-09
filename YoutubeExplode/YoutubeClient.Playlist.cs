@@ -28,7 +28,7 @@ namespace YoutubeExplode
             // Get all videos across pages
             JToken playlistJson;
             var page = 1;
-            var index = playlistId.StartsWith("PL", StringComparison.OrdinalIgnoreCase) ? 101 : 0;
+            var index = 0;
             var videoIds = new HashSet<string>();
             var videos = new List<Video>();
             do
