@@ -121,6 +121,7 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("PL601B2E69B03FAB9D"); // not sure
             yield return new TestCaseData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e"); // normal
             yield return new TestCaseData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk"); // large
+            yield return new TestCaseData("OLAK5uy_mtOdjCW76nDvf5yOzgcAVMYpJ5gcW5uKU"); // large alternative
             yield return new TestCaseData("RD1hu8-y6fKg0"); // video mix
             yield return new TestCaseData("RDMMU-ty-2B02VY"); // my mix
             yield return new TestCaseData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs"); // music mix
