@@ -36,6 +36,7 @@
                             x:Name="QueryTextBox"
                             Grid.Column="0"
                             Margin="6"
+                            VerticalAlignment="Bottom"
                             materialDesign:HintAssist.Hint="Youtube video URL or ID"
                             materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                             BorderThickness="0"

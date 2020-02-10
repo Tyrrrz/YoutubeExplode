@@ -1,3 +1,7 @@
+### v4.7.13 (10-Feb-2020)
+
+- Fixed an issue where `GetPlaylistAsync` only returned 200 videos for some larger playlists. Thanks [@polynoman](https://github.com/polynoman).
+
 ### v4.7.12 (29-Dec-2019)
 
 - Fixed an issue where some playlist IDs were incorrectly considered invalid.
