@@ -58,125 +58,134 @@ namespace YoutubeExplode
             return XElement.Parse(raw).StripNamespaces();
         }
 
-        private async Task<PlayerConfiguration> GetPlayerConfigurationAsync(string videoId)
+        private async Task<PlayerConfiguration?> TryGetPlayerConfigurationFromVideoInfoAsync(string videoId)
         {
-            // Some awful code ahead. Will rework when I have time.
+            // Get video embed page HTML
+            var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId).ConfigureAwait(false);
 
-            // Try to get from video info
+            // Get player config JSON
+            var playerConfigRaw = videoEmbedPageHtml.GetElementsByTagName("script")
+                .Select(e => e.GetInnerText())
+                .Select(s => Regex.Match(s, @"yt\.setConfig\({'PLAYER_CONFIG':(.*)}\);").Groups[1].Value)
+                .First(s => !string.IsNullOrWhiteSpace(s));
+            var playerConfigJson = JToken.Parse(playerConfigRaw);
+
+            // Extract player source URL
+            var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
+
+            // Get video info dictionary
+            var requestedAt = DateTimeOffset.Now;
+            var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
+
+            // Get player response JSON
+            var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
+
+            // If video is unavailable - throw
+            if (string.Equals(playerResponseJson.SelectToken("playabilityStatus.status")?.Value<string>(), "error",
+                StringComparison.OrdinalIgnoreCase))
             {
-                // Get video embed page HTML
-                var videoEmbedPageHtml = await GetVideoEmbedPageHtmlAsync(videoId).ConfigureAwait(false);
+                throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
+            }
 
-                // Get player config JSON
-                var playerConfigRaw = videoEmbedPageHtml.GetElementsByTagName("script")
-                    .Select(e => e.GetInnerText())
-                    .Select(s => Regex.Match(s, @"yt\.setConfig\({'PLAYER_CONFIG':(.*)}\);").Groups[1].Value)
-                    .First(s => !string.IsNullOrWhiteSpace(s));
-                var playerConfigJson = JToken.Parse(playerConfigRaw);
+            // If there is no error - extract info and return
+            var errorReason = playerResponseJson.SelectToken("playabilityStatus.reason")?.Value<string>();
+            if (string.IsNullOrWhiteSpace(errorReason))
+            {
+                // Extract whether the video is a live stream
+                var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
 
-                // Extract player source URL
-                var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
+                // Extract valid until date
+                var expiresIn = TimeSpan.FromSeconds(playerResponseJson.SelectToken("streamingData.expiresInSeconds").Value<double>());
+                var validUntil = requestedAt + expiresIn;
 
-                // Get video info dictionary
-                var requestedAt = DateTimeOffset.Now;
-                var videoInfoDic = await GetVideoInfoDicAsync(videoId).ConfigureAwait(false);
+                // Extract stream info
+                var hlsManifestUrl =
+                    isLiveStream ? playerResponseJson.SelectToken("streamingData.hlsManifestUrl")?.Value<string>() : null;
+                var dashManifestUrl =
+                    !isLiveStream ? playerResponseJson.SelectToken("streamingData.dashManifestUrl")?.Value<string>() : null;
+                var muxedStreamInfosUrlEncoded =
+                    !isLiveStream ? videoInfoDic.GetValueOrDefault("url_encoded_fmt_stream_map") : null;
+                var adaptiveStreamInfosUrlEncoded =
+                    !isLiveStream ? videoInfoDic.GetValueOrDefault("adaptive_fmts") : null;
+                var muxedStreamInfosJson =
+                    !isLiveStream ? playerResponseJson.SelectToken("streamingData.formats") : null;
+                var adaptiveStreamInfosJson =
+                    !isLiveStream ? playerResponseJson.SelectToken("streamingData.adaptiveFormats") : null;
 
-                // Get player response JSON
-                var playerResponseJson = JToken.Parse(videoInfoDic["player_response"]);
+                return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
+                    adaptiveStreamInfosUrlEncoded, muxedStreamInfosJson, adaptiveStreamInfosJson, validUntil);
+            }
 
-                // If video is unavailable - throw
-                if (string.Equals(playerResponseJson.SelectToken("playabilityStatus.status")?.Value<string>(), "error",
-                    StringComparison.OrdinalIgnoreCase))
+            // If the video requires purchase - throw (approach one)
+            {
+                var previewVideoId = playerResponseJson
+                    .SelectToken("playabilityStatus.errorScreen.playerLegacyDesktopYpcTrailerRenderer.trailerVideoId")?.Value<string>();
+                if (!string.IsNullOrWhiteSpace(previewVideoId))
                 {
-                    throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
-                }
-
-                // If there is no error - extract info and return
-                var errorReason = playerResponseJson.SelectToken("playabilityStatus.reason")?.Value<string>();
-                if (string.IsNullOrWhiteSpace(errorReason))
-                {
-                    // Extract whether the video is a live stream
-                    var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
-
-                    // Extract valid until date
-                    var expiresIn = TimeSpan.FromSeconds(playerResponseJson.SelectToken("streamingData.expiresInSeconds").Value<double>());
-                    var validUntil = requestedAt + expiresIn;
-
-                    // Extract stream info
-                    var hlsManifestUrl =
-                        isLiveStream ? playerResponseJson.SelectToken("streamingData.hlsManifestUrl")?.Value<string>() : null;
-                    var dashManifestUrl =
-                        !isLiveStream ? playerResponseJson.SelectToken("streamingData.dashManifestUrl")?.Value<string>() : null;
-                    var muxedStreamInfosUrlEncoded =
-                        !isLiveStream ? videoInfoDic.GetValueOrDefault("url_encoded_fmt_stream_map") : null;
-                    var adaptiveStreamInfosUrlEncoded =
-                        !isLiveStream ? videoInfoDic.GetValueOrDefault("adaptive_fmts") : null;
-                    var muxedStreamInfosJson =
-                        !isLiveStream ? playerResponseJson.SelectToken("streamingData.formats") : null;
-                    var adaptiveStreamInfosJson =
-                        !isLiveStream ? playerResponseJson.SelectToken("streamingData.adaptiveFormats") : null;
-
-                    return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
-                        adaptiveStreamInfosUrlEncoded, muxedStreamInfosJson, adaptiveStreamInfosJson, validUntil);
-                }
-
-                // If the video requires purchase - throw (approach one)
-                {
-                    var previewVideoId = playerResponseJson
-                        .SelectToken("playabilityStatus.errorScreen.playerLegacyDesktopYpcTrailerRenderer.trailerVideoId")?.Value<string>();
-                    if (!string.IsNullOrWhiteSpace(previewVideoId))
-                    {
-                        throw new VideoRequiresPurchaseException(videoId, previewVideoId,
-                            $"Video [{videoId}] is unplayable because it requires purchase.");
-                    }
-                }
-
-                // If the video requires purchase - throw (approach two)
-                {
-                    var previewVideoInfoRaw = playerResponseJson.SelectToken("playabilityStatus.errorScreen.ypcTrailerRenderer.playerVars")
-                        ?.Value<string>();
-                    if (!string.IsNullOrWhiteSpace(previewVideoInfoRaw))
-                    {
-                        var previewVideoInfoDic = Url.SplitQuery(previewVideoInfoRaw);
-                        var previewVideoId = previewVideoInfoDic.GetValueOrDefault("video_id");
-
-                        throw new VideoRequiresPurchaseException(videoId, previewVideoId,
-                            $"Video [{videoId}] is unplayable because it requires purchase.");
-                    }
+                    throw new VideoRequiresPurchaseException(videoId, previewVideoId,
+                        $"Video [{videoId}] is unplayable because it requires purchase.");
                 }
             }
 
-            // Try to get from video watch page
+            // If the video requires purchase - throw (approach two)
             {
-                // Get video watch page HTML
-                var requestedAt = DateTimeOffset.Now;
-                var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
-
-                // Extract player config
-                var playerConfigRaw = videoWatchPageHtml.GetElementsByTagName("script")
-                    .Select(e => e.GetInnerText())
-                    .Select(s =>
-                        Regex.Match(s,
-                                @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
-                            .Groups["Json"].Value)
-                    .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s));
-
-                // If player config is not available - throw
-                if (string.IsNullOrWhiteSpace(playerConfigRaw))
+                var previewVideoInfoRaw = playerResponseJson.SelectToken("playabilityStatus.errorScreen.ypcTrailerRenderer.playerVars")
+                    ?.Value<string>();
+                if (!string.IsNullOrWhiteSpace(previewVideoInfoRaw))
                 {
-                    var errorReason = videoWatchPageHtml.GetElementById("unavailable-message")?.GetInnerText().Trim();
+                    var previewVideoInfoDic = Url.SplitQuery(previewVideoInfoRaw);
+                    var previewVideoId = previewVideoInfoDic.GetValueOrDefault("video_id");
+
+                    throw new VideoRequiresPurchaseException(videoId, previewVideoId,
+                        $"Video [{videoId}] is unplayable because it requires purchase.");
+                }
+            }
+
+            return null;
+        }
+
+        private async Task<PlayerConfiguration?> TryGetPlayerConfigurationFromWatchPageAsync(string videoId)
+        {
+            // Get video watch page HTML
+            var requestedAt = DateTimeOffset.Now;
+            var videoWatchPageHtml = await GetVideoWatchPageHtmlAsync(videoId).ConfigureAwait(false);
+
+            // Extract player config
+            var playerConfigRaw = videoWatchPageHtml.GetElementsByTagName("script")
+                .Select(e => e.GetInnerText())
+                .Select(s =>
+                    Regex.Match(s,
+                            @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
+                        .Groups["Json"].Value)
+                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s));
+
+            // If player config is not available - throw
+            if (string.IsNullOrWhiteSpace(playerConfigRaw))
+            {
+                var errorReason = videoWatchPageHtml.GetElementById("unavailable-message")?.GetInnerText().Trim();
+
+                if (!string.IsNullOrWhiteSpace(errorReason) &&
+                    errorReason.IndexOf("This video is unavailable", StringComparison.OrdinalIgnoreCase) < 0)
+                {
                     throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
                 }
 
-                // Get player config JSON
-                var playerConfigJson = JToken.Parse(playerConfigRaw);
+                return null;
+            }
 
-                // Extract player source URL
-                var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
+            // Get player config JSON
+            var playerConfigJson = JToken.Parse(playerConfigRaw);
 
-                // Get player response JSON
-                var playerResponseRaw = playerConfigJson.SelectToken("args.player_response").Value<string>();
-                var playerResponseJson = JToken.Parse(playerResponseRaw);
+            // Extract player source URL
+            var playerSourceUrl = "https://youtube.com" + playerConfigJson.SelectToken("assets.js").Value<string>();
+
+            // Get player response JSON
+            var playerResponseRaw = playerConfigJson.SelectToken("args.player_response").Value<string>();
+            var playerResponseJson = JToken.Parse(playerResponseRaw);
+
+            var errorReason2 = playerResponseJson.SelectToken("playabilityStatus.reason")?.Value<string>();
+            if (string.IsNullOrWhiteSpace(errorReason2))
+            {
 
                 // Extract whether the video is a live stream
                 var isLiveStream = playerResponseJson.SelectToken("videoDetails.isLive")?.Value<bool>() == true;
@@ -202,7 +211,14 @@ namespace YoutubeExplode
                 return new PlayerConfiguration(playerSourceUrl, dashManifestUrl, hlsManifestUrl, muxedStreamInfosUrlEncoded,
                     adaptiveStreamInfosUrlEncoded, muxedStreamInfosJson, adaptiveStreamInfosJson, validUntil);
             }
+
+            return null;
         }
+
+        private async Task<PlayerConfiguration> GetPlayerConfigurationAsync(string videoId) =>
+            await TryGetPlayerConfigurationFromWatchPageAsync(videoId) ??
+            await TryGetPlayerConfigurationFromVideoInfoAsync(videoId) ??
+            throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
 
         private async Task<IReadOnlyList<ICipherOperation>> GetCipherOperationsAsync(string playerSourceUrl)
         {
@@ -453,7 +469,7 @@ namespace YoutubeExplode
 
                         url = cipherDic["url"];
                         var signature = cipherDic["s"];
-                        
+
                         // Get cipher operations (cached)
                         var cipherOperations = await GetCipherOperationsAsync(playerConfiguration.PlayerSourceUrl).ConfigureAwait(false);
 
