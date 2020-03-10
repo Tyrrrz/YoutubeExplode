@@ -38,7 +38,7 @@ namespace YoutubeExplode
 
         private async Task<HtmlDocument> GetVideoWatchPageHtmlAsync(string videoId)
         {
-            var url = $"https://youtube.com/watch?v={videoId}&disable_polymer=true&bpctr=9999999999&hl=en";
+            var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return HtmlParser.Default.ParseDocument(raw);
@@ -46,7 +46,7 @@ namespace YoutubeExplode
 
         private async Task<HtmlDocument> GetVideoEmbedPageHtmlAsync(string videoId)
         {
-            var url = $"https://youtube.com/embed/{videoId}?disable_polymer=true&hl=en";
+            var url = $"https://youtube.com/embed/{videoId}?hl=en";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             return HtmlParser.Default.ParseDocument(raw);
