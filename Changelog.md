@@ -1,3 +1,7 @@
+### v4.7.14 (10-Mar-2020)
+
+- Fixed an issue where `GetMediaStreamAsync` and `DownloadMediaStreamAsync` threw an exception due to recent YouTube changes. As a side effect, age-restricted videos may no longer work, at least until a new workaround is found.
+
 ### v4.7.13 (10-Feb-2020)
 
 - Fixed an issue where `GetPlaylistAsync` only returned 200 videos for some larger playlists. Thanks [@polynoman](https://github.com/polynoman).
