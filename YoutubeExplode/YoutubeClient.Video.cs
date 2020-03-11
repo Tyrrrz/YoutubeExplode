@@ -162,14 +162,6 @@ namespace YoutubeExplode
             // If player config is not available - throw
             if (string.IsNullOrWhiteSpace(playerConfigRaw))
             {
-                var errorReason = videoWatchPageHtml.GetElementById("unavailable-message")?.GetInnerText().Trim();
-
-                if (!string.IsNullOrWhiteSpace(errorReason) &&
-                    errorReason.IndexOf("This video is unavailable", StringComparison.OrdinalIgnoreCase) < 0)
-                {
-                    throw new VideoUnplayableException(videoId, $"Video [{videoId}] is unplayable. Reason: {errorReason}");
-                }
-
                 return null;
             }
 
