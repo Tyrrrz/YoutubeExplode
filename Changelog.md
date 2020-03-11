@@ -1,3 +1,7 @@
+### v4.7.15 (11-Mar-2020)
+
+- Fixed some issues revolving around videos marked with "content warning".
+
 ### v4.7.14 (10-Mar-2020)
 
 - Fixed an issue where `GetMediaStreamAsync` and `DownloadMediaStreamAsync` threw an exception due to recent YouTube changes. As a side effect, age-restricted videos may no longer work, at least until a new workaround is found.
