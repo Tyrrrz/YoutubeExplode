@@ -27,7 +27,7 @@ namespace YoutubeExplode
             var eurl = $"https://youtube.googleapis.com/v/{videoId}".UrlEncode();
 
             // Execute request
-            var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&eurl={eurl}&hl=en";
+            var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&eurl={eurl}&hl=en&sts=18333";
             var raw = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
             // Parse response as URL-encoded dictionary
@@ -208,8 +208,8 @@ namespace YoutubeExplode
         }
 
         private async Task<PlayerConfiguration> GetPlayerConfigurationAsync(string videoId) =>
-            await TryGetPlayerConfigurationFromWatchPageAsync(videoId) ??
             await TryGetPlayerConfigurationFromVideoInfoAsync(videoId) ??
+            await TryGetPlayerConfigurationFromWatchPageAsync(videoId) ??
             throw new VideoUnavailableException(videoId, $"Video [{videoId}] is unavailable.");
 
         private async Task<IReadOnlyList<ICipherOperation>> GetCipherOperationsAsync(string playerSourceUrl)
