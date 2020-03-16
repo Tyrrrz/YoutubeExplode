@@ -1,3 +1,7 @@
+### v4.7.16 (16-Mar-2020)
+
+- Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
+
 ### v4.7.15 (11-Mar-2020)
 
 - Fixed some issues revolving around videos marked with "content warning".
