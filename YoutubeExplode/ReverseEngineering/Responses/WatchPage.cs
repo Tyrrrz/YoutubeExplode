@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
 
@@ -21,9 +20,6 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             _root = root;
         }
-
-        private bool IsOk() => _root
-            .QuerySelector("meta[itemprop=\"datePublished\"]") != null;
 
         public DateTimeOffset GetVideoUploadDate() => _root
             .QuerySelector("meta[itemprop=\"datePublished\"]")
@@ -48,7 +44,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public PlayerConfig? TryGetPlayerConfig() => _root
             .GetElementsByTagName("script")
-            .Select(e => NodeExtensions.Text(e))
+            .Select(e => e.Text())
             .Select(s => Regex.Match(s,
                     @"ytplayer\.config = (?<Json>\{[^\{\}]*(((?<Open>\{)[^\{\}]*)+((?<Close-Open>\})[^\{\}]*)+)*(?(Open)(?!))\})")
                 .Groups["Json"].Value)
@@ -113,12 +109,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
                 var raw = await httpClient.GetStringAsync(url);
 
-                var result = Parse(raw);
-
-                if (!result.IsOk())
-                    throw TransientFailureException.InvalidResponseContent("Video watch page is broken.");
-
-                return result;
+                return Parse(raw);
             });
     }
 }
