@@ -21,7 +21,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public string GetSts() => _root
             .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;var \w\s*=)\d+").Value)
-            .NullIfWhiteSpace() ?? throw new ParsingFailureException("Could not find sts in player source.");
+            .NullIfWhiteSpace() ?? throw FatalFailureException.Generic("Could not find sts in player source.");
 
         public IEnumerable<ICipherOperation> GetCipherOperations()
         {
@@ -31,8 +31,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             if (string.IsNullOrWhiteSpace(deciphererFuncName))
             {
-                throw new ParsingFailureException(
-                    "Could not find signature decipherer function name. Please report this issue on GitHub.");
+                throw FatalFailureException.Generic(
+                    "Could not find signature decipherer function name.");
             }
 
             // Find the body of the function
@@ -41,8 +41,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             if (string.IsNullOrWhiteSpace(deciphererFuncBody))
             {
-                throw new ParsingFailureException(
-                    "Could not find signature decipherer function body. Please report this issue on GitHub.");
+                throw FatalFailureException.Generic(
+                    "Could not find signature decipherer function body.");
             }
 
             // Split the function body into statements

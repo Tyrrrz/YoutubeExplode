@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,11 @@ namespace YoutubeExplode.ReverseEngineering
         public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var response = await _innerHttpClient.SendAsync(request, cancellationToken);
+
+            // Some pages redirect to https://www.google.com/sorry instead of return 429
+            if (request.RequestUri.Host.EndsWith(".google.com", StringComparison.OrdinalIgnoreCase) &&
+                request.RequestUri.LocalPath.StartsWith("/sorry/", StringComparison.OrdinalIgnoreCase))
+                throw RequestRateExceededException.FailedHttpRequest(request, response);
 
             var statusCode = (int) response.StatusCode;
 

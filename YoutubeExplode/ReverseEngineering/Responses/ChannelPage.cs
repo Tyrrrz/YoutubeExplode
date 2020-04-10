@@ -49,7 +49,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var result = Parse(raw);
 
                 if (!result.IsOk())
-                    throw TransientFailureException.InvalidResponseContent("Channel page is broken.");
+                    throw TransientFailureException.Generic("Channel page is broken.");
 
                 return result;
             });
@@ -63,7 +63,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var result = Parse(raw);
 
                 if (!result.IsOk())
-                    throw TransientFailureException.InvalidResponseContent("Channel page is broken.");
+                    throw TransientFailureException.Generic("Channel page is broken.");
 
                 return result;
             });

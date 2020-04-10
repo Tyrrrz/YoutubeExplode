@@ -16,7 +16,7 @@ namespace YoutubeExplode.Exceptions
         {
             var message = $@"
 Failed to perform an HTTP request to YouTube.
-The status code indicates that this is most likely an error on YouTube's side and is not a bug in the library.
+The response indicates that this is most likely an error on YouTube's side and is not a bug in the library.
 If this issue persists, please report it on the project's GitHub page.
 
 Request: {req}
@@ -26,7 +26,7 @@ Response: {res}".Trim();
             return new TransientFailureException(message);
         }
 
-        internal static TransientFailureException InvalidResponseContent(string unmetExpectations)
+        internal static TransientFailureException Generic(string unmetExpectations)
         {
             var message = $@"
 {unmetExpectations}

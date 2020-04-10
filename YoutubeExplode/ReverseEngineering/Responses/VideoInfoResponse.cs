@@ -124,12 +124,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var url = $"https://youtube.com/get_video_info?video_id={videoId}&el=embedded&eurl={eurl}&hl=en&sts={sts}";
                 var raw = await httpClient.GetStringAsync(url);
 
-                var response = Parse(raw);
+                var result = Parse(raw);
 
-                if (!response.IsVideoAvailable() || !response.GetPlayerResponse().IsVideoAvailable())
+                if (!result.IsVideoAvailable() || !result.GetPlayerResponse().IsVideoAvailable())
                     throw VideoUnavailableException.Unavailable(videoId);
 
-                return response;
+                return result;
             });
     }
 }

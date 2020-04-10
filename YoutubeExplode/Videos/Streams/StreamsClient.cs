@@ -360,7 +360,7 @@ namespace YoutubeExplode.Videos.Streams
             {
                 return await GetManifestFromVideoInfoAsync(videoId);
             }
-            catch (Exception ex) when (ex is VideoUnavailableException || ex is ParsingFailureException)
+            catch (YoutubeExplodeException)
             {
                 return await GetManifestFromWatchPageAsync(videoId);
             }
