@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
 
@@ -15,6 +16,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             _root = root;
         }
+
+        private bool IsOk() => _root
+            .QuerySelector("meta[property=\"og:url\"]") != null;
 
         public string GetChannelUrl() => _root
             .QuerySelector("meta[property=\"og:url\"]")
@@ -42,7 +46,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var url = $"https://www.youtube.com/channel/{id}?hl=en";
                 var raw = await httpClient.GetStringAsync(url);
 
-                return Parse(raw);
+                var result = Parse(raw);
+
+                if (!result.IsOk())
+                    throw TransientFailureException.InvalidResponseContent("Channel page is broken.");
+
+                return result;
             });
 
         public static async Task<ChannelPage> GetByUserNameAsync(HttpClient httpClient, string userName) =>
@@ -51,7 +60,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var url = $"https://www.youtube.com/user/{userName}?hl=en";
                 var raw = await httpClient.GetStringAsync(url);
 
-                return Parse(raw);
+                var result = Parse(raw);
+
+                if (!result.IsOk())
+                    throw TransientFailureException.InvalidResponseContent("Channel page is broken.");
+
+                return result;
             });
     }
 }

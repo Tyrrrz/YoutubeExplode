@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http;
 
 namespace YoutubeExplode.Exceptions
@@ -23,8 +22,7 @@ Unfortunately, there's nothing the library can do to work around this error.
 
 Request: {req}
 
-Response: {res}
-".Trim();
+Response: {res}".Trim();
 
             return new RequestRateExceededException(message);
         }

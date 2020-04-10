@@ -17,7 +17,7 @@ namespace YoutubeExplode.Exceptions
             var message = $@"
 Failed to perform an HTTP request to YouTube.
 The status code indicates that YouTube most likely changed something and broke this library.
-If this issue persists, please report it on project's GitHub.
+If this issue persists, please report it on the project's GitHub page.
 
 Request: {req}
 

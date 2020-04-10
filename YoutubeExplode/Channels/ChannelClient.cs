@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.Playlists;
-using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos;
 

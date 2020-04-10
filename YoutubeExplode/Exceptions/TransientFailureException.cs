@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http;
 
 namespace YoutubeExplode.Exceptions
@@ -17,12 +16,22 @@ namespace YoutubeExplode.Exceptions
         {
             var message = $@"
 Failed to perform an HTTP request to YouTube.
-The status code indicates that this is most likely an error on their side and is not a bug in the library.
-If this issue persists, please report it on project's GitHub.
+The status code indicates that this is most likely an error on YouTube's side and is not a bug in the library.
+If this issue persists, please report it on the project's GitHub page.
 
 Request: {req}
 
 Response: {res}".Trim();
+
+            return new TransientFailureException(message);
+        }
+
+        internal static TransientFailureException InvalidResponseContent(string unmetExpectations)
+        {
+            var message = $@"
+{unmetExpectations}
+This error is most likely caused by a transient failure on YouTube's side and is not a bug in the library.
+If this issue persists, please report it on the project's GitHub page.".Trim();
 
             return new TransientFailureException(message);
         }

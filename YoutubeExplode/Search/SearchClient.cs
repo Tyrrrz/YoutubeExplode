@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using YoutubeExplode.Common;
-using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Extensions;
-using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos;
 
