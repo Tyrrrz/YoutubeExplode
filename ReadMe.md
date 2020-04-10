@@ -25,7 +25,7 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 - All metadata properties are exposed using strong types and enums
 - Provides static methods to validate IDs and to parse IDs from URLs
 - Fully asynchronous API
-- Targets .NET Framework 4.5+ and .NET Standard 1.1+
+- Targets .NET Framework 4.6.1+ and .NET Standard 2.0+
 - No need for an API key and no usage quotas
 
 ## Screenshots

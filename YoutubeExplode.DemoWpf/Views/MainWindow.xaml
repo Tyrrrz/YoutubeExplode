@@ -277,7 +277,7 @@
                                             <Button
                                                 Padding="4"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding DataContext.DownloadMediaStreamCommand, ElementName=Root}"
+                                                Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
                                                 CommandParameter="{Binding}"
                                                 Style="{DynamicResource MaterialDesignFlatButton}">
                                                 <materialDesign:PackIcon
@@ -318,7 +318,7 @@
                                             <Button
                                                 Padding="4"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding DataContext.DownloadMediaStreamCommand, ElementName=Root}"
+                                                Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
                                                 CommandParameter="{Binding}"
                                                 Style="{DynamicResource MaterialDesignFlatButton}">
                                                 <materialDesign:PackIcon
@@ -359,7 +359,7 @@
                                             <Button
                                                 Padding="4"
                                                 VerticalAlignment="Center"
-                                                Command="{Binding DataContext.DownloadMediaStreamCommand, ElementName=Root}"
+                                                Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
                                                 CommandParameter="{Binding}"
                                                 Style="{DynamicResource MaterialDesignFlatButton}">
                                                 <materialDesign:PackIcon

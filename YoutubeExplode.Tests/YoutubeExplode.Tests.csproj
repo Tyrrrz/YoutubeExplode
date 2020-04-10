@@ -2,7 +2,7 @@
   <Import Project="../YoutubeExplode.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <CollectCoverage>true</CollectCoverage>
@@ -12,10 +12,10 @@
 
   <ItemGroup>
     <PackageReference Include="GitHubActionsTestLogger" Version="1.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
-    <PackageReference Include="coverlet.msbuild" Version="2.8.0" PrivateAssets="all" />
+    <PackageReference Include="coverlet.msbuild" Version="2.8.1" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
