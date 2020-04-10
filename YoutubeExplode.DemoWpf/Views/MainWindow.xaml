@@ -135,7 +135,7 @@
                                     Margin="6,6,6,4"
                                     HorizontalAlignment="Right"
                                     FontSize="16">
-                                    <Run Text="{Binding Video.Statistics.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                    <Run Text="{Binding Video.Engagement.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
                                     <Run Text="views" />
                                 </TextBlock>
 
@@ -157,7 +157,7 @@
                                     HorizontalAlignment="Stretch"
                                     Maximum="5"
                                     Minimum="1"
-                                    Value="{Binding Video.Statistics.AverageRating, Mode=OneWay}" />
+                                    Value="{Binding Video.Engagement.AverageRating, Mode=OneWay}" />
 
                                 <!--  Upload date  -->
                                 <TextBlock
@@ -180,7 +180,7 @@
                                     <TextBlock
                                         Margin="3,0,0,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Video.Statistics.LikeCount, StringFormat=\{0:N0\}}" />
+                                        Text="{Binding Video.Engagement.LikeCount, StringFormat=\{0:N0\}}" />
                                     <materialDesign:PackIcon
                                         Margin="8,0,0,0"
                                         VerticalAlignment="Center"
@@ -189,7 +189,7 @@
                                     <TextBlock
                                         Margin="3,0,0,0"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Video.Statistics.DislikeCount, StringFormat=\{0:N0\}}" />
+                                        Text="{Binding Video.Engagement.DislikeCount, StringFormat=\{0:N0\}}" />
                                 </StackPanel>
                             </Grid>
                         </DockPanel>
@@ -269,7 +269,7 @@
                                 Margin="16,0,16,8"
                                 FontSize="14"
                                 Text="Muxed streams:" />
-                            <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding MediaStreamInfos.Muxed}">
+                            <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding MuxedStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -294,11 +294,11 @@
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Encodings:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
+                                                <Run Text="Codecs:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={x:Static converters:FileSizeToStringConverter.Instance}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -310,7 +310,7 @@
                                 Margin="16,8,16,8"
                                 FontSize="14"
                                 Text="Video-only streams:" />
-                            <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding MediaStreamInfos.Video}">
+                            <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding VideoOnlyStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -335,11 +335,11 @@
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Encoding:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoEncoding, Mode=OneWay}" />
+                                                <Run Text="Codec:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={x:Static converters:FileSizeToStringConverter.Instance}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
@@ -351,7 +351,7 @@
                                 Margin="16,8,16,8"
                                 FontSize="14"
                                 Text="Audio-only streams:" />
-                            <ItemsControl Margin="16,0,6,8" ItemsSource="{Binding MediaStreamInfos.Audio}">
+                            <ItemsControl Margin="16,0,6,8" ItemsSource="{Binding AudioOnlyStreamInfos}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -373,11 +373,11 @@
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
-                                                <Run Text="Encoding:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
+                                                <Run Text="Codec:" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioCodec, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Converter={x:Static converters:FileSizeToStringConverter.Instance}, StringFormat=\{0\}, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>

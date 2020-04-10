@@ -21,6 +21,11 @@ namespace YoutubeExplode.Common
         public long DislikeCount { get; }
 
         /// <summary>
+        /// Average rating.
+        /// </summary>
+        public double AverageRating => 5.0 * LikeCount / (LikeCount + DislikeCount);
+
+        /// <summary>
         /// Initializes an instance of <see cref="Engagement"/>.
         /// </summary>
         public Engagement(long viewCount, long likeCount, long dislikeCount)
