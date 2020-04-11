@@ -115,8 +115,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
                 var result = Parse(raw);
 
+                // TODO: remove this before merging
                 if (!result.IsOk())
-                    throw TransientFailureException.Generic($"Video watch page is broken. Dump: {raw}" + Environment.NewLine);
+                    Console.WriteLine($"Video watch page is broken. Dump: {raw}");
 
                 return result;
             });
