@@ -69,7 +69,7 @@ namespace YoutubeExplode.Playlists
                         video.GetTitle(),
                         video.GetAuthor(),
                         video.GetUploadDate(),
-                        video.GetDescription(), // TODO
+                        video.GetDescription(),
                         video.GetDuration(),
                         Array.Empty<Thumbnail>(),
                         video.GetKeywords(),
@@ -82,7 +82,7 @@ namespace YoutubeExplode.Playlists
                     countDelta++;
                 }
 
-                // If no distinct videos were added to the list - break
+                // Videos loop around, so break when we stop seeing new videos
                 if (countDelta <= 0)
                     break;
 

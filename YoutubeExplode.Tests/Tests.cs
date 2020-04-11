@@ -140,7 +140,7 @@ namespace YoutubeExplode.Tests
 
             foreach (var streamInfo in manifest.Streams)
             {
-                await using var stream = await youtube.Videos.Streams.GetStreamAsync(streamInfo);
+                await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
                 Assert.That(stream, Is.Not.Null);
 
                 var buffer = new byte[100];

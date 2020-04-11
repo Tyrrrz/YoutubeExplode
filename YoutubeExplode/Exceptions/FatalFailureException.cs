@@ -2,8 +2,14 @@ using System.Net.Http;
 
 namespace YoutubeExplode.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when a fatal failure occurs.
+    /// </summary>
     public partial class FatalFailureException : YoutubeExplodeException
     {
+        /// <summary>
+        /// Initializes an instance of <see cref="FatalFailureException"/>.
+        /// </summary>
         public FatalFailureException(string message)
             : base(message)
         {

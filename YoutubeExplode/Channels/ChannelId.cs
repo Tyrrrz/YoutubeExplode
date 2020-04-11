@@ -3,11 +3,20 @@ using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Channels
 {
+    /// <summary>
+    /// Encapsulates a valid YouTube channel ID.
+    /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct ChannelId
     {
+        /// <summary>
+        /// ID as a string.
+        /// </summary>
         public string Value { get; }
 
+        /// <summary>
+        /// Initializes an instance of <see cref="ChannelId"/>.
+        /// </summary>
         public ChannelId(string idOrUrl) =>
             Value = TryNormalize(idOrUrl) ??
                     throw new ArgumentException($"Invalid YouTube channel ID or URL: '{idOrUrl}'.");
@@ -18,8 +27,14 @@ namespace YoutubeExplode.Channels
 
     public partial struct ChannelId
     {
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
         public static implicit operator ChannelId(string idOrUrl) => new ChannelId(idOrUrl);
 
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
         public static implicit operator string(ChannelId id) => id.ToString();
     }
 

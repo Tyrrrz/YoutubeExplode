@@ -22,6 +22,7 @@ namespace YoutubeExplode.Common
 
         /// <summary>
         /// Average rating.
+        /// Calculated as <code>5.0 * LikeCount / (LikeCount + DislikeCount)</code>.
         /// </summary>
         public double AverageRating => 5.0 * LikeCount / (LikeCount + DislikeCount);
 

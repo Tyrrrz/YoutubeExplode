@@ -24,7 +24,7 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Gets channel by ID.
+        /// Gets the metadata associated with the specified channel.
         /// </summary>
         public async Task<Channel> GetAsync(ChannelId id)
         {
@@ -38,7 +38,7 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Gets the channel that belongs to the specified user.
+        /// Gets the metadata associated with the channel of the specified user.
         /// </summary>
         public async Task<Channel> GetByUserAsync(UserName userName)
         {
@@ -52,7 +52,7 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Gets the channel that uploaded the specified video.
+        /// Gets the metadata associated with the channel that uploaded the specified video.
         /// </summary>
         public async Task<Channel> GetByVideoAsync(VideoId videoId)
         {

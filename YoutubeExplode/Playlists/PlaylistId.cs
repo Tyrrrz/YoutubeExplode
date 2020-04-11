@@ -3,11 +3,20 @@ using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Playlists
 {
+    /// <summary>
+    /// Encapsulates a valid YouTube playlist ID.
+    /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct PlaylistId
     {
+        /// <summary>
+        /// ID as a string.
+        /// </summary>
         public string Value { get; }
 
+        /// <summary>
+        /// Initializes an instance of <see cref="PlaylistId"/>.
+        /// </summary>
         public PlaylistId(string idOrUrl) =>
             Value = TryNormalize(idOrUrl) ??
                     throw new ArgumentException($"Invalid YouTube playlist ID or URL: '{idOrUrl}'.");
@@ -18,8 +27,14 @@ namespace YoutubeExplode.Playlists
 
     public partial struct PlaylistId
     {
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
         public static implicit operator PlaylistId(string idOrUrl) => new PlaylistId(idOrUrl);
 
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
         public static implicit operator string(PlaylistId id) => id.ToString();
     }
 

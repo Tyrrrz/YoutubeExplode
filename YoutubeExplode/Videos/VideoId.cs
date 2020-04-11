@@ -3,11 +3,20 @@ using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Videos
 {
+    /// <summary>
+    /// Encapsulates a valid YouTube video ID.
+    /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct VideoId
     {
+        /// <summary>
+        /// ID as a string.
+        /// </summary>
         public string Value { get; }
 
+        /// <summary>
+        /// Initializes an instance of <see cref="VideoId"/>.
+        /// </summary>
         public VideoId(string idOrUrl) =>
             Value = TryNormalize(idOrUrl) ??
                     throw new ArgumentException($"Invalid YouTube video ID or URL: '{idOrUrl}'.");
@@ -18,8 +27,14 @@ namespace YoutubeExplode.Videos
 
     public partial struct VideoId
     {
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
         public static implicit operator VideoId(string idOrUrl) => new VideoId(idOrUrl);
 
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
         public static implicit operator string(VideoId id) => id.ToString();
     }
 

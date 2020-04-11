@@ -9,15 +9,24 @@ using YoutubeExplode.ReverseEngineering.Responses;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
+    /// <summary>
+    /// Queries related to closed captions of YouTube videos.
+    /// </summary>
     public class ClosedCaptionTrackClient
     {
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// Initializes an instance of <see cref="ClosedCaptionTrackClient"/>.
+        /// </summary>
         public ClosedCaptionTrackClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
+        /// <summary>
+        /// Gets the manifest that contains information about available closed caption tracks in the specified video.
+        /// </summary>
         public async Task<ClosedCaptionTrackManifest> GetManifestAsync(VideoId videoId)
         {
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
@@ -37,6 +46,9 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             return new ClosedCaptionTrackManifest(tracks);
         }
 
+        /// <summary>
+        /// Gets the actual closed caption track which is identified by the specified metadata.
+        /// </summary>
         public async Task<ClosedCaptionTrack> GetAsync(ClosedCaptionTrackInfo trackInfo)
         {
             var response = await ClosedCaptionTrackResponse.GetAsync(_httpClient, trackInfo.Url);
@@ -52,6 +64,10 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             return new ClosedCaptionTrack(captions);
         }
 
+        /// <summary>
+        /// Writes the actual closed caption track which is identified by the specified metadata to the specified writer.
+        /// Closed captions are written in the SRT file format.
+        /// </summary>
         public async Task WriteToAsync(ClosedCaptionTrackInfo trackInfo, TextWriter writer,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
@@ -82,6 +98,10 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             }
         }
 
+        /// <summary>
+        /// Downloads the actual closed caption track which is identified by the specified metadata to the specified file.
+        /// Closed captions are written in the SRT file format.
+        /// </summary>
         public async Task DownloadAsync(ClosedCaptionTrackInfo trackInfo, string filePath,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {

@@ -2,6 +2,9 @@ using YoutubeExplode.ReverseEngineering;
 
 namespace YoutubeExplode.Videos.Streams
 {
+    /// <summary>
+    /// Stream container.
+    /// </summary>
     public enum Container
     {
         /// <summary>
@@ -20,10 +23,13 @@ namespace YoutubeExplode.Videos.Streams
         Tgpp
     }
 
+    /// <summary>
+    /// Extensions for <see cref="Container"/>.
+    /// </summary>
     public static class ContainerExtensions
     {
         /// <summary>
-        /// Gets file extension based on container type.
+        /// Gets file extension based on container.
         /// </summary>
         public static string GetFileExtension(this Container container) => Heuristics.ContainerToFileExtension(container);
     }

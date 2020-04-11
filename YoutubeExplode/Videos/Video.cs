@@ -5,7 +5,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// YouTube video.
+    /// YouTube video metadata.
     /// </summary>
     public class Video
     {

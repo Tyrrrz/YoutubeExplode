@@ -1,5 +1,8 @@
 namespace YoutubeExplode.Videos.Streams
 {
+    /// <summary>
+    /// Video stream quality.
+    /// </summary>
     public enum VideoQuality
     {
         /// <summary>

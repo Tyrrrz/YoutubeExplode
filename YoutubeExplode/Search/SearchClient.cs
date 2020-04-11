@@ -8,7 +8,7 @@ using YoutubeExplode.Videos;
 namespace YoutubeExplode.Search
 {
     /// <summary>
-    /// Queries related to YouTube search.
+    /// YouTube search queries.
     /// </summary>
     public class SearchClient
     {
@@ -29,8 +29,7 @@ namespace YoutubeExplode.Search
         {
             var encounteredVideoIds = new HashSet<string>();
 
-            var page = 0;
-            while (true)
+            for (var page = 0; page < int.MaxValue; page++)
             {
                 var response = await PlaylistResponse.GetSearchResultsAsync(_httpClient, searchQuery, page);
 
@@ -48,9 +47,11 @@ namespace YoutubeExplode.Search
                         video.GetTitle(),
                         video.GetAuthor(),
                         video.GetUploadDate(),
-                        video.GetDescription(), // TODO
+                        video.GetDescription(),
                         video.GetDuration(),
-                        Array.Empty<Thumbnail>(), video.GetKeywords(), new Engagement(
+                        Array.Empty<Thumbnail>(),
+                        video.GetKeywords(),
+                        new Engagement(
                             video.GetViewCount(),
                             video.GetLikeCount(),
                             video.GetDislikeCount()
@@ -59,11 +60,9 @@ namespace YoutubeExplode.Search
                     countDelta++;
                 }
 
-                // If no distinct videos were added to the list - break
+                // Videos loop around, so break when we stop seeing new videos
                 if (countDelta <= 0)
                     break;
-
-                page++;
             }
         }
     }

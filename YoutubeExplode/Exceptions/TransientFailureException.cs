@@ -2,8 +2,14 @@ using System.Net.Http;
 
 namespace YoutubeExplode.Exceptions
 {
+    /// <summary>
+    /// Exception thrown when a transient failure occurs.
+    /// </summary>
     public partial class TransientFailureException : YoutubeExplodeException
     {
+        /// <summary>
+        /// Initializes an instance of <see cref="TransientFailureException"/>.
+        /// </summary>
         public TransientFailureException(string message)
             : base(message)
         {

@@ -22,7 +22,7 @@ namespace YoutubeExplode.ReverseEngineering
             // Some pages redirect to https://www.google.com/sorry instead of return 429
             if (request.RequestUri.Host.EndsWith(".google.com", StringComparison.OrdinalIgnoreCase) &&
                 request.RequestUri.LocalPath.StartsWith("/sorry/", StringComparison.OrdinalIgnoreCase))
-                throw RequestRateExceededException.FailedHttpRequest(request, response);
+                throw RequestLimitExceededException.FailedHttpRequest(request, response);
 
             var statusCode = (int) response.StatusCode;
 
@@ -30,7 +30,7 @@ namespace YoutubeExplode.ReverseEngineering
                 throw TransientFailureException.FailedHttpRequest(request, response);
 
             if (statusCode == 429)
-                throw RequestRateExceededException.FailedHttpRequest(request, response);
+                throw RequestLimitExceededException.FailedHttpRequest(request, response);
 
             if (statusCode >= 400)
                 throw FatalFailureException.FailedHttpRequest(request, response);

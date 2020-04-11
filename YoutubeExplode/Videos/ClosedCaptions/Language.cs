@@ -1,5 +1,8 @@
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
+    /// <summary>
+    /// Encapsulates a human written language.
+    /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
     public readonly struct Language
     {

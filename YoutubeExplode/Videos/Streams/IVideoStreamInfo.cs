@@ -3,19 +3,40 @@ using System.Linq;
 
 namespace YoutubeExplode.Videos.Streams
 {
+    /// <summary>
+    /// YouTube media stream that contains video.
+    /// </summary>
     public interface IVideoStreamInfo : IStreamInfo
     {
+        /// <summary>
+        /// Video codec.
+        /// </summary>
         string VideoCodec { get; }
 
+        /// <summary>
+        /// Video quality label, as seen on YouTube.
+        /// </summary>
         string VideoQualityLabel { get; }
 
+        /// <summary>
+        /// Video quality.
+        /// </summary>
         VideoQuality VideoQuality { get; }
 
+        /// <summary>
+        /// Video resolution.
+        /// </summary>
         VideoResolution Resolution { get; }
 
+        /// <summary>
+        /// Video framerate.
+        /// </summary>
         Framerate Framerate { get; }
     }
 
+    /// <summary>
+    /// Extensions for <see cref="IVideoStreamInfo"/>.
+    /// </summary>
     public static class VideoStreamInfoExtensions
     {
         /// <summary>

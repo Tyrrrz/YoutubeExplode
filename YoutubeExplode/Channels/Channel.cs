@@ -1,7 +1,7 @@
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// YouTube channel.
+    /// YouTube channel metadata.
     /// </summary>
     public class Channel
     {
@@ -9,6 +9,11 @@ namespace YoutubeExplode.Channels
         /// Channel ID.
         /// </summary>
         public ChannelId Id { get; }
+
+        /// <summary>
+        /// Channel URL.
+        /// </summary>
+        public string Url => $"https://www.youtube.com/channel/{Id}";
 
         /// <summary>
         /// Channel title.

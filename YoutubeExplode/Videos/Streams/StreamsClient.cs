@@ -15,10 +15,16 @@ using YoutubeExplode.ReverseEngineering.Responses;
 
 namespace YoutubeExplode.Videos.Streams
 {
+    /// <summary>
+    /// Queries related to media streams of YouTube videos.
+    /// </summary>
     public class StreamsClient
     {
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// Initializes an instance of <see cref="StreamsClient"/>.
+        /// </summary>
         public StreamsClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -352,7 +358,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Gets the available streams for this video.
+        /// Gets the manifest that contains information about available streams in the specified video.
         /// </summary>
         public async Task<StreamManifest> GetManifestAsync(VideoId videoId)
         {
@@ -366,9 +372,17 @@ namespace YoutubeExplode.Videos.Streams
             }
         }
 
-        public Task<Stream> GetStreamAsync(IStreamInfo streamInfo)
+        /// <summary>
+        /// Gets the actual stream which is identified by the specified metadata.
+        /// </summary>
+        public Task<Stream> GetAsync(IStreamInfo streamInfo)
         {
-            // Get segment size depending on whether the stream is rate limited or not
+            // YouTube streams are often rate-limited -- they return data at about the same rate
+            // as the actual video is going. This helps them avoid unnecessary bandwidth by not loading
+            // all data eagerly. On the other hand, we want to download the streams as fast as possible,
+            // so we'll be splitting the stream into small segments and retrieving them separately, to
+            // work around rate limiting.
+
             var segmentSize = !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes")
                 ? 9_898_989 // this number was carefully devised through research
                 : long.MaxValue; // don't use segmentation for non-rate-limited streams
@@ -378,13 +392,19 @@ namespace YoutubeExplode.Videos.Streams
             return Task.FromResult<Stream>(stream);
         }
 
+        /// <summary>
+        /// Copies the actual stream which is identified by the specified metadata to the specified stream.
+        /// </summary>
         public async Task CopyToAsync(IStreamInfo streamInfo, Stream destination,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
-            using var input = await GetStreamAsync(streamInfo);
+            using var input = await GetAsync(streamInfo);
             await input.CopyToAsync(destination, progress, cancellationToken);
         }
 
+        /// <summary>
+        /// Download the actual stream which is identified by the specified metadata to the specified file.
+        /// </summary>
         public async Task DownloadAsync(IStreamInfo streamInfo, string filePath,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
