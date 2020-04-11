@@ -56,6 +56,6 @@ namespace YoutubeExplode.Videos.Streams
         /// Returns null if sequence is empty.
         /// </summary>
         public static IVideoStreamInfo? WithHighestVideoQuality(this IEnumerable<IVideoStreamInfo> streamInfos) =>
-            streamInfos.OrderByDescending(s => s.VideoQuality).ThenByDescending(s => s.Framerate.FramesPerSecond).FirstOrDefault();
+            streamInfos.OrderByDescending(s => s.VideoQuality).ThenByDescending(s => s.Framerate).FirstOrDefault();
     }
 }

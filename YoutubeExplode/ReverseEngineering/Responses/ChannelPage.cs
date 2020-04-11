@@ -21,19 +21,19 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .QuerySelector("meta[property=\"og:url\"]") != null;
 
         public string GetChannelUrl() => _root
-            .QuerySelector("meta[property=\"og:url\"]")
-            .GetAttribute("content");
+            .QuerySelectorOrThrow("meta[property=\"og:url\"]")
+            .GetAttributeOrThrow("content");
 
         public string GetChannelId() => GetChannelUrl()
             .SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase);
 
         public string GetChannelTitle() => _root
-            .QuerySelector("meta[property=\"og:title\"]")
-            .GetAttribute("content");
+            .QuerySelectorOrThrow("meta[property=\"og:title\"]")
+            .GetAttributeOrThrow("content");
 
         public string GetChannelLogoUrl() => _root
-            .QuerySelector("meta[property=\"og:image\"]")
-            .GetAttribute("content");
+            .QuerySelectorOrThrow("meta[property=\"og:image\"]")
+            .GetAttributeOrThrow("content");
     }
 
     internal partial class ChannelPage

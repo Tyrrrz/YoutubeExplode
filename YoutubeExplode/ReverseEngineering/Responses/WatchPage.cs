@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
 
@@ -26,8 +25,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .QuerySelector("meta[itemprop=\"datePublished\"]") != null;
 
         public DateTimeOffset GetVideoUploadDate() => _root
-            .QuerySelector("meta[itemprop=\"datePublished\"]")
-            .GetAttribute("content")
+            .QuerySelectorOrThrow("meta[itemprop=\"datePublished\"]")
+            .GetAttributeOrThrow("content")
             .ParseDateTimeOffset("yyyy-MM-dd");
 
         public long? TryGetVideoLikeCount() => _root
