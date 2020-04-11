@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AngleSharp.Common;
 using YoutubeExplode.DemoConsole.Internal;
 using YoutubeExplode.Videos.Streams;
 
