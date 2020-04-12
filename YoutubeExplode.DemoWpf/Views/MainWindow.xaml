@@ -295,7 +295,7 @@
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Codecs:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioEncoding, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoCodec, Mode=OneWay}" /><Run Text=", " /><Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding AudioCodec, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Size:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Size, Mode=OneWay}" />

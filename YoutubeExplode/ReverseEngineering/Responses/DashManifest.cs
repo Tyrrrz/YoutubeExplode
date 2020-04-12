@@ -52,7 +52,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public string GetContainer() => GetUrl()
                 .Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
-                .Pipe(WebUtility.UrlDecode!);
+                .Pipe(WebUtility.UrlDecode)!;
 
             private bool IsAudioOnly() => _root
                 .Element("AudioChannelConfiguration") != null;

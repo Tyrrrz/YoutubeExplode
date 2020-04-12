@@ -32,6 +32,5 @@ namespace YoutubeExplode.Internal.Extensions
                 progress?.Report(1.0 * totalBytesCopied / source.Length);
             } while (bytesCopied > 0);
         }
-
     }
 }
