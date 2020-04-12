@@ -18,7 +18,7 @@ namespace YoutubeExplode.Videos.Streams
     /// <summary>
     /// Queries related to media streams of YouTube videos.
     /// </summary>
-    public class StreamsClient
+    public partial class StreamsClient
     {
         private readonly HttpClient _httpClient;
 
@@ -30,209 +30,7 @@ namespace YoutubeExplode.Videos.Streams
             _httpClient = httpClient;
         }
 
-        private async Task<IStreamInfo?> TryGetMuxedStreamInfoAsync(
-            VideoInfoResponse.StreamInfo streamInfo,
-            IReadOnlyList<ICipherOperation> cipherOperations)
-        {
-            var tag = streamInfo.GetTag();
-            var url = streamInfo.GetUrl();
-
-            // Signature
-            var signature = streamInfo.TryGetSignature();
-            var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
-
-            if (!string.IsNullOrWhiteSpace(signature))
-            {
-                signature = cipherOperations.Decipher(signature);
-                url = Url.SetQueryParameter(url, signatureParameter, signature);
-            }
-
-            // Content length
-            var contentLength = streamInfo.TryGetContentLength() ??
-                                await _httpClient.TryGetContentLengthAsync(url, false) ??
-                                0;
-
-            if (contentLength <= 0)
-                return null;
-
-            return new MuxedStreamInfo(
-                tag,
-                url,
-                streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
-                contentLength.Pipe(FileSize.FromBytes),
-                streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
-                streamInfo.GetAudioCodec(),
-                streamInfo.GetVideoCodec(),
-                tag.Pipe(Heuristics.VideoQualityFromTag).Pipe(Heuristics.VideoQualityToLabel),
-                tag.Pipe(Heuristics.VideoQualityFromTag),
-                new VideoResolution(
-                    streamInfo.GetVideoWidth(),
-                    streamInfo.GetVideoHeight()
-                ),
-                streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
-            );
-        }
-
-        private async Task<IStreamInfo?> TryGetMuxedStreamInfoAsync(
-            PlayerResponse.StreamInfo streamInfo,
-            IReadOnlyList<ICipherOperation> cipherOperations)
-        {
-            var tag = streamInfo.GetTag();
-            var url = streamInfo.GetUrl();
-
-            // Signature
-            var signature = streamInfo.TryGetSignature();
-            var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
-
-            if (!string.IsNullOrWhiteSpace(signature))
-            {
-                signature = cipherOperations.Decipher(signature);
-                url = Url.SetQueryParameter(url, signatureParameter, signature);
-            }
-
-            // Content length
-            var contentLength = streamInfo.TryGetContentLength() ??
-                                await _httpClient.TryGetContentLengthAsync(url, false) ??
-                                0;
-
-            if (contentLength <= 0)
-                return null;
-
-            return new MuxedStreamInfo(
-                tag,
-                url,
-                streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
-                contentLength.Pipe(FileSize.FromBytes),
-                streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
-                streamInfo.GetAudioCodec(),
-                streamInfo.GetVideoCodec(),
-                tag.Pipe(Heuristics.VideoQualityFromTag).Pipe(Heuristics.VideoQualityToLabel),
-                tag.Pipe(Heuristics.VideoQualityFromTag),
-                new VideoResolution(
-                    streamInfo.GetVideoWidth(),
-                    streamInfo.GetVideoHeight()
-                ),
-                streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
-            );
-        }
-
-        private async Task<IStreamInfo?> TryGetAdaptiveStreamInfoAsync(
-            VideoInfoResponse.StreamInfo streamInfo,
-            IReadOnlyList<ICipherOperation> cipherOperations)
-        {
-            var tag = streamInfo.GetTag();
-            var url = streamInfo.GetUrl();
-
-            // Signature
-            var signature = streamInfo.TryGetSignature();
-            var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
-
-            if (!string.IsNullOrWhiteSpace(signature))
-            {
-                signature = cipherOperations.Decipher(signature);
-                url = Url.SetQueryParameter(url, signatureParameter, signature);
-            }
-
-            // Content length
-            var contentLength = streamInfo.TryGetContentLength() ??
-                                await _httpClient.TryGetContentLengthAsync(url, false) ??
-                                0;
-
-            if (contentLength <= 0)
-                return null;
-
-            // Audio-only
-            if (streamInfo.IsAudioOnly())
-            {
-                return new AudioOnlyStreamInfo(
-                    tag,
-                    url,
-                    streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
-                    contentLength.Pipe(FileSize.FromBytes),
-                    streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
-                    streamInfo.GetAudioCodec()
-                );
-            }
-            // Video-only
-            else
-            {
-                return new VideoOnlyStreamInfo(
-                    tag,
-                    url,
-                    streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
-                    contentLength.Pipe(FileSize.FromBytes),
-                    streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
-                    streamInfo.GetVideoCodec(),
-                    streamInfo.GetVideoQualityLabel(),
-                    streamInfo.GetVideoQualityLabel().Pipe(Heuristics.VideoQualityFromLabel),
-                    new VideoResolution(
-                        streamInfo.GetVideoWidth(),
-                        streamInfo.GetVideoHeight()
-                    ),
-                    streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
-                );
-            }
-        }
-
-        private async Task<IStreamInfo?> TryGetAdaptiveStreamInfoAsync(
-            PlayerResponse.StreamInfo streamInfo,
-            IReadOnlyList<ICipherOperation> cipherOperations)
-        {
-            var tag = streamInfo.GetTag();
-            var url = streamInfo.GetUrl();
-
-            // Signature
-            var signature = streamInfo.TryGetSignature();
-            var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
-
-            if (!string.IsNullOrWhiteSpace(signature))
-            {
-                signature = cipherOperations.Decipher(signature);
-                url = Url.SetQueryParameter(url, signatureParameter, signature);
-            }
-
-            // Content length
-            var contentLength = streamInfo.TryGetContentLength() ??
-                                await _httpClient.TryGetContentLengthAsync(url, false) ??
-                                0;
-
-            if (contentLength <= 0)
-                return null;
-
-            // Audio-only
-            if (streamInfo.IsAudioOnly())
-            {
-                return new AudioOnlyStreamInfo(
-                    tag,
-                    url,
-                    streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
-                    contentLength.Pipe(FileSize.FromBytes),
-                    streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
-                    streamInfo.GetAudioCodec()
-                );
-            }
-            // Video-only
-            else
-            {
-                return new VideoOnlyStreamInfo(
-                    tag,
-                    url,
-                    streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
-                    contentLength.Pipe(FileSize.FromBytes),
-                    streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
-                    streamInfo.GetVideoCodec(),
-                    streamInfo.GetVideoQualityLabel(),
-                    streamInfo.GetVideoQualityLabel().Pipe(Heuristics.VideoQualityFromLabel),
-                    new VideoResolution(
-                        streamInfo.GetVideoWidth(),
-                        streamInfo.GetVideoHeight()
-                    ),
-                    streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
-                );
-            }
-        }
-
-        private async Task<StreamManifest> GetManifestFromVideoInfoAsync(VideoId videoId)
+        private async Task<StreamInfoSource> GetStreamInfoSourceFromVideoInfoAsync(VideoId videoId)
         {
             var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
             var playerConfig = embedPage.TryGetPlayerConfig() ??
@@ -250,52 +48,14 @@ namespace YoutubeExplode.Videos.Streams
             if (playerResponse.IsLive())
                 throw VideoUnavailableException.Livestream(videoId);
 
-            var streamInfos = new Dictionary<int, IStreamInfo>();
-
-            foreach (var streamInfoProvider in videoInfoResponse.GetMuxedStreams())
-            {
-                var streamInfo = await TryGetMuxedStreamInfoAsync(streamInfoProvider, cipherOperations);
-
-                if (streamInfo != null)
-                {
-                    streamInfos[streamInfo.Tag] = streamInfo;
-                }
-            }
-
-            foreach (var streamInfoProvider in playerResponse.GetMuxedStreams())
-            {
-                var streamInfo = await TryGetMuxedStreamInfoAsync(streamInfoProvider, cipherOperations);
-
-                if (streamInfo != null)
-                {
-                    streamInfos[streamInfo.Tag] = streamInfo;
-                }
-            }
-
-            foreach (var streamInfoProvider in videoInfoResponse.GetAdaptiveStreams())
-            {
-                var streamInfo = await TryGetAdaptiveStreamInfoAsync(streamInfoProvider, cipherOperations);
-
-                if (streamInfo != null)
-                {
-                    streamInfos[streamInfo.Tag] = streamInfo;
-                }
-            }
-
-            foreach (var streamInfoProvider in playerResponse.GetAdaptiveStreams())
-            {
-                var streamInfo = await TryGetAdaptiveStreamInfoAsync(streamInfoProvider, cipherOperations);
-
-                if (streamInfo != null)
-                {
-                    streamInfos[streamInfo.Tag] = streamInfo;
-                }
-            }
-
-            return new StreamManifest(streamInfos.Values.ToArray());
+            return new StreamInfoSource(
+                videoInfoResponse.GetMuxedStreams().Concat(videoInfoResponse.GetAdaptiveStreams()).ToArray(),
+                playerResponse.GetMuxedStreams().Concat(playerResponse.GetAdaptiveStreams()).ToArray(),
+                cipherOperations
+            );
         }
 
-        private async Task<StreamManifest> GetManifestFromWatchPageAsync(VideoId videoId)
+        private async Task<StreamInfoSource> GetStreamInfoSourceFromWatchPageAsync(VideoId videoId)
         {
             var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
             var playerConfig = watchPage.TryGetPlayerConfig() ??
@@ -312,49 +72,164 @@ namespace YoutubeExplode.Videos.Streams
             if (playerResponse.IsLive())
                 throw VideoUnavailableException.Livestream(videoId);
 
-            var streamInfos = new Dictionary<int, IStreamInfo>();
+            return new StreamInfoSource(
+                playerConfig.GetMuxedStreams().Concat(playerConfig.GetAdaptiveStreams()).ToArray(),
+                playerResponse.GetMuxedStreams().Concat(playerResponse.GetAdaptiveStreams()).ToArray(),
+                cipherOperations
+            );
+        }
 
-            foreach (var streamInfoProvider in playerConfig.GetMuxedStreams())
+        private async Task<StreamManifest> GetManifestAsync(StreamInfoSource streamInfoSource)
+        {
+            var streams = new Dictionary<int, IStreamInfo>();
+
+            foreach (var streamInfo in streamInfoSource.FromVideoInfo)
             {
-                var streamInfo = await TryGetMuxedStreamInfoAsync(streamInfoProvider, cipherOperations);
+                var tag = streamInfo.GetTag();
+                var url = streamInfo.GetUrl();
 
-                if (streamInfo != null)
+                // Signature
+                var signature = streamInfo.TryGetSignature();
+                var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
+
+                if (!string.IsNullOrWhiteSpace(signature))
                 {
-                    streamInfos[streamInfo.Tag] = streamInfo;
+                    signature = streamInfoSource.CipherOperations.Decipher(signature);
+                    url = Url.SetQueryParameter(url, signatureParameter, signature);
+                }
+
+                // Content length
+                var contentLength = streamInfo.TryGetContentLength() ??
+                                    await _httpClient.TryGetContentLengthAsync(url, false) ??
+                                    0;
+
+                if (contentLength <= 0)
+                    continue;
+
+                if (streamInfo.IsMuxed())
+                {
+                    streams[tag] = new MuxedStreamInfo(
+                        tag,
+                        url,
+                        streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
+                        contentLength.Pipe(FileSize.FromBytes),
+                        streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
+                        streamInfo.GetAudioCodec(),
+                        streamInfo.GetVideoCodec(),
+                        tag.Pipe(Heuristics.VideoQualityFromTag).Pipe(Heuristics.VideoQualityToLabel),
+                        tag.Pipe(Heuristics.VideoQualityFromTag),
+                        new VideoResolution(
+                            streamInfo.GetVideoWidth(),
+                            streamInfo.GetVideoHeight()
+                        ),
+                        streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
+                    );
+                }
+                else if (streamInfo.IsAudioOnly())
+                {
+                    streams[tag] = new AudioOnlyStreamInfo(
+                        tag,
+                        url,
+                        streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
+                        contentLength.Pipe(FileSize.FromBytes),
+                        streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
+                        streamInfo.GetAudioCodec()
+                    );
+                }
+                else
+                {
+                    streams[tag] = new VideoOnlyStreamInfo(
+                        tag,
+                        url,
+                        streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
+                        contentLength.Pipe(FileSize.FromBytes),
+                        streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
+                        streamInfo.GetVideoCodec(),
+                        streamInfo.GetVideoQualityLabel(),
+                        streamInfo.GetVideoQualityLabel().Pipe(Heuristics.VideoQualityFromLabel),
+                        new VideoResolution(
+                            streamInfo.GetVideoWidth(),
+                            streamInfo.GetVideoHeight()
+                        ),
+                        streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
+                    );
                 }
             }
 
-            foreach (var streamInfoProvider in playerResponse.GetMuxedStreams())
+            foreach (var streamInfo in streamInfoSource.FromPlayerResponse)
             {
-                var streamInfo = await TryGetMuxedStreamInfoAsync(streamInfoProvider, cipherOperations);
+                var tag = streamInfo.GetTag();
+                var url = streamInfo.GetUrl();
 
-                if (streamInfo != null)
+                // Signature
+                var signature = streamInfo.TryGetSignature();
+                var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
+
+                if (!string.IsNullOrWhiteSpace(signature))
                 {
-                    streamInfos[streamInfo.Tag] = streamInfo;
+                    signature = streamInfoSource.CipherOperations.Decipher(signature);
+                    url = Url.SetQueryParameter(url, signatureParameter, signature);
+                }
+
+                // Content length
+                var contentLength = streamInfo.TryGetContentLength() ??
+                                    await _httpClient.TryGetContentLengthAsync(url, false) ??
+                                    0;
+
+                if (contentLength <= 0)
+                    continue;
+
+                if (streamInfo.IsMuxed())
+                {
+                    streams[tag] = new MuxedStreamInfo(
+                        tag,
+                        url,
+                        streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
+                        contentLength.Pipe(FileSize.FromBytes),
+                        streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
+                        streamInfo.GetAudioCodec(),
+                        streamInfo.GetVideoCodec(),
+                        tag.Pipe(Heuristics.VideoQualityFromTag).Pipe(Heuristics.VideoQualityToLabel),
+                        tag.Pipe(Heuristics.VideoQualityFromTag),
+                        new VideoResolution(
+                            streamInfo.GetVideoWidth(),
+                            streamInfo.GetVideoHeight()
+                        ),
+                        streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
+                    );
+                }
+                else if (streamInfo.IsAudioOnly())
+                {
+                    streams[tag] = new AudioOnlyStreamInfo(
+                        tag,
+                        url,
+                        streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
+                        contentLength.Pipe(FileSize.FromBytes),
+                        streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
+                        streamInfo.GetAudioCodec()
+                    );
+                }
+                else
+                {
+                    streams[tag] = new VideoOnlyStreamInfo(
+                        tag,
+                        url,
+                        streamInfo.GetContainer().Pipe(Heuristics.ContainerFromMimeType),
+                        contentLength.Pipe(FileSize.FromBytes),
+                        streamInfo.GetBitrate().Pipe(Bitrate.FromBytesPerSecond),
+                        streamInfo.GetVideoCodec(),
+                        streamInfo.GetVideoQualityLabel(),
+                        streamInfo.GetVideoQualityLabel().Pipe(Heuristics.VideoQualityFromLabel),
+                        new VideoResolution(
+                            streamInfo.GetVideoWidth(),
+                            streamInfo.GetVideoHeight()
+                        ),
+                        streamInfo.GetFramerate().Pipe(Framerate.FromFramesPerSecond)
+                    );
                 }
             }
 
-            foreach (var streamInfoProvider in playerConfig.GetAdaptiveStreams())
-            {
-                var streamInfo = await TryGetAdaptiveStreamInfoAsync(streamInfoProvider, cipherOperations);
-
-                if (streamInfo != null)
-                {
-                    streamInfos[streamInfo.Tag] = streamInfo;
-                }
-            }
-
-            foreach (var streamInfoProvider in playerResponse.GetAdaptiveStreams())
-            {
-                var streamInfo = await TryGetAdaptiveStreamInfoAsync(streamInfoProvider, cipherOperations);
-
-                if (streamInfo != null)
-                {
-                    streamInfos[streamInfo.Tag] = streamInfo;
-                }
-            }
-
-            return new StreamManifest(streamInfos.Values.ToArray());
+            return new StreamManifest(streams.Values.ToArray());
         }
 
         /// <summary>
@@ -364,11 +239,13 @@ namespace YoutubeExplode.Videos.Streams
         {
             try
             {
-                return await GetManifestFromVideoInfoAsync(videoId);
+                var streamInfoSource = await GetStreamInfoSourceFromVideoInfoAsync(videoId);
+                return await GetManifestAsync(streamInfoSource);
             }
             catch (YoutubeExplodeException)
             {
-                return await GetManifestFromWatchPageAsync(videoId);
+                var streamInfoSource = await GetStreamInfoSourceFromWatchPageAsync(videoId);
+                return await GetManifestAsync(streamInfoSource);
             }
         }
 
@@ -410,6 +287,28 @@ namespace YoutubeExplode.Videos.Streams
         {
             using var destination = File.Create(filePath);
             await CopyToAsync(streamInfo, destination, progress, cancellationToken);
+        }
+    }
+
+    public partial class StreamsClient
+    {
+        private class StreamInfoSource
+        {
+            public IReadOnlyList<VideoInfoResponse.StreamInfo> FromVideoInfo { get; }
+
+            public IReadOnlyList<PlayerResponse.StreamInfo> FromPlayerResponse { get; }
+
+            public IReadOnlyList<ICipherOperation> CipherOperations { get; }
+
+            public StreamInfoSource(
+                IReadOnlyList<VideoInfoResponse.StreamInfo> fromVideoInfo,
+                IReadOnlyList<PlayerResponse.StreamInfo> fromPlayerResponse,
+                IReadOnlyList<ICipherOperation> cipherOperations)
+            {
+                FromVideoInfo = fromVideoInfo;
+                FromPlayerResponse = fromPlayerResponse;
+                CipherOperations = cipherOperations;
+            }
         }
     }
 }

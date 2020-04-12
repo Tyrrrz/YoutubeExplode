@@ -21,6 +21,12 @@ namespace YoutubeExplode.Videos.Streams
 
         /// <inheritdoc />
         public int CompareTo(Bitrate other) => BytesPerSecond.CompareTo(other.BytesPerSecond);
+
+        public override string ToString()
+        {
+            // TODO
+            return base.ToString();
+        }
     }
 
     public partial struct Bitrate

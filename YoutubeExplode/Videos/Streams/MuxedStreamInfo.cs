@@ -41,7 +41,8 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
         /// </summary>
-        public MuxedStreamInfo(int tag,
+        public MuxedStreamInfo(
+            int tag,
             string url,
             Container container,
             FileSize size,
@@ -67,6 +68,6 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"Muxed ({Tag} / {VideoQualityLabel} / {Container})";
+        public override string ToString() => $"Muxed ({Tag} | {VideoQualityLabel} | {Container})";
     }
 }

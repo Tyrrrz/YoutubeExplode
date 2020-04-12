@@ -44,7 +44,7 @@ namespace YoutubeExplode.Videos.Streams
         /// Gets the stream with highest bitrate.
         /// Returns null if sequence is empty.
         /// </summary>
-        public static IStreamInfo WithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
+        public static IStreamInfo? WithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
             streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
     }
 }

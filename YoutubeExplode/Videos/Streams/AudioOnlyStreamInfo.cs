@@ -42,6 +42,6 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"Audio-only ({Tag} / {Container})";
+        public override string ToString() => $"Audio-only ({Tag} | {Container})";
     }
 }

@@ -22,9 +22,10 @@ namespace YoutubeExplode.Common
 
         /// <summary>
         /// Average rating.
-        /// Calculated as <code>5.0 * LikeCount / (LikeCount + DislikeCount)</code>.
         /// </summary>
-        public double AverageRating => 5.0 * LikeCount / (LikeCount + DislikeCount);
+        public double AverageRating => LikeCount + DislikeCount != 0
+            ? 1 + 4.0 * LikeCount / (LikeCount + DislikeCount)
+            : 0; // avoid division by 0
 
         /// <summary>
         /// Initializes an instance of <see cref="Engagement"/>.

@@ -78,6 +78,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public string GetMimeType() => _root["type"];
 
+            public bool IsMuxed() => GetMimeType()
+                .SubstringAfter("codecs=\"")
+                .SubstringUntil("\"")
+                .Split(", ")
+                .Length >= 2;
+
             public bool IsAudioOnly() => GetMimeType()
                 .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 

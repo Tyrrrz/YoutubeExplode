@@ -64,10 +64,10 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+        public int CompareTo(FileSize other) => TotalBytes.CompareTo(other.TotalBytes);
 
         /// <inheritdoc />
-        public int CompareTo(FileSize other) => TotalBytes.CompareTo(other.TotalBytes);
+        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
     }
 
     public partial struct FileSize

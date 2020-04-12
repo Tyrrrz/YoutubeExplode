@@ -160,6 +160,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetProperty("mimeType")
                 .GetString();
 
+            public bool IsMuxed() => GetMimeType()
+                .SubstringAfter("codecs=\"")
+                .SubstringUntil("\"")
+                .Split(", ")
+                .Length >= 2;
+
             public bool IsAudioOnly() => _root
                 .GetPropertyOrNull("audioSampleRate") != null;
 

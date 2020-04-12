@@ -38,7 +38,8 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Initializes an instance of <see cref="VideoOnlyStreamInfo"/>.
         /// </summary>
-        public VideoOnlyStreamInfo(int tag,
+        public VideoOnlyStreamInfo(
+            int tag,
             string url,
             Container container,
             FileSize size,
@@ -62,6 +63,6 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"Video-only ({Tag} / {VideoQualityLabel} / {Container})";
+        public override string ToString() => $"Video-only ({Tag} | {VideoQualityLabel} | {Container})";
     }
 }
