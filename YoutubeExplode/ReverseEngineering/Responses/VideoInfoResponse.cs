@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
@@ -120,7 +119,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static VideoInfoResponse Parse(string raw) => new VideoInfoResponse(Url.SplitQuery(raw));
 
-        public static async Task<VideoInfoResponse> GetAsync(HttpClient httpClient, string videoId, string? sts = null) =>
+        public static async Task<VideoInfoResponse> GetAsync(YoutubeHttpClient httpClient, string videoId, string? sts = null) =>
             await Retry.WrapAsync(async () =>
             {
                 var eurl = WebUtility.HtmlEncode($"https://youtube.googleapis.com/v/{videoId}");

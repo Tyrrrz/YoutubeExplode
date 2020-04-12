@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using YoutubeExplode.Common;
+using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos;
 
@@ -12,12 +12,12 @@ namespace YoutubeExplode.Search
     /// </summary>
     public class SearchClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="SearchClient"/>.
         /// </summary>
-        public SearchClient(HttpClient httpClient)
+        internal SearchClient(YoutubeHttpClient httpClient)
         {
             _httpClient = httpClient;
         }

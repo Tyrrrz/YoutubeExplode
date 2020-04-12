@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -111,7 +110,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static PlaylistResponse Parse(string raw) => new PlaylistResponse(Json.Parse(raw));
 
-        public static async Task<PlaylistResponse> GetAsync(HttpClient httpClient, string id, int index = 0) =>
+        public static async Task<PlaylistResponse> GetAsync(YoutubeHttpClient httpClient, string id, int index = 0) =>
             await Retry.WrapAsync(async () =>
             {
                 var url = $"https://youtube.com/list_ajax?style=json&action_get_list=1&list={id}&index={index}&hl=en";
@@ -120,7 +119,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 return Parse(raw);
             });
 
-        public static async Task<PlaylistResponse> GetSearchResultsAsync(HttpClient httpClient, string query, int page = 0) =>
+        public static async Task<PlaylistResponse> GetSearchResultsAsync(YoutubeHttpClient httpClient, string query, int page = 0) =>
             await Retry.WrapAsync(async () =>
             {
                 var queryEncoded = WebUtility.HtmlEncode(query);

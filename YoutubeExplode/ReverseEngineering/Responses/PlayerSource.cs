@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
@@ -93,7 +92,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static PlayerSource Parse(string raw) => new PlayerSource(raw);
 
-        public static async Task<PlayerSource> GetAsync(HttpClient httpClient, string url) =>
+        public static async Task<PlayerSource> GetAsync(YoutubeHttpClient httpClient, string url) =>
             await Retry.WrapAsync(async () =>
             {
                 var raw = await httpClient.GetStringAsync(url);

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,17 +18,11 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public WatchPage(IHtmlDocument root) => _root = root;
 
-        private bool IsOk() => _root
-            .Body
-            .QuerySelector("#player") != null;
+        private bool IsOk() =>
+            _root.Body.QuerySelector("#player") != null;
 
         public bool IsVideoAvailable() => _root
             .QuerySelector("meta[property=\"og:url\"]") != null;
-
-        public DateTimeOffset GetVideoUploadDate() => _root
-            .QuerySelectorOrThrow("meta[itemprop=\"datePublished\"]")
-            .GetAttributeOrThrow("content")
-            .ParseDateTimeOffset("yyyy-MM-dd");
 
         public long? TryGetVideoLikeCount() => _root
             .GetElementsByClassName("like-button-renderer-like-button")
@@ -107,7 +100,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static WatchPage Parse(string raw) => new WatchPage(Html.Parse(raw));
 
-        public static async Task<WatchPage> GetAsync(HttpClient httpClient, string videoId) =>
+        public static async Task<WatchPage> GetAsync(YoutubeHttpClient httpClient, string videoId) =>
             await Retry.WrapAsync(async () =>
             {
                 var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";

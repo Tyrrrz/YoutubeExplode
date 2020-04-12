@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -82,7 +81,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static DashManifest Parse(string raw) => new DashManifest(Xml.Parse(raw));
 
-        public static async Task<DashManifest> GetAsync(HttpClient httpClient, string url) =>
+        public static async Task<DashManifest> GetAsync(YoutubeHttpClient httpClient, string url) =>
             await Retry.WrapAsync(async () =>
             {
                 var raw = await httpClient.GetStringAsync(url);

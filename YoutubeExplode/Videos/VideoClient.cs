@@ -1,7 +1,7 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
+using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
@@ -13,7 +13,7 @@ namespace YoutubeExplode.Videos
     /// </summary>
     public class VideoClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
 
         /// <summary>
         /// Queries related to media streams of YouTube videos.
@@ -28,7 +28,7 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Initializes an instance of <see cref="VideoClient"/>.
         /// </summary>
-        public VideoClient(HttpClient httpClient)
+        internal VideoClient(YoutubeHttpClient httpClient)
         {
             _httpClient = httpClient;
 
@@ -50,7 +50,7 @@ namespace YoutubeExplode.Videos
                 id,
                 playerResponse.GetVideoTitle(),
                 playerResponse.GetVideoAuthor(),
-                watchPage.GetVideoUploadDate(),
+                playerResponse.GetVideoUploadDate(),
                 playerResponse.GetVideoDescription(),
                 playerResponse.GetVideoDuration(),
                 Array.Empty<Thumbnail>(),

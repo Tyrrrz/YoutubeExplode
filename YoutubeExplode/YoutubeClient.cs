@@ -37,14 +37,20 @@ namespace YoutubeExplode
         /// <summary>
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
-        public YoutubeClient(HttpClient httpClient)
+        internal YoutubeClient(YoutubeHttpClient httpClient)
         {
-            var youtubeHttpClient = new YoutubeHttpClient(httpClient);
+            Videos = new VideoClient(httpClient);
+            Playlists = new PlaylistClient(httpClient);
+            Channels = new ChannelClient(httpClient);
+            Search = new SearchClient(httpClient);
+        }
 
-            Videos = new VideoClient(youtubeHttpClient);
-            Playlists = new PlaylistClient(youtubeHttpClient);
-            Channels = new ChannelClient(youtubeHttpClient);
-            Search = new SearchClient(youtubeHttpClient);
+        /// <summary>
+        /// Initializes an instance of <see cref="YoutubeClient"/>.
+        /// </summary>
+        public YoutubeClient(HttpClient httpClient)
+            : this(new YoutubeHttpClient(httpClient))
+        {
         }
 
         /// <summary>

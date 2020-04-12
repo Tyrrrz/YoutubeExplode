@@ -18,16 +18,16 @@ namespace YoutubeExplode.Exceptions
 
     public partial class FatalFailureException
     {
-        internal static FatalFailureException FailedHttpRequest(HttpRequestMessage req, HttpResponseMessage res)
+        internal static FatalFailureException FailedHttpRequest(HttpResponseMessage response)
         {
             var message = $@"
 Failed to perform an HTTP request to YouTube due to a fatal failure.
 In most cases, this error indicates that YouTube most likely changed something, which broke the library.
 If this issue persists, please report it on the project's GitHub page.
 
-Request: {req}
+Request: {response.RequestMessage}
 
-Response: {res}";
+Response: {response}";
 
             return new FatalFailureException(message.Trim());
         }

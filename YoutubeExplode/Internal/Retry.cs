@@ -6,12 +6,18 @@ namespace YoutubeExplode.Internal
 {
     internal static class Retry
     {
+        private static int GetRetryCost(this Exception ex) => ex switch
+        {
+            TransientFailureException _ => 1,
+            RequestLimitExceededException _ => 2,
+            FatalFailureException _ => 3,
+            _ => 100
+        };
+
         public static async Task<T> WrapAsync<T>(Func<Task<T>> executeAsync)
         {
-            const int maxRetryCount = 5;
-            var retryDelay = TimeSpan.FromSeconds(0.5);
-
-            var currentRetry = 0;
+            // Most exceptions are retried, but some are retried more than others
+            var retryResourceRemaining = 5;
 
             while (true)
             {
@@ -19,12 +25,12 @@ namespace YoutubeExplode.Internal
                 {
                     return await executeAsync();
                 }
-                catch (Exception ex) when (ex is TransientFailureException || ex is RequestLimitExceededException)
+                catch (Exception ex)
                 {
-                    if (++currentRetry > maxRetryCount)
+                    if ((retryResourceRemaining -= ex.GetRetryCost()) < 0)
                         throw;
 
-                    await Task.Delay(retryDelay);
+                    await Task.Delay(TimeSpan.FromSeconds(0.5));
                 }
             }
         }

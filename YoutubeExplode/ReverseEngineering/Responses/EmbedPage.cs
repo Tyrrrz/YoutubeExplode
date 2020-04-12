@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -46,7 +45,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static EmbedPage Parse(string raw) => new EmbedPage(Html.Parse(raw));
 
-        public static async Task<EmbedPage> GetAsync(HttpClient httpClient, string videoId) =>
+        public static async Task<EmbedPage> GetAsync(YoutubeHttpClient httpClient, string videoId) =>
             await Retry.WrapAsync(async () =>
             {
                 var url = $"https://youtube.com/embed/{videoId}?hl=en";

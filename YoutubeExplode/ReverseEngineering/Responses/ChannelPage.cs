@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using YoutubeExplode.Exceptions;
@@ -37,7 +36,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static ChannelPage Parse(string raw) => new ChannelPage(Html.Parse(raw));
 
-        public static async Task<ChannelPage> GetAsync(HttpClient httpClient, string id) =>
+        public static async Task<ChannelPage> GetAsync(YoutubeHttpClient httpClient, string id) =>
             await Retry.WrapAsync(async () =>
             {
                 var url = $"https://www.youtube.com/channel/{id}?hl=en";
@@ -51,7 +50,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 return result;
             });
 
-        public static async Task<ChannelPage> GetByUserNameAsync(HttpClient httpClient, string userName) =>
+        public static async Task<ChannelPage> GetByUserNameAsync(YoutubeHttpClient httpClient, string userName) =>
             await Retry.WrapAsync(async () =>
             {
                 var url = $"https://www.youtube.com/user/{userName}?hl=en";

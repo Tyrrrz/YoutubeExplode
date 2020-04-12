@@ -40,6 +40,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetProperty("author")
             .GetString();
 
+        public DateTimeOffset GetVideoUploadDate() => _root
+            .GetProperty("microformat")
+            .GetProperty("playerMicroformatRenderer")
+            .GetProperty("uploadDate")
+            .GetDateTimeOffset();
+
         public string GetVideoChannelId() => _root
             .GetProperty("videoDetails")
             .GetProperty("channelId")

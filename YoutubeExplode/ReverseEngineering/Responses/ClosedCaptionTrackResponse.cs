@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using YoutubeExplode.Internal;
@@ -39,7 +38,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         public static ClosedCaptionTrackResponse Parse(string raw) => new ClosedCaptionTrackResponse(Xml.Parse(raw));
 
-        public static async Task<ClosedCaptionTrackResponse> GetAsync(HttpClient httpClient, string url) =>
+        public static async Task<ClosedCaptionTrackResponse> GetAsync(YoutubeHttpClient httpClient, string url) =>
             await Retry.WrapAsync(async () =>
             {
                 // Enforce known format

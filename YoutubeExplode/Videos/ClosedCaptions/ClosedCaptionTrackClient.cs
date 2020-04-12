@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
@@ -14,12 +14,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions
     /// </summary>
     public class ClosedCaptionTrackClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="ClosedCaptionTrackClient"/>.
         /// </summary>
-        public ClosedCaptionTrackClient(HttpClient httpClient)
+        internal ClosedCaptionTrackClient(YoutubeHttpClient httpClient)
         {
             _httpClient = httpClient;
         }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
@@ -19,12 +18,12 @@ namespace YoutubeExplode.Videos.Streams
     /// </summary>
     public partial class StreamsClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="StreamsClient"/>.
         /// </summary>
-        public StreamsClient(HttpClient httpClient)
+        internal StreamsClient(YoutubeHttpClient httpClient)
         {
             _httpClient = httpClient;
         }

@@ -18,7 +18,7 @@ namespace YoutubeExplode.Exceptions
 
     public partial class TransientFailureException
     {
-        internal static TransientFailureException FailedHttpRequest(HttpRequestMessage req, HttpResponseMessage res)
+        internal static TransientFailureException FailedHttpRequest(HttpResponseMessage response)
         {
             var message = $@"
 Failed to perform an HTTP request to YouTube due to a transient failure.
@@ -26,9 +26,9 @@ In most cases, this error indicates that the problem is on YouTube's side and th
 To resolve this error, please wait some time and try again.
 If this issue persists, please report it on the project's GitHub page.
 
-Request: {req}
+Request: {response.RequestMessage}
 
-Response: {res}";
+Response: {response}";
 
             return new TransientFailureException(message.Trim());
         }

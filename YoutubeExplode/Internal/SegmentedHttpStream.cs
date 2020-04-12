@@ -1,22 +1,21 @@
 using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.ReverseEngineering;
 
 namespace YoutubeExplode.Internal
 {
     internal class SegmentedHttpStream : Stream
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
         private readonly string _url;
         private readonly long _segmentSize;
 
         private Stream? _currentStream;
         private long _position;
 
-        public SegmentedHttpStream(HttpClient httpClient, string url, long length, long segmentSize)
+        public SegmentedHttpStream(YoutubeHttpClient httpClient, string url, long length, long segmentSize)
         {
             _url = url;
             _httpClient = httpClient;
@@ -118,11 +117,5 @@ namespace YoutubeExplode.Internal
             if (disposing)
                 ClearCurrentStream();
         }
-    }
-
-    internal static class SegmentedHttpStreamExtensions
-    {
-        public static SegmentedHttpStream CreateSegmentedStream(this HttpClient httpClient, string url, long length, long segmentSize) =>
-            new SegmentedHttpStream(httpClient, url, length, segmentSize);
     }
 }

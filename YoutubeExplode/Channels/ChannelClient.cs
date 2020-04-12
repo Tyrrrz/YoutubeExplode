@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.Playlists;
+using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos;
 
@@ -13,12 +13,12 @@ namespace YoutubeExplode.Channels
     /// </summary>
     public class ChannelClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="ChannelClient"/>.
         /// </summary>
-        public ChannelClient(HttpClient httpClient)
+        internal ChannelClient(YoutubeHttpClient httpClient)
         {
             _httpClient = httpClient;
         }
