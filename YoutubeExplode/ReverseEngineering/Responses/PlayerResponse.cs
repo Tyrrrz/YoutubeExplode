@@ -85,6 +85,11 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("dashManifestUrl")?
             .GetString();
 
+        public string? TryGetHlsManifestUrl() =>_root
+            .GetPropertyOrNull("streamingData")?
+            .GetPropertyOrNull("hslManifestUrl")?
+            .GetString();
+
         public IEnumerable<StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
             _root
                 .GetPropertyOrNull("streamingData")?

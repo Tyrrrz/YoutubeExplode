@@ -31,10 +31,15 @@ namespace YoutubeExplode.Exceptions
             "Please report this issue on GitHub in that case."
         );
 
-        internal static VideoUnavailableException Livestream(string videoId) => new VideoUnavailableException(
+        internal static VideoUnavailableException LiveStream(string videoId) => new VideoUnavailableException(
             $"Video '{videoId}' is an ongoing live stream. " +
             "We can't get streaming data for this video. " +
             "Please wait until the live stream finishes and try again."
+        );
+
+        internal static VideoUnavailableException NotLiveStream(string videoId) => new VideoUnavailableException(
+            $"Video '{videoId}' is not an ongoing live stream. " +
+            "We can't get live streaming data for this video."
         );
     }
 }

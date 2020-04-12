@@ -23,9 +23,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         }
 
         private bool IsOk() => _root
-            .Body
-            .Children
-            .Any(e => !string.Equals(e.TagName, "script", StringComparison.OrdinalIgnoreCase));
+            .QuerySelector("#player") != null;
 
         public DateTimeOffset GetVideoUploadDate() => _root
             .QuerySelectorOrThrow("meta[itemprop=\"datePublished\"]")

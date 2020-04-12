@@ -60,7 +60,7 @@ namespace YoutubeExplode.Videos.Streams
                 throw VideoUnavailableException.Unplayable(videoId);
 
             if (playerResponse.IsLive())
-                throw VideoUnavailableException.Livestream(videoId);
+                throw VideoUnavailableException.LiveStream(videoId);
 
             var streamInfoProviders = new List<IStreamInfoProvider>();
 
@@ -96,7 +96,7 @@ namespace YoutubeExplode.Videos.Streams
                 throw VideoUnavailableException.Unplayable(videoId);
 
             if (playerResponse.IsLive())
-                throw VideoUnavailableException.Livestream(videoId);
+                throw VideoUnavailableException.LiveStream(videoId);
 
             var streamInfoProviders = new List<IStreamInfoProvider>();
 
@@ -223,6 +223,21 @@ namespace YoutubeExplode.Videos.Streams
             }
 
             return new StreamManifest(streams.Values.ToArray());
+        }
+
+        /// <summary>
+        /// Gets the HTTP Live Stream (HLS) URL for the specified video (if it's a live video stream).
+        /// </summary>
+        public async Task<string> GetHttpLiveStreamUrlAsync(VideoId videoId)
+        {
+            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
+            var playerResponse = videoInfoResponse.GetPlayerResponse();
+
+            if (!playerResponse.IsVideoPlayable())
+                throw VideoUnavailableException.Unplayable(videoId);
+
+            return playerResponse.TryGetHlsManifestUrl() ??
+                   throw VideoUnavailableException.NotLiveStream(videoId);
         }
 
         /// <summary>
