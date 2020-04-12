@@ -185,7 +185,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
                 // Get data
                 var streamManifest = await _youtube.Videos.Streams.GetManifestAsync(videoId);
-                var trackManifest = await _youtube.Videos.ClosedCaptionTracks.GetManifestAsync(videoId);
+                var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
 
                 Video = await _youtube.Videos.GetAsync(videoId);
                 Channel = await _youtube.Channels.GetByVideoAsync(videoId);
@@ -252,7 +252,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 var progressHandler = new Progress<double>(p => Progress = p);
 
                 // Download to file
-                await _youtube.Videos.ClosedCaptionTracks.DownloadAsync(trackInfo, filePath, progressHandler);
+                await _youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath, progressHandler);
             }
             finally
             {

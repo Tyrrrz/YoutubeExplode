@@ -12,14 +12,14 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         /// <summary>
         /// Closed captions.
         /// </summary>
-        public IReadOnlyList<ClosedCaption> ClosedCaptions { get; }
+        public IReadOnlyList<ClosedCaption> Captions { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="ClosedCaptionTrack"/>.
         /// </summary>
-        public ClosedCaptionTrack(IReadOnlyList<ClosedCaption> closedCaptions)
+        public ClosedCaptionTrack(IReadOnlyList<ClosedCaption> captions)
         {
-            ClosedCaptions = closedCaptions;
+            Captions = captions;
         }
 
         /// <summary>
@@ -27,6 +27,6 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         /// Returns null if not found.
         /// </summary>
         public ClosedCaption? TryGetByTime(TimeSpan time) =>
-            ClosedCaptions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
+            Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
     }
 }

@@ -7,7 +7,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
     /// <summary>
     /// Manifest that contains information about available closed caption tracks in a specific video.
     /// </summary>
-    public class ClosedCaptionTrackManifest
+    public class ClosedCaptionManifest
     {
         /// <summary>
         /// Available closed caption tracks.
@@ -15,9 +15,9 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public IReadOnlyList<ClosedCaptionTrackInfo> Tracks { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="ClosedCaptionTrackManifest"/>.
+        /// Initializes an instance of <see cref="ClosedCaptionManifest"/>.
         /// </summary>
-        public ClosedCaptionTrackManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
+        public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
         {
             Tracks = tracks;
         }

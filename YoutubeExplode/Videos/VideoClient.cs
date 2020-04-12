@@ -23,7 +23,7 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Queries related to closed captions of YouTube videos.
         /// </summary>
-        public ClosedCaptionTrackClient ClosedCaptionTracks { get; }
+        public ClosedCaptionClient ClosedCaptions { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="VideoClient"/>.
@@ -33,7 +33,7 @@ namespace YoutubeExplode.Videos
             _httpClient = httpClient;
 
             Streams = new StreamsClient(httpClient);
-            ClosedCaptionTracks = new ClosedCaptionTrackClient(httpClient);
+            ClosedCaptions = new ClosedCaptionClient(httpClient);
         }
 
         /// <summary>

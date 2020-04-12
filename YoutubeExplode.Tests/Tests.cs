@@ -112,7 +112,7 @@ namespace YoutubeExplode.Tests
         {
             var youtube = new YoutubeClient();
 
-            var trackManifest = await youtube.Videos.ClosedCaptionTracks.GetManifestAsync(videoId);
+            var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
 
             Assert.That(trackManifest, Is.Not.Null);
         }
@@ -123,7 +123,7 @@ namespace YoutubeExplode.Tests
         {
             var youtube = new YoutubeClient();
 
-            Assert.CatchAsync<VideoUnavailableException>(() => youtube.Videos.ClosedCaptionTracks.GetManifestAsync(videoId));
+            Assert.CatchAsync<VideoUnavailableException>(() => youtube.Videos.ClosedCaptions.GetManifestAsync(videoId));
         }
 
         [Test]
@@ -171,13 +171,13 @@ namespace YoutubeExplode.Tests
         {
             var youtube = new YoutubeClient();
 
-            var manifest = await youtube.Videos.ClosedCaptionTracks.GetManifestAsync(videoId);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
 
             Assert.That(manifest.Tracks, Is.Not.Empty);
 
             foreach (var trackInfo in manifest.Tracks)
             {
-                var track = await youtube.Videos.ClosedCaptionTracks.GetAsync(trackInfo);
+                var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
                 Assert.That(track, Is.Not.Null);
             }
@@ -189,11 +189,11 @@ namespace YoutubeExplode.Tests
         {
             var youtube = new YoutubeClient();
 
-            var manifest = await youtube.Videos.ClosedCaptionTracks.GetManifestAsync(videoId);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
 
             var outputFilePath = Path.Combine(_tempDirPath, Guid.NewGuid().ToString());
             Directory.CreateDirectory(_tempDirPath);
-            await youtube.Videos.ClosedCaptionTracks.DownloadAsync(manifest.Tracks.First(), outputFilePath);
+            await youtube.Videos.ClosedCaptions.DownloadAsync(manifest.Tracks.First(), outputFilePath);
 
             var fileInfo = new FileInfo(outputFilePath);
 
