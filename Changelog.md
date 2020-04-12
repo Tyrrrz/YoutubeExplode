@@ -1,3 +1,16 @@
+### v5.0 (12-Apr-2020)
+
+- **Reworked the entire library from the ground up.**
+- Video, playlist, channel IDs and usernames are now encapsulated in corresponding domain objects. This means that you no longer have to parse IDs manually -- e.g. if a method accepts a parameter of type `VideoId`, you can either specify an ID (`bnsUkE8i0tU`) or a URL (`https://youtube.com/watch?v=bnsUkE8i0tU`).
+- Playlist videos and search results are now returned as `IAsyncEnumerable` so you can enumerate through them without worrying about making too many or too few requests. If you want to buffer them in-memory, you can use an extension method called `BufferAsync()`.
+- Improved exceptions, exception messages, and everything related to exceptions. Additionally, all exception types now derive from `YoutubeExplodeException`, making them easier to catch.
+- Added built-in retry mechanisms to work around transient errors on YouTube's side.
+- Improved resilience of the library in general.
+- Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
+- Fixed a metric ton of YouTube-related issues.
+- Many, many others improvements that I didn't think to mention.
+- Dropped .NET Framework v4.5 target in favor of v4.6.1 and .NET Standard v1.1 target in favor of v2.0.
+
 ### v4.7.16 (16-Mar-2020)
 
 - Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
