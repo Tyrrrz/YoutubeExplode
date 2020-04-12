@@ -15,12 +15,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly IReadOnlyDictionary<string, string> _root;
 
-        public VideoInfoResponse(IReadOnlyDictionary<string, string> root)
-        {
-            _root = root;
-        }
+        public VideoInfoResponse(IReadOnlyDictionary<string, string> root) => _root = root;
 
-        public string GetStatus() => _root["status"];
+        private string GetStatus() => _root["status"];
 
         public bool IsVideoAvailable() =>
             !string.Equals(GetStatus(), "fail", StringComparison.OrdinalIgnoreCase);
@@ -28,7 +25,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public PlayerResponse GetPlayerResponse() => _root["player_response"]
             .Pipe(PlayerResponse.Parse);
 
-        public IEnumerable<StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
+        private IEnumerable<StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
             _root
                 .GetValueOrDefault("url_encoded_fmt_stream_map")?
                 .Split(",")
@@ -36,7 +33,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Select(d => new StreamInfo(d))
         );
 
-        public IEnumerable<StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
+        private IEnumerable<StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
             _root
                 .GetValueOrDefault("adaptive_fmts")?
                 .Split(",")
@@ -53,10 +50,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly IReadOnlyDictionary<string, string> _root;
 
-            public StreamInfo(IReadOnlyDictionary<string, string> root)
-            {
-                _root = root;
-            }
+            public StreamInfo(IReadOnlyDictionary<string, string> root) => _root = root;
 
             public int GetTag() => _root["itag"].ParseInt();
 
@@ -137,7 +131,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var result = Parse(raw);
 
                 if (!result.IsVideoAvailable() || !result.GetPlayerResponse().IsVideoAvailable())
-                    throw VideoUnavailableException.Unavailable(videoId);
+                    throw VideoUnavailableException.Generic(videoId);
 
                 return result;
             });

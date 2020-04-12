@@ -21,25 +21,27 @@ namespace YoutubeExplode.Exceptions
         internal static TransientFailureException FailedHttpRequest(HttpRequestMessage req, HttpResponseMessage res)
         {
             var message = $@"
-Failed to perform an HTTP request to YouTube.
-The response indicates that this is most likely an error on YouTube's side and is not a bug in the library.
+Failed to perform an HTTP request to YouTube due to a transient failure.
+In most cases, this error indicates that the problem is on YouTube's side and this is not a bug in the library.
+To resolve this error, please wait some time and try again.
 If this issue persists, please report it on the project's GitHub page.
 
 Request: {req}
 
-Response: {res}".Trim();
+Response: {res}";
 
-            return new TransientFailureException(message);
+            return new TransientFailureException(message.Trim());
         }
 
-        internal static TransientFailureException Generic(string unmetExpectations)
+        internal static TransientFailureException Generic(string? reason = null)
         {
             var message = $@"
-{unmetExpectations}
-This error is most likely caused by a transient failure on YouTube's side and is not a bug in the library.
-If this issue persists, please report it on the project's GitHub page.".Trim();
+{reason}
+In most cases, this error indicates that the problem is on YouTube's side and this is not a bug in the library.
+To resolve this error, please wait some time and try again.
+If this issue persists, please report it on the project's GitHub page.";
 
-            return new TransientFailureException(message);
+            return new TransientFailureException(message.Trim());
         }
     }
 }

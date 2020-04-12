@@ -17,13 +17,10 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly IHtmlDocument _root;
 
-        public WatchPage(IHtmlDocument root)
-        {
-            _root = root;
-        }
+        public WatchPage(IHtmlDocument root) => _root = root;
 
         private bool IsOk() => _root
-            .QuerySelector("#player") != null;
+                                   .QuerySelector("#player") != null;
 
         public DateTimeOffset GetVideoUploadDate() => _root
             .QuerySelectorOrThrow("meta[itemprop=\"datePublished\"]")
@@ -64,10 +61,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly JsonElement _root;
 
-            public PlayerConfig(JsonElement root)
-            {
-                _root = root;
-            }
+            public PlayerConfig(JsonElement root) => _root = root;
 
             public string GetPlayerSourceUrl() => _root
                 .GetProperty("assets")
@@ -81,7 +75,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetString()
                 .Pipe(PlayerResponse.Parse);
 
-            public IEnumerable<VideoInfoResponse.StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
+            private IEnumerable<VideoInfoResponse.StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
                 _root
                     .GetProperty("args")
                     .GetPropertyOrNull("url_encoded_fmt_stream_map")?
@@ -91,7 +85,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                     .Select(d => new VideoInfoResponse.StreamInfo(d))
             );
 
-            public IEnumerable<VideoInfoResponse.StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
+            private IEnumerable<VideoInfoResponse.StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
                 _root
                     .GetProperty("args")
                     .GetPropertyOrNull("adaptive_fmts")?

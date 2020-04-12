@@ -12,10 +12,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly XElement _root;
 
-        public ClosedCaptionTrackResponse(XElement root)
-        {
-            _root = root;
-        }
+        public ClosedCaptionTrackResponse(XElement root) => _root = root;
 
         public IEnumerable<ClosedCaption> GetClosedCaptions() => _root
             .Descendants("p")
@@ -28,10 +25,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly XElement _root;
 
-            public ClosedCaption(XElement root)
-            {
-                _root = root;
-            }
+            public ClosedCaption(XElement root) => _root = root;
 
             public string GetText() => (string) _root;
 

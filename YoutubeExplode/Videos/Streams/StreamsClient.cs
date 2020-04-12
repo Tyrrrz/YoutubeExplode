@@ -48,7 +48,7 @@ namespace YoutubeExplode.Videos.Streams
         {
             var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
             var playerConfig = embedPage.TryGetPlayerConfig() ??
-                               throw VideoUnavailableException.Unavailable(videoId);
+                               throw VideoUnplayableException.Generic(videoId);
 
             var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
@@ -56,11 +56,15 @@ namespace YoutubeExplode.Videos.Streams
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId, playerSource.GetSts());
             var playerResponse = videoInfoResponse.GetPlayerResponse();
 
+            var previewVideoId = playerResponse.TryGetPreviewVideoId();
+            if (!string.IsNullOrWhiteSpace(previewVideoId))
+                throw VideoRequiresPurchaseException.WithPreview(videoId, previewVideoId);
+
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnavailableException.Unplayable(videoId);
+                throw VideoUnplayableException.Generic(videoId, playerResponse.TryGetVideoPlayabilityError());
 
             if (playerResponse.IsLive())
-                throw VideoUnavailableException.LiveStream(videoId);
+                throw VideoUnplayableException.LiveStream(videoId);
 
             var streamInfoProviders = new List<IStreamInfoProvider>();
 
@@ -85,18 +89,22 @@ namespace YoutubeExplode.Videos.Streams
         {
             var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
             var playerConfig = watchPage.TryGetPlayerConfig() ??
-                               throw VideoUnavailableException.Unavailable(videoId);
+                               throw VideoUnplayableException.Generic(videoId);
 
             var playerResponse = playerConfig.GetPlayerResponse();
+
+            var previewVideoId = playerResponse.TryGetPreviewVideoId();
+            if (!string.IsNullOrWhiteSpace(previewVideoId))
+                throw VideoRequiresPurchaseException.WithPreview(videoId, previewVideoId);
 
             var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
 
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnavailableException.Unplayable(videoId);
+                throw VideoUnplayableException.Generic(videoId, playerResponse.TryGetVideoPlayabilityError());
 
             if (playerResponse.IsLive())
-                throw VideoUnavailableException.LiveStream(videoId);
+                throw VideoUnplayableException.LiveStream(videoId);
 
             var streamInfoProviders = new List<IStreamInfoProvider>();
 
@@ -119,6 +127,7 @@ namespace YoutubeExplode.Videos.Streams
 
         private async Task<StreamManifest> GetManifestAsync(StreamContext streamContext)
         {
+            // To make sure there are no duplicates streams, group them by tag
             var streams = new Dictionary<int, IStreamInfo>();
 
             foreach (var streamInfo in streamContext.StreamInfoProviders)
@@ -226,21 +235,6 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Gets the HTTP Live Stream (HLS) URL for the specified video (if it's a live video stream).
-        /// </summary>
-        public async Task<string> GetHttpLiveStreamUrlAsync(VideoId videoId)
-        {
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
-            var playerResponse = videoInfoResponse.GetPlayerResponse();
-
-            if (!playerResponse.IsVideoPlayable())
-                throw VideoUnavailableException.Unplayable(videoId);
-
-            return playerResponse.TryGetHlsManifestUrl() ??
-                   throw VideoUnavailableException.NotLiveStream(videoId);
-        }
-
-        /// <summary>
         /// Gets the manifest that contains information about available streams in the specified video.
         /// </summary>
         public async Task<StreamManifest> GetManifestAsync(VideoId videoId)
@@ -258,6 +252,21 @@ namespace YoutubeExplode.Videos.Streams
                 var streamInfoSource = await GetStreamContextFromWatchPageAsync(videoId);
                 return await GetManifestAsync(streamInfoSource);
             }
+        }
+
+        /// <summary>
+        /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it's a live video stream).
+        /// </summary>
+        public async Task<string> GetHttpLiveStreamUrlAsync(VideoId videoId)
+        {
+            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
+            var playerResponse = videoInfoResponse.GetPlayerResponse();
+
+            if (!playerResponse.IsVideoPlayable())
+                throw VideoUnplayableException.Generic(videoId, playerResponse.TryGetVideoPlayabilityError());
+
+            return playerResponse.TryGetHlsManifestUrl() ??
+                   throw VideoUnplayableException.NotLiveStream(videoId);
         }
 
         /// <summary>

@@ -94,8 +94,7 @@ namespace YoutubeExplode.Tests
         {
             var youtube = new YoutubeClient();
 
-            Assert.Inconclusive("TODO");
-            //Assert.CatchAsync<VideoUnplayableException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            Assert.CatchAsync<VideoUnplayableException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
         }
 
         [Test]
@@ -104,8 +103,7 @@ namespace YoutubeExplode.Tests
         {
             var youtube = new YoutubeClient();
 
-            Assert.Inconclusive("TODO");
-            //Assert.CatchAsync<VideoRequiresPurchaseException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            Assert.CatchAsync<VideoRequiresPurchaseException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
         }
 
         [Test]

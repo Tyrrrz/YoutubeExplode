@@ -14,10 +14,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly IHtmlDocument _root;
 
-        public EmbedPage(IHtmlDocument root)
-        {
-            _root = root;
-        }
+        public EmbedPage(IHtmlDocument root) => _root = root;
 
         public PlayerConfig? TryGetPlayerConfig() => _root
             .GetElementsByTagName("script")
@@ -35,10 +32,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly JsonElement _root;
 
-            public PlayerConfig(JsonElement root)
-            {
-                _root = root;
-            }
+            public PlayerConfig(JsonElement root) => _root = root;
 
             public string GetPlayerSourceUrl() => _root
                 .GetProperty("assets")

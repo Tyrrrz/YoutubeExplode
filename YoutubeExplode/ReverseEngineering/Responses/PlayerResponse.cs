@@ -12,19 +12,16 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly JsonElement _root;
 
-        public PlayerResponse(JsonElement root)
-        {
-            _root = root;
-        }
+        public PlayerResponse(JsonElement root) => _root = root;
 
         public string GetVideoPlayabilityStatus() => _root
             .GetProperty("playabilityStatus")
             .GetProperty("status")
             .GetString();
 
-        public string GetVideoPlayabilityError() => _root
-            .GetProperty("playabilityStatus")
-            .GetProperty("reason")
+        public string? TryGetVideoPlayabilityError() => _root
+            .GetPropertyOrNull("playabilityStatus")?
+            .GetPropertyOrNull("reason")?
             .GetString();
 
         public bool IsVideoAvailable() =>
@@ -75,6 +72,22 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetString()
             .ParseLong();
 
+        public string? TryGetPreviewVideoId() =>
+            _root
+                .GetPropertyOrNull("playabilityStatus")?
+                .GetPropertyOrNull("errorScreen")?
+                .GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")?
+                .GetPropertyOrNull("trailerVideoId")?
+                .GetString() ??
+            _root
+                .GetPropertyOrNull("playabilityStatus")?
+                .GetPropertyOrNull("errorScreen")?
+                .GetPropertyOrNull("ypcTrailerRenderer")?
+                .GetPropertyOrNull("playerVars")?
+                .GetString()
+                .Pipe(Url.SplitQuery)
+                .GetValueOrDefault("video_id");
+
         public bool IsLive() => _root
             .GetProperty("videoDetails")
             .GetPropertyOrNull("isLive")?
@@ -90,7 +103,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("hlsManifestUrl")?
             .GetString();
 
-        public IEnumerable<StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
+        private IEnumerable<StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
             _root
                 .GetPropertyOrNull("streamingData")?
                 .GetPropertyOrNull("formats")?
@@ -98,7 +111,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Select(j => new StreamInfo(j))
         );
 
-        public IEnumerable<StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
+        private IEnumerable<StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
             _root
                 .GetPropertyOrNull("streamingData")?
                 .GetPropertyOrNull("adaptiveFormats")?
@@ -124,10 +137,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly JsonElement _root;
 
-            public StreamInfo(JsonElement root)
-            {
-                _root = root;
-            }
+            public StreamInfo(JsonElement root) => _root = root;
 
             public int GetTag() => _root
                 .GetProperty("itag")
@@ -214,10 +224,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly JsonElement _root;
 
-            public ClosedCaptionTrack(JsonElement root)
-            {
-                _root = root;
-            }
+            public ClosedCaptionTrack(JsonElement root) => _root = root;
 
             public string GetUrl() => _root
                 .GetProperty("baseUrl")

@@ -12,10 +12,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly IHtmlDocument _root;
 
-        public ChannelPage(IHtmlDocument root)
-        {
-            _root = root;
-        }
+        public ChannelPage(IHtmlDocument root) => _root = root;
 
         private bool IsOk() => _root
             .QuerySelector("meta[property=\"og:url\"]") != null;

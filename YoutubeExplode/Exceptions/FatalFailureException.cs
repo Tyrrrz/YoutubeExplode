@@ -21,25 +21,25 @@ namespace YoutubeExplode.Exceptions
         internal static FatalFailureException FailedHttpRequest(HttpRequestMessage req, HttpResponseMessage res)
         {
             var message = $@"
-Failed to perform an HTTP request to YouTube.
-The response indicates that YouTube most likely changed something which broke the library.
+Failed to perform an HTTP request to YouTube due to a fatal failure.
+In most cases, this error indicates that YouTube most likely changed something, which broke the library.
 If this issue persists, please report it on the project's GitHub page.
 
 Request: {req}
 
-Response: {res}".Trim();
+Response: {res}";
 
-            return new FatalFailureException(message);
+            return new FatalFailureException(message.Trim());
         }
 
-        internal static TransientFailureException Generic(string unmetExpectations)
+        internal static TransientFailureException Generic(string? reason = null)
         {
             var message = $@"
-{unmetExpectations}
-This error is most likely caused by a change on YouTube's side which broke the library.
-If this issue persists, please report it on the project's GitHub page.".Trim();
+{reason}
+In most cases, this error indicates that YouTube most likely changed something, which broke the library.
+If this issue persists, please report it on the project's GitHub page.";
 
-            return new TransientFailureException(message);
+            return new TransientFailureException(message.Trim());
         }
     }
 }

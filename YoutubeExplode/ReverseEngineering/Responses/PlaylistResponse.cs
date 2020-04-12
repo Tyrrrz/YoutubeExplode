@@ -15,10 +15,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly JsonElement _root;
 
-        public PlaylistResponse(JsonElement root)
-        {
-            _root = root;
-        }
+        public PlaylistResponse(JsonElement root) => _root = root;
 
         public string GetTitle() => _root
             .GetProperty("title")
@@ -56,10 +53,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly JsonElement _root;
 
-            public Video(JsonElement root)
-            {
-                _root = root;
-            }
+            public Video(JsonElement root) => _root = root;
 
             public string GetId() => _root
                 .GetProperty("encrypted_id")

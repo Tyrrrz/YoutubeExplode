@@ -14,10 +14,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
     {
         private readonly XElement _root;
 
-        public DashManifest(XElement root)
-        {
-            _root = root;
-        }
+        public DashManifest(XElement root) => _root = root;
 
         public IEnumerable<StreamInfo> GetStreams() => _root
             .Descendants("Representation")
@@ -36,10 +33,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         {
             private readonly XElement _root;
 
-            public StreamInfo(XElement root)
-            {
-                _root = root;
-            }
+            public StreamInfo(XElement root) => _root = root;
 
             public int GetTag() => (int) _root.Attribute("id");
 

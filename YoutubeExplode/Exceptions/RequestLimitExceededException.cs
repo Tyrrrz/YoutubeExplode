@@ -28,9 +28,9 @@ Unfortunately, there's nothing the library can do to work around this error.
 
 Request: {req}
 
-Response: {res}".Trim();
+Response: {res}";
 
-            return new RequestLimitExceededException(message);
+            return new RequestLimitExceededException(message.Trim());
         }
     }
 }
