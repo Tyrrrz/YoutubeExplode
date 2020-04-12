@@ -21,7 +21,7 @@ namespace YoutubeExplode.Exceptions
 
     public partial class VideoRequiresPurchaseException
     {
-        internal static VideoRequiresPurchaseException WithPreview(VideoId videoId, VideoId previewVideoId)
+        internal static VideoRequiresPurchaseException Preview(VideoId videoId, VideoId previewVideoId)
         {
             var message = $@"
 Video '{videoId}' is unplayable because it requires purchase.

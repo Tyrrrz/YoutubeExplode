@@ -18,7 +18,7 @@ namespace YoutubeExplode.Exceptions
 
     public partial class VideoUnavailableException
     {
-        internal static VideoUnavailableException Generic(VideoId videoId)
+        internal static VideoUnavailableException Unavailable(VideoId videoId)
         {
             var message = $@"
 Video '{videoId}' is unavailable.

@@ -131,7 +131,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var result = Parse(raw);
 
                 if (!result.IsVideoAvailable() || !result.GetPlayerResponse().IsVideoAvailable())
-                    throw VideoUnavailableException.Generic(videoId);
+                    throw VideoUnavailableException.Unavailable(videoId);
 
                 return result;
             });

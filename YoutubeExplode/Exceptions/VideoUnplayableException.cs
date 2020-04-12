@@ -18,7 +18,7 @@ namespace YoutubeExplode.Exceptions
 
     public partial class VideoUnplayableException
     {
-        internal static VideoUnplayableException Generic(VideoId videoId, string? reason = null)
+        internal static VideoUnplayableException Unplayable(VideoId videoId, string? reason = null)
         {
             var message = $@"
 Video '{videoId}' is unplayable.

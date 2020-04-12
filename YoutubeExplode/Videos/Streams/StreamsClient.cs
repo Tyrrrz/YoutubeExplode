@@ -48,7 +48,7 @@ namespace YoutubeExplode.Videos.Streams
         {
             var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
             var playerConfig = embedPage.TryGetPlayerConfig() ??
-                               throw VideoUnplayableException.Generic(videoId);
+                               throw VideoUnplayableException.Unplayable(videoId);
 
             var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
@@ -58,10 +58,10 @@ namespace YoutubeExplode.Videos.Streams
 
             var previewVideoId = playerResponse.TryGetPreviewVideoId();
             if (!string.IsNullOrWhiteSpace(previewVideoId))
-                throw VideoRequiresPurchaseException.WithPreview(videoId, previewVideoId);
+                throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
 
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Generic(videoId, playerResponse.TryGetVideoPlayabilityError());
+                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
 
             if (playerResponse.IsLive())
                 throw VideoUnplayableException.LiveStream(videoId);
@@ -89,19 +89,19 @@ namespace YoutubeExplode.Videos.Streams
         {
             var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
             var playerConfig = watchPage.TryGetPlayerConfig() ??
-                               throw VideoUnplayableException.Generic(videoId);
+                               throw VideoUnplayableException.Unplayable(videoId);
 
             var playerResponse = playerConfig.GetPlayerResponse();
 
             var previewVideoId = playerResponse.TryGetPreviewVideoId();
             if (!string.IsNullOrWhiteSpace(previewVideoId))
-                throw VideoRequiresPurchaseException.WithPreview(videoId, previewVideoId);
+                throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
 
             var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
 
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Generic(videoId, playerResponse.TryGetVideoPlayabilityError());
+                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
 
             if (playerResponse.IsLive())
                 throw VideoUnplayableException.LiveStream(videoId);
@@ -263,7 +263,7 @@ namespace YoutubeExplode.Videos.Streams
             var playerResponse = videoInfoResponse.GetPlayerResponse();
 
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Generic(videoId, playerResponse.TryGetVideoPlayabilityError());
+                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
 
             return playerResponse.TryGetHlsManifestUrl() ??
                    throw VideoUnplayableException.NotLiveStream(videoId);

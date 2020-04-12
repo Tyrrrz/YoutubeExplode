@@ -20,7 +20,11 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public WatchPage(IHtmlDocument root) => _root = root;
 
         private bool IsOk() => _root
-                                   .QuerySelector("#player") != null;
+            .Body
+            .QuerySelector("#player") != null;
+
+        public bool IsVideoAvailable() => _root
+            .QuerySelector("meta[property=\"og:url\"]") != null;
 
         public DateTimeOffset GetVideoUploadDate() => _root
             .QuerySelectorOrThrow("meta[itemprop=\"datePublished\"]")
@@ -113,6 +117,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
                 if (!result.IsOk())
                     throw TransientFailureException.Generic("Video watch page is broken.");
+
+                if (!result.IsVideoAvailable())
+                    throw VideoUnavailableException.Unavailable(videoId);
 
                 return result;
             });

@@ -14,7 +14,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public PlayerResponse(JsonElement root) => _root = root;
 
-        public string GetVideoPlayabilityStatus() => _root
+        private string GetVideoPlayabilityStatus() => _root
             .GetProperty("playabilityStatus")
             .GetProperty("status")
             .GetString();
