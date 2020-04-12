@@ -41,10 +41,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("dislikes")?
             .GetInt64();
 
-        public IEnumerable<Video> GetVideos() => _root
-            .GetProperty("video")
-            .EnumerateArray()
-            .Select(j => new Video(j));
+        public IEnumerable<Video> GetVideos() => Fallback.ToEmpty(
+            _root
+                .GetPropertyOrNull("video")?
+                .EnumerateArray()
+                .Select(j => new Video(j))
+        );
     }
 
     internal partial class PlaylistResponse
