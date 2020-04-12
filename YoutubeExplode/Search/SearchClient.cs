@@ -38,7 +38,7 @@ namespace YoutubeExplode.Search
                 {
                     var videoId = video.GetId();
 
-                    // Yield the video if it's distinct
+                    // Skip already encountered videos
                     if (!encounteredVideoIds.Add(videoId))
                         continue;
 
@@ -55,7 +55,8 @@ namespace YoutubeExplode.Search
                             video.GetViewCount(),
                             video.GetLikeCount(),
                             video.GetDislikeCount()
-                        ));
+                        )
+                    );
 
                     countDelta++;
                 }

@@ -60,7 +60,7 @@ namespace YoutubeExplode.Playlists
                 {
                     var videoId = video.GetId();
 
-                    // Yield the video if it's distinct
+                    // Skip already encountered videos
                     if (!encounteredVideoIds.Add(videoId))
                         continue;
 
@@ -77,7 +77,8 @@ namespace YoutubeExplode.Playlists
                             video.GetViewCount(),
                             video.GetLikeCount(),
                             video.GetDislikeCount()
-                        ));
+                        )
+                    );
 
                     countDelta++;
                 }

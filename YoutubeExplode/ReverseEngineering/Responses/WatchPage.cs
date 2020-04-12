@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
 
@@ -22,7 +23,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         }
 
         private bool IsOk() => _root
-            .QuerySelector("meta[itemprop=\"datePublished\"]") != null;
+            .Body
+            .Children
+            .Any(e => !string.Equals(e.TagName, "script", StringComparison.OrdinalIgnoreCase));
 
         public DateTimeOffset GetVideoUploadDate() => _root
             .QuerySelectorOrThrow("meta[itemprop=\"datePublished\"]")
@@ -116,9 +119,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
                 var result = Parse(raw);
 
-                // TODO: remove this before merging
                 if (!result.IsOk())
-                    Console.WriteLine($"Video watch page is broken. Dump: {raw}");
+                    throw TransientFailureException.Generic("Video watch page is broken.");
 
                 return result;
             });

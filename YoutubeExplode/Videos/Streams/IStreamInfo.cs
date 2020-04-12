@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Videos.Streams
 {
@@ -40,6 +41,9 @@ namespace YoutubeExplode.Videos.Streams
     /// </summary>
     public static class StreamInfoExtensions
     {
+        internal static bool IsRateLimited(this IStreamInfo streamInfo) =>
+            !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes");
+
         /// <summary>
         /// Gets the stream with highest bitrate.
         /// Returns null if sequence is empty.

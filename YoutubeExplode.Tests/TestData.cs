@@ -75,6 +75,7 @@ namespace YoutubeExplode.Tests
             yield return new TestCaseData("5VGm0dczmHc"); // rating not allowed
             yield return new TestCaseData("ZGdLIwrGHG8"); // unlisted
             yield return new TestCaseData("rsAAeyAr-9Y"); // recording of a live stream
+            yield return new TestCaseData("AI7ULzgf8RU"); // has DASH manifest
 
             // Include nested
             foreach (var testCaseData in GetVideoIds_Valid_Available_Playable_WithClosedCaptions())

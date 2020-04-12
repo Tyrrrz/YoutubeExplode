@@ -80,6 +80,11 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("isLive")?
             .GetBoolean() ?? false;
 
+        public string? TryGetDashManifestUrl() => _root
+            .GetPropertyOrNull("streamingData")?
+            .GetPropertyOrNull("dashManifestUrl")?
+            .GetString();
+
         public IEnumerable<StreamInfo> GetMuxedStreams() => Fallback.ToEmpty(
             _root
                 .GetPropertyOrNull("streamingData")?

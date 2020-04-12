@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
@@ -30,6 +29,21 @@ namespace YoutubeExplode.Videos.Streams
             _httpClient = httpClient;
         }
 
+        private async Task<DashManifest> GetDashManifestAsync(
+            string dashManifestUrl,
+            IReadOnlyList<ICipherOperation> cipherOperations)
+        {
+            var signature = DashManifest.TryGetSignatureFromUrl(dashManifestUrl);
+
+            if (!string.IsNullOrWhiteSpace(signature))
+            {
+                signature = cipherOperations.Decipher(signature);
+                dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", signature);
+            }
+
+            return await DashManifest.GetAsync(_httpClient, dashManifestUrl);
+        }
+
         private async Task<StreamContext> GetSteamContextFromVideoInfoAsync(VideoId videoId)
         {
             var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
@@ -49,8 +63,20 @@ namespace YoutubeExplode.Videos.Streams
                 throw VideoUnavailableException.Livestream(videoId);
 
             var streamInfoProviders = new List<IStreamInfoProvider>();
+
+            // Streams from video info
             streamInfoProviders.AddRange(videoInfoResponse.GetStreams());
+
+            // Streams from player response
             streamInfoProviders.AddRange(playerResponse.GetStreams());
+
+            // Streams from DASH manifest
+            var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
+            if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+            {
+                var dashManifest = await GetDashManifestAsync(dashManifestUrl, cipherOperations);
+                streamInfoProviders.AddRange(dashManifest.GetStreams());
+            }
 
             return new StreamContext(streamInfoProviders, cipherOperations);
         }
@@ -73,8 +99,20 @@ namespace YoutubeExplode.Videos.Streams
                 throw VideoUnavailableException.Livestream(videoId);
 
             var streamInfoProviders = new List<IStreamInfoProvider>();
+
+            // Streams from player config
             streamInfoProviders.AddRange(playerConfig.GetStreams());
+
+            // Streams from player response
             streamInfoProviders.AddRange(playerResponse.GetStreams());
+
+            // Streams from DASH manifest
+            var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
+            if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+            {
+                var dashManifest = await GetDashManifestAsync(dashManifestUrl, cipherOperations);
+                streamInfoProviders.AddRange(dashManifest.GetStreams());
+            }
 
             return new StreamContext(streamInfoProviders, cipherOperations);
         }
@@ -218,7 +256,7 @@ namespace YoutubeExplode.Videos.Streams
             // so we'll be splitting the stream into small segments and retrieving them separately, to
             // work around rate limiting.
 
-            var segmentSize = !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes")
+            var segmentSize = streamInfo.IsRateLimited()
                 ? 9_898_989 // this number was carefully devised through research
                 : long.MaxValue; // don't use segmentation for non-rate-limited streams
 
