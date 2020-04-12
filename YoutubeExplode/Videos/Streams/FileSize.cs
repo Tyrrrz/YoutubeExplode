@@ -8,7 +8,7 @@ namespace YoutubeExplode.Videos.Streams
     /// Encapsulates file size.
     /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
-    public readonly partial struct FileSize : IComparable<FileSize>
+    public readonly struct FileSize : IComparable<FileSize>
     {
         /// <summary>
         /// Total bytes.
@@ -68,13 +68,5 @@ namespace YoutubeExplode.Videos.Streams
 
         /// <inheritdoc />
         public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
-    }
-
-    public partial struct FileSize
-    {
-        /// <summary>
-        /// Creates a file size from byte size.
-        /// </summary>
-        public static FileSize FromBytes(long bytes) => new FileSize(bytes);
     }
 }

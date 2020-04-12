@@ -31,11 +31,10 @@ namespace YoutubeExplode.DemoConsole
             }
 
             // Compose file name, based on metadata
-            var fileExtension = streamInfo.Container.GetFileExtension();
-            var fileName = $"{videoIdOrUrl}.{fileExtension}";
+            var fileName = $"{videoIdOrUrl}.{streamInfo.Container}";
 
             // Download video
-            Console.Write($"Downloading stream: {streamInfo.VideoQualityLabel} / {fileExtension}... ");
+            Console.Write($"Downloading stream: {streamInfo.VideoQualityLabel} / {streamInfo.Container}... ");
             using (var progress = new InlineProgress())
                 await youtube.Videos.Streams.DownloadAsync(streamInfo, fileName, progress);
 

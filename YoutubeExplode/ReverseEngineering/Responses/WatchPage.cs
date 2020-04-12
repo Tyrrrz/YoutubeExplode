@@ -99,6 +99,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                     .Select(Url.SplitQuery)
                     .Select(d => new VideoInfoResponse.StreamInfo(d))
             );
+
+            public IEnumerable<VideoInfoResponse.StreamInfo> GetStreams() => GetMuxedStreams().Concat(GetAdaptiveStreams());
         }
     }
 

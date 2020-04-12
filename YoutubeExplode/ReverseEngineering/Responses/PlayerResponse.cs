@@ -96,6 +96,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Select(j => new StreamInfo(j))
         );
 
+        public IEnumerable<StreamInfo> GetStreams() => GetMuxedStreams().Concat(GetAdaptiveStreams());
+
         public IEnumerable<ClosedCaptionTrack> GetClosedCaptionTracks() => Fallback.ToEmpty(
             _root
                 .GetPropertyOrNull("captions")?
@@ -108,7 +110,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class PlayerResponse
     {
-        public class StreamInfo
+        public class StreamInfo : IStreamInfoProvider
         {
             private readonly JsonElement _root;
 
@@ -156,50 +158,46 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetProperty("bitrate")
                 .GetDouble();
 
-            public string GetMimeType() => _root
+            private string GetMimeType() => _root
                 .GetProperty("mimeType")
                 .GetString();
-
-            public bool IsMuxed() => GetMimeType()
-                .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-                .Split(", ")
-                .Length >= 2;
-
-            public bool IsAudioOnly() => _root
-                .GetPropertyOrNull("audioSampleRate") != null;
 
             public string GetContainer() => GetMimeType()
                 .SubstringUntil(";")
                 .SubstringAfter("/");
 
-            public string GetAudioCodec() => GetMimeType()
-                .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-                .Split(", ")
-                .Last();
+            private bool IsAudioOnly() => GetMimeType()
+                .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 
-            public string GetVideoCodec() => GetMimeType()
+            private string GetCodecs() => GetMimeType()
                 .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-                .Split(", ")
-                .First();
+                .SubstringUntil("\"");
 
-            public string GetVideoQualityLabel() => _root
-                .GetProperty("qualityLabel")
+            public string? TryGetAudioCodec() =>
+                IsAudioOnly()
+                    ? GetCodecs()
+                    : GetCodecs().SubstringAfter(", ").NullIfWhiteSpace();
+
+            public string? TryGetVideoCodec() =>
+                IsAudioOnly()
+                    ? null
+                    : GetCodecs().SubstringUntil(", ").NullIfWhiteSpace();
+
+            public string? TryGetVideoQualityLabel() => _root
+                .GetPropertyOrNull("qualityLabel")?
                 .GetString();
 
-            public int GetVideoWidth() => _root
-                .GetProperty("width")
+            public int? TryGetVideoWidth() => _root
+                .GetPropertyOrNull("width")?
                 .GetInt32();
 
-            public int GetVideoHeight() => _root
-                .GetProperty("height")
+            public int? TryGetVideoHeight() => _root
+                .GetPropertyOrNull("height")?
                 .GetInt32();
 
-            public int GetFramerate() => _root
+            public int? TryGetFramerate() => _root
                 .GetPropertyOrNull("fps")?
-                .GetInt32() ?? 24;
+                .GetInt32();
         }
 
         public class ClosedCaptionTrack

@@ -6,7 +6,7 @@ namespace YoutubeExplode.Videos.Streams
     /// Encapsulates bitrate.
     /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
-    public readonly partial struct Bitrate : IComparable<Bitrate>
+    public readonly struct Bitrate : IComparable<Bitrate>
     {
         /// <summary>
         /// Bitrate as bytes per second.
@@ -27,13 +27,5 @@ namespace YoutubeExplode.Videos.Streams
             // TODO
             return base.ToString();
         }
-    }
-
-    public partial struct Bitrate
-    {
-        /// <summary>
-        /// Creates bitrate as bytes per second.
-        /// </summary>
-        public static Bitrate FromBytesPerSecond(double bytesPerSecond) => new Bitrate(bytesPerSecond);
     }
 }

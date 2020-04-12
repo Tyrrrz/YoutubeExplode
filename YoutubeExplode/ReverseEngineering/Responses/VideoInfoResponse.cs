@@ -43,11 +43,13 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Select(Url.SplitQuery)
                 .Select(d => new StreamInfo(d))
         );
+
+        public IEnumerable<StreamInfo> GetStreams() => GetMuxedStreams().Concat(GetAdaptiveStreams());
     }
 
     internal partial class VideoInfoResponse
     {
-        public class StreamInfo
+        public class StreamInfo : IStreamInfoProvider
         {
             private readonly IReadOnlyDictionary<string, string> _root;
 
@@ -76,44 +78,46 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             public double GetBitrate() => _root["bitrate"]
                 .ParseDouble();
 
-            public string GetMimeType() => _root["type"];
-
-            public bool IsMuxed() => GetMimeType()
-                .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-                .Split(", ")
-                .Length >= 2;
-
-            public bool IsAudioOnly() => GetMimeType()
-                .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
+            private string GetMimeType() => _root["type"];
 
             public string GetContainer() => GetMimeType()
                 .SubstringUntil(";")
                 .SubstringAfter("/");
 
-            public string GetAudioCodec() => GetMimeType()
+            private bool IsAudioOnly() => GetMimeType()
+                .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
+
+            private string GetCodecs() => GetMimeType()
                 .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-                .Split(", ")
-                .Last();
+                .SubstringUntil("\"");
 
-            public string GetVideoCodec() => GetMimeType()
-                .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-                .Split(", ")
-                .First();
+            public string? TryGetAudioCodec() =>
+                IsAudioOnly()
+                    ? GetCodecs()
+                    : GetCodecs().SubstringAfter(", ").NullIfWhiteSpace();
 
-            public string GetVideoQualityLabel() => _root["quality_label"];
+            public string? TryGetVideoCodec() =>
+                IsAudioOnly()
+                    ? null
+                    : GetCodecs().SubstringUntil(", ").NullIfWhiteSpace();
 
-            public int GetVideoWidth() => _root["size"]
+            public string? TryGetVideoQualityLabel() => _root
+                .GetValueOrDefault("quality_label");
+
+            public int? TryGetVideoWidth() => _root
+                .GetValueOrDefault("size")?
                 .SubstringUntil("x")
+                .NullIfWhiteSpace()?
                 .ParseInt();
 
-            public int GetVideoHeight() => _root["size"]
+            public int? TryGetVideoHeight() => _root
+                .GetValueOrDefault("size")?
                 .SubstringAfter("x")
+                .NullIfWhiteSpace()?
                 .ParseInt();
 
-            public int GetFramerate() => _root["fps"]
+            public int? TryGetFramerate() => _root
+                .GetValueOrDefault("fps")?
                 .ParseInt();
         }
     }

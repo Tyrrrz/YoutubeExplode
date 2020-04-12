@@ -211,11 +211,10 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 Progress = 0;
 
                 // Generate default file name
-                var fileExt = streamInfo.Container.GetFileExtension();
-                var defaultFileName = SanitizeFileName($"{Video!.Title}.{fileExt}");
+                var defaultFileName = SanitizeFileName($"{Video!.Title}.{streamInfo.Container}");
 
                 // Prompt file path
-                var filePath = PromptSaveFilePath(defaultFileName, $"{fileExt} files|*.{fileExt}|All Files|*.*");
+                var filePath = PromptSaveFilePath(defaultFileName, $"{streamInfo.Container} files|*.{streamInfo.Container}|All Files|*.*");
                 if (string.IsNullOrWhiteSpace(filePath))
                     return;
 

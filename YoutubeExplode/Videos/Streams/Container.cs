@@ -1,36 +1,63 @@
-using YoutubeExplode.ReverseEngineering;
+using System;
 
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
     /// Stream container.
     /// </summary>
-    public enum Container
+    [Equals(DoNotAddEqualityOperators = true)]
+    public readonly partial struct Container
+    {
+        /// <summary>
+        /// Container name.
+        /// Can be used as file extension.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Initializes an instance of <see cref="Container"/>.
+        /// </summary>
+        public Container(string name) => Name = name;
+
+        /// <inheritdoc />
+        public override string ToString() => Name;
+    }
+
+    public partial struct Container
     {
         /// <summary>
         /// MPEG-4 Part 14 (.mp4).
         /// </summary>
-        Mp4,
+        public static Container Mp4 { get; }  = new Container();
 
         /// <summary>
         /// Web Media (.webm).
         /// </summary>
-        WebM,
+        public static Container WebM { get; }  = new Container();
 
         /// <summary>
         /// 3rd Generation Partnership Project (.3gpp).
         /// </summary>
-        Tgpp
+        public static Container Tgpp { get; }  = new Container();
     }
 
-    /// <summary>
-    /// Extensions for <see cref="Container"/>.
-    /// </summary>
-    public static class ContainerExtensions
+    public partial struct Container
     {
         /// <summary>
-        /// Gets file extension based on container.
+        /// Parse a container from name.
         /// </summary>
-        public static string GetFileExtension(this Container container) => Heuristics.ContainerToFileExtension(container);
+        public static Container Parse(string name)
+        {
+            if (name.Equals("mp4", StringComparison.OrdinalIgnoreCase))
+                return Mp4;
+
+            if (name.Equals("webm", StringComparison.OrdinalIgnoreCase))
+                return WebM;
+
+            if (name.Equals("3gpp", StringComparison.OrdinalIgnoreCase))
+                return Tgpp;
+
+            throw new ArgumentException($"Unrecognized container '{name}'.", nameof(name));
+        }
     }
 }

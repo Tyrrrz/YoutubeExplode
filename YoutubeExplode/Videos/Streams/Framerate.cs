@@ -6,10 +6,10 @@ namespace YoutubeExplode.Videos.Streams
     /// Encapsulates framerate.
     /// </summary>
     [Equals(DoNotAddEqualityOperators = true)]
-    public readonly partial struct Framerate : IComparable<Framerate>
+    public readonly struct Framerate : IComparable<Framerate>
     {
         /// <summary>
-        /// Framerate as frames per second
+        /// Framerate as frames per second.
         /// </summary>
         public double FramesPerSecond { get; }
 
@@ -23,15 +23,5 @@ namespace YoutubeExplode.Videos.Streams
 
         /// <inheritdoc />
         public override string ToString() => $"{FramesPerSecond:N0} FPS";
-    }
-
-    public partial struct Framerate
-    {
-        /// <summary>
-        /// Creates framerate as frames per second.
-        /// </summary>
-        public static Framerate FromFramesPerSecond(double framesPerSecond) => new Framerate(framesPerSecond);
-
-        internal static Framerate FromFramesPerSecond(int framesPerSecond) => FromFramesPerSecond((double) framesPerSecond);
     }
 }

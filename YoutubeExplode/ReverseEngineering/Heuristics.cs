@@ -7,36 +7,7 @@ namespace YoutubeExplode.ReverseEngineering
 {
     internal static class Heuristics
     {
-        public static Container ContainerFromMimeType(string str)
-        {
-            if (str.Equals("mp4", StringComparison.OrdinalIgnoreCase))
-                return Container.Mp4;
-
-            if (str.Equals("webm", StringComparison.OrdinalIgnoreCase))
-                return Container.WebM;
-
-            if (str.Equals("3gpp", StringComparison.OrdinalIgnoreCase))
-                return Container.Tgpp;
-
-            throw new ArgumentException($"Unrecognized container '{str}'.", nameof(str));
-        }
-
-        private static readonly Dictionary<Container, string> ContainerToFileExtensionMap =
-            new Dictionary<Container, string>
-            {
-                {Container.Mp4, "mp4"},
-                {Container.WebM, "webm"},
-                {Container.Tgpp, "3gpp"}
-            };
-
-        public static string ContainerToFileExtension(Container container)
-        {
-            return ContainerToFileExtensionMap.TryGetValue(container, out var extension)
-                ? extension
-                : throw new ArgumentException($"Unrecognized container [{container}].", nameof(container));
-        }
-
-        private static readonly Dictionary<int, VideoQuality> ItagToVideoQualityMap =
+        private static readonly Dictionary<int, VideoQuality> TagToVideoQualityMap =
             new Dictionary<int, VideoQuality>
             {
                 {5, VideoQuality.Low144},
@@ -125,14 +96,14 @@ namespace YoutubeExplode.ReverseEngineering
                 {337, VideoQuality.High2160}
             };
 
-        public static VideoQuality VideoQualityFromTag(int itag)
+        public static VideoQuality GetVideoQuality(int tag)
         {
-            return ItagToVideoQualityMap.TryGetValue(itag, out var quality)
+            return TagToVideoQualityMap.TryGetValue(tag, out var quality)
                 ? quality
-                : throw new ArgumentException($"Unrecognized itag [{itag}].", nameof(itag));
+                : throw new ArgumentException($"Unrecognized tag '{tag}'.", nameof(tag));
         }
 
-        public static VideoQuality VideoQualityFromLabel(string label)
+        public static VideoQuality GetVideoQuality(string label)
         {
             if (label.StartsWith("144p", StringComparison.OrdinalIgnoreCase))
                 return VideoQuality.Low144;
@@ -168,24 +139,30 @@ namespace YoutubeExplode.ReverseEngineering
                 return VideoQuality.High4320;
 
             // Unrecognized
-            throw new ArgumentException($"Unrecognized video quality label [{label}].", nameof(label));
+            throw new ArgumentException($"Unrecognized video quality label '{label}'.", nameof(label));
         }
 
-        public static string VideoQualityToLabel(VideoQuality quality)
+        public static string GetVideoQualityLabel(VideoQuality quality)
         {
             // Convert to string, strip non-digits and add "p"
             return quality.ToString().StripNonDigit() + 'p';
         }
 
-        public static string VideoQualityToLabel(VideoQuality quality, int framerate)
+        public static string GetVideoQualityLabel(VideoQuality quality, double framerate)
         {
             // Framerate appears only if it's above 30
             if (framerate <= 30)
-                return VideoQualityToLabel(quality);
+                return GetVideoQualityLabel(quality);
 
             // YouTube rounds framerate to nearest next decimal
             var framerateRounded = (int) Math.Ceiling(framerate / 10.0) * 10;
-            return VideoQualityToLabel(quality) + framerateRounded;
+            return GetVideoQualityLabel(quality) + framerateRounded;
+        }
+
+        public static string GetVideoQualityLabel(int tag, double framerate)
+        {
+            var videoQuality = GetVideoQuality(tag);
+            return GetVideoQualityLabel(videoQuality, framerate);
         }
 
         private static readonly Dictionary<VideoQuality, VideoResolution> VideoQualityToResolutionMap =
@@ -204,11 +181,9 @@ namespace YoutubeExplode.ReverseEngineering
                 {VideoQuality.High4320, new VideoResolution(7680, 4320)}
             };
 
-        public static VideoResolution VideoQualityToResolution(VideoQuality quality)
-        {
-            return VideoQualityToResolutionMap.TryGetValue(quality, out var resolution)
+        public static VideoResolution GetVideoResolution(VideoQuality quality) =>
+            VideoQualityToResolutionMap.TryGetValue(quality, out var resolution)
                 ? resolution
-                : throw new ArgumentException($"Unrecognized video quality [{quality}].", nameof(quality));
-        }
+                : throw new ArgumentException($"Unrecognized video quality '{quality}'.", nameof(quality));
     }
 }
