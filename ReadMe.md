@@ -79,13 +79,13 @@ Once you get the manifest, you can filter through the streams and choose the one
 var streamInfo = streamManifest.GetMuxed().WithHighestVideoQuality();
 
 // ...or highest bitrate audio-only stream
-// var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
+var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
 
 // ...or highest quality MP4 video-only stream
-// var streamInfo = streamManifest
-//    .GetVideoOnly()
-//    .Where(s => s.Container == Container.Mp4)
-//    .WithHighestVideoQuality()
+var streamInfo = streamManifest
+    .GetVideoOnly()
+    .Where(s => s.Container == Container.Mp4)
+    .WithHighestVideoQuality()
 ```
 
 Finally, you can get the actual `Stream` object represented by the metadata:
@@ -107,7 +107,7 @@ You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExp
 
 ### Working with playlists
 
-Among other things, YouTube explode can also reverse-engineer YouTube playlists:
+Among other things, YoutubeExplode also supports playlists:
 
 ```csharp
 var youtube = new YoutubeClient();
