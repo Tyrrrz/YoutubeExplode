@@ -96,6 +96,22 @@ namespace YoutubeExplode.ReverseEngineering
                 {337, VideoQuality.High2160}
             };
 
+        private static readonly Dictionary<VideoQuality, VideoResolution> VideoQualityToResolutionMap =
+            new Dictionary<VideoQuality, VideoResolution>
+            {
+                {VideoQuality.Low144, new VideoResolution(256, 144)},
+                {VideoQuality.Low240, new VideoResolution(426, 240)},
+                {VideoQuality.Medium360, new VideoResolution(640, 360)},
+                {VideoQuality.Medium480, new VideoResolution(854, 480)},
+                {VideoQuality.High720, new VideoResolution(1280, 720)},
+                {VideoQuality.High1080, new VideoResolution(1920, 1080)},
+                {VideoQuality.High1440, new VideoResolution(2560, 1440)},
+                {VideoQuality.High2160, new VideoResolution(3840, 2160)},
+                {VideoQuality.High2880, new VideoResolution(5120, 2880)},
+                {VideoQuality.High3072, new VideoResolution(4096, 3072)},
+                {VideoQuality.High4320, new VideoResolution(7680, 4320)}
+            };
+
         public static VideoQuality GetVideoQuality(int tag)
         {
             return TagToVideoQualityMap.TryGetValue(tag, out var quality)
@@ -164,22 +180,6 @@ namespace YoutubeExplode.ReverseEngineering
             var videoQuality = GetVideoQuality(tag);
             return GetVideoQualityLabel(videoQuality, framerate);
         }
-
-        private static readonly Dictionary<VideoQuality, VideoResolution> VideoQualityToResolutionMap =
-            new Dictionary<VideoQuality, VideoResolution>
-            {
-                {VideoQuality.Low144, new VideoResolution(256, 144)},
-                {VideoQuality.Low240, new VideoResolution(426, 240)},
-                {VideoQuality.Medium360, new VideoResolution(640, 360)},
-                {VideoQuality.Medium480, new VideoResolution(854, 480)},
-                {VideoQuality.High720, new VideoResolution(1280, 720)},
-                {VideoQuality.High1080, new VideoResolution(1920, 1080)},
-                {VideoQuality.High1440, new VideoResolution(2560, 1440)},
-                {VideoQuality.High2160, new VideoResolution(3840, 2160)},
-                {VideoQuality.High2880, new VideoResolution(5120, 2880)},
-                {VideoQuality.High3072, new VideoResolution(4096, 3072)},
-                {VideoQuality.High4320, new VideoResolution(7680, 4320)}
-            };
 
         public static VideoResolution GetVideoResolution(VideoQuality quality) =>
             VideoQualityToResolutionMap.TryGetValue(quality, out var resolution)
