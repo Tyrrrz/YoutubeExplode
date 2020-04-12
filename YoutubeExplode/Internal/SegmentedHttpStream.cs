@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.ReverseEngineering;
 
 namespace YoutubeExplode.Internal
 {
     internal class SegmentedHttpStream : Stream
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeHttpClient _httpClient;
         private readonly string _url;
         private readonly long _segmentSize;
 
         private Stream? _currentStream;
         private long _position;
 
-        public SegmentedHttpStream(HttpClient httpClient, string url, long length, long segmentSize)
+        public SegmentedHttpStream(YoutubeHttpClient httpClient, string url, long length, long segmentSize)
         {
             _url = url;
             _httpClient = httpClient;
@@ -62,11 +62,11 @@ namespace YoutubeExplode.Internal
             // If current stream is not set - resolve it
             if (_currentStream == null)
             {
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1).ConfigureAwait(false);
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
             }
 
             // Read from current stream
-            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+            var bytesRead = await _currentStream.ReadAsync(buffer, offset, count, cancellationToken);
 
             // Advance the position (using field directly to avoid clearing stream)
             _position += bytesRead;
@@ -78,7 +78,7 @@ namespace YoutubeExplode.Internal
                 ClearCurrentStream();
 
                 // Recursively read again
-                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+                bytesRead = await ReadAsync(buffer, offset, count, cancellationToken);
             }
 
             return bytesRead;
@@ -104,15 +104,11 @@ namespace YoutubeExplode.Internal
 
         public override long Seek(long offset, SeekOrigin origin) => Position = GetNewPosition(offset, origin);
 
-        #region Not supported
-
         public override void Flush() => throw new NotSupportedException();
 
         public override void SetLength(long value) => throw new NotSupportedException();
 
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
-
-        #endregion
 
         protected override void Dispose(bool disposing)
         {

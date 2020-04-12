@@ -25,7 +25,7 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 - All metadata properties are exposed using strong types and enums
 - Provides static methods to validate IDs and to parse IDs from URLs
 - Fully asynchronous API
-- Targets .NET Framework 4.5+ and .NET Standard 1.1+
+- Works with .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1+
 - No need for an API key and no usage quotas
 
 ## Screenshots
@@ -34,105 +34,142 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 
 ## Usage
 
-YoutubeExplode has a single entry point, the `YoutubeClient` class -- all available integration API can be accessed by calling methods of this class.
+- [Getting metadata of a video](#getting-metadata-of-a-video)
+- [Downloading a video stream](#downloading-a-video-stream)
+- [Working with playlists](#working-with-playlists)
+- [Extracting closed captions](#extracting-closed-captions)
 
-A lot of helper methods are provided as extensions for models, make sure to include corresponding `using` statements to see them.
+### Getting metadata of a video
 
-Media streams come in 3 forms -- `Muxed` (video & audio), `Audio` (audio only) and `Video` (video only). Highest qualities are not available in muxed streams so you'll have to download separate streams and multiplex them yourself using tools like [ffmpeg](https://www.ffmpeg.org/).
+The following example shows how you can extract various metadata from a YouTube video:
 
-You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) to take care of multiplexing for you.
+```csharp
+var youtube = new YoutubeClient();
 
-### Parse ID from URL
-
-Most methods require video/playlist/channel ID which you can extract from any valid URL using one of the static parse methods.
-
-```c#
-var url = "https://www.youtube.com/watch?v=bnsUkE8i0tU";
-var id = YoutubeClient.ParseVideoId(url); // "bnsUkE8i0tU"
-```
-
-### Get video info
-
-You can get video metadata by passing its ID to `GetVideoAsync` method.
-
-```c#
-var client = new YoutubeClient();
-
-var video = await client.GetVideoAsync("bnsUkE8i0tU");
+// You can specify video ID or URL
+var video = await youtube.Videos.GetAsync("https://youtube.com/watch?v=bnsUkE8i0tU");
 
 var title = video.Title; // "Infected Mushroom - Spitfire [Monstercat Release]"
 var author = video.Author; // "Monstercat"
 var duration = video.Duration; // 00:07:14
 ```
 
-### Download video
+### Downloading a video stream
 
-If you want to download a video, you first need to get info on all its streams using `GetVideoMediaStreamInfosAsync`, then choose the stream you want to download, then pass it to `DownloadMediaStreamAsync` method. You can also use `GetMediaStreamAsync` to get the stream itself.
+Every YouTube video has a number of streams available. These streams may have different containers, video quality, bitrate, etc.
 
-Keep in mind that the streams are split into Muxed (audio+video), Audio (audio only) and Video (video only).
+On top of that, depending on the content of the stream, the streams are further divided into 3 categories:
 
-```c#
-var client = new YoutubeClient();
+- Muxed streams -- contain both video and audio.
+- Audio-only streams -- contain only audio.
+- Video-only streams -- contain only video.
 
-// Get metadata for all streams in this video
-var streamInfoSet = await client.GetVideoMediaStreamInfosAsync("bnsUkE8i0tU");
+You can request the stream manifest to get available streams for a particular video:
 
-// Select one of the streams, e.g. highest quality muxed stream
-var streamInfo = streamInfoSet.Muxed.WithHighestVideoQuality();
+```csharp
+var youtube = new YoutubeClient();
 
-// ...or highest bitrate audio stream
-// var streamInfo = streamInfoSet.Audio.WithHighestBitrate();
-
-// ...or highest quality & highest framerate MP4 video stream
-// var streamInfo = streamInfoSet.Video
-//    .Where(s => s.Container == Container.Mp4)
-//    .OrderByDescending(s => s.VideoQuality)
-//    .ThenByDescending(s => s.Framerate)
-//    .First();
-
-// Get file extension based on stream's container
-var ext = streamInfo.Container.GetFileExtension();
-
-// Download stream to file
-await client.DownloadMediaStreamAsync(streamInfo, $"downloaded_video.{ext}");
+var streamManifest = await youtube.Videos.Streams.GetManifestAsync("bnsUkE8i0tU");
 ```
 
-### Extract closed captions
+Once you get the manifest, you can filter through the streams and choose the one you're interested in downloading:
 
-Similarly to streams, you can extract closed captions by getting the info on all available tracks using `GetVideoClosedCaptionTrackInfosAsync`, choosing the one you're interested in, then resolving it with `GetClosedCaptionTrackAsync`. If you want, you can also download the track as an SRT file by calling `DownloadClosedCaptionTrackAsync`.
+```csharp
+// Get highest quality muxed stream
+var streamInfo = streamManifest.GetMuxed().WithHighestVideoQuality();
 
-```c#
-var client = new YoutubeClient();
+// ...or highest bitrate audio-only stream
+var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
 
-// Get metadata for all closed caption tracks in this video
-var trackInfos = await client.GetVideoClosedCaptionTrackInfosAsync("_QdPW8JrYzQ");
-
-// Select a closed caption track in English (assuming it exists)
-var trackInfo = trackInfos.First(t => t.Language.Code == "en");
-
-// Resolve the closed caption track
-var track = await client.GetClosedCaptionTrackAsync(trackInfo);
-
-// Get the caption displayed at 1:01
-var caption = track.GetByTime(TimeSpan.FromSeconds(61));
-var text = caption.Text; // "And the game was afoot."
+// ...or highest quality MP4 video-only stream
+var streamInfo = streamManifest
+    .GetVideoOnly()
+    .Where(s => s.Container == Container.Mp4)
+    .WithHighestVideoQuality()
 ```
 
-### Get playlist info
+Finally, you can get the actual `Stream` object represented by the metadata:
 
-YoutubeExplode is not limited to just videos so you can also use it to get the contents of a playlist and all associated metadata by calling `GetPlaylistAsync` method.
+```csharp
+// Get the actual stream
+var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 
-```c#
-var client = new YoutubeClient();
+// Download the stream to file
+await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
+```
 
-var playlist = await client.GetPlaylistAsync("PLQLqnnnfa_fAkUmMFw5xh8Kv0S5voEjC9");
+While it may be tempting to just always use muxed streams, it's important to note that they are limited in quality.
+Muxed streams don't go beyond 720p30.
+
+If you want to download the video in maximum quality, you need to download the audio-only and video-only streams separately and then mux them together on your own.
+There are tools like [FFmpeg](http://ffmpeg.org/) that let you do that.
+You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) which wraps FFmpeg and provides an extension point for YoutubeExplode to download videos directly.
+
+### Working with playlists
+
+Among other things, YoutubeExplode also supports playlists:
+
+```csharp
+var youtube = new YoutubeClient();
+
+// Get playlist metadata
+var playlist = await youtube.Playlists.GetAsync("PLQLqnnnfa_fAkUmMFw5xh8Kv0S5voEjC9");
 
 var title = playlist.Title; // "Igorrr - Hallelujah"
 var author = playlist.Author; // "randomusername604"
 
-var video = playlist.Videos.First();
-var videoTitle = video.Title; // "Igorrr - Tout Petit Moineau"
-var videoAuthor = video.Author; // "Igorrr Official"
+// Enumerate through playlist videos
+await foreach (var video in youtube.Playlists.GetVideosAsync(playlist.Id))
+{
+    var videoTitle = video.Title;
+    var videoAuthor = video.Author;
+}
+
+// Get all playlist videos
+var playlistVideos = await youtube
+    .Playlists
+    .GetVideosAsync(playlist.Id)
+    .BufferAsync();
+
+// Get first 20 playlist videos
+var somePlaylistVideos = await youtube
+    .Playlists
+    .GetVideosAsync(playlist.Id)
+    .BufferAsync(20);
+```
+
+### Extracting closed captions
+
+Similarly to streams, you can extract closed captions by getting the manifest and choosing the track you're interested in:
+
+```csharp
+var youtube = new YoutubeClient();
+
+var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("_QdPW8JrYzQ");
+
+// Select a closed caption track in English
+var trackInfo = trackManifest.TryGetByLanguage("en");
+
+if (trackInfo != null)
+{
+    // Get the actual closed caption track
+    var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
+
+    // Get the caption displayed at 1:01
+    var caption = track.TryGetByTime(TimeSpan.FromSeconds(61));
+    var text = caption?.Text; // "And the game was afoot."
+}
+```
+
+You can also download closed caption tracks as SRT files:
+
+```csharp
+var trackInfo = trackManifest.TryGetByLanguage("en");
+
+if (trackInfo != null)
+{
+    await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
+}
 ```
 
 ## Etymology

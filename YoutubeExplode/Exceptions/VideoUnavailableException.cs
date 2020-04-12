@@ -1,25 +1,32 @@
-﻿using System;
+using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when a video is not available and cannot be processed.
-    /// This can happen because the video does not exist, is deleted, is private, or due to other reasons.
+    /// Exception thrown when the requested video is unavailable.
     /// </summary>
-    public class VideoUnavailableException : Exception
+    public partial class VideoUnavailableException : VideoUnplayableException
     {
-        /// <summary>
-        /// ID of the video.
-        /// </summary>
-        public string VideoId { get; }
-
         /// <summary>
         /// Initializes an instance of <see cref="VideoUnavailableException"/>.
         /// </summary>
-        public VideoUnavailableException(string videoId, string? message)
+        public VideoUnavailableException(string message)
             : base(message)
         {
-            VideoId = videoId;
+        }
+    }
+
+    public partial class VideoUnavailableException
+    {
+        internal static VideoUnavailableException Unavailable(VideoId videoId)
+        {
+            var message = $@"
+Video '{videoId}' is unavailable.
+In most cases, this error indicates that the video doesn't exist, is private, or has been taken down.
+If you can however open this video in your browser in incognito mode, it most likely means that YouTube changed something, which broke this library.
+Please report this issue on GitHub in that case.";
+
+            return new VideoUnavailableException(message.Trim());
         }
     }
 }
