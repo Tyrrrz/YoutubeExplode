@@ -16,17 +16,11 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 
 ## Features
 
-- Retrieves information about videos, playlists, channels, media streams and closed caption tracks
-- Handles all types of videos, including legacy, signed, restricted, non-embeddable and unlisted videos
-- Works with media streams of all types -- muxed, embedded adaptive, dash adaptive
-- Downloads videos by exposing their media content as a stream
-- Supports media stream seeking and segmentation to circumvent throttling
-- Parses and downloads closed caption tracks
-- All metadata properties are exposed using strong types and enums
-- Provides static methods to validate IDs and to parse IDs from URLs
-- Fully asynchronous API
+- Retrieve metadata on videos, playlists, channels, streams, and closed captions
+- Execute search queries and get resulting videos
+- Get or download video streams, with support for seeking
+- Get closed captions or download them as SRT files
 - Works with .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1+
-- No need for an API key and no usage quotas
 
 ## Screenshots
 
@@ -60,9 +54,9 @@ Every YouTube video has a number of streams available. These streams may have di
 
 On top of that, depending on the content of the stream, the streams are further divided into 3 categories:
 
-- Muxed streams -- contain both video and audio.
-- Audio-only streams -- contain only audio.
-- Video-only streams -- contain only video.
+- Muxed streams -- contain both video and audio
+- Audio-only streams -- contain only audio
+- Video-only streams -- contain only video
 
 You can request the stream manifest to get available streams for a particular video:
 
