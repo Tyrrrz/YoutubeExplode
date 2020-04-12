@@ -49,7 +49,7 @@ namespace YoutubeExplode.Search
                         video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),
-                        Array.Empty<Thumbnail>(),
+                        new ThumbnailSet(videoId),
                         video.GetKeywords(),
                         new Engagement(
                             video.GetViewCount(),

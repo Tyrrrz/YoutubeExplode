@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
 
@@ -30,15 +31,15 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public long? TryGetViewCount() => _root
             .GetPropertyOrNull("views")?
-            .GetInt64OrNull();
+            .GetInt64();
 
         public long? TryGetLikeCount() => _root
             .GetPropertyOrNull("likes")?
-            .GetInt64OrNull();
+            .GetInt64();
 
         public long? TryGetDislikeCount() => _root
             .GetPropertyOrNull("dislikes")?
-            .GetInt64OrNull();
+            .GetInt64();
 
         public IEnumerable<Video> GetVideos() => _root
             .GetProperty("video")
@@ -108,7 +109,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class PlaylistResponse
     {
-        public static PlaylistResponse Parse(string raw) => new PlaylistResponse(Json.Parse(raw));
+        public static PlaylistResponse Parse(string raw) => new PlaylistResponse(
+            Json.TryParse(raw) ?? throw TransientFailureException.Generic("Playlist response is broken.")
+        );
 
         public static async Task<PlaylistResponse> GetAsync(YoutubeHttpClient httpClient, string id, int index = 0) =>
             await Retry.WrapAsync(async () =>

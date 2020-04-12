@@ -25,19 +25,19 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .QuerySelector("meta[property=\"og:url\"]") != null;
 
         public long? TryGetVideoLikeCount() => _root
-            .GetElementsByClassName("like-button-renderer-like-button")
-            .FirstOrDefault()?
-            .Text()?
-            .StripNonDigit()
+            .Source
+            .Text
+            .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) likes""").Groups[1].Value)
             .NullIfWhiteSpace()?
+            .StripNonDigit()
             .ParseLong();
 
-        public long? TryGetVideoDislikeCount() =>_root
-            .GetElementsByClassName("like-button-renderer-dislike-button")
-            .FirstOrDefault()?
-            .Text()?
-            .StripNonDigit()
+        public long? TryGetVideoDislikeCount() => _root
+            .Source
+            .Text
+            .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) dislikes""").Groups[1].Value)
             .NullIfWhiteSpace()?
+            .StripNonDigit()
             .ParseLong();
 
         public PlayerConfig? TryGetPlayerConfig() => _root

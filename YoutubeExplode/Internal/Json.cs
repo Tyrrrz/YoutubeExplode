@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 
 namespace YoutubeExplode.Internal
@@ -8,6 +9,18 @@ namespace YoutubeExplode.Internal
         {
             using var doc = JsonDocument.Parse(source);
             return doc.RootElement.Clone();
+        }
+
+        public static JsonElement? TryParse(string source)
+        {
+            try
+            {
+                return Parse(source);
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
     }
 }

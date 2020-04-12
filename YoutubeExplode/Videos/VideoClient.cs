@@ -53,7 +53,7 @@ namespace YoutubeExplode.Videos
                 playerResponse.GetVideoUploadDate(),
                 playerResponse.GetVideoDescription(),
                 playerResponse.GetVideoDuration(),
-                Array.Empty<Thumbnail>(),
+                new ThumbnailSet(id),
                 playerResponse.GetVideoKeywords(),
                 new Engagement(
                     playerResponse.TryGetVideoViewCount() ?? 0,

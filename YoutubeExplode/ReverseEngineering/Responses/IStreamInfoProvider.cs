@@ -12,7 +12,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         long? TryGetContentLength();
 
-        double GetBitrate();
+        long GetBitrate();
 
         string GetContainer();
 

@@ -48,11 +48,11 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 (long?) _root.Attribute("contentLength") ??
                 GetUrl().Pipe(s => Regex.Match(s, @"clen[/=](\d+)").Groups[1].Value).NullIfWhiteSpace()?.ParseLong();
 
-            public double GetBitrate() => (double) _root.Attribute("bandwidth");
+            public long GetBitrate() => (long) _root.Attribute("bandwidth");
 
             public string GetContainer() => GetUrl()
                 .Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
-                .Pipe(WebUtility.UrlDecode);
+                .Pipe(WebUtility.UrlDecode!);
 
             private bool IsAudioOnly() => _root
                 .Element("AudioChannelConfiguration") != null;

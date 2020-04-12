@@ -180,9 +180,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                     .NullIfWhiteSpace()?
                     .ParseLong();
 
-            public double GetBitrate() => _root
+            public long GetBitrate() => _root
                 .GetProperty("bitrate")
-                .GetDouble();
+                .GetInt64();
 
             private string GetMimeType() => _root
                 .GetProperty("mimeType")

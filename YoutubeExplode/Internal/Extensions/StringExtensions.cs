@@ -37,12 +37,6 @@ namespace YoutubeExplode.Internal.Extensions
         public static double ParseDouble(this string s) =>
             double.Parse(s, NumberFormatInfo.InvariantInfo);
 
-        public static DateTimeOffset ParseDateTimeOffset(this string s) =>
-            DateTimeOffset.Parse(s, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal);
-
-        public static DateTimeOffset ParseDateTimeOffset(this string s, string format) =>
-            DateTimeOffset.ParseExact(s, format, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AssumeUniversal);
-
         public static string Reverse(this string s)
         {
             var buffer = new StringBuilder(s.Length);

@@ -9,23 +9,63 @@ namespace YoutubeExplode.Videos.Streams
     public readonly struct Bitrate : IComparable<Bitrate>
     {
         /// <summary>
-        /// Bitrate as bytes per second.
+        /// Bits per second.
         /// </summary>
-        public double BytesPerSecond { get; }
+        public long BitsPerSecond { get; }
+
+        /// <summary>
+        /// Kilobits per second.
+        /// </summary>
+        public double KiloBitsPerSecond => BitsPerSecond / 1024.0;
+
+        /// <summary>
+        /// Megabits per second.
+        /// </summary>
+        public double MegaBitsPerSecond => KiloBitsPerSecond / 1024.0;
+
+        /// <summary>
+        /// Gigabits per second
+        /// </summary>
+        public double GigaBitsPerSecond => MegaBitsPerSecond / 1024.0;
 
         /// <summary>
         /// Initializes an instance of <see cref="Bitrate"/>.
         /// </summary>
-        /// <param name="bytesPerSecond"></param>
-        public Bitrate(double bytesPerSecond) => BytesPerSecond = bytesPerSecond;
+        /// <param name="bitsPerSecond"></param>
+        public Bitrate(long bitsPerSecond) => BitsPerSecond = bitsPerSecond;
+
+        private string GetLargestWholeNumberSymbol()
+        {
+            if (Math.Abs(GigaBitsPerSecond) >= 1)
+                return "Gbit/s";
+
+            if (Math.Abs(MegaBitsPerSecond) >= 1)
+                return "Mbit/s";
+
+            if (Math.Abs(KiloBitsPerSecond) >= 1)
+                return "Kbit/s";
+
+            return "Bit/s";
+        }
+
+        private double GetLargestWholeNumberValue()
+        {
+            if (Math.Abs(GigaBitsPerSecond) >= 1)
+                return GigaBitsPerSecond;
+
+            if (Math.Abs(MegaBitsPerSecond) >= 1)
+                return MegaBitsPerSecond;
+
+            if (Math.Abs(KiloBitsPerSecond) >= 1)
+                return KiloBitsPerSecond;
+
+            return BitsPerSecond;
+        }
 
         /// <inheritdoc />
-        public int CompareTo(Bitrate other) => BytesPerSecond.CompareTo(other.BytesPerSecond);
+        public int CompareTo(Bitrate other) => BitsPerSecond.CompareTo(other.BitsPerSecond);
 
-        public override string ToString()
-        {
-            // TODO
-            return base.ToString();
-        }
+        /// <inheritdoc />
+        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
     }
 }
