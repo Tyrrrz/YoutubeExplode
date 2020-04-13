@@ -5,8 +5,7 @@ namespace YoutubeExplode.Videos.Streams
     /// <summary>
     /// Encapsulates bitrate.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
-    public readonly struct Bitrate : IComparable<Bitrate>
+    public readonly partial struct Bitrate
     {
         /// <summary>
         /// Bits per second.
@@ -63,9 +62,31 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
+        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+    }
+
+    public partial struct Bitrate : IComparable<Bitrate>, IEquatable<Bitrate>
+    {
+        /// <inheritdoc />
         public int CompareTo(Bitrate other) => BitsPerSecond.CompareTo(other.BitsPerSecond);
 
         /// <inheritdoc />
-        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+        public bool Equals(Bitrate other) => CompareTo(other) == 0;
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Bitrate other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(BitsPerSecond);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(Bitrate left, Bitrate right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(Bitrate left, Bitrate right) => !(left == right);
     }
 }

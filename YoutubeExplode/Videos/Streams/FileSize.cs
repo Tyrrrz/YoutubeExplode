@@ -7,8 +7,7 @@ namespace YoutubeExplode.Videos.Streams
     /// <summary>
     /// Encapsulates file size.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
-    public readonly struct FileSize : IComparable<FileSize>
+    public readonly partial struct FileSize
     {
         /// <summary>
         /// Total bytes.
@@ -64,9 +63,31 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
+        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+    }
+
+    public partial struct FileSize : IComparable<FileSize>, IEquatable<FileSize>
+    {
+        /// <inheritdoc />
         public int CompareTo(FileSize other) => TotalBytes.CompareTo(other.TotalBytes);
 
         /// <inheritdoc />
-        public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+        public bool Equals(FileSize other) => CompareTo(other) == 0;
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is FileSize other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(TotalBytes);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(FileSize left, FileSize right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(FileSize left, FileSize right) => !(left == right);
     }
 }

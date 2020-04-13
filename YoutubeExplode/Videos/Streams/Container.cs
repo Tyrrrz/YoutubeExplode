@@ -5,7 +5,6 @@ namespace YoutubeExplode.Videos.Streams
     /// <summary>
     /// Stream container.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct Container
     {
         /// <summary>
@@ -21,6 +20,28 @@ namespace YoutubeExplode.Videos.Streams
 
         /// <inheritdoc />
         public override string ToString() => Name;
+    }
+
+    public partial struct Container : IEquatable<Container>
+    {
+        /// <inheritdoc />
+        public bool Equals(Container other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Container other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Name);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(Container left, Container right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(Container left, Container right) => !(left == right);
     }
 
     public partial struct Container

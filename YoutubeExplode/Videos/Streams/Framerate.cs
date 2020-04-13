@@ -5,8 +5,7 @@ namespace YoutubeExplode.Videos.Streams
     /// <summary>
     /// Encapsulates framerate.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
-    public readonly struct Framerate : IComparable<Framerate>
+    public readonly partial struct Framerate
     {
         /// <summary>
         /// Framerate as frames per second.
@@ -19,9 +18,31 @@ namespace YoutubeExplode.Videos.Streams
         public Framerate(double framesPerSecond) => FramesPerSecond = framesPerSecond;
 
         /// <inheritdoc />
+        public override string ToString() => $"{FramesPerSecond:N0} FPS";
+    }
+
+    public partial struct Framerate : IComparable<Framerate>, IEquatable<Framerate>
+    {
+        /// <inheritdoc />
         public int CompareTo(Framerate other) => FramesPerSecond.CompareTo(other.FramesPerSecond);
 
         /// <inheritdoc />
-        public override string ToString() => $"{FramesPerSecond:N0} FPS";
+        public bool Equals(Framerate other) => CompareTo(other) == 0;
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Framerate other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(FramesPerSecond);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(Framerate left, Framerate right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(Framerate left, Framerate right) => !(left == right);
     }
 }

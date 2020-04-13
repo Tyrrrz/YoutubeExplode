@@ -6,7 +6,6 @@ namespace YoutubeExplode.Playlists
     /// <summary>
     /// Encapsulates a valid YouTube playlist ID.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct PlaylistId
     {
         /// <summary>
@@ -23,6 +22,28 @@ namespace YoutubeExplode.Playlists
 
         /// <inheritdoc />
         public override string ToString() => Value;
+    }
+
+    public partial struct PlaylistId : IEquatable<PlaylistId>
+    {
+        /// <inheritdoc />
+        public bool Equals(PlaylistId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is PlaylistId other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(PlaylistId left, PlaylistId right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(PlaylistId left, PlaylistId right) => !(left == right);
     }
 
     public partial struct PlaylistId

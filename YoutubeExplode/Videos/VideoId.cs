@@ -6,7 +6,6 @@ namespace YoutubeExplode.Videos
     /// <summary>
     /// Encapsulates a valid YouTube video ID.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct VideoId
     {
         /// <summary>
@@ -23,6 +22,28 @@ namespace YoutubeExplode.Videos
 
         /// <inheritdoc />
         public override string ToString() => Value;
+    }
+
+    public partial struct VideoId : IEquatable<VideoId>
+    {
+        /// <inheritdoc />
+        public bool Equals(VideoId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is VideoId other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(VideoId left, VideoId right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(VideoId left, VideoId right) => !(left == right);
     }
 
     public partial struct VideoId

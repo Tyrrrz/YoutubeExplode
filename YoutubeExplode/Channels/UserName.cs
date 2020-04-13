@@ -6,7 +6,6 @@ namespace YoutubeExplode.Channels
     /// <summary>
     /// Encapsulates a valid YouTube user name.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct UserName
     {
         /// <summary>
@@ -23,6 +22,28 @@ namespace YoutubeExplode.Channels
 
         /// <inheritdoc />
         public override string ToString() => Value;
+    }
+
+    public partial struct UserName : IEquatable<UserName>
+    {
+        /// <inheritdoc />
+        public bool Equals(UserName other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is UserName other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(UserName left, UserName right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(UserName left, UserName right) => !(left == right);
     }
 
     public partial struct UserName

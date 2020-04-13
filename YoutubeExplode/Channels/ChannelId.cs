@@ -6,7 +6,6 @@ namespace YoutubeExplode.Channels
     /// <summary>
     /// Encapsulates a valid YouTube channel ID.
     /// </summary>
-    [Equals(DoNotAddEqualityOperators = true)]
     public readonly partial struct ChannelId
     {
         /// <summary>
@@ -23,6 +22,28 @@ namespace YoutubeExplode.Channels
 
         /// <inheritdoc />
         public override string ToString() => Value;
+    }
+
+    public partial struct ChannelId : IEquatable<ChannelId>
+    {
+        /// <inheritdoc />
+        public bool Equals(ChannelId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is ChannelId other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(ChannelId left, ChannelId right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(ChannelId left, ChannelId right) => !(left == right);
     }
 
     public partial struct ChannelId

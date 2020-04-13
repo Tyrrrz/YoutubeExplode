@@ -30,7 +30,6 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.14.0" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" PrivateAssets="all" />
-    <PackageReference Include="Equals.Fody" Version="4.0.1" PrivateAssets="all" />
     <PackageReference Include="Fody" Version="6.1.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
