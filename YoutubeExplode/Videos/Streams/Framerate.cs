@@ -44,5 +44,15 @@ namespace YoutubeExplode.Videos.Streams
         /// Equality check.
         /// </summary>
         public static bool operator !=(Framerate left, Framerate right) => !(left == right);
+
+        /// <summary>
+        /// Comparison.
+        /// </summary>
+        public static bool operator >(Framerate left, Framerate right) => left.CompareTo(right) > 0;
+
+        /// <summary>
+        /// Comparison.
+        /// </summary>
+        public static bool operator <(Framerate left, Framerate right) => left.CompareTo(right) < 0;
     }
 }
