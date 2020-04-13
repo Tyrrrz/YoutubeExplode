@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
@@ -23,14 +25,29 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public TimeSpan Duration { get; }
 
         /// <summary>
+        /// Caption parts (usually individual words).
+        /// May be empty because not all captions contain parts.
+        /// </summary>
+        public IReadOnlyList<ClosedCaptionPart> Parts { get; }
+
+        /// <summary>
         /// Initializes an instance of <see cref="ClosedCaption"/>.
         /// </summary>
-        public ClosedCaption(string text, TimeSpan offset, TimeSpan duration)
+        public ClosedCaption(string text, TimeSpan offset, TimeSpan duration, IReadOnlyList<ClosedCaptionPart> parts)
         {
             Text = text;
             Offset = offset;
             Duration = duration;
+            Parts = parts;
         }
+
+        /// <summary>
+        /// Gets the caption part displayed at the specified point in time, relative to this caption's offset.
+        /// Returns null if not found.
+        /// Note that some captions may not have any parts at all.
+        /// </summary>
+        public ClosedCaptionPart? TryGetPartByTime(TimeSpan offset) =>
+            Parts.FirstOrDefault(p => p.Offset >= offset);
 
         /// <inheritdoc />
         public override string ToString() => Text;

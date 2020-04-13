@@ -58,7 +58,11 @@ namespace YoutubeExplode.Videos.ClosedCaptions
                 .Select(t => new ClosedCaption(
                     t.GetText(),
                     t.GetOffset(),
-                    t.GetDuration()
+                    t.GetDuration(),
+                    t.GetParts().Select(p => new ClosedCaptionPart(
+                        p.GetText(),
+                        p.GetOffset())
+                    ).ToArray()
                 )).ToArray();
 
             return new ClosedCaptionTrack(captions);

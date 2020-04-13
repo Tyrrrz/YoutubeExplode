@@ -28,9 +28,24 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public string GetText() => (string) _root;
 
-            public TimeSpan GetOffset() => TimeSpan.FromMilliseconds((double) _root.Attribute("t"));
+            public TimeSpan GetOffset() => TimeSpan.FromMilliseconds((double?) _root.Attribute("t") ?? 0);
 
-            public TimeSpan GetDuration() => TimeSpan.FromMilliseconds((double) _root.Attribute("d"));
+            public TimeSpan GetDuration() => TimeSpan.FromMilliseconds((double?) _root.Attribute("d") ?? 0);
+
+            public IEnumerable<ClosedCaptionPart> GetParts() => _root
+                .Elements("s")
+                .Select(x => new ClosedCaptionPart(x));
+        }
+
+        public class ClosedCaptionPart
+        {
+            private readonly XElement _root;
+
+            public ClosedCaptionPart(XElement root) => _root = root;
+
+            public string GetText() => (string) _root;
+
+            public TimeSpan GetOffset() => TimeSpan.FromMilliseconds((double?) _root.Attribute("t") ?? 0);
         }
     }
 

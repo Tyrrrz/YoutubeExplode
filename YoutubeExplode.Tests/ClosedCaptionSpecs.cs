@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -17,6 +18,7 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("_QdPW8JrYzQ")]
+        [InlineData("YltHGKX80Y8")]
         public async Task I_can_get_available_closed_caption_tracks_of_any_available_YouTube_video(string videoId)
         {
             // Arrange
@@ -29,16 +31,17 @@ namespace YoutubeExplode.Tests
             manifest.Tracks.Should().NotBeEmpty();
         }
 
-        [Fact]
-        public async Task I_can_get_a_specific_closed_caption_track()
+        [Theory]
+        [InlineData("_QdPW8JrYzQ")]
+        [InlineData("YltHGKX80Y8")]
+        public async Task I_can_get_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=_QdPW8JrYzQ";
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
-            var trackInfo = manifest.TryGetByLanguage("en")!;
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
+            var trackInfo = manifest.Tracks.First();
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
             // Assert
@@ -46,34 +49,38 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task I_can_get_a_specific_closed_caption_track_and_extract_a_closed_caption_that_appears_at_a_specific_time()
+        public async Task I_can_extract_a_closed_caption_that_appears_at_a_specific_time_on_an_available_YouTube_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=_QdPW8JrYzQ";
+            const string videoUrl = "https://www.youtube.com/watch?v=YltHGKX80Y8";
             var youtube = new YoutubeClient();
 
             // Act
             var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
             var trackInfo = manifest.TryGetByLanguage("en")!;
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
-            var caption = track.TryGetByTime(TimeSpan.FromSeconds(61))!;
+            var caption = track.TryGetByTime(new TimeSpan(00, 10, 41))!;
+            var captionPart = caption.TryGetPartByTime(TimeSpan.FromSeconds(0.65))!;
 
             // Assert
             caption.Should().NotBeNull();
-            caption.Text.Should().Be("And the game was afoot.");
+            captionPart.Should().NotBeNull();
+            caption.Text.Should().Be("know I worked really hard on not doing");
+            captionPart.Text.Should().Be(" hard");
         }
 
-        [Fact]
-        public async Task I_can_download_a_specific_closed_caption_track()
+        [Theory]
+        [InlineData("_QdPW8JrYzQ")]
+        [InlineData("YltHGKX80Y8")]
+        public async Task I_can_download_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=_QdPW8JrYzQ";
             var filePath = Path.Combine(TempDirPath, $"{Guid.NewGuid()}.srt");
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
-            var trackInfo = manifest.TryGetByLanguage("en")!;
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
+            var trackInfo = manifest.Tracks.First();
             await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath);
 
             // Assert
