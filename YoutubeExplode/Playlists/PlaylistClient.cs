@@ -32,15 +32,13 @@ namespace YoutubeExplode.Playlists
 
             return new Playlist(
                 id,
-                response.TryGetAuthor(),
                 response.GetTitle(),
-                response.TryGetDescription() ?? "",
-                new Engagement(
+                response.TryGetAuthor(),
+                response.TryGetDescription() ?? "", new Engagement(
                     response.TryGetViewCount() ?? 0,
                     response.TryGetLikeCount() ?? 0,
                     response.TryGetDislikeCount() ?? 0
-                )
-            );
+                ));
         }
 
         /// <summary>

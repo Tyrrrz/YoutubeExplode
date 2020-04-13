@@ -18,15 +18,15 @@ namespace YoutubeExplode.Playlists
         public string Url => $"https://www.youtube.com/playlist?list={Id}";
 
         /// <summary>
+        /// Playlist title.
+        /// </summary>
+        public string Title { get; }
+
+        /// <summary>
         /// Playlist author.
         /// Can be null if it's a system playlist (e.g. Video Mix, Topics, etc.).
         /// </summary>
         public string? Author { get; }
-
-        /// <summary>
-        /// Playlist title.
-        /// </summary>
-        public string Title { get; }
 
         /// <summary>
         /// Playlist description.
@@ -41,11 +41,11 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Initializes an instance of <see cref="Playlist"/>.
         /// </summary>
-        public Playlist(PlaylistId id, string? author, string title, string description, Engagement engagement)
+        public Playlist(PlaylistId id, string title, string? author, string description, Engagement engagement)
         {
             Id = id;
-            Author = author;
             Title = title;
+            Author = author;
             Description = description;
             Engagement = engagement;
         }
