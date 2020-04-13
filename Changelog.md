@@ -1,3 +1,9 @@
+### v5.0.1 (13-Apr-2020)
+
+- Extended `ClosedCaption` with `Parts` property that contains separate parts of a caption, along with their individual timings. Note that not all tracks contain this information.
+- Fixed an issue where searching for videos sometimes failed with an exception.
+- Added missing operators for `FileSize`, `Bitrate`, `Framerate`, `VideoResolution`, `Container`, `Language`, `VideoId`, `PlaylistId`, `ChannelId`, `UserName`.
+
 ### v5.0 (12-Apr-2020)
 
 - **Reworked the entire library from the ground up.**
