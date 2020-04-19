@@ -25,9 +25,9 @@ Failed to perform an HTTP request to YouTube due to a fatal failure.
 In most cases, this error indicates that YouTube most likely changed something, which broke the library.
 If this issue persists, please report it on the project's GitHub page.
 
-Request: {response.RequestMessage}
+{response.RequestMessage}
 
-Response: {response}";
+{response}";
 
             return new FatalFailureException(message.Trim());
         }

@@ -26,9 +26,9 @@ This error indicates that YouTube thinks there were too many requests made from 
 To resolve this error, please wait some time and try again -or- try injecting an HttpClient that has cookies for an authenticated user.
 Unfortunately, there's nothing the library can do to work around this error.
 
-Request: {response.RequestMessage}
+{response.RequestMessage}
 
-Response: {response}";
+{response}";
 
             return new RequestLimitExceededException(message.Trim());
         }

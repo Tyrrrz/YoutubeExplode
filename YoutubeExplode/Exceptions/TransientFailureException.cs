@@ -26,9 +26,9 @@ In most cases, this error indicates that the problem is on YouTube's side and th
 To resolve this error, please wait some time and try again.
 If this issue persists, please report it on the project's GitHub page.
 
-Request: {response.RequestMessage}
+{response.RequestMessage}
 
-Response: {response}";
+{response}";
 
             return new TransientFailureException(message.Trim());
         }
