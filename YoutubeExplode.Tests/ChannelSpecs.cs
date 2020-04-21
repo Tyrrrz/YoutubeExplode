@@ -75,7 +75,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Channels.GetUploadsAsync(channelUrl).BufferAsync();
+            var videos = await youtube.Channels.GetUploadsAsync(channelUrl);
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(80);
@@ -91,7 +91,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Channels.GetUploadsAsync(channelId).BufferAsync();
+            var videos = await youtube.Channels.GetUploadsAsync(channelId);
 
             // Assert
             videos.Should().NotBeEmpty();

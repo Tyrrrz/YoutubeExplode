@@ -55,7 +55,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(playlistUrl).BufferAsync();
+            var videos = await youtube.Playlists.GetVideosAsync(playlistUrl);
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(20);
@@ -90,7 +90,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(playlistId).BufferAsync();
+            var videos = await youtube.Playlists.GetVideosAsync(playlistId);
 
             // Assert
             videos.Should().NotBeEmpty();

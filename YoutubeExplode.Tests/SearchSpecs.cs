@@ -13,7 +13,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetVideosAsync("undead corporation megalomania").BufferAsync();
+            var videos = await youtube.Search.GetVideosAsync("undead corporation megalomania");
 
             // Assert
             videos.Should().NotBeEmpty();
