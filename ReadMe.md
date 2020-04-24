@@ -85,11 +85,14 @@ var streamInfo = streamManifest
 Finally, you can get the actual `Stream` object represented by the metadata:
 
 ```csharp
-// Get the actual stream
-var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
-
-// Download the stream to file
-await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
+if (streamInfo != null)
+{
+    // Get the actual stream
+    var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+    
+    // Download the stream to file
+    await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
+}
 ```
 
 While it may be tempting to just always use muxed streams, it's important to note that they are limited in quality.
@@ -120,14 +123,10 @@ await foreach (var video in youtube.Playlists.GetVideosAsync(playlist.Id))
 }
 
 // Get all playlist videos
-var playlistVideos = await youtube
-    .Playlists
-    .GetVideosAsync(playlist.Id)
-    .BufferAsync();
+var playlistVideos = await youtube.Playlists.GetVideosAsync(playlist.Id);
 
 // Get first 20 playlist videos
-var somePlaylistVideos = await youtube
-    .Playlists
+var somePlaylistVideos = await youtube.Playlists
     .GetVideosAsync(playlist.Id)
     .BufferAsync(20);
 ```
