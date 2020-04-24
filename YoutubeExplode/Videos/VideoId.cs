@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using YoutubeExplode.Internal.Extensions;
 
 namespace YoutubeExplode.Videos
 {
@@ -73,7 +74,7 @@ namespace YoutubeExplode.Videos
             return !Regex.IsMatch(id, @"[^0-9a-zA-Z_\-]");
         }
 
-        private static string? TryNormalize(string idOrUrl)
+        private static string? TryNormalize(string? idOrUrl)
         {
             if (string.IsNullOrWhiteSpace(idOrUrl))
                 return null;
@@ -87,28 +88,29 @@ namespace YoutubeExplode.Videos
             // https://www.youtube.com/watch?v=yIVRs6YSbOM
             var regularMatch = Regex.Match(idOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            {
                 return regularMatch;
-            }
 
             // Short URL
             // https://youtu.be/yIVRs6YSbOM
             var shortMatch = Regex.Match(idOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(shortMatch) && IsValid(shortMatch))
-            {
                 return shortMatch;
-            }
 
             // Embed URL
             // https://www.youtube.com/embed/yIVRs6YSbOM
             var embedMatch = Regex.Match(idOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(embedMatch) && IsValid(embedMatch))
-            {
                 return embedMatch;
-            }
 
             // Invalid input
             return null;
         }
+
+        /// <summary>
+        /// Attempts to parse the specified string as a video ID or URL.
+        /// Returns null in case of failure.
+        /// </summary>
+        public static VideoId? TryParse(string? idOrUrl) =>
+            TryNormalize(idOrUrl)?.Pipe(id => new VideoId(id));
     }
 }

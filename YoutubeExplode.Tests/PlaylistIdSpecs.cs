@@ -23,9 +23,11 @@ namespace YoutubeExplode.Tests
         {
             // Act
             var result = new PlaylistId(playlistId);
+            var maybeResult = PlaylistId.TryParse(playlistId);
 
             // Assert
             result.Value.Should().Be(playlistId);
+            maybeResult.Should().Be(result);
         }
 
         [Theory]
@@ -38,9 +40,11 @@ namespace YoutubeExplode.Tests
         {
             // Act
             var result = new PlaylistId(playlistUrl);
+            var maybeResult = PlaylistId.TryParse(playlistUrl);
 
             // Assert
             result.Value.Should().Be(expectedPlaylistId);
+            maybeResult.Should().Be(result);
         }
 
         [Theory]
@@ -51,6 +55,7 @@ namespace YoutubeExplode.Tests
         {
             // Act & assert
             Assert.Throws<ArgumentException>(() => new PlaylistId(playlistId));
+            PlaylistId.TryParse(playlistId).Should().BeNull();
         }
 
         [Theory]
@@ -61,6 +66,7 @@ namespace YoutubeExplode.Tests
         {
             // Act & assert
             Assert.Throws<ArgumentException>(() => new PlaylistId(playlistUrl));
+            PlaylistId.TryParse(playlistUrl).Should().BeNull();
         }
     }
 }

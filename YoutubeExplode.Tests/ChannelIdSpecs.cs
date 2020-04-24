@@ -14,9 +14,11 @@ namespace YoutubeExplode.Tests
         {
             // Act
             var result = new ChannelId(channelId);
+            var maybeResult = ChannelId.TryParse(channelId);
 
             // Assert
             result.Value.Should().Be(channelId);
+            maybeResult.Should().Be(result);
         }
 
         [Theory]
@@ -27,9 +29,11 @@ namespace YoutubeExplode.Tests
         {
             // Act
             var result = new ChannelId(channelUrl);
+            var maybeResult = ChannelId.TryParse(channelUrl);
 
             // Assert
             result.Value.Should().Be(expectedChannelId);
+            maybeResult.Should().Be(result);
         }
 
         [Theory]
@@ -40,6 +44,7 @@ namespace YoutubeExplode.Tests
         {
             // Act & assert
             Assert.Throws<ArgumentException>(() => new ChannelId(channelId));
+            ChannelId.TryParse(channelId).Should().BeNull();
         }
 
         [Theory]
@@ -50,6 +55,7 @@ namespace YoutubeExplode.Tests
         {
             // Act & assert
             Assert.Throws<ArgumentException>(() => new ChannelId(channelUrl));
+            ChannelId.TryParse(channelUrl).Should().BeNull();
         }
     }
 }

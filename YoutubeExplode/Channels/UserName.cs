@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using YoutubeExplode.Internal.Extensions;
 
 namespace YoutubeExplode.Channels
 {
@@ -87,12 +88,17 @@ namespace YoutubeExplode.Channels
             // https://www.youtube.com/user/TheTyrrr
             var regularMatch = Regex.Match(nameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            {
                 return regularMatch;
-            }
 
             // Invalid input
             return null;
         }
+
+        /// <summary>
+        /// Attempts to parse the specified string as a username or URL.
+        /// Returns null in case of failure.
+        /// </summary>
+        public static UserName? TryParse(string? nameOrUrl) =>
+            TryNormalize(nameOrUrl)?.Pipe(name => new UserName(name));
     }
 }

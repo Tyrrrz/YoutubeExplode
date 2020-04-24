@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using YoutubeExplode.Internal.Extensions;
 
 namespace YoutubeExplode.Playlists
 {
@@ -106,36 +107,35 @@ namespace YoutubeExplode.Playlists
             // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
             var regularMatch = Regex.Match(idOrUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            {
                 return regularMatch;
-            }
 
             // Composite URL (video + playlist)
             // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
             var compositeMatch = Regex.Match(idOrUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(compositeMatch) && IsValid(compositeMatch))
-            {
                 return compositeMatch;
-            }
 
             // Short composite URL (video + playlist)
             // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
             var shortCompositeMatch = Regex.Match(idOrUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(shortCompositeMatch) && IsValid(shortCompositeMatch))
-            {
                 return shortCompositeMatch;
-            }
 
             // Embed URL
             // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
             var embedCompositeMatch = Regex.Match(idOrUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(embedCompositeMatch) && IsValid(embedCompositeMatch))
-            {
                 return embedCompositeMatch;
-            }
 
             // Invalid input
             return null;
         }
+
+        /// <summary>
+        /// Attempts to parse the specified string as a playlist ID or URL.
+        /// Returns null in case of failure.
+        /// </summary>
+        public static PlaylistId? TryParse(string? idOrUrl) =>
+            TryNormalize(idOrUrl)?.Pipe(id => new PlaylistId(id));
     }
 }

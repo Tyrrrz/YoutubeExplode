@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using YoutubeExplode.Internal.Extensions;
 
 namespace YoutubeExplode.Channels
 {
@@ -91,12 +92,17 @@ namespace YoutubeExplode.Channels
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
             var regularMatch = Regex.Match(idOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            {
                 return regularMatch;
-            }
 
             // Invalid input
             return null;
         }
+
+        /// <summary>
+        /// Attempts to parse the specified string as a channel ID or URL.
+        /// Returns null in case of failure.
+        /// </summary>
+        public static ChannelId? TryParse(string? idOrUrl) =>
+            TryNormalize(idOrUrl)?.Pipe(id => new ChannelId(id));
     }
 }
