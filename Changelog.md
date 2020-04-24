@@ -1,3 +1,9 @@
+### v5.0.2 (24-Apr-2020)
+
+- Added `TryParse` static method to `ChannelId`, `UserName`, `PlaylistId`, `VideoId` objects.
+- Added an extension method to make it simpler to buffer an asynchronous list of videos in-memory. You can now do `var videos = await youtube.Playlist.GetVideosAsync(...)` on top of enumerating it with `await foreach`. The readme has been updated with new usage examples.
+- Simplified exception messages.
+
 ### v5.0.1 (13-Apr-2020)
 
 - Extended `ClosedCaption` with `Parts` property that contains separate parts of a caption, along with their individual timings. Note that not all tracks contain this information.
