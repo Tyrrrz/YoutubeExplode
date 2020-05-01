@@ -1,3 +1,7 @@
+### v5.0.3 (01-May-2020)
+
+- Fixed an issue where streams couldn't be extracted for some videos.
+
 ### v5.0.2 (24-Apr-2020)
 
 - Added `TryParse` static method to `ChannelId`, `UserName`, `PlaylistId`, `VideoId` objects.
