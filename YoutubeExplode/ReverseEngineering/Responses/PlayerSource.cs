@@ -16,8 +16,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public PlayerSource(string root) => _root = root;
 
         public string GetSts() => _root
-                                      .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;var \w\s*=)\d+").Value)
-                                      .NullIfWhiteSpace() ?? throw FatalFailureException.Generic("Could not find sts in player source.");
+            .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;\w+\s*=)\d+").Value)
+            .NullIfWhiteSpace() ?? throw FatalFailureException.Generic("Could not find sts in player source.");
 
         public IEnumerable<ICipherOperation> GetCipherOperations()
         {
