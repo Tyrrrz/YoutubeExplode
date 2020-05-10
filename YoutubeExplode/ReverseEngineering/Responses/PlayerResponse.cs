@@ -154,21 +154,37 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                     .GetPropertyOrNull("url")?
                     .GetString() ??
                 _root
-                    .GetProperty("cipher")
+                    .GetPropertyOrNull("cipher")?
+                    .GetString()
+                    .Pipe(Url.SplitQuery)["url"] ??
+                _root
+                    .GetProperty("signatureCipher")
                     .GetString()
                     .Pipe(Url.SplitQuery)["url"];
 
-            public string? TryGetSignature() => _root
-                .GetPropertyOrNull("cipher")?
-                .GetString()
-                .Pipe(Url.SplitQuery)
-                .GetValueOrDefault("s");
+            public string? TryGetSignature() =>
+                _root
+                    .GetPropertyOrNull("cipher")?
+                    .GetString()
+                    .Pipe(Url.SplitQuery)
+                    .GetValueOrDefault("s") ??
+                _root
+                    .GetPropertyOrNull("signatureCipher")?
+                    .GetString()
+                    .Pipe(Url.SplitQuery)
+                    .GetValueOrDefault("s");
 
-            public string? TryGetSignatureParameter() => _root
-                .GetPropertyOrNull("cipher")?
-                .GetString()
-                .Pipe(Url.SplitQuery)
-                .GetValueOrDefault("sp");
+            public string? TryGetSignatureParameter() =>
+                _root
+                    .GetPropertyOrNull("cipher")?
+                    .GetString()
+                    .Pipe(Url.SplitQuery)
+                    .GetValueOrDefault("sp") ??
+                _root
+                    .GetPropertyOrNull("signatureCipher")?
+                    .GetString()
+                    .Pipe(Url.SplitQuery)
+                    .GetValueOrDefault("sp");
 
             public long? TryGetContentLength() =>
                 _root
