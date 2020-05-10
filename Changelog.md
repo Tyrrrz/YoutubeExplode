@@ -1,3 +1,8 @@
+### v5.0.4 (10-May-2020)
+
+- Fixed an issue where the search query was not correctly escaped in `SearchClient`. (Thanks [@Calle](https://github.com/calledude))
+- Fixed an issue where an exception "The given key was not present in the dictionary" was thrown when trying to get streams for some videos, due to recent YouTube changes.
+
 ### v5.0.3 (01-May-2020)
 
 - Fixed an issue where streams couldn't be extracted for some videos.
