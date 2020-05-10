@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -127,7 +126,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public static async Task<PlaylistResponse> GetSearchResultsAsync(YoutubeHttpClient httpClient, string query, int page = 0) =>
             await Retry.WrapAsync(async () =>
             {
-                var queryEncoded = WebUtility.HtmlEncode(query);
+                var queryEncoded = Uri.EscapeUriString(query);
 
                 var url = $"https://youtube.com/search_ajax?style=json&search_query={queryEncoded}&page={page}&hl=en";
                 var raw = await httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
