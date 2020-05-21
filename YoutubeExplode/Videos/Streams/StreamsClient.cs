@@ -145,9 +145,10 @@ namespace YoutubeExplode.Videos.Streams
                 }
 
                 // Content length
-                var contentLength = streamInfo.TryGetContentLength() ??
-                                    await _httpClient.TryGetContentLengthAsync(url, false) ??
-                                    0;
+                var contentLength =
+                    streamInfo.TryGetContentLength() ??
+                    await _httpClient.TryGetContentLengthAsync(url, false) ??
+                    0;
 
                 if (contentLength <= 0)
                     continue; // broken stream URL?
@@ -165,8 +166,9 @@ namespace YoutubeExplode.Videos.Streams
                 {
                     var framerate = new Framerate(streamInfo.TryGetFramerate() ?? 24);
 
-                    var videoQualityLabel = streamInfo.TryGetVideoQualityLabel() ??
-                                            Heuristics.GetVideoQualityLabel(tag, framerate.FramesPerSecond);
+                    var videoQualityLabel =
+                        streamInfo.TryGetVideoQualityLabel() ??
+                        Heuristics.GetVideoQualityLabel(tag, framerate.FramesPerSecond);
 
                     var videoQuality = Heuristics.GetVideoQuality(videoQualityLabel);
 
@@ -243,13 +245,13 @@ namespace YoutubeExplode.Videos.Streams
 
             try
             {
-                var streamInfoSource = await GetSteamContextFromVideoInfoAsync(videoId);
-                return await GetManifestAsync(streamInfoSource);
+                var context = await GetSteamContextFromVideoInfoAsync(videoId);
+                return await GetManifestAsync(context);
             }
             catch (YoutubeExplodeException)
             {
-                var streamInfoSource = await GetStreamContextFromWatchPageAsync(videoId);
-                return await GetManifestAsync(streamInfoSource);
+                var context = await GetStreamContextFromWatchPageAsync(videoId);
+                return await GetManifestAsync(context);
             }
         }
 

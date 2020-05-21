@@ -23,6 +23,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Attribute("sourceURL")?
                 .Value
                 .Contains("sq/") != true)
+            .Where(x => !string.IsNullOrWhiteSpace(x.Attribute("codecs")?.Value))
             .Select(x => new StreamInfo(x));
     }
 

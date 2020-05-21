@@ -115,6 +115,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetPropertyOrNull("formats")?
                 .EnumerateArray()
                 .Select(j => new StreamInfo(j))
+                .Where(s => !string.Equals(s.GetCodecs(), "unknown", StringComparison.OrdinalIgnoreCase))
         );
 
         private IEnumerable<StreamInfo> GetAdaptiveStreams() => Fallback.ToEmpty(
@@ -123,6 +124,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetPropertyOrNull("adaptiveFormats")?
                 .EnumerateArray()
                 .Select(j => new StreamInfo(j))
+                .Where(s => !string.Equals(s.GetCodecs(), "unknown", StringComparison.OrdinalIgnoreCase))
         );
 
         public IEnumerable<StreamInfo> GetStreams() => GetMuxedStreams().Concat(GetAdaptiveStreams());
@@ -211,7 +213,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             private bool IsAudioOnly() => GetMimeType()
                 .StartsWith("audio/", StringComparison.OrdinalIgnoreCase);
 
-            private string GetCodecs() => GetMimeType()
+            public string GetCodecs() => GetMimeType()
                 .SubstringAfter("codecs=\"")
                 .SubstringUntil("\"");
 

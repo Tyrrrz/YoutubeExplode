@@ -83,6 +83,7 @@ namespace YoutubeExplode.Tests
         [InlineData("ZGdLIwrGHG8")] // unlisted
         [InlineData("rsAAeyAr-9Y")] // recording of a live stream
         [InlineData("AI7ULzgf8RU")] // has DASH manifest
+        [InlineData("EqzzbZ0M3HU")] // recording of a live stream with broken data
         public async Task I_can_get_a_specific_stream_of_any_playable_YouTube_video(string videoId)
         {
             // Arrange
@@ -118,6 +119,7 @@ namespace YoutubeExplode.Tests
         [InlineData("ZGdLIwrGHG8")] // unlisted
         [InlineData("rsAAeyAr-9Y")] // recording of a live stream
         [InlineData("AI7ULzgf8RU")] // has DASH manifest
+        [InlineData("EqzzbZ0M3HU")] // recording of a live stream with broken data
         public async Task I_can_download_a_specific_stream_of_any_playable_YouTube_video(string videoId)
         {
             // Arrange
