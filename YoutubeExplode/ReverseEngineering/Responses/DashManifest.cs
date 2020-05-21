@@ -47,7 +47,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public long? TryGetContentLength() =>
                 (long?) _root.Attribute("contentLength") ??
-                GetUrl().Pipe(s => Regex.Match(s, @"clen[/=](\d+)").Groups[1].Value).NullIfWhiteSpace()?.ParseLong();
+                GetUrl().Pipe(s => Regex.Match(s, @"[/\?]clen[/=](\d+)").Groups[1].Value).NullIfWhiteSpace()?.ParseLong();
 
             public long GetBitrate() => (long) _root.Attribute("bandwidth");
 
