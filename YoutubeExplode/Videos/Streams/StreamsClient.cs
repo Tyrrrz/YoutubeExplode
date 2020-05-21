@@ -46,8 +46,9 @@ namespace YoutubeExplode.Videos.Streams
         private async Task<StreamContext> GetSteamContextFromVideoInfoAsync(VideoId videoId)
         {
             var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
-            var playerConfig = embedPage.TryGetPlayerConfig() ??
-                               throw VideoUnplayableException.Unplayable(videoId);
+            var playerConfig =
+                embedPage.TryGetPlayerConfig() ??
+                throw VideoUnplayableException.Unplayable(videoId);
 
             var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
@@ -87,8 +88,9 @@ namespace YoutubeExplode.Videos.Streams
         private async Task<StreamContext> GetStreamContextFromWatchPageAsync(VideoId videoId)
         {
             var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
-            var playerConfig = watchPage.TryGetPlayerConfig() ??
-                               throw VideoUnplayableException.Unplayable(videoId);
+            var playerConfig =
+                watchPage.TryGetPlayerConfig() ??
+                throw VideoUnplayableException.Unplayable(videoId);
 
             var playerResponse = playerConfig.GetPlayerResponse();
 

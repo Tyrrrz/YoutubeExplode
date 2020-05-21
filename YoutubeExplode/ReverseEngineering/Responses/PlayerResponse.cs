@@ -194,7 +194,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                     .GetString()
                     .ParseLong() ??
                 GetUrl()
-                    .Pipe(s => Regex.Match(s, @"clen=(\d+)").Groups[1].Value)
+                    .Pipe(s => Regex.Match(s, @"[\?&]clen=(\d+)").Groups[1].Value)
                     .NullIfWhiteSpace()?
                     .ParseLong();
 
