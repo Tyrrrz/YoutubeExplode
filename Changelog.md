@@ -1,3 +1,10 @@
+### v5.0.5 (23-May-2020)
+
+- Fixed an issue where sometimes the content length of a stream was equal to `1` due to an error in parsing.
+- Fixed an issue where an exception was thrown on videos that contained unplayable media streams. These streams are now ignored.
+- Fixed an issue where trying to get stream manifest on 360° videos resulted in an exception.
+- Fixed an issue where `Engagement.ToString()` was incorrectly formatting likes and dislikes. (Thanks [@bcook254](https://github.com/bcook254))
+
 ### v5.0.4 (10-May-2020)
 
 - Fixed an issue where the search query was not correctly escaped in `SearchClient`. (Thanks [@Calle](https://github.com/calledude))
