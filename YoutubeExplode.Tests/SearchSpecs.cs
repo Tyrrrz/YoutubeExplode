@@ -33,5 +33,20 @@ namespace YoutubeExplode.Tests
             videos.Should().NotBeEmpty();
             videos.Should().HaveCountLessOrEqualTo(maxVideoCount);
         }
+
+        [Fact]
+        public async Task I_can_search_for_YouTube_videos_and_limit_the_total_loaded_page()
+        {
+            // Arrange
+            const int maxSearchRequest = 1;
+            var youtube = new YoutubeClient();
+
+            // Act
+            var videos = await youtube.Search.GetVideosAsync("billie eilish", maxSearchRequest);
+
+            // Assert
+            videos.Should().NotBeEmpty();
+            videos.Should().HaveCountLessOrEqualTo(30);
+        }
     }
 }
