@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using YoutubeExplode.DemoConsole.Internal;
+using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.DemoConsole
@@ -19,10 +20,10 @@ namespace YoutubeExplode.DemoConsole
 
             // Read the video ID
             Console.Write("Enter YouTube video ID or URL: ");
-            var videoIdOrUrl = Console.ReadLine();
+            var videoId = new VideoId(Console.ReadLine());
 
             // Get media streams & choose the best muxed stream
-            var streams = await youtube.Videos.Streams.GetManifestAsync(videoIdOrUrl);
+            var streams = await youtube.Videos.Streams.GetManifestAsync(videoId);
             var streamInfo = streams.GetMuxed().WithHighestVideoQuality();
             if (streamInfo == null)
             {
@@ -31,7 +32,7 @@ namespace YoutubeExplode.DemoConsole
             }
 
             // Compose file name, based on metadata
-            var fileName = $"{videoIdOrUrl}.{streamInfo.Container.Name}";
+            var fileName = $"{videoId}.{streamInfo.Container.Name}";
 
             // Download video
             Console.Write($"Downloading stream: {streamInfo.VideoQualityLabel} / {streamInfo.Container.Name}... ");
