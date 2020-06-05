@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Internal
@@ -8,7 +9,7 @@ namespace YoutubeExplode.Internal
     {
         public static string SetQueryParameter(string url, string key, string value)
         {
-            value = value ?? string.Empty;
+            value ??= string.Empty;
 
             // Find existing parameter
             var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
@@ -42,7 +43,7 @@ namespace YoutubeExplode.Internal
 
         public static string SetRouteParameter(string url, string key, string value)
         {
-            value = value ?? string.Empty;
+            value ??= string.Empty;
 
             // Find existing parameter
             var existingMatch = Regex.Match(url, $"/({Regex.Escape(key)}/?.*?)(?:/|$)");
@@ -74,7 +75,7 @@ namespace YoutubeExplode.Internal
             var paramsEncoded = query.TrimStart('?').Split("&");
             foreach (var paramEncoded in paramsEncoded)
             {
-                var param = paramEncoded.UrlDecode();
+                var param = WebUtility.UrlDecode(paramEncoded);
 
                 // Look for the equals sign
                 var equalsPos = param.IndexOf('=');

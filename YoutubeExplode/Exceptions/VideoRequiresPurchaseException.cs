@@ -1,24 +1,34 @@
-﻿using YoutubeExplode.Internal;
+using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Thrown when a video is not playable because it requires purchase.
+    /// Exception thrown when the requested video requires purchase.
     /// </summary>
-    public class VideoRequiresPurchaseException : VideoUnplayableException
+    public partial class VideoRequiresPurchaseException : VideoUnplayableException
     {
         /// <summary>
-        /// ID of the preview video.
+        /// ID of a free preview video for this video.
         /// </summary>
-        public string PreviewVideoId { get; }
+        public VideoId PreviewVideoId { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="VideoRequiresPurchaseException"/>.
+        /// Initializes an instance of <see cref="VideoRequiresPurchaseException"/>
         /// </summary>
-        public VideoRequiresPurchaseException(string videoId, string previewVideoId, string message)
-            : base(videoId, message)
+        public VideoRequiresPurchaseException(string message, VideoId previewVideoId) : base(message) =>
+            PreviewVideoId = previewVideoId;
+    }
+
+    public partial class VideoRequiresPurchaseException
+    {
+        internal static VideoRequiresPurchaseException Preview(VideoId videoId, VideoId previewVideoId)
         {
-            PreviewVideoId = previewVideoId.GuardNotNull(nameof(previewVideoId));
+            var message = $@"
+Video '{videoId}' is unplayable because it requires purchase.
+Streams are not available for this video.
+There is a preview video available: '{previewVideoId}'.";
+
+            return new VideoRequiresPurchaseException(message, previewVideoId);
         }
     }
 }

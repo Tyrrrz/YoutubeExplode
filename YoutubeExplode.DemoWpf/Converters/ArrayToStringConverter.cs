@@ -11,10 +11,10 @@ namespace YoutubeExplode.DemoWpf.Converters
     {
         public static ArrayToStringConverter Instance { get; } = new ArrayToStringConverter();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
-                return null;
+                return default(string);
 
             var enumerable = (IEnumerable) value;
             var separator = parameter as string ?? ", ";

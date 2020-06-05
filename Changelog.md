@@ -1,3 +1,70 @@
+### v5.0.5 (23-May-2020)
+
+- Fixed an issue where sometimes the content length of a stream was equal to `1` due to an error in parsing.
+- Fixed an issue where an exception was thrown on videos that contained unplayable media streams. These streams are now ignored.
+- Fixed an issue where trying to get stream manifest on 360° videos resulted in an exception.
+- Fixed an issue where `Engagement.ToString()` was incorrectly formatting likes and dislikes. (Thanks [@bcook254](https://github.com/bcook254))
+
+### v5.0.4 (10-May-2020)
+
+- Fixed an issue where the search query was not correctly escaped in `SearchClient`. (Thanks [@Calle](https://github.com/calledude))
+- Fixed an issue where an exception "The given key was not present in the dictionary" was thrown when trying to get streams for some videos, due to recent YouTube changes.
+
+### v5.0.3 (01-May-2020)
+
+- Fixed an issue where streams couldn't be extracted for some videos.
+
+### v5.0.2 (24-Apr-2020)
+
+- Added `TryParse` static method to `ChannelId`, `UserName`, `PlaylistId`, `VideoId` objects.
+- Added an extension method to make it simpler to buffer an asynchronous list of videos in-memory. You can now do `var videos = await youtube.Playlist.GetVideosAsync(...)` on top of enumerating it with `await foreach`. The readme has been updated with new usage examples.
+- Simplified exception messages.
+
+### v5.0.1 (13-Apr-2020)
+
+- Extended `ClosedCaption` with `Parts` property that contains separate parts of a caption, along with their individual timings. Note that not all tracks contain this information.
+- Fixed an issue where searching for videos sometimes failed with an exception.
+- Added missing operators for `FileSize`, `Bitrate`, `Framerate`, `VideoResolution`, `Container`, `Language`, `VideoId`, `PlaylistId`, `ChannelId`, `UserName`.
+
+### v5.0 (12-Apr-2020)
+
+- **Reworked the entire library from the ground up.**
+- Video, playlist, channel IDs and usernames are now encapsulated in corresponding domain objects. This means that you no longer have to parse IDs manually -- e.g. if a method accepts a parameter of type `VideoId`, you can either specify an ID (`bnsUkE8i0tU`) or a URL (`https://youtube.com/watch?v=bnsUkE8i0tU`).
+- Playlist videos and search results are now returned as `IAsyncEnumerable` so you can enumerate through them without worrying about making too many or too few requests. If you want to buffer them in-memory, you can use an extension method called `BufferAsync()`.
+- Improved exceptions, exception messages, and everything related to exceptions. Additionally, all exception types now derive from `YoutubeExplodeException`, making them easier to catch.
+- Added built-in retry mechanisms to work around transient errors on YouTube's side.
+- Improved resilience of the library in general.
+- Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
+- Fixed a metric ton of YouTube-related issues.
+- Many, many others improvements that I didn't think to mention.
+- Dropped .NET Framework v4.5 target in favor of v4.6.1 and .NET Standard v1.1 target in favor of v2.0.
+
+### v4.7.16 (16-Mar-2020)
+
+- Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
+
+### v4.7.15 (11-Mar-2020)
+
+- Fixed some issues revolving around videos marked with "content warning".
+
+### v4.7.14 (10-Mar-2020)
+
+- Fixed an issue where `GetMediaStreamAsync` and `DownloadMediaStreamAsync` threw an exception due to recent YouTube changes. As a side effect, age-restricted videos may no longer work, at least until a new workaround is found.
+
+### v4.7.13 (10-Feb-2020)
+
+- Fixed an issue where `GetPlaylistAsync` only returned 200 videos for some larger playlists. Thanks [@polynoman](https://github.com/polynoman).
+
+### v4.7.12 (29-Dec-2019)
+
+- Fixed an issue where some playlist IDs were incorrectly considered invalid.
+
+### v4.7.11 (15-Dec-2019)
+
+- Fixed an issue where `GetVideoMediaStreamInfosAsync` sometimes returned a set without any streams due to recent YouTube changes.
+- Fixed an issue where "my mix" playlists were considered invalid.
+- Added nullable reference type annotations and removed ReSharper annotations.
+
 ### v4.7.10 (23-Sep-2019)
 
 - Fixed an issue where `GetVideoMediaStreamInfosAsync` threw an exception due to recent YouTube changes.

@@ -9,10 +9,10 @@ namespace YoutubeExplode.DemoWpf.Converters
     {
         public static BoolToStringConverter Instance { get; } = new BoolToStringConverter();
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
-                throw new ArgumentNullException(nameof(value));
+                return default(string);
 
             var b = (bool) value;
             return b ? "yes" : "no";
