@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
@@ -27,6 +28,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public string? TryGetDescription() => _root
             .GetPropertyOrNull("description")?
             .GetString();
+
+        public ThumbnailSet? TryGetThumbnails()
+        {
+            string? firstVideoId = GetVideos().FirstOrDefault()?.GetId();
+            return firstVideoId != null ? new ThumbnailSet(firstVideoId) : null;
+        }
 
         public long? TryGetViewCount() => _root
             .GetPropertyOrNull("views")?

@@ -34,7 +34,9 @@ namespace YoutubeExplode.Playlists
                 id,
                 response.GetTitle(),
                 response.TryGetAuthor(),
-                response.TryGetDescription() ?? "", new Engagement(
+                response.TryGetDescription() ?? "",
+                response.TryGetThumbnails(),
+                new Engagement(
                     response.TryGetViewCount() ?? 0,
                     response.TryGetLikeCount() ?? 0,
                     response.TryGetDislikeCount() ?? 0
