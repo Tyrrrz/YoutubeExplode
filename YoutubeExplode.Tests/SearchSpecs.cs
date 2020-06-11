@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -17,6 +18,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().NotBeEmpty();
+            videos.Select(v => v.ChannelId.Value.Length.Should().Be(24));
         }
 
         [Fact]

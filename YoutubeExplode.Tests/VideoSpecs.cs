@@ -23,6 +23,7 @@ namespace YoutubeExplode.Tests
             video.Url.Should().Be(videoUrl);
             video.Title.Should().Be("Aka no Ha [Another] +HDHR");
             video.Author.Should().Be("Tyrrrz");
+            video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
             video.Duration.Should().Be(new TimeSpan(00, 01, 48));

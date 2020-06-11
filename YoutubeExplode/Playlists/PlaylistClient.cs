@@ -66,6 +66,7 @@ namespace YoutubeExplode.Playlists
                         videoId,
                         video.GetTitle(),
                         video.GetAuthor(),
+                        video.GetAuthorId(),
                         video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),
