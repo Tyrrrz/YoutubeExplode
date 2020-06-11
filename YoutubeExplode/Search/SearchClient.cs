@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using YoutubeExplode.Common;
 using YoutubeExplode.ReverseEngineering;
@@ -46,6 +45,7 @@ namespace YoutubeExplode.Search
                         videoId,
                         video.GetTitle(),
                         video.GetAuthor(),
+                        video.GetAuthorId(),
                         video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),

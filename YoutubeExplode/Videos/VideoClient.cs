@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
 using YoutubeExplode.ReverseEngineering;
@@ -50,6 +49,7 @@ namespace YoutubeExplode.Videos
                 id,
                 playerResponse.GetVideoTitle(),
                 playerResponse.GetVideoAuthor(),
+                playerResponse.GetVideoChannelId(),
                 playerResponse.GetVideoUploadDate(),
                 playerResponse.GetVideoDescription(),
                 playerResponse.GetVideoDuration(),

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -79,6 +80,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(80);
+            videos.Select(v => v.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ"));
         }
 
         [Theory]

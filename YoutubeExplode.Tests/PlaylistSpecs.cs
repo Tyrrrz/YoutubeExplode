@@ -70,6 +70,7 @@ namespace YoutubeExplode.Tests
                 "VoGpvg3xXoE",
                 "Qzu-fTdjeFY"
             });
+            videos.Select(v => v.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ"));
         }
 
         [Theory]
