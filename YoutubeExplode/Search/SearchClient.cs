@@ -45,7 +45,7 @@ namespace YoutubeExplode.Search
                         videoId,
                         video.GetTitle(),
                         video.GetAuthor(),
-                        video.GetAuthorId(),
+                        video.GetChannelId(),
                         video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),

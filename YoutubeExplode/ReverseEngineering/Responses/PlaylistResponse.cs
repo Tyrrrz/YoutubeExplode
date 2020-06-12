@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using YoutubeExplode.Channels;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
@@ -65,7 +64,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetProperty("author")
                 .GetString();
 
-            public ChannelId GetAuthorId() => _root
+            public string GetChannelId() => _root
                 .GetProperty("user_id")
                 .GetString()
                 .Pipe(id => "UC" + id);

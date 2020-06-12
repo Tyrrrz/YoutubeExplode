@@ -80,7 +80,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(80);
-            videos.Select(v => v.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ"));
+            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == "UCEnBXANsKmyj2r9xVyKoDiQ");
         }
 
         [Theory]
@@ -97,6 +97,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().NotBeEmpty();
+            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == channelId);
         }
 
         [Theory]
@@ -114,6 +115,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().NotBeEmpty();
+            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == channelId);
             videos.Should().HaveCountLessOrEqualTo(maxVideoCount);
         }
     }

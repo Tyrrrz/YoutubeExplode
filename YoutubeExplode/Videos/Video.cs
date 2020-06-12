@@ -31,7 +31,7 @@ namespace YoutubeExplode.Videos
         public string Author { get; }
 
         /// <summary>
-        /// Video author ID.
+        /// Video channel ID.
         /// </summary>
         public ChannelId ChannelId { get; }
 
@@ -72,7 +72,7 @@ namespace YoutubeExplode.Videos
             VideoId id,
             string title,
             string author,
-            ChannelId authorId,
+            ChannelId channelId,
             DateTimeOffset uploadDate,
             string description,
             TimeSpan duration,
@@ -83,7 +83,7 @@ namespace YoutubeExplode.Videos
             Id = id;
             Title = title;
             Author = author;
-            ChannelId = authorId;
+            ChannelId = channelId;
             UploadDate = uploadDate;
             Description = description;
             Duration = duration;
