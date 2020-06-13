@@ -29,11 +29,10 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("description")?
             .GetString();
 
-        public ThumbnailSet? TryGetThumbnails()
-        {
-            string? firstVideoId = GetVideos().FirstOrDefault()?.GetId();
-            return firstVideoId != null ? new ThumbnailSet(firstVideoId) : null;
-        }
+        public ThumbnailSet? TryGetThumbnails() => GetVideos()
+            .FirstOrDefault()?
+            .GetId()
+            .Pipe(i => new ThumbnailSet(i));
 
         public long? TryGetViewCount() => _root
             .GetPropertyOrNull("views")?
