@@ -34,6 +34,11 @@ namespace YoutubeExplode.Playlists
         public string Description { get; }
 
         /// <summary>
+        /// Available thumbnails for this playlist.
+        /// </summary>
+        public ThumbnailSet? Thumbnails { get; }
+
+        /// <summary>
         /// Engagement statistics.
         /// </summary>
         public Engagement Engagement { get; }
@@ -41,12 +46,13 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Initializes an instance of <see cref="Playlist"/>.
         /// </summary>
-        public Playlist(PlaylistId id, string title, string? author, string description, Engagement engagement)
+        public Playlist(PlaylistId id, string title, string? author, string description, ThumbnailSet? thumbnails, Engagement engagement)
         {
             Id = id;
             Title = title;
             Author = author;
             Description = description;
+            Thumbnails = thumbnails;
             Engagement = engagement;
         }
 
