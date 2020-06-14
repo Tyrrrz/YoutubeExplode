@@ -1,3 +1,8 @@
+### v5.1 (14-Jun-2020)
+
+- Added `ChannelId` property to the `Video` object. (Thanks [@Tom PoLáKoSz](https://github.com/PoLaKoSz))
+- Added `Thumbnails` property to the `Playlist` object. The playlist's thumbnail is the same as the thumbnail of its first video. If the playlist is empty, then this property is `null`. (Thanks [@Halil](https://github.com/hig-dev))
+
 ### v5.0.5 (23-May-2020)
 
 - Fixed an issue where sometimes the content length of a stream was equal to `1` due to an error in parsing.
