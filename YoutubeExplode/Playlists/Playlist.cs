@@ -35,6 +35,7 @@ namespace YoutubeExplode.Playlists
 
         /// <summary>
         /// Available thumbnails for this playlist.
+        /// Can be null if the playlist is empty.
         /// </summary>
         public ThumbnailSet? Thumbnails { get; }
 
