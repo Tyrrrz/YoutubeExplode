@@ -71,8 +71,6 @@ namespace YoutubeExplode
             if (handler.SupportsAutomaticDecompression)
                 handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            handler.UseCookies = false;
-
             var httpClient = new HttpClient(handler, true);
 
             httpClient.DefaultRequestHeaders.Add("User-Agent",
