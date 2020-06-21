@@ -1,3 +1,8 @@
+### v5.1.1 (21-Jun-2020)
+
+- Fixed an issue where age-restricted videos could not be downloaded.
+- Fixed an issue where `PlatformNotSupportedException` was thrown when targeting Blazor WASM.
+
 ### v5.1 (14-Jun-2020)
 
 - Added `ChannelId` property to the `Video` object. (Thanks [@Tom PoLáKoSz](https://github.com/PoLaKoSz))
