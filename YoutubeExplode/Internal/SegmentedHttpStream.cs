@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,10 +24,13 @@ namespace YoutubeExplode.Internal
             _segmentSize = segmentSize;
         }
 
+        [ExcludeFromCodeCoverage]
         public override bool CanRead => true;
 
+        [ExcludeFromCodeCoverage]
         public override bool CanSeek => true;
 
+        [ExcludeFromCodeCoverage]
         public override bool CanWrite => false;
 
         public override long Length { get; }
@@ -52,6 +56,14 @@ namespace YoutubeExplode.Internal
             _currentStream?.Dispose();
             _currentStream = null;
         }
+
+        private long GetNewPosition(long offset, SeekOrigin origin) => origin switch
+        {
+            SeekOrigin.Begin => offset,
+            SeekOrigin.Current => Position + offset,
+            SeekOrigin.End => Length + offset,
+            _ => throw new ArgumentOutOfRangeException(nameof(origin))
+        };
 
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
@@ -84,30 +96,20 @@ namespace YoutubeExplode.Internal
             return bytesRead;
         }
 
+        [ExcludeFromCodeCoverage]
         public override int Read(byte[] buffer, int offset, int count) =>
             ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
 
-        private long GetNewPosition(long offset, SeekOrigin origin)
-        {
-            switch (origin)
-            {
-                case SeekOrigin.Begin:
-                    return offset;
-                case SeekOrigin.Current:
-                    return Position + offset;
-                case SeekOrigin.End:
-                    return Length + offset;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(origin));
-            }
-        }
-
+        [ExcludeFromCodeCoverage]
         public override long Seek(long offset, SeekOrigin origin) => Position = GetNewPosition(offset, origin);
 
+        [ExcludeFromCodeCoverage]
         public override void Flush() => throw new NotSupportedException();
 
+        [ExcludeFromCodeCoverage]
         public override void SetLength(long value) => throw new NotSupportedException();
 
+        [ExcludeFromCodeCoverage]
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
         protected override void Dispose(bool disposing)
