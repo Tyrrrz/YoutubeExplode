@@ -9,6 +9,7 @@ using AngleSharp.Html.Dom;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Videos.Chapters;
 
 namespace YoutubeExplode.ReverseEngineering.Responses
 {
@@ -39,6 +40,15 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .NullIfWhiteSpace()?
             .StripNonDigit()
             .ParseLong();
+
+        public InitialData? TryGetInitialData() => _root
+                .GetElementsByTagName("script")
+                .Select(e => e.Text())
+                .FirstOrDefault(s => s.Contains("window[\"ytInitialData\"] ="))?
+                .NullIfWhiteSpace()?
+                .Pipe(s => Regex.Match(s, "window\\[\"ytInitialData\"\\]\\s*=\\s*(.+?})(?:\"\\))?;", RegexOptions.Singleline).Groups[1].Value)
+                .Pipe(Json.Parse)
+                .Pipe(j => new InitialData(j));
 
         public PlayerConfig? TryGetPlayerConfig() => _root
             .GetElementsByTagName("script")
@@ -94,6 +104,28 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public IEnumerable<VideoInfoResponse.StreamInfo> GetStreams() => GetMuxedStreams().Concat(GetAdaptiveStreams());
         }
+
+        public class InitialData
+        {
+            private readonly JsonElement _root;
+
+            public InitialData(JsonElement root) => _root = root;
+
+            public IReadOnlyList<Chapter> GetChapters() => Fallback.ToEmpty(
+                _root
+                    .GetPropertyOrNull("playerOverlays")?
+                    .GetPropertyOrNull("playerOverlayRenderer")?
+                    .GetPropertyOrNull("decoratedPlayerBarRenderer")?
+                    .GetPropertyOrNull("decoratedPlayerBarRenderer")?
+                    .GetPropertyOrNull("playerBar")?
+                    .GetPropertyOrNull("chapteredPlayerBarRenderer")?
+                    .GetPropertyOrNull("chapters")?
+                    .EnumerateArray()
+                    .Select(j => new Chapter(
+                        j.GetProperty("chapterRenderer").GetProperty("title").GetProperty("simpleText").GetString(),
+                        j.GetProperty("chapterRenderer").GetProperty("timeRangeStartMillis").GetUInt64()))
+                    .ToArray());
+        };
     }
 
     internal partial class WatchPage

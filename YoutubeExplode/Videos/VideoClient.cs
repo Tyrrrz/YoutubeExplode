@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
+using YoutubeExplode.Internal;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -59,7 +60,8 @@ namespace YoutubeExplode.Videos
                     playerResponse.TryGetVideoViewCount() ?? 0,
                     watchPage.TryGetVideoLikeCount() ?? 0,
                     watchPage.TryGetVideoDislikeCount() ?? 0
-                )
+                ),
+                Fallback.ToEmpty(watchPage.TryGetInitialData()?.GetChapters())
             );
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
+using YoutubeExplode.Videos.Chapters;
 
 namespace YoutubeExplode.Videos
 {
@@ -66,6 +67,12 @@ namespace YoutubeExplode.Videos
         public Engagement Engagement { get; }
 
         /// <summary>
+        /// Chapters for this video.
+        /// Will be null for playlists and searches.
+        /// </summary>
+        public IReadOnlyList<Chapter>? Chapters { get; }
+
+        /// <summary>
         /// Initializes an instance of <see cref="Video"/>.
         /// </summary>
         public Video(
@@ -78,7 +85,8 @@ namespace YoutubeExplode.Videos
             TimeSpan duration,
             ThumbnailSet thumbnails,
             IReadOnlyList<string> keywords,
-            Engagement engagement)
+            Engagement engagement,
+            IReadOnlyList<Chapter>? chapters = null)
         {
             Id = id;
             Title = title;
@@ -90,6 +98,7 @@ namespace YoutubeExplode.Videos
             Thumbnails = thumbnails;
             Keywords = keywords;
             Engagement = engagement;
+            Chapters = chapters;
         }
 
 
