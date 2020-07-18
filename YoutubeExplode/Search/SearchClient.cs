@@ -24,11 +24,23 @@ namespace YoutubeExplode.Search
         /// <summary>
         /// Enumerates videos returned by the specified search query.
         /// </summary>
-        public async IAsyncEnumerable<Video> GetVideosAsync(string searchQuery)
+        /// <param name="searchQuery">The term to look for.</param>
+        public IAsyncEnumerable<Video> GetVideosAsync(string searchQuery)
+        {
+            return GetVideosAsync(searchQuery, firstPage: 0, takePage: int.MaxValue);
+        }
+
+        /// <summary>
+        /// Enumerates videos returned by the specified search query.
+        /// </summary>
+        /// <param name="searchQuery">The term to look for.</param>
+        /// <param name="firstPage">Sets how many page should be skipped from the beginning of the search.</param>
+        /// <param name="takePage">Limits how many page should be requested to complete the search.</param>
+        public async IAsyncEnumerable<Video> GetVideosAsync(string searchQuery, int firstPage, int takePage)
         {
             var encounteredVideoIds = new HashSet<string>();
 
-            for (var page = 0; page < int.MaxValue; page++)
+            for (var page = firstPage; page < firstPage + takePage; page++)
             {
                 var response = await PlaylistResponse.GetSearchResultsAsync(_httpClient, searchQuery, page);
 
