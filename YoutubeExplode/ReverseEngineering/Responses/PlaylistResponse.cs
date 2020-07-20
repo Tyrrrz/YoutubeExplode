@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
@@ -69,10 +70,22 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetString()
                 .Pipe(id => "UC" + id);
 
-            public DateTimeOffset GetUploadDate() => _root
-                .GetProperty("time_created")
-                .GetInt64()
-                .Pipe(Epoch.ToDateTimeOffset);
+            public DateTimeOffset GetUploadDate()
+            {
+                if (DateTime.TryParseExact(_root.GetProperty("added").GetString(),
+                    "M/d/yy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeLocal, out DateTime odt)
+                    )
+                {
+                    return new DateTimeOffset(odt);
+                }
+                else
+                {
+                    return _root
+                    .GetProperty("time_created")
+                    .GetInt64()
+                    .Pipe(Epoch.ToDateTimeOffset);
+                }
+            }
 
             public string GetTitle() => _root
                 .GetProperty("title")
