@@ -1,3 +1,8 @@
+### v5.1.2 (21-Jul-2020)
+
+- Added overload for `SearchClient.GetVideosAsync()` that can be used to specify starting page and page count, if you only want a subset of results. (Thanks [@Tom PoLáKoSz](https://github.com/PoLaKoSz))
+- Fixed an issue where an exception "Could not find signature decipherer definition body" was thrown, due to recent YouTube changes.
+
 ### v5.1.1 (21-Jun-2020)
 
 - Fixed an issue where age-restricted videos could not be downloaded.
