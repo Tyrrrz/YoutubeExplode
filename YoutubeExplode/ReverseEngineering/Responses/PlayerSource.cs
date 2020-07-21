@@ -37,13 +37,13 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             string? TryGetDeciphererDefinitionBody(string deciphererFuncBody)
             {
-                var funcName = Regex.Match(deciphererFuncBody, "(\\w+).\\w+\\(\\w+,\\d+\\);")
+                var objName = Regex.Match(deciphererFuncBody, "([\\$_\\w]+).\\w+\\(\\w+,\\d+\\);")
                     .Groups[1]
                     .Value;
 
-                var escapedFuncName = Regex.Escape(funcName);
+                var escapedObjName = Regex.Escape(objName);
 
-                return Regex.Match(_root, $@"var\s+{escapedFuncName}=\{{(\w+:function\(\w+(,\w+)?\)\{{(.*?)\}}),?\}};", RegexOptions.Singleline)
+                return Regex.Match(_root, $@"var\s+{escapedObjName}=\{{(\w+:function\(\w+(,\w+)?\)\{{(.*?)\}}),?\}};", RegexOptions.Singleline)
                     .Groups[0]
                     .Value
                     .NullIfWhiteSpace();
