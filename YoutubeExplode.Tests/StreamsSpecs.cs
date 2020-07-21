@@ -1,21 +1,19 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Tests.Internal;
+using YoutubeExplode.Tests.Fixtures;
 
 namespace YoutubeExplode.Tests
 {
-    public class StreamsSpecs : IDisposable
+    public class StreamsSpecs : IClassFixture<TempOutputFixture>
     {
-        private string TempDirPath { get; } = Path.Combine(Directory.GetCurrentDirectory(), $"{nameof(StreamsSpecs)}_{Guid.NewGuid()}");
+        private readonly TempOutputFixture _tempOutputFixture;
 
-        public StreamsSpecs() => DirectoryEx.Reset(TempDirPath);
-
-        public void Dispose() => DirectoryEx.DeleteIfExists(TempDirPath);
+        public StreamsSpecs(TempOutputFixture tempOutputFixture) =>
+            _tempOutputFixture = tempOutputFixture;
 
         [Theory]
         [InlineData("9bZkp7q19f0")] // very popular
@@ -123,7 +121,7 @@ namespace YoutubeExplode.Tests
         public async Task I_can_download_a_specific_stream_of_any_playable_YouTube_video(string videoId)
         {
             // Arrange
-            var filePath = Path.Combine(TempDirPath, $"{Guid.NewGuid()}.vid");
+            var filePath = _tempOutputFixture.GetTempFilePath();
             var youtube = new YoutubeClient();
 
             // Act

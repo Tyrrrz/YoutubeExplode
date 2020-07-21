@@ -4,17 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using YoutubeExplode.Tests.Internal;
+using YoutubeExplode.Tests.Fixtures;
 
 namespace YoutubeExplode.Tests
 {
-    public class ClosedCaptionSpecs : IDisposable
+    public class ClosedCaptionSpecs : IClassFixture<TempOutputFixture>
     {
-        private string TempDirPath { get; } = Path.Combine(Directory.GetCurrentDirectory(), $"{nameof(ClosedCaptionSpecs)}_{Guid.NewGuid()}");
+        private readonly TempOutputFixture _tempOutputFixture;
 
-        public ClosedCaptionSpecs() => DirectoryEx.Reset(TempDirPath);
-
-        public void Dispose() => DirectoryEx.DeleteIfExists(TempDirPath);
+        public ClosedCaptionSpecs(TempOutputFixture tempOutputFixture) =>
+            _tempOutputFixture = tempOutputFixture;
 
         [Theory]
         [InlineData("_QdPW8JrYzQ")]
@@ -75,7 +74,7 @@ namespace YoutubeExplode.Tests
         public async Task I_can_download_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
         {
             // Arrange
-            var filePath = Path.Combine(TempDirPath, $"{Guid.NewGuid()}.srt");
+            var filePath = _tempOutputFixture.GetTempFilePath();
             var youtube = new YoutubeClient();
 
             // Act
