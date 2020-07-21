@@ -25,22 +25,13 @@ namespace YoutubeExplode.Search
         /// Enumerates videos returned by the specified search query.
         /// </summary>
         /// <param name="searchQuery">The term to look for.</param>
-        public IAsyncEnumerable<Video> GetVideosAsync(string searchQuery)
-        {
-            return GetVideosAsync(searchQuery, firstPage: 0, takePage: int.MaxValue);
-        }
-
-        /// <summary>
-        /// Enumerates videos returned by the specified search query.
-        /// </summary>
-        /// <param name="searchQuery">The term to look for.</param>
-        /// <param name="firstPage">Sets how many page should be skipped from the beginning of the search.</param>
-        /// <param name="takePage">Limits how many page should be requested to complete the search.</param>
-        public async IAsyncEnumerable<Video> GetVideosAsync(string searchQuery, int firstPage, int takePage)
+        /// <param name="startPage">Sets how many page should be skipped from the beginning of the search.</param>
+        /// <param name="pageCount">Limits how many page should be requested to complete the search.</param>
+        public async IAsyncEnumerable<Video> GetVideosAsync(string searchQuery, int startPage, int pageCount)
         {
             var encounteredVideoIds = new HashSet<string>();
 
-            for (var page = firstPage; page < firstPage + takePage; page++)
+            for (var page = startPage; page < startPage + pageCount; page++)
             {
                 var response = await PlaylistResponse.GetSearchResultsAsync(_httpClient, searchQuery, page);
 
@@ -78,5 +69,12 @@ namespace YoutubeExplode.Search
                     break;
             }
         }
+
+        /// <summary>
+        /// Enumerates videos returned by the specified search query.
+        /// </summary>
+        // This needs to be an overload to maintain backwards compatibility
+        public IAsyncEnumerable<Video> GetVideosAsync(string searchQuery) =>
+            GetVideosAsync(searchQuery, 0, int.MaxValue);
     }
 }
