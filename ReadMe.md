@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/nuget/v/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![Downloads](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![Donate](https://img.shields.io/badge/donate-$$$-purple.svg)](https://tyrrrz.me/donate)
+[![Extra Services](https://img.shields.io/badge/extra%20services-xs:code-blue.svg)](https://xscode.com/Tyrrrz/YoutubeExplode)
 
 YoutubeExplode is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks. Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered AJAX requests to retrieve information. As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
 
@@ -89,7 +90,7 @@ if (streamInfo != null)
 {
     // Get the actual stream
     var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
-    
+
     // Download the stream to file
     await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 }
