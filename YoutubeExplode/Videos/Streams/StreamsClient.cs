@@ -126,6 +126,80 @@ namespace YoutubeExplode.Videos.Streams
             return new StreamContext(streamInfoProviders, cipherOperations);
         }
 
+        private async Task<StreamManifest> GetManifestFromWatchPagePlayerConfigAsync(WatchPage.PlayerConfig playerConfig, VideoId videoId)
+        {
+            var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
+            var cipherOperations = playerSource.GetCipherOperations().ToArray();
+
+            try
+            {
+                var playerResponse = playerConfig.GetPlayerResponse();
+
+                var previewVideoId = playerResponse.TryGetPreviewVideoId();
+                if (!string.IsNullOrWhiteSpace(previewVideoId))
+                    throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
+
+                if (!playerResponse.IsVideoPlayable())
+                    throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
+
+                if (playerResponse.IsLive())
+                    throw VideoUnplayableException.LiveStream(videoId);
+
+                var streamInfoProviders = new List<IStreamInfoProvider>();
+
+                // Streams from player config
+                streamInfoProviders.AddRange(playerConfig.GetStreams());
+
+                // Streams from player response
+                streamInfoProviders.AddRange(playerResponse.GetStreams());
+
+                // Streams from DASH manifest
+                var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
+                if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                {
+                    var dashManifest = await GetDashManifestAsync(dashManifestUrl, cipherOperations);
+                    streamInfoProviders.AddRange(dashManifest.GetStreams());
+                }
+
+                var context = new StreamContext(streamInfoProviders, cipherOperations);
+                return await GetManifestAsync(context);
+            }
+            catch (YoutubeExplodeException)
+            {
+                var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId, playerSource.GetSts());
+                var playerResponse = videoInfoResponse.GetPlayerResponse();
+
+                var previewVideoId = playerResponse.TryGetPreviewVideoId();
+                if (!string.IsNullOrWhiteSpace(previewVideoId))
+                    throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
+
+                if (!playerResponse.IsVideoPlayable())
+                    throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
+
+                if (playerResponse.IsLive())
+                    throw VideoUnplayableException.LiveStream(videoId);
+
+                var streamInfoProviders = new List<IStreamInfoProvider>();
+
+                // Streams from video info
+                streamInfoProviders.AddRange(videoInfoResponse.GetStreams());
+
+                // Streams from player response
+                streamInfoProviders.AddRange(playerResponse.GetStreams());
+
+                // Streams from DASH manifest
+                var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
+                if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                {
+                    var dashManifest = await GetDashManifestAsync(dashManifestUrl, cipherOperations);
+                    streamInfoProviders.AddRange(dashManifest.GetStreams());
+                }
+
+                var context = new StreamContext(streamInfoProviders, cipherOperations);
+                return await GetManifestAsync(context);
+            }
+        }
+
         private async Task<StreamManifest> GetManifestAsync(StreamContext streamContext)
         {
             // To make sure there are no duplicates streams, group them by tag
@@ -255,6 +329,20 @@ namespace YoutubeExplode.Videos.Streams
                 var context = await GetStreamContextFromWatchPageAsync(videoId);
                 return await GetManifestAsync(context);
             }
+        }
+
+        /// <summary>
+        /// Gets the manifest that contains information about available streams from the specified video metadata.
+        /// </summary>
+        public Task<StreamManifest> GetManifestAsync(Video video)
+        {
+            // Check if the playerconfig is already cached which speeds up the whole process (2x)
+            if (video.PlayerConfig != null)
+            {
+                return GetManifestFromWatchPagePlayerConfigAsync(video.PlayerConfig, video.Id);
+            }
+
+            return GetManifestAsync(video.Id);
         }
 
         /// <summary>

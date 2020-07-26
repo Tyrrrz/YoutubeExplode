@@ -38,29 +38,55 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Gets the metadata associated with the specified video.
         /// </summary>
-        public async Task<Video> GetAsync(VideoId id)
+        /// <param name="id">The video id</param>
+        /// <param name="fastMode">If enabled, this method is up to 4x faster, but doesnt include like/dislike count and disables caching</param>
+        public async Task<Video> GetAsync(VideoId id, bool fastMode = false)
         {
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, id);
             var playerResponse = videoInfoResponse.GetPlayerResponse();
 
-            var watchPage = await WatchPage.GetAsync(_httpClient, id);
+            if (!fastMode)
+            {
+                var watchPage = await WatchPage.GetAsync(_httpClient, id);
 
-            return new Video(
-                id,
-                playerResponse.GetVideoTitle(),
-                playerResponse.GetVideoAuthor(),
-                playerResponse.GetVideoChannelId(),
-                playerResponse.GetVideoUploadDate(),
-                playerResponse.GetVideoDescription(),
-                playerResponse.GetVideoDuration(),
-                new ThumbnailSet(id),
-                playerResponse.GetVideoKeywords(),
-                new Engagement(
-                    playerResponse.TryGetVideoViewCount() ?? 0,
-                    watchPage.TryGetVideoLikeCount() ?? 0,
-                    watchPage.TryGetVideoDislikeCount() ?? 0
-                )
-            );
+                return new Video(
+                    id,
+                    playerResponse.GetVideoTitle(),
+                    playerResponse.GetVideoAuthor(),
+                    playerResponse.GetVideoChannelId(),
+                    playerResponse.GetVideoUploadDate(),
+                    playerResponse.GetVideoDescription(),
+                    playerResponse.GetVideoDuration(),
+                    new ThumbnailSet(id),
+                    playerResponse.GetVideoKeywords(),
+                    new Engagement(
+                        playerResponse.TryGetVideoViewCount() ?? 0,
+                        watchPage.TryGetVideoLikeCount() ?? 0,
+                        watchPage.TryGetVideoDislikeCount() ?? 0
+                    )
+                ) { 
+                    PlayerConfig = watchPage.TryGetPlayerConfig() ?? null
+                };
+            }
+            else
+            {
+                return new Video(
+                    id,
+                    playerResponse.GetVideoTitle(),
+                    playerResponse.GetVideoAuthor(),
+                    playerResponse.GetVideoChannelId(),
+                    playerResponse.GetVideoUploadDate(),
+                    playerResponse.GetVideoDescription(),
+                    playerResponse.GetVideoDuration(),
+                    new ThumbnailSet(id),
+                    playerResponse.GetVideoKeywords(),
+                    new Engagement(
+                        playerResponse.TryGetVideoViewCount() ?? 0,
+                        0,
+                        0
+                    )
+                );
+            }
         }
     }
 }
