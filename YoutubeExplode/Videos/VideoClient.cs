@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -38,15 +40,37 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Gets the metadata associated with the specified video.
         /// </summary>
-        /// <param name="id">The video id</param>
-        /// <param name="fastMode">If enabled, this method is up to 4x faster, but doesnt include like/dislike count and disables caching</param>
-        public async Task<Video> GetAsync(VideoId id, bool fastMode = false)
+        public async Task<Video> GetAsync(VideoId id)
         {
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, id);
-            var playerResponse = videoInfoResponse.GetPlayerResponse();
-
-            if (!fastMode)
+            try
             {
+                // getting the video metadata through a mixplaylist is 4x faster
+                var playlistInfo = await PlaylistResponse.GetAsync(_httpClient, "RD" + id.Value);
+                var video = playlistInfo.GetVideos().FirstOrDefault();
+
+                return new Video(
+                            id,
+                            video.GetTitle(),
+                            video.GetAuthor(),
+                            video.GetChannelId(),
+                            video.GetUploadDate(),
+                            video.GetDescription(),
+                            video.GetDuration(),
+                            new ThumbnailSet(id),
+                            video.GetKeywords(),
+                            new Engagement(
+                                video.GetViewCount(),
+                                video.GetLikeCount(),
+                                video.GetDislikeCount()
+                            )
+                        );
+            }
+            catch (YoutubeExplodeException)
+            {
+                // fallback because mixplaylist cannot handle unlisted videos
+                var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, id);
+                var playerResponse = videoInfoResponse.GetPlayerResponse();
+
                 var watchPage = await WatchPage.GetAsync(_httpClient, id);
 
                 return new Video(
@@ -64,28 +88,10 @@ namespace YoutubeExplode.Videos
                         watchPage.TryGetVideoLikeCount() ?? 0,
                         watchPage.TryGetVideoDislikeCount() ?? 0
                     )
-                ) { 
+                )
+                {
                     PlayerConfig = watchPage.TryGetPlayerConfig() ?? null
                 };
-            }
-            else
-            {
-                return new Video(
-                    id,
-                    playerResponse.GetVideoTitle(),
-                    playerResponse.GetVideoAuthor(),
-                    playerResponse.GetVideoChannelId(),
-                    playerResponse.GetVideoUploadDate(),
-                    playerResponse.GetVideoDescription(),
-                    playerResponse.GetVideoDuration(),
-                    new ThumbnailSet(id),
-                    playerResponse.GetVideoKeywords(),
-                    new Engagement(
-                        playerResponse.TryGetVideoViewCount() ?? 0,
-                        0,
-                        0
-                    )
-                );
             }
         }
     }

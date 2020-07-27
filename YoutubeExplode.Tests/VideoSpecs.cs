@@ -26,7 +26,7 @@ namespace YoutubeExplode.Tests
             video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
-            video.Duration.Should().Be(new TimeSpan(00, 01, 48));
+            video.Duration.Should().BeCloseTo(new TimeSpan(00, 01, 48), 1000);
             video.Thumbnails.LowResUrl.Should().NotBeNullOrWhiteSpace();
             video.Thumbnails.MediumResUrl.Should().NotBeNullOrWhiteSpace();
             video.Thumbnails.HighResUrl.Should().NotBeNullOrWhiteSpace();
@@ -35,36 +35,6 @@ namespace YoutubeExplode.Tests
             video.Keywords.Should().BeEquivalentTo("osu", "mouse", "rhythm game");
             video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
             video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(5);
-            video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
-        }
-
-        [Fact]
-        public async Task I_can_get_metadata_of_a_YouTube_video_fast()
-        {
-            // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=AI7ULzgf8RU";
-            var youtube = new YoutubeClient();
-
-            // Act
-            var video = await youtube.Videos.GetAsync(videoUrl, true);
-
-            // Assert
-            video.Id.Value.Should().Be("AI7ULzgf8RU");
-            video.Url.Should().Be(videoUrl);
-            video.Title.Should().Be("Aka no Ha [Another] +HDHR");
-            video.Author.Should().Be("Tyrrrz");
-            video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
-            video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
-            video.Description.Should().Contain("246pp");
-            video.Duration.Should().Be(new TimeSpan(00, 01, 48));
-            video.Thumbnails.LowResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.MediumResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.HighResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.StandardResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.MaxResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Keywords.Should().BeEquivalentTo("osu", "mouse", "rhythm game");
-            video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
-            video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(0);
             video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
         }
 
