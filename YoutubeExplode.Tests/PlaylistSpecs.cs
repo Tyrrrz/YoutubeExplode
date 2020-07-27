@@ -63,7 +63,7 @@ namespace YoutubeExplode.Tests
             var videos = await youtube.Playlists.GetVideosAsync(playlistUrl);
 
             // Assert
-            videos.Should().HaveCountGreaterOrEqualTo(20);
+            videos.Should().HaveCountGreaterOrEqualTo(19);
             videos.Select(v => v.Id.Value).Should().Contain(new[]
             {
                 "B6N8-_rBTh8",
@@ -72,7 +72,6 @@ namespace YoutubeExplode.Tests
                 "LsNPjFXIPT8",
                 "fXYPMPglYTs",
                 "AI7ULzgf8RU",
-                "VoGpvg3xXoE",
                 "Qzu-fTdjeFY"
             });
         }
