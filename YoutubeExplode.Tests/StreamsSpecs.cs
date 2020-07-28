@@ -38,29 +38,6 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        public async Task I_can_get_metadata_and_available_streams_of_any_playable_YouTube_video(string videoId)
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
-
-            // Act
-            var video = await youtube.Videos.GetAsync(videoId);
-            var manifest = await youtube.Videos.Streams.GetManifestAsync(video);
-
-            // Assert
-            manifest.Streams.Should().NotBeEmpty();
-        }
-
-        [Theory]
         [InlineData("5qap5aO4i9A")] // live stream
         public async Task I_cannot_get_available_streams_of_an_unplayable_YouTube_video(string videoId)
         {

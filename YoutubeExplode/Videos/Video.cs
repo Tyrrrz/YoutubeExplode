@@ -67,11 +67,6 @@ namespace YoutubeExplode.Videos
         public Engagement Engagement { get; }
 
         /// <summary>
-        /// Caches PlayerConfig so it doesnt need to be fetched again by StreamClient
-        /// </summary>
-        internal WatchPage.PlayerConfig? PlayerConfig { get; set; }
-
-        /// <summary>
         /// Initializes an instance of <see cref="Video"/>.
         /// </summary>
         public Video(
@@ -96,7 +91,6 @@ namespace YoutubeExplode.Videos
             Thumbnails = thumbnails;
             Keywords = keywords;
             Engagement = engagement;
-            PlayerConfig = null;
         }
 
 
