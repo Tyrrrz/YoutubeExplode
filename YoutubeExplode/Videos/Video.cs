@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
-using YoutubeExplode.ReverseEngineering.Responses;
 
 namespace YoutubeExplode.Videos
 {
