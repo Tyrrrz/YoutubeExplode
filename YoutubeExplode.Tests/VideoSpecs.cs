@@ -26,7 +26,7 @@ namespace YoutubeExplode.Tests
             video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
-            video.Duration.Should().Be(new TimeSpan(00, 01, 48));
+            video.Duration.Should().BeCloseTo(new TimeSpan(00, 01, 48), 1000);
             video.Thumbnails.LowResUrl.Should().NotBeNullOrWhiteSpace();
             video.Thumbnails.MediumResUrl.Should().NotBeNullOrWhiteSpace();
             video.Thumbnails.HighResUrl.Should().NotBeNullOrWhiteSpace();

@@ -1,5 +1,8 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -35,10 +38,30 @@ namespace YoutubeExplode.Videos
             ClosedCaptions = new ClosedCaptionClient(httpClient);
         }
 
-        /// <summary>
-        /// Gets the metadata associated with the specified video.
-        /// </summary>
-        public async Task<Video> GetAsync(VideoId id)
+        private async Task<Video> GetVideoFromMixPlaylistAsync(VideoId id)
+        {
+            var playlistInfo = await PlaylistResponse.GetAsync(_httpClient, "RD" + id.Value);
+            var video = playlistInfo.GetVideos().First(x => x.GetId() == id.Value);
+
+            return new Video(
+                id,
+                video.GetTitle(),
+                video.GetAuthor(),
+                video.GetChannelId(),
+                video.GetUploadDate(),
+                video.GetDescription(),
+                video.GetDuration(),
+                new ThumbnailSet(id),
+                video.GetKeywords(),
+                new Engagement(
+                    video.GetViewCount(),
+                    video.GetLikeCount(),
+                    video.GetDislikeCount()
+                )
+            );
+        }
+
+        private async Task<Video> GetVideoFromWatchPageAsync(VideoId id)
         {
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, id);
             var playerResponse = videoInfoResponse.GetPlayerResponse();
@@ -61,6 +84,24 @@ namespace YoutubeExplode.Videos
                     watchPage.TryGetVideoDislikeCount() ?? 0
                 )
             );
+        }
+        
+        /// <summary>
+        /// Gets the metadata associated with the specified video.
+        /// </summary>
+        public async Task<Video> GetAsync(VideoId id)
+        {
+            // We can try to extract video metadata from two sources: mix playlist and the video watch page.
+            // First is significantly faster but doesn't always work.
+
+            try
+            {
+                return await GetVideoFromMixPlaylistAsync(id);
+            }
+            catch (Exception ex) when (ex is YoutubeExplodeException || ex is InvalidOperationException)
+            {
+                return await GetVideoFromWatchPageAsync(id);
+            }
         }
     }
 }
