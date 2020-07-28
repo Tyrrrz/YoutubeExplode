@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
@@ -50,6 +51,10 @@ namespace YoutubeExplode.Videos
                 return await GetVideoMetadataFromMixplaylist(id);
             }
             catch (YoutubeExplodeException)
+            {
+                return await GetVideoMetadataFromWatchPage(id);
+            }
+            catch (InvalidOperationException)
             {
                 return await GetVideoMetadataFromWatchPage(id);
             }
