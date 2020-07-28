@@ -38,29 +38,7 @@ namespace YoutubeExplode.Videos
             ClosedCaptions = new ClosedCaptionClient(httpClient);
         }
 
-        /// <summary>
-        /// Gets the metadata associated with the specified video.
-        /// </summary>
-        public async Task<Video> GetAsync(VideoId id)
-        {
-            // We can try to extract the manifest from two sources: mixplaylist and the video watch page.
-            // In some cases one works, in some cases another does.
-
-            try
-            {
-                return await GetVideoMetadataFromMixplaylist(id);
-            }
-            catch (YoutubeExplodeException)
-            {
-                return await GetVideoMetadataFromWatchPage(id);
-            }
-            catch (InvalidOperationException)
-            {
-                return await GetVideoMetadataFromWatchPage(id);
-            }
-        }
-
-        private async Task<Video> GetVideoMetadataFromMixplaylist(VideoId id)
+        private async Task<Video> GetVideoFromMixPlaylistAsync(VideoId id)
         {
             var playlistInfo = await PlaylistResponse.GetAsync(_httpClient, "RD" + id.Value);
             var video = playlistInfo.GetVideos().First(x => x.GetId() == id.Value);
@@ -83,7 +61,7 @@ namespace YoutubeExplode.Videos
             );
         }
 
-        private async Task<Video> GetVideoMetadataFromWatchPage(VideoId id)
+        private async Task<Video> GetVideoFromWatchPageAsync(VideoId id)
         {
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, id);
             var playerResponse = videoInfoResponse.GetPlayerResponse();
@@ -106,6 +84,24 @@ namespace YoutubeExplode.Videos
                     watchPage.TryGetVideoDislikeCount() ?? 0
                 )
             );
+        }
+        
+        /// <summary>
+        /// Gets the metadata associated with the specified video.
+        /// </summary>
+        public async Task<Video> GetAsync(VideoId id)
+        {
+            // We can try to extract video metadata from two sources: mix playlist and the video watch page.
+            // First is significantly faster but doesn't always work.
+
+            try
+            {
+                return await GetVideoFromMixPlaylistAsync(id);
+            }
+            catch (Exception ex) when (ex is YoutubeExplodeException || ex is InvalidOperationException)
+            {
+                return await GetVideoFromWatchPageAsync(id);
+            }
         }
     }
 }
