@@ -1,3 +1,8 @@
+### v5.1.3 (29-Jul-2020)
+
+- Improved performance in `VideoClient.GetAsync`. (Thanks [@SnGmng](https://github.com/SnGmng))
+- Fixed an issue where an exception "Could not find signature decipherer definition body" was thrown, due to recent YouTube changes. (Thanks [@Tymoteusz Jankowski](https://github.com/jankowski-t) and [@OMANSAK](https://github.com/omansak))
+
 ### v5.1.2 (21-Jul-2020)
 
 - Added overload for `SearchClient.GetVideosAsync()` that can be used to specify starting page and page count, if you only want a subset of results. (Thanks [@Tom PoLáKoSz](https://github.com/PoLaKoSz))
