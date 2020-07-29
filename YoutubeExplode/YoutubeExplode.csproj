@@ -16,7 +16,6 @@
     <EmbedUntrackedSources>True</EmbedUntrackedSources>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Version>5.1.3</Version>
   </PropertyGroup>
   
   <!-- Disable nullability warnings on older frameworks because there is no nullability info for BCL -->
