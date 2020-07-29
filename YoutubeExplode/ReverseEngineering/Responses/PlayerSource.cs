@@ -24,8 +24,10 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             string? TryGetDeciphererFuncBody()
             {
                 var funcName = Regex.Match(_root, @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}")
-                    .Groups[1]
+                    .Groups[0]
                     .Value;
+
+                return funcName;
 
                 var escapedFuncName = Regex.Escape(funcName);
 
