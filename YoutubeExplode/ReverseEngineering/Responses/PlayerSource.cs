@@ -28,13 +28,6 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                     .Value;
 
                 return funcName;
-
-                var escapedFuncName = Regex.Escape(funcName);
-
-                return Regex.Match(_root, $@"(?!h\.){escapedFuncName}=function\(\w+\)\{{(.*?)\}}", RegexOptions.Singleline)
-                    .Groups[1]
-                    .Value
-                    .NullIfWhiteSpace();
             }
 
             string? TryGetDeciphererDefinitionBody(string deciphererFuncBody)
