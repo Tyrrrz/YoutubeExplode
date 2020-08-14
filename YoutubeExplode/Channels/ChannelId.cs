@@ -25,41 +25,6 @@ namespace YoutubeExplode.Channels
         public override string ToString() => Value;
     }
 
-    public partial struct ChannelId : IEquatable<ChannelId>
-    {
-        /// <inheritdoc />
-        public bool Equals(ChannelId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
-
-        /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is ChannelId other && Equals(other);
-
-        /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Value);
-
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator ==(ChannelId left, ChannelId right) => left.Equals(right);
-
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator !=(ChannelId left, ChannelId right) => !(left == right);
-    }
-
-    public partial struct ChannelId
-    {
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator ChannelId(string idOrUrl) => new ChannelId(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(ChannelId id) => id.ToString();
-    }
-
     public partial struct ChannelId
     {
         private static bool IsValid(string? id)
@@ -104,5 +69,37 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public static ChannelId? TryParse(string? idOrUrl) =>
             TryNormalize(idOrUrl)?.Pipe(id => new ChannelId(id));
+    }
+
+    public partial struct ChannelId : IEquatable<ChannelId>
+    {
+        /// <inheritdoc />
+        public bool Equals(ChannelId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is ChannelId other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(ChannelId left, ChannelId right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(ChannelId left, ChannelId right) => !(left == right);
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator ChannelId(string idOrUrl) => new ChannelId(idOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(ChannelId id) => id.ToString();
     }
 }

@@ -25,41 +25,6 @@ namespace YoutubeExplode.Videos
         public override string ToString() => Value;
     }
 
-    public partial struct VideoId : IEquatable<VideoId>
-    {
-        /// <inheritdoc />
-        public bool Equals(VideoId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
-
-        /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is VideoId other && Equals(other);
-
-        /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Value);
-
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator ==(VideoId left, VideoId right) => left.Equals(right);
-
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator !=(VideoId left, VideoId right) => !(left == right);
-    }
-
-    public partial struct VideoId
-    {
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator VideoId(string idOrUrl) => new VideoId(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(VideoId id) => id.ToString();
-    }
-
     public partial struct VideoId
     {
         private static bool IsValid(string? id)
@@ -112,5 +77,37 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public static VideoId? TryParse(string? idOrUrl) =>
             TryNormalize(idOrUrl)?.Pipe(id => new VideoId(id));
+    }
+
+    public partial struct VideoId : IEquatable<VideoId>
+    {
+        /// <inheritdoc />
+        public bool Equals(VideoId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is VideoId other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(VideoId left, VideoId right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(VideoId left, VideoId right) => !(left == right);
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator VideoId(string idOrUrl) => new VideoId(idOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(VideoId id) => id.ToString();
     }
 }

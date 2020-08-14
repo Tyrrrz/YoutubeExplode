@@ -25,41 +25,6 @@ namespace YoutubeExplode.Playlists
         public override string ToString() => Value;
     }
 
-    public partial struct PlaylistId : IEquatable<PlaylistId>
-    {
-        /// <inheritdoc />
-        public bool Equals(PlaylistId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
-
-        /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is PlaylistId other && Equals(other);
-
-        /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Value);
-
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator ==(PlaylistId left, PlaylistId right) => left.Equals(right);
-
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator !=(PlaylistId left, PlaylistId right) => !(left == right);
-    }
-
-    public partial struct PlaylistId
-    {
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator PlaylistId(string idOrUrl) => new PlaylistId(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(PlaylistId id) => id.ToString();
-    }
-
     public partial struct PlaylistId
     {
         private static bool IsValid(string? id)
@@ -137,5 +102,37 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public static PlaylistId? TryParse(string? idOrUrl) =>
             TryNormalize(idOrUrl)?.Pipe(id => new PlaylistId(id));
+    }
+
+    public partial struct PlaylistId : IEquatable<PlaylistId>
+    {
+        /// <inheritdoc />
+        public bool Equals(PlaylistId other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is PlaylistId other && Equals(other);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Value);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator ==(PlaylistId left, PlaylistId right) => left.Equals(right);
+
+        /// <summary>
+        /// Equality check.
+        /// </summary>
+        public static bool operator !=(PlaylistId left, PlaylistId right) => !(left == right);
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator PlaylistId(string idOrUrl) => new PlaylistId(idOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(PlaylistId id) => id.ToString();
     }
 }
