@@ -1,3 +1,7 @@
+### v5.1.4 (14-Aug-2020)
+
+- Fixed an issue where some age-restricted videos could not be played, due to a change in the way STS (signature timestamp) is formatted in the player source.
+
 ### v5.1.3 (29-Jul-2020)
 
 - Improved performance in `VideoClient.GetAsync`. (Thanks [@SnGmng](https://github.com/SnGmng))
