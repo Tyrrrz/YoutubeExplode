@@ -268,8 +268,9 @@ namespace YoutubeExplode.Videos.Streams
             if (!playerResponse.IsVideoPlayable())
                 throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
 
-            return playerResponse.TryGetHlsManifestUrl() ??
-                   throw VideoUnplayableException.NotLiveStream(videoId);
+            return
+                playerResponse.TryGetHlsManifestUrl() ??
+                throw VideoUnplayableException.NotLiveStream(videoId);
         }
 
         /// <summary>

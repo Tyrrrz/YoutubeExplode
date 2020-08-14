@@ -15,9 +15,14 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public PlayerSource(string root) => _root = root;
 
-        public string GetSts() => _root
-            .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;[\w\s]+=)\d+").Value)
-            .NullIfWhiteSpace() ?? throw FatalFailureException.Generic("Could not find sts in player source.");
+        public string GetSts() =>
+            _root
+                .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;[\w\s]+=)\d+").Value)
+                .NullIfWhiteSpace() ??
+            _root
+                .Pipe(s => Regex.Match(s, @"(?<=this\.signatureTimestamp=)\d+").Value)
+                .NullIfWhiteSpace() ??
+            throw FatalFailureException.Generic("Could not find sts in player source.");
 
         public IEnumerable<ICipherOperation> GetCipherOperations()
         {
@@ -30,9 +35,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 return funcName;
             }
 
-            string? TryGetDeciphererDefinitionBody(string deciphererFuncBody)
+            string? TryGetDeciphererDefinitionBody(string body)
             {
-                var objName = Regex.Match(deciphererFuncBody, "([\\$_\\w]+).\\w+\\(\\w+,\\d+\\);")
+                var objName = Regex.Match(body, "([\\$_\\w]+).\\w+\\(\\w+,\\d+\\);")
                     .Groups[1]
                     .Value;
 
