@@ -134,7 +134,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var queryEncoded = Uri.EscapeUriString(query);
 
                 var url = $"https://youtube.com/search_ajax?style=json&search_query={queryEncoded}&page={page}&hl=en";
-                var raw = await httpClient.GetStringAsync(url, false); // don't ensure success but rather return empty list
+                var raw = await httpClient.GetStringAsync(url, false, 
+                    ("x-youtube-client-name", "56"), ("x-youtube-client-version", "20200911")); // don't ensure success but rather return empty list
 
                 return Parse(raw);
             });
