@@ -16,7 +16,7 @@ namespace YoutubeExplode.Tests
             _tempOutputFixture = tempOutputFixture;
 
         [Theory]
-        [InlineData("_QdPW8JrYzQ")]
+        [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
         public async Task I_can_get_available_closed_caption_tracks_of_any_available_YouTube_video(string videoId)
         {
@@ -31,7 +31,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("_QdPW8JrYzQ")]
+        [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
         public async Task I_can_get_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
         {
@@ -69,7 +69,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("_QdPW8JrYzQ")]
+        [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
         public async Task I_can_download_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
         {
