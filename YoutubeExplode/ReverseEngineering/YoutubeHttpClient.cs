@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace YoutubeExplode.ReverseEngineering
 
         private void CheckResponse(HttpResponseMessage response)
         {
-            // Some pages redirect to https://www.google.com/sorry instead of return 429
+            // Some pages redirect to https://www.google.com/sorry instead of returning 429
             if (response.RequestMessage.RequestUri.Host.EndsWith(".google.com", StringComparison.OrdinalIgnoreCase) &&
                 response.RequestMessage.RequestUri.LocalPath.StartsWith("/sorry/", StringComparison.OrdinalIgnoreCase))
                 throw RequestLimitExceededException.FailedHttpRequest(response);
@@ -35,18 +34,12 @@ namespace YoutubeExplode.ReverseEngineering
         }
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-                                                         HttpCompletionOption completion = HttpCompletionOption.ResponseHeadersRead) =>
+            HttpCompletionOption completion = HttpCompletionOption.ResponseHeadersRead) =>
             await _innerHttpClient.SendAsync(request, completion);
 
-        public async Task<HttpResponseMessage> GetAsync(string requestUri, params (string Name, string Value)[] headers)
+        public async Task<HttpResponseMessage> GetAsync(string requestUri)
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-            if (headers.Length > 0)
-            {
-                foreach (var header in headers)
-                    request.Headers.Add(header.Name, header.Value);
-            }
-
             return await SendAsync(request);
         }
 
@@ -56,9 +49,9 @@ namespace YoutubeExplode.ReverseEngineering
             return await SendAsync(request);
         }
 
-        public async Task<string> GetStringAsync(string requestUri, bool ensureSuccess = true, params (string Name, string Value)[] headers)
+        public async Task<string> GetStringAsync(string requestUri, bool ensureSuccess = true)
         {
-            using var response = await GetAsync(requestUri, headers);
+            using var response = await GetAsync(requestUri);
 
             if (ensureSuccess)
                 CheckResponse(response);
@@ -67,7 +60,7 @@ namespace YoutubeExplode.ReverseEngineering
         }
 
         public async Task<Stream> GetStreamAsync(string requestUri,
-                                                 long? from = null, long? to = null, bool ensureSuccess = true)
+            long? from = null, long? to = null, bool ensureSuccess = true)
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             request.Headers.Range = new RangeHeaderValue(from, to);

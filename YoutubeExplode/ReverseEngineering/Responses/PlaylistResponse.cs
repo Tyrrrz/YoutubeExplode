@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -134,8 +135,16 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var queryEncoded = Uri.EscapeUriString(query);
 
                 var url = $"https://youtube.com/search_ajax?style=json&search_query={queryEncoded}&page={page}&hl=en";
-                var raw = await httpClient.GetStringAsync(url, false, 
-                    ("x-youtube-client-name", "56"), ("x-youtube-client-version", "20200911")); // don't ensure success but rather return empty list
+
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+                // These headers are required for some reason
+                request.Headers.Add("x-youtube-client-name", "56");
+                request.Headers.Add("x-youtube-client-version", "20200911");
+
+                // Don't ensure success here but rather return an empty list
+                using var response = await httpClient.SendAsync(request);
+                var raw = await response.Content.ReadAsStringAsync();
 
                 return Parse(raw);
             });

@@ -30,7 +30,7 @@ namespace YoutubeExplode.Search
         public async IAsyncEnumerable<Video> GetVideosAsync(string searchQuery, int startPage, int pageCount)
         {
             var encounteredVideoIds = new HashSet<string>();
-            
+
             for (var page = startPage; page < startPage + pageCount; page++)
             {
                 var response = await PlaylistResponse.GetSearchResultsAsync(_httpClient, searchQuery, page);
