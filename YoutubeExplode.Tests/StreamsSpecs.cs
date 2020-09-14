@@ -25,6 +25,7 @@ namespace YoutubeExplode.Tests
         [InlineData("ZGdLIwrGHG8")] // unlisted
         [InlineData("rsAAeyAr-9Y")] // recording of a live stream
         [InlineData("AI7ULzgf8RU")] // has DASH manifest
+        [InlineData("-xNN-bJQ4vI")] // 360° video
         public async Task I_can_get_available_streams_of_any_playable_YouTube_video(string videoId)
         {
             // Arrange
@@ -135,7 +136,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("5qap5aO4i9A")]
+        [InlineData("5qap5aO4i9A")] // live stream
         public async Task I_can_get_http_live_stream_url_of_any_ongoing_YouTube_live_stream_video(string videoId)
         {
             // Arrange
