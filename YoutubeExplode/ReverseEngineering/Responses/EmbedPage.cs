@@ -18,7 +18,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public PlayerConfig? TryGetPlayerConfig() => _root
             .GetElementsByTagName("script")
             .Select(e => e.Text())
-            .Select(s => Regex.Match(s, @"yt\.setConfig\({'PLAYER_CONFIG':(.*)}\);").Groups[1].Value)
+            .Select(s => Regex.Match(s, @"'PLAYER_CONFIG':\s*(\{.*\})\}").Groups[1].Value)
             .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
             .NullIfWhiteSpace()?
             .Pipe(Json.Parse)

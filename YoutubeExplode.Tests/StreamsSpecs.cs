@@ -17,7 +17,7 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("9bZkp7q19f0")] // very popular
-        //[InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
+        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
         [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
         [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
         [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
@@ -74,7 +74,7 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("9bZkp7q19f0")] // very popular
-        //[InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
+        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
         [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
         [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
         [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
@@ -110,7 +110,7 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("9bZkp7q19f0")] // very popular
-        //[InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
+        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
         [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
         [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
         [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
