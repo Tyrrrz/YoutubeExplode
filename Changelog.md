@@ -1,3 +1,8 @@
+### v5.1.6 (29-Sep-2020)
+
+- Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
+- Fixed an issue with player config extraction for some videos.
+
 ### v5.1.5 (12-Sep-2020)
 
 - Fixed an issue where an exception was thrown when using video search. (Thanks [@Mattia](https://github.com/Hexer10) & [@Unreal852](https://github.com/Unreal852))
