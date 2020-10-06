@@ -74,7 +74,7 @@ namespace YoutubeExplode.Internal
             // If current stream is not set - resolve it
             if (_currentStream == null)
             {
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
+                _currentStream = await _httpClient.GetStreamAsync(_url, Position, _segmentSize - 1);
             }
 
             // Read from current stream
