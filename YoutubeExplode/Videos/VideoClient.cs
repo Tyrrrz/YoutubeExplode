@@ -20,7 +20,7 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Queries related to media streams of YouTube videos.
         /// </summary>
-        public StreamsClient Streams { get; }
+        public StreamClient Streams { get; }
 
         /// <summary>
         /// Queries related to closed captions of YouTube videos.
@@ -34,7 +34,7 @@ namespace YoutubeExplode.Videos
         {
             _httpClient = httpClient;
 
-            Streams = new StreamsClient(httpClient);
+            Streams = new StreamClient(httpClient);
             ClosedCaptions = new ClosedCaptionClient(httpClient);
         }
 

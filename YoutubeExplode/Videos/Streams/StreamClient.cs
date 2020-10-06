@@ -16,14 +16,14 @@ namespace YoutubeExplode.Videos.Streams
     /// <summary>
     /// Queries related to media streams of YouTube videos.
     /// </summary>
-    public partial class StreamsClient
+    public partial class StreamClient
     {
         private readonly YoutubeHttpClient _httpClient;
 
         /// <summary>
-        /// Initializes an instance of <see cref="StreamsClient"/>.
+        /// Initializes an instance of <see cref="StreamClient"/>.
         /// </summary>
-        internal StreamsClient(YoutubeHttpClient httpClient)
+        internal StreamClient(YoutubeHttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -314,7 +314,7 @@ namespace YoutubeExplode.Videos.Streams
         }
     }
 
-    public partial class StreamsClient
+    public partial class StreamClient
     {
         private class StreamContext
         {
