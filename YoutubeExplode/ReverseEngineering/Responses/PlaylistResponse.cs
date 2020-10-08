@@ -17,6 +17,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public PlaylistResponse(JsonElement root) => _root = root;
 
+        public bool IsPlaylistAvailable() => _root
+            .GetPropertyOrNull("title") != null;
+
         public string GetTitle() => _root
             .GetProperty("title")
             .GetString();
@@ -124,9 +127,14 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             await Retry.WrapAsync(async () =>
             {
                 var url = $"https://youtube.com/list_ajax?style=json&action_get_list=1&list={id}&index={index}&hl=en";
-                var raw = await httpClient.GetStringAsync(url);
+                var raw = await httpClient.GetStringAsync(url, false);
+                
+                var result = Parse(raw);
 
-                return Parse(raw);
+                if (!result.IsPlaylistAvailable())
+                    throw PlaylistUnavailableException.Unavailable(id);
+
+                return result;
             });
 
         public static async Task<PlaylistResponse> GetSearchResultsAsync(YoutubeHttpClient httpClient, string query, int page = 0) =>

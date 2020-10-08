@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Tests
 {
@@ -31,6 +32,28 @@ namespace YoutubeExplode.Tests
             playlist.Engagement.ViewCount.Should().BeGreaterOrEqualTo(133);
             playlist.Engagement.LikeCount.Should().BeGreaterOrEqualTo(0);
             playlist.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
+        }
+
+        [Fact]
+        public async Task I_cannot_get_metadata_of_a_private_YouTube_playlist()
+        {
+            // Arrange
+            const string playlistUrl = "https://www.youtube.com/playlist?list=PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBr";
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            await Assert.ThrowsAsync<PlaylistUnavailableException>(() => youtube.Playlists.GetAsync(playlistUrl));
+        }
+
+        [Fact]
+        public async Task I_cannot_get_metadata_of_a_nonexistent_YouTube_playlist()
+        {
+            // Arrange
+            const string playlistUrl = "https://www.youtube.com/playlist?list=PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBx";
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            await Assert.ThrowsAsync<PlaylistUnavailableException>(() => youtube.Playlists.GetAsync(playlistUrl));
         }
 
         [Theory]
