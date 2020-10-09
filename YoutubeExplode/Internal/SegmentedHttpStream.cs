@@ -11,12 +11,12 @@ namespace YoutubeExplode.Internal
     {
         private readonly YoutubeHttpClient _httpClient;
         private readonly string _url;
-        private readonly long _segmentSize;
+        private readonly long? _segmentSize;
 
         private Stream? _currentStream;
         private long _position;
 
-        public SegmentedHttpStream(YoutubeHttpClient httpClient, string url, long length, long segmentSize)
+        public SegmentedHttpStream(YoutubeHttpClient httpClient, string url, long length, long? segmentSize)
         {
             _url = url;
             _httpClient = httpClient;
@@ -74,7 +74,16 @@ namespace YoutubeExplode.Internal
             // If current stream is not set - resolve it
             if (_currentStream == null)
             {
-                _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
+                if (_segmentSize == null)
+                {
+                    // The current is NOT RateLimited - _segmentSize will be null
+                    _currentStream = await _httpClient.GetStreamAsync(_url, Position);
+                }
+                else
+                {
+                    // The current is RateLimited - use _segmentSize with Position to set 'to' stream position
+                    _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
+                }
             }
 
             // Read from current stream

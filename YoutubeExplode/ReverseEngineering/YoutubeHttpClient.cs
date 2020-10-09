@@ -83,7 +83,7 @@ namespace YoutubeExplode.ReverseEngineering
             return response.Content.Headers.ContentLength;
         }
 
-        public SegmentedHttpStream CreateSegmentedStream(string url, long length, long segmentSize) =>
+        public SegmentedHttpStream CreateSegmentedStream(string url, long length, long? segmentSize) =>
             new SegmentedHttpStream(this, url, length, segmentSize);
     }
 }

@@ -284,9 +284,9 @@ namespace YoutubeExplode.Videos.Streams
             // so we'll be splitting the stream into small segments and retrieving them separately, to
             // work around rate limiting.
 
-            var segmentSize = streamInfo.IsRateLimited()
+            long? segmentSize = streamInfo.IsRateLimited()
                 ? 9_898_989 // this number was carefully devised through research
-                : long.MaxValue; // don't use segmentation for non-rate-limited streams
+                : default(long?); // don't use segmentation for non-rate-limited streams
 
             var stream = _httpClient.CreateSegmentedStream(streamInfo.Url, streamInfo.Size.TotalBytes, segmentSize);
 
