@@ -76,7 +76,7 @@ namespace YoutubeExplode.Internal
             {
                 if (_segmentSize == null)
                 {
-                    // The current is NOT RateLimited - _segmentSize will be null
+                    // The current is not RateLimited - _segmentSize will be null
                     _currentStream = await _httpClient.GetStreamAsync(_url, Position);
                 }
                 else
