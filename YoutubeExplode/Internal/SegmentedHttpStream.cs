@@ -74,16 +74,10 @@ namespace YoutubeExplode.Internal
             // If current stream is not set - resolve it
             if (_currentStream == null)
             {
-                if (_segmentSize == null)
-                {
-                    // The current is not RateLimited - _segmentSize will be null
-                    _currentStream = await _httpClient.GetStreamAsync(_url, Position);
-                }
-                else
-                {
-                    // The current is RateLimited - use _segmentSize with Position to set 'to' stream position
-                    _currentStream = await _httpClient.GetStreamAsync(_url, Position, Position + _segmentSize - 1);
-                }
+                var from = Position;
+                var to = _segmentSize != null ?  Position + _segmentSize - 1 : null;
+                
+                _currentStream = await _httpClient.GetStreamAsync(_url, from, to);
             }
 
             // Read from current stream
