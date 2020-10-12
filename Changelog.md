@@ -1,3 +1,8 @@
+### v5.1.7 (12-Oct-2020)
+
+- Added a specialized `PlaylistUnavailableException` that gets thrown when the requested playlist is private, doesn't exist, or otherwise unavailable. (Thanks [@Brandon Wood](https://github.com/bcwood))
+- Fixed an issue where streams without rate-limiting did not properly support seeking. (Thanks [@Johnson Pan](https://github.com/MockyJoke))
+
 ### v5.1.6 (29-Sep-2020)
 
 - Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
