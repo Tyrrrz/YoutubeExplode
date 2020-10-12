@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Internal;
 
 namespace YoutubeExplode.ReverseEngineering
 {
@@ -82,8 +81,5 @@ namespace YoutubeExplode.ReverseEngineering
 
             return response.Content.Headers.ContentLength;
         }
-
-        public SegmentedHttpStream CreateSegmentedStream(string url, long length, long? segmentSize) =>
-            new SegmentedHttpStream(this, url, length, segmentSize);
     }
 }

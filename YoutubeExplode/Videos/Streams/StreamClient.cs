@@ -288,7 +288,12 @@ namespace YoutubeExplode.Videos.Streams
                 ? 9_898_989 // this number was carefully devised through research
                 : (long?) null; // don't use segmentation for non-rate-limited streams
 
-            var stream = _httpClient.CreateSegmentedStream(streamInfo.Url, streamInfo.Size.TotalBytes, segmentSize);
+            var stream = new YoutubeMediaStream(
+                _httpClient,
+                streamInfo.Url,
+                streamInfo.Size.TotalBytes,
+                segmentSize
+            );
 
             return Task.FromResult<Stream>(stream);
         }

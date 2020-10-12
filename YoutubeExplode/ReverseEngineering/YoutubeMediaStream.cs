@@ -3,11 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.ReverseEngineering;
 
-namespace YoutubeExplode.Internal
+namespace YoutubeExplode.ReverseEngineering
 {
-    internal class SegmentedHttpStream : Stream
+    // Special abstraction to work around rate limiting and provide seeking support
+    // for YouTube media streams.
+    internal class YoutubeMediaStream : Stream
     {
         private readonly YoutubeHttpClient _httpClient;
         private readonly string _url;
@@ -16,7 +17,7 @@ namespace YoutubeExplode.Internal
         private Stream? _currentStream;
         private long _position;
 
-        public SegmentedHttpStream(YoutubeHttpClient httpClient, string url, long length, long? segmentSize)
+        public YoutubeMediaStream(YoutubeHttpClient httpClient, string url, long length, long? segmentSize)
         {
             _url = url;
             _httpClient = httpClient;
@@ -75,8 +76,11 @@ namespace YoutubeExplode.Internal
             if (_currentStream == null)
             {
                 var from = Position;
-                var to = _segmentSize != null ?  Position + _segmentSize - 1 : null;
-                
+
+                var to = _segmentSize != null
+                    ? Position + _segmentSize - 1
+                    : null;
+
                 _currentStream = await _httpClient.GetStreamAsync(_url, from, to);
             }
 
