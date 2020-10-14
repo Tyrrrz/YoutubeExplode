@@ -70,13 +70,13 @@ namespace YoutubeExplode.Channels
     public partial struct UserName : IEquatable<UserName>
     {
         /// <inheritdoc />
-        public bool Equals(UserName other) => string.Equals(Value, other.Value, StringComparison.Ordinal);
+        public bool Equals(UserName other) => StringComparer.Ordinal.Equals(Value, other.Value);
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is UserName other && Equals(other);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Value);
+        public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Value);
 
         /// <summary>
         /// Equality check.

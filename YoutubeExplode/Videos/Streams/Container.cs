@@ -60,13 +60,13 @@ namespace YoutubeExplode.Videos.Streams
     public partial struct Container : IEquatable<Container>
     {
         /// <inheritdoc />
-        public bool Equals(Container other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+        public bool Equals(Container other) => StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name);
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is Container other && Equals(other);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Name);
+        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Name);
 
         /// <summary>
         /// Equality check.
