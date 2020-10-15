@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Internal.Extensions;
 
 namespace YoutubeExplode.ReverseEngineering.Cipher
@@ -10,6 +11,7 @@ namespace YoutubeExplode.ReverseEngineering.Cipher
 
         public string Decipher(string input) => input.SwapChars(0, _index);
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Swap ({_index})";
     }
 }

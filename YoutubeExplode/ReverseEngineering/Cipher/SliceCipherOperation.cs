@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YoutubeExplode.ReverseEngineering.Cipher
 {
     internal class SliceCipherOperation : ICipherOperation
@@ -8,6 +10,7 @@ namespace YoutubeExplode.ReverseEngineering.Cipher
 
         public string Decipher(string input) => input.Substring(_index);
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Slice ({_index})";
     }
 }

@@ -9,8 +9,6 @@ namespace YoutubeExplode.Internal
     {
         public static string SetQueryParameter(string url, string key, string value)
         {
-            value ??= string.Empty;
-
             // Find existing parameter
             var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
 
@@ -43,8 +41,6 @@ namespace YoutubeExplode.Internal
 
         public static string SetRouteParameter(string url, string key, string value)
         {
-            value ??= string.Empty;
-
             // Find existing parameter
             var existingMatch = Regex.Match(url, $"/({Regex.Escape(key)}/?.*?)(?:/|$)");
 
