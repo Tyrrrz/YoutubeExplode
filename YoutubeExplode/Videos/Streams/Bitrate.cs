@@ -30,7 +30,6 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Initializes an instance of <see cref="Bitrate"/>.
         /// </summary>
-        /// <param name="bitsPerSecond"></param>
         public Bitrate(long bitsPerSecond) => BitsPerSecond = bitsPerSecond;
 
         private string GetLargestWholeNumberSymbol()

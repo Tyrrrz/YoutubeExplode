@@ -27,34 +27,17 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// MPEG-4 Part 14 (.mp4).
         /// </summary>
-        public static Container Mp4 { get; }  = new Container("mp4");
+        public static Container Mp4 { get; } = new Container("mp4");
 
         /// <summary>
         /// Web Media (.webm).
         /// </summary>
-        public static Container WebM { get; }  = new Container("webm");
+        public static Container WebM { get; } = new Container("webm");
 
         /// <summary>
         /// 3rd Generation Partnership Project (.3gpp).
         /// </summary>
-        public static Container Tgpp { get; }  = new Container("3gpp");
-
-        /// <summary>
-        /// Parse a container from name.
-        /// </summary>
-        public static Container Parse(string name)
-        {
-            if (name.Equals("mp4", StringComparison.OrdinalIgnoreCase))
-                return Mp4;
-
-            if (name.Equals("webm", StringComparison.OrdinalIgnoreCase))
-                return WebM;
-
-            if (name.Equals("3gpp", StringComparison.OrdinalIgnoreCase))
-                return Tgpp;
-
-            throw new ArgumentException($"Unrecognized container '{name}'.", nameof(name));
-        }
+        public static Container Tgpp { get; } = new Container("3gpp");
     }
 
     public partial struct Container : IEquatable<Container>

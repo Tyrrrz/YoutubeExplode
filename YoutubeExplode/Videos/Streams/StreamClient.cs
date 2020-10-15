@@ -156,7 +156,7 @@ namespace YoutubeExplode.Videos.Streams
                     continue; // broken stream URL?
 
                 // Common
-                var container = Container.Parse(streamInfo.GetContainer());
+                var container = new Container(streamInfo.GetContainer());
                 var fileSize = new FileSize(contentLength);
                 var bitrate = new Bitrate(streamInfo.GetBitrate());
 
