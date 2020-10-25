@@ -1,3 +1,9 @@
+### v5.1.8 (25-Oct-2020)
+
+- Fixed numerous issues related to stream extraction caused by recent YouTube changes.
+- Improved memory usage when downloading streams.
+- Updated package icon. (Thanks [@Khalid Abuhakmeh](https://github.com/khalidabuhakmeh))
+
 ### v5.1.7 (12-Oct-2020)
 
 - Added a specialized `PlaylistUnavailableException` that gets thrown when the requested playlist is private, doesn't exist, or otherwise unavailable. (Thanks [@Brandon Wood](https://github.com/bcwood))
