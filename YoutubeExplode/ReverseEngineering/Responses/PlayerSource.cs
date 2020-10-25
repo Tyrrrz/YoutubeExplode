@@ -20,7 +20,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;[\w\s]+=)\d+").Value)
                 .NullIfWhiteSpace() ??
             _root
-                .Pipe(s => Regex.Match(s, @"(?<=this\.signatureTimestamp=)\d+").Value)
+                .Pipe(s => Regex.Match(s, @"(?<=signatureTimestamp[=\:])\d+").Value)
                 .NullIfWhiteSpace() ??
             throw FatalFailureException.Generic("Could not find sts in player source.");
 
