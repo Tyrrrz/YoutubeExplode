@@ -24,6 +24,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public bool IsVideoAvailable() => _root
             .QuerySelector("meta[property=\"og:url\"]") != null;
 
+        public string? TryGetPlayerSourceUrl() => _root
+            .GetElementsByName("player_ias/base")
+            .FirstOrDefault()?
+            .GetAttribute("src")
+            .Pipe(s => "https://youtube.com" + s);
+
         public long? TryGetVideoLikeCount() => _root
             .Source
             .Text
@@ -49,12 +55,6 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .Pipe(Json.Extract)
             .Pipe(Json.Parse)
             .Pipe(j => new PlayerConfig(j));
-
-        public string? TryGetPlayerSourceUrl() => _root
-            .GetElementsByName("player_ias/base")
-            .FirstOrDefault()?
-            .GetAttribute("src")
-            .Pipe(s => "https://youtube.com" + s);
     }
 
     internal partial class WatchPage

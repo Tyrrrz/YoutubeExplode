@@ -50,7 +50,8 @@ namespace YoutubeExplode.Videos.Streams
                 embedPage.TryGetPlayerConfig() ??
                 throw VideoUnplayableException.Unplayable(videoId);
 
-            var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
+            var playerSourceUrl = embedPage.TryGetPlayerSourceUrl() ?? playerConfig.GetPlayerSourceUrl();
+            var playerSource = await PlayerSource.GetAsync(_httpClient, playerSourceUrl);
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
 
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId, playerSource.GetSts());

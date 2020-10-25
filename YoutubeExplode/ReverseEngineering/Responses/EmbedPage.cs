@@ -15,6 +15,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
         public EmbedPage(IHtmlDocument root) => _root = root;
 
+        public string? TryGetPlayerSourceUrl() => _root
+            .GetElementsByName("player_ias/base")
+            .FirstOrDefault()?
+            .GetAttribute("src")
+            .Pipe(s => "https://youtube.com" + s);
+
         public PlayerConfig? TryGetPlayerConfig() => _root
             .GetElementsByTagName("script")
             .Select(e => e.Text())
