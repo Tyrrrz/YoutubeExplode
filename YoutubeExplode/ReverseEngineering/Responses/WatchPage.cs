@@ -48,6 +48,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .NullIfWhiteSpace()?
             .Pipe(Json.Parse)
             .Pipe(j => new PlayerConfig(j));
+
+        public string? TryGetPlayerSourceUrl() => _root
+            .GetElementsByName("player_ias/base")
+            .FirstOrDefault()?
+            .GetAttribute("src")
+            .Pipe(s => "https://youtube.com" + s);
     }
 
     internal partial class WatchPage

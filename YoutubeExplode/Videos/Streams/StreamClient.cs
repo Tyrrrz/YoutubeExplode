@@ -98,7 +98,8 @@ namespace YoutubeExplode.Videos.Streams
             if (!string.IsNullOrWhiteSpace(previewVideoId))
                 throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
 
-            var playerSource = await PlayerSource.GetAsync(_httpClient, playerConfig.GetPlayerSourceUrl());
+            var playerSourceUrl = watchPage.TryGetPlayerSourceUrl() ?? playerConfig.GetPlayerSourceUrl();
+            var playerSource = await PlayerSource.GetAsync(_httpClient, playerSourceUrl);
             var cipherOperations = playerSource.GetCipherOperations().ToArray();
 
             if (!playerResponse.IsVideoPlayable())
