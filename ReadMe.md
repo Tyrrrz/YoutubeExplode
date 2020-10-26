@@ -44,11 +44,11 @@ The following example shows how you can extract various metadata from a YouTube 
 var youtube = new YoutubeClient();
 
 // You can specify video ID or URL
-var video = await youtube.Videos.GetAsync("https://youtube.com/watch?v=bnsUkE8i0tU");
+var video = await youtube.Videos.GetAsync("https://youtube.com/watch?v=u_yIGGhubZs");
 
-var title = video.Title; // "Infected Mushroom - Spitfire [Monstercat Release]"
-var author = video.Author; // "Monstercat"
-var duration = video.Duration; // 00:07:14
+var title = video.Title; // "Collections - Blender 2.80 Fundamentals"
+var author = video.Author; // "Blender"
+var duration = video.Duration; // 00:07:20
 ```
 
 ### Downloading a video stream
@@ -66,7 +66,7 @@ You can request the stream manifest to get available streams for a particular vi
 ```csharp
 var youtube = new YoutubeClient();
 
-var streamManifest = await youtube.Videos.Streams.GetManifestAsync("bnsUkE8i0tU");
+var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs");
 ```
 
 Once you get the manifest, you can filter through the streams and choose the one you're interested in downloading:
@@ -113,10 +113,10 @@ Among other things, YoutubeExplode also supports playlists:
 var youtube = new YoutubeClient();
 
 // Get playlist metadata
-var playlist = await youtube.Playlists.GetAsync("PLQLqnnnfa_fAkUmMFw5xh8Kv0S5voEjC9");
+var playlist = await youtube.Playlists.GetAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6");
 
-var title = playlist.Title; // "Igorrr - Hallelujah"
-var author = playlist.Author; // "randomusername604"
+var title = playlist.Title; // "First Steps - Blender 2.80 Fundamentals"
+var author = playlist.Author; // "Blender"
 
 // Enumerate through playlist videos
 await foreach (var video in youtube.Playlists.GetVideosAsync(playlist.Id))
@@ -141,7 +141,7 @@ Similarly to streams, you can extract closed captions by getting the manifest an
 ```csharp
 var youtube = new YoutubeClient();
 
-var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("_QdPW8JrYzQ");
+var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("u_yIGGhubZs");
 
 // Select a closed caption track in English
 var trackInfo = trackManifest.TryGetByLanguage("en");
@@ -151,9 +151,9 @@ if (trackInfo != null)
     // Get the actual closed caption track
     var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
-    // Get the caption displayed at 1:01
-    var caption = track.TryGetByTime(TimeSpan.FromSeconds(61));
-    var text = caption?.Text; // "And the game was afoot."
+    // Get the caption displayed at 0:35
+    var caption = track.TryGetByTime(TimeSpan.FromSeconds(35));
+    var text = caption?.Text;
 }
 ```
 
