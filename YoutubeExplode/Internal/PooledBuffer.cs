@@ -13,4 +13,9 @@ namespace YoutubeExplode.Internal
         public void Dispose() =>
             ArrayPool<T>.Shared.Return(Array);
     }
+
+    internal static class PooledBuffer
+    {
+        public static PooledBuffer<byte> ForStream() => new PooledBuffer<byte>(81920);
+    }
 }

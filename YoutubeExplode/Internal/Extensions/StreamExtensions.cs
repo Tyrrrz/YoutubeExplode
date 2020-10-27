@@ -19,7 +19,7 @@ namespace YoutubeExplode.Internal.Extensions
         public static async Task CopyToAsync(this Stream source, Stream destination,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
-            using var buffer = new PooledBuffer<byte>(81920);
+            using var buffer = PooledBuffer.ForStream();
 
             var totalBytesCopied = 0L;
             int bytesCopied;
