@@ -7,6 +7,12 @@ namespace System
 {
     internal static class Extensions
     {
+        public static bool Contains(
+            this string str,
+            string subStr,
+            StringComparison comparison = StringComparison.Ordinal) =>
+            str.IndexOf(subStr, comparison) >= 0;
+
         public static string[] Split(this string input, params string[] separators) =>
             input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
     }
@@ -29,8 +35,10 @@ namespace System.Collections.Generic
 {
     internal static class Extensions
     {
-        public static TValue GetValueOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key) =>
-            dic.TryGetValue(key, out var result) ? result! : default!;
+        public static TValue GetValueOrDefault<TKey, TValue>(
+            this IReadOnlyDictionary<TKey, TValue> dic,
+            TKey key) =>
+            dic.TryGetValue(key!, out var result) ? result! : default!;
 
         public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source) => new HashSet<T>(source);
     }

@@ -20,7 +20,7 @@ namespace YoutubeExplode.DemoConsole
 
             // Read the video ID
             Console.Write("Enter YouTube video ID or URL: ");
-            var videoId = new VideoId(Console.ReadLine());
+            var videoId = new VideoId(Console.ReadLine()!);
 
             // Get media streams & choose the best muxed stream
             var streams = await youtube.Videos.Streams.GetManifestAsync(videoId);

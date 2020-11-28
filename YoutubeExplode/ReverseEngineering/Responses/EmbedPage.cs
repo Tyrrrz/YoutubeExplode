@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -16,9 +17,13 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public EmbedPage(IHtmlDocument root) => _root = root;
 
         public string? TryGetPlayerSourceUrl() => _root
-            .GetElementsByName("player_ias/base")
-            .FirstOrDefault()?
-            .GetAttribute("src")
+            .GetElementsByTagName("script")
+            .Select(e => e.GetAttribute("src"))
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .FirstOrDefault(s =>
+                s.Contains("player_ias", StringComparison.OrdinalIgnoreCase) &&
+                s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            )?
             .Pipe(s => "https://youtube.com" + s);
 
         public PlayerConfig? TryGetPlayerConfig() => _root

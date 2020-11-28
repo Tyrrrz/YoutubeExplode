@@ -25,9 +25,13 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .QuerySelector("meta[property=\"og:url\"]") != null;
 
         public string? TryGetPlayerSourceUrl() => _root
-            .GetElementsByName("player_ias/base")
-            .FirstOrDefault()?
-            .GetAttribute("src")
+            .GetElementsByTagName("script")
+            .Select(e => e.GetAttribute("src"))
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .FirstOrDefault(s =>
+                s.Contains("player_ias", StringComparison.OrdinalIgnoreCase) &&
+                s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            )?
             .Pipe(s => "https://youtube.com" + s);
 
         public long? TryGetVideoLikeCount() => _root
