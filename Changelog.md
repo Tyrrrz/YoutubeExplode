@@ -1,3 +1,8 @@
+### v5.1.9 (28-Nov-2020)
+
+- Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
+- Fixed an issue where trying to get stream manifest resulted in an exception sometimes. 
+
 ### v5.1.8 (25-Oct-2020)
 
 - Fixed numerous issues related to stream extraction caused by recent YouTube changes.
