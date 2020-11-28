@@ -57,8 +57,18 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
             .NullIfWhiteSpace()?
             .Pipe(Json.Extract)
-            .Pipe(Json.Parse)
+            .Pipe(Json.TryParse)?
             .Pipe(j => new PlayerConfig(j));
+
+        public PlayerResponse? TryGetPlayerResponse() => _root
+            .GetElementsByTagName("script")
+            .Select(e => e.Text())
+            .Select(s => Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value)
+            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
+            .NullIfWhiteSpace()?
+            .Pipe(Json.Extract)
+            .Pipe(Json.TryParse)?
+            .Pipe(j => new PlayerResponse(j));
     }
 
     internal partial class WatchPage

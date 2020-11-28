@@ -89,19 +89,23 @@ namespace YoutubeExplode.Videos.Streams
         private async Task<StreamContext> GetStreamContextFromWatchPageAsync(VideoId videoId)
         {
             var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
-            var playerConfig =
-                watchPage.TryGetPlayerConfig() ??
-                throw VideoUnplayableException.Unplayable(videoId);
+            var playerConfig = watchPage.TryGetPlayerConfig();
 
-            var playerResponse = playerConfig.GetPlayerResponse();
+            var playerResponse =
+                playerConfig?.GetPlayerResponse() ??
+                watchPage.TryGetPlayerResponse() ??
+                throw VideoUnplayableException.Unplayable(videoId);
 
             var previewVideoId = playerResponse.TryGetPreviewVideoId();
             if (!string.IsNullOrWhiteSpace(previewVideoId))
                 throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
 
-            var playerSourceUrl = watchPage.TryGetPlayerSourceUrl() ?? playerConfig.GetPlayerSourceUrl();
-            var playerSource = await PlayerSource.GetAsync(_httpClient, playerSourceUrl);
-            var cipherOperations = playerSource.GetCipherOperations().ToArray();
+            var playerSourceUrl = watchPage.TryGetPlayerSourceUrl() ?? playerConfig?.GetPlayerSourceUrl();
+            var playerSource = !string.IsNullOrWhiteSpace(playerSourceUrl)
+                ? await PlayerSource.GetAsync(_httpClient, playerSourceUrl)
+                : null;
+
+            var cipherOperations = playerSource?.GetCipherOperations().ToArray() ?? Array.Empty<ICipherOperation>();
 
             if (!playerResponse.IsVideoPlayable())
                 throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
@@ -112,7 +116,10 @@ namespace YoutubeExplode.Videos.Streams
             var streamInfoProviders = new List<IStreamInfoProvider>();
 
             // Streams from player config
-            streamInfoProviders.AddRange(playerConfig.GetStreams());
+            if (playerConfig != null)
+            {
+                streamInfoProviders.AddRange(playerConfig.GetStreams());
+            }
 
             // Streams from player response
             streamInfoProviders.AddRange(playerResponse.GetStreams());
