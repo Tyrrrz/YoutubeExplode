@@ -119,7 +119,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class PlaylistResponse
     {
-        public static PlaylistResponse Parse(string raw) => new PlaylistResponse(
+        public static PlaylistResponse Parse(string raw) => new(
             Json.TryParse(raw) ?? throw TransientFailureException.Generic("Playlist response is broken.")
         );
 

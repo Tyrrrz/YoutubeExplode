@@ -91,7 +91,7 @@ namespace YoutubeExplode.Channels
         /// <summary>
         /// Converts string to user name.
         /// </summary>
-        public static implicit operator UserName(string nameOrUrl) => new UserName(nameOrUrl);
+        public static implicit operator UserName(string nameOrUrl) => new(nameOrUrl);
 
         /// <summary>
         /// Converts user name to string.

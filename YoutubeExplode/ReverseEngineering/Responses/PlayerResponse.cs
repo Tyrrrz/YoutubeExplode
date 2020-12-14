@@ -272,6 +272,6 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class PlayerResponse
     {
-        public static PlayerResponse Parse(string raw) => new PlayerResponse(Json.Parse(raw));
+        public static PlayerResponse Parse(string raw) => new(Json.Parse(raw));
     }
 }

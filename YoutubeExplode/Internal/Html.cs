@@ -5,7 +5,7 @@ namespace YoutubeExplode.Internal
 {
     internal static class Html
     {
-        private static readonly HtmlParser HtmlParser = new HtmlParser();
+        private static readonly HtmlParser HtmlParser = new();
 
         public static IHtmlDocument Parse(string source) => HtmlParser.ParseDocument(source);
     }

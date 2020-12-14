@@ -3,20 +3,25 @@
 // Polyfills to bridge the missing APIs in older versions of the framework/standard.
 
 #if NETSTANDARD2_0 || NET461
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+internal static partial class PolyfillExtensions
+{
+    public static bool Contains(
+        this string str,
+        string subStr,
+        StringComparison comparison = StringComparison.Ordinal) =>
+        str.IndexOf(subStr, comparison) >= 0;
+
+    public static string[] Split(this string input, params string[] separators) =>
+        input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+}
+
 namespace System
 {
-    internal static class Extensions
-    {
-        public static bool Contains(
-            this string str,
-            string subStr,
-            StringComparison comparison = StringComparison.Ordinal) =>
-            str.IndexOf(subStr, comparison) >= 0;
-
-        public static string[] Split(this string input, params string[] separators) =>
-            input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-    }
-
     internal static class HashCode
     {
         public static int Combine<T>(T value) => value?.GetHashCode() ?? 0;
@@ -33,26 +38,20 @@ namespace System
 
 namespace System.Collections.Generic
 {
-    internal static class Extensions
+    internal static class PolyfillExtensions
     {
         public static TValue GetValueOrDefault<TKey, TValue>(
             this IReadOnlyDictionary<TKey, TValue> dic,
             TKey key) =>
             dic.TryGetValue(key!, out var result) ? result! : default!;
 
-        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source) => new HashSet<T>(source);
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source) => new(source);
     }
 }
 
-namespace System.IO
+internal static partial class PolyfillExtensions
 {
-    using Threading;
-    using Threading.Tasks;
-
-    internal static class Extensions
-    {
-        public static async Task<int> ReadAsync(this Stream stream, byte[] buffer, CancellationToken cancellationToken) =>
-            await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-    }
+    public static async Task<int> ReadAsync(this Stream stream, byte[] buffer, CancellationToken cancellationToken) =>
+        await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
 }
 #endif

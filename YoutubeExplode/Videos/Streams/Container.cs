@@ -27,17 +27,17 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// MPEG-4 Part 14 (.mp4).
         /// </summary>
-        public static Container Mp4 { get; } = new Container("mp4");
+        public static Container Mp4 { get; } = new("mp4");
 
         /// <summary>
         /// Web Media (.webm).
         /// </summary>
-        public static Container WebM { get; } = new Container("webm");
+        public static Container WebM { get; } = new("webm");
 
         /// <summary>
         /// 3rd Generation Partnership Project (.3gpp).
         /// </summary>
-        public static Container Tgpp { get; } = new Container("3gpp");
+        public static Container Tgpp { get; } = new("3gpp");
     }
 
     public partial struct Container : IEquatable<Container>

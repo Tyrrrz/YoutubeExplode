@@ -7,9 +7,9 @@ namespace YoutubeExplode.DemoWpf.Converters
     [ValueConversion(typeof(bool), typeof(string))]
     public class BoolToStringConverter : IValueConverter
     {
-        public static BoolToStringConverter Instance { get; } = new BoolToStringConverter();
+        public static BoolToStringConverter Instance { get; } = new();
 
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
                 return default(string);
@@ -18,9 +18,7 @@ namespace YoutubeExplode.DemoWpf.Converters
             return b ? "yes" : "no";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotSupportedException();
     }
 }

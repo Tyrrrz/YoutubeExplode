@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -90,7 +89,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class PlayerSource
     {
-        public static PlayerSource Parse(string raw) => new PlayerSource(raw);
+        public static PlayerSource Parse(string raw) => new(raw);
 
         public static async Task<PlayerSource> GetAsync(YoutubeHttpClient httpClient, string url) =>
             await Retry.WrapAsync(async () =>

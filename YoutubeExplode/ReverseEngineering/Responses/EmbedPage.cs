@@ -66,7 +66,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class EmbedPage
     {
-        public static EmbedPage Parse(string raw) => new EmbedPage(Html.Parse(raw));
+        public static EmbedPage Parse(string raw) => new(Html.Parse(raw));
 
         public static async Task<EmbedPage> GetAsync(YoutubeHttpClient httpClient, string videoId) =>
             await Retry.WrapAsync(async () =>

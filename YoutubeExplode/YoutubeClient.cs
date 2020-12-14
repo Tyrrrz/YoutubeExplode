@@ -64,7 +64,7 @@ namespace YoutubeExplode
 
     public partial class YoutubeClient
     {
-        private static readonly Lazy<HttpClient> LazyHttpClient = new Lazy<HttpClient>(() =>
+        private static readonly Lazy<HttpClient> LazyHttpClient = new(() =>
         {
             var handler = new HttpClientHandler();
 

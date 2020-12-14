@@ -34,7 +34,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class ChannelPage
     {
-        public static ChannelPage Parse(string raw) => new ChannelPage(Html.Parse(raw));
+        public static ChannelPage Parse(string raw) => new(Html.Parse(raw));
 
         public static async Task<ChannelPage> GetAsync(YoutubeHttpClient httpClient, string id) =>
             await Retry.WrapAsync(async () =>

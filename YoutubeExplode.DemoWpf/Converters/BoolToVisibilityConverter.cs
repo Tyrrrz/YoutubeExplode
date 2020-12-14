@@ -8,9 +8,9 @@ namespace YoutubeExplode.DemoWpf.Converters
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class BoolToVisibilityConverter : IValueConverter
     {
-        public static BoolToVisibilityConverter Instance { get; } = new BoolToVisibilityConverter();
+        public static BoolToVisibilityConverter Instance { get; } = new();
 
-        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
         {
             var falseVisibility = Visibility.Hidden;
             if (parameter is Visibility parameterVisibility)
@@ -23,9 +23,7 @@ namespace YoutubeExplode.DemoWpf.Converters
             return valueBool ? Visibility.Visible : falseVisibility;
         }
 
-        public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotSupportedException();
     }
 }

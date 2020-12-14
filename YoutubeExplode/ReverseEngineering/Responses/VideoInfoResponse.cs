@@ -117,7 +117,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class VideoInfoResponse
     {
-        public static VideoInfoResponse Parse(string raw) => new VideoInfoResponse(Url.SplitQuery(raw));
+        public static VideoInfoResponse Parse(string raw) => new(Url.SplitQuery(raw));
 
         public static async Task<VideoInfoResponse> GetAsync(YoutubeHttpClient httpClient, string videoId, string? sts = null) =>
             await Retry.WrapAsync(async () =>

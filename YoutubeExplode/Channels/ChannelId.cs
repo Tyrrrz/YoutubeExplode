@@ -95,7 +95,7 @@ namespace YoutubeExplode.Channels
         /// <summary>
         /// Converts string to ID.
         /// </summary>
-        public static implicit operator ChannelId(string idOrUrl) => new ChannelId(idOrUrl);
+        public static implicit operator ChannelId(string idOrUrl) => new(idOrUrl);
 
         /// <summary>
         /// Converts ID to string.

@@ -80,7 +80,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class DashManifest
     {
-        public static DashManifest Parse(string raw) => new DashManifest(Xml.Parse(raw));
+        public static DashManifest Parse(string raw) => new(Xml.Parse(raw));
 
         public static async Task<DashManifest> GetAsync(YoutubeHttpClient httpClient, string url) =>
             await Retry.WrapAsync(async () =>

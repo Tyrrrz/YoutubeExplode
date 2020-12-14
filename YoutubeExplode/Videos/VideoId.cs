@@ -103,7 +103,7 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Converts string to ID.
         /// </summary>
-        public static implicit operator VideoId(string idOrUrl) => new VideoId(idOrUrl);
+        public static implicit operator VideoId(string idOrUrl) => new(idOrUrl);
 
         /// <summary>
         /// Converts ID to string.

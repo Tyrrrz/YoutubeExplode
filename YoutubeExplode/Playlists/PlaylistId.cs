@@ -128,7 +128,7 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Converts string to ID.
         /// </summary>
-        public static implicit operator PlaylistId(string idOrUrl) => new PlaylistId(idOrUrl);
+        public static implicit operator PlaylistId(string idOrUrl) => new(idOrUrl);
 
         /// <summary>
         /// Converts ID to string.

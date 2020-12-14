@@ -9,9 +9,9 @@ namespace YoutubeExplode.DemoWpf.Converters
     [ValueConversion(typeof(IEnumerable), typeof(string))]
     public class ArrayToStringConverter : IValueConverter
     {
-        public static ArrayToStringConverter Instance { get; } = new ArrayToStringConverter();
+        public static ArrayToStringConverter Instance { get; } = new();
 
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
                 return default(string);
@@ -21,9 +21,7 @@ namespace YoutubeExplode.DemoWpf.Converters
             return string.Join(separator, enumerable.Cast<object>());
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotSupportedException();
     }
 }

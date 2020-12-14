@@ -117,7 +117,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class WatchPage
     {
-        public static WatchPage Parse(string raw) => new WatchPage(Html.Parse(raw));
+        public static WatchPage Parse(string raw) => new(Html.Parse(raw));
 
         public static async Task<WatchPage> GetAsync(YoutubeHttpClient httpClient, string videoId) =>
             await Retry.WrapAsync(async () =>
