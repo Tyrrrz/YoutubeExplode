@@ -7,30 +7,21 @@ namespace YoutubeExplode.Internal
     {
         public static string Extract(string source)
         {
-            var buffer = new StringBuilder();
-            var depth = 0;
-
-            // We trust that the source contains valid json, we just need to extract it.
-            // To do it, we will be matching curly braces until we even out.
-            for (var i = 0; i < source.Length; i++)
+            StringBuilder sb = new StringBuilder();
+            int depth = 0;
+            char lastChar = default;
+            foreach (var ch in source)
             {
-                var ch = source[i];
-                var chPrv = i > 0 ? source[i - 1] : default;
-
-                buffer.Append(ch);
-
-                // Match braces
-                if (ch == '{' && chPrv != '\\')
+                sb.Append(ch);
+                if (ch == '{' && lastChar != '\\')
                     depth++;
-                else if (ch == '}' && chPrv != '\\')
+                else if (ch == '}' && lastChar != '\\')
                     depth--;
-
-                // Break when evened out
                 if (depth == 0)
                     break;
+                lastChar = ch;
             }
-
-            return buffer.ToString();
+            return sb.ToString();
         }
 
         public static JsonElement Parse(string source)
