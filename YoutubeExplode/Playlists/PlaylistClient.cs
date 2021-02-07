@@ -32,15 +32,15 @@ namespace YoutubeExplode.Playlists
             var response = await PlaylistResponse.GetAsync(_httpClient, id);
 
             var thumbnails = response
-                .GetVideos()
+                .GetPlaylistVideos()
                 .FirstOrDefault()?
                 .GetId()
                 .Pipe(i => new ThumbnailSet(i));
 
             return new Playlist(
                 id,
-                response.GetTitle(),
-                response.TryGetAuthor(),
+                response.TryGetTitle() ?? "",
+                response.TryGetAuthor() ?? "",
                 response.TryGetDescription() ?? "",
                 thumbnails,
                 new Engagement(
@@ -63,12 +63,16 @@ namespace YoutubeExplode.Playlists
                 var response = await PlaylistResponse.GetAsync(_httpClient, id, index);
 
                 var countDelta = 0;
-                foreach (var video in response.GetVideos())
+                foreach (var video in response.GetPlaylistVideos())
                 {
                     var videoId = video.GetId();
 
                     // Skip already encountered videos
                     if (!encounteredVideoIds.Add(videoId))
+                        continue;
+
+                    // Skip deleted videos
+                    if (string.IsNullOrEmpty(video.GetChannelId()))
                         continue;
 
                     yield return new Video(
