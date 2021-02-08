@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.Internal;
 using YoutubeExplode.Internal.Extensions;
 
@@ -74,7 +75,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 var url = $"https://youtube.com/embed/{videoId}?hl=en";
                 var raw = await httpClient.GetStringAsync(url);
 
-                return Parse(raw);
+                var result = Parse(raw);
+
+                if (result.TryGetPlayerConfig() == null)
+                    throw TransientFailureException.Generic("Failed to extract player config from embed page.");
+
+                return result;
             });
     }
 }
