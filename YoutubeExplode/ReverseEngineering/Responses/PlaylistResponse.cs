@@ -165,13 +165,13 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetProperty("text")
                 .GetString();
 
-            public string GetDescription() => _root
+            public string GetDescription() => string.Concat(
+                _root
                 .GetPropertyOrNull("descriptionSnippet")?
                 .GetPropertyOrNull("runs")?
                 .EnumerateArray()
-                .FirstOrDefault()
-                .GetPropertyOrNull("text")?
-                .GetString() ?? "";
+                .Select(x => x.GetPropertyOrNull("text")?.GetString()) ?? Enumerable.Empty<string>()
+                );
 
             public TimeSpan GetDuration() => _root
                 .GetProperty("lengthText")
