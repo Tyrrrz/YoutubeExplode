@@ -26,6 +26,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("title")?
             .GetString();
 
+        // Some playlists do not have an author
         public string? TryGetAuthor() => _root
             .GetPropertyOrNull("sidebar")?
             .GetPropertyOrNull("playlistSidebarRenderer")?
@@ -36,11 +37,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("videoOwner")?
             .GetPropertyOrNull("videoOwnerRenderer")?
             .GetPropertyOrNull("title")?
-            .GetPropertyOrNull("runs")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("text")?
-            .GetString();
+            .Flatten();
 
         public string? TryGetDescription() => _root
             .GetPropertyOrNull("metadata")?
@@ -61,16 +58,12 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("simpleText")?
             .GetInt64();
 
-        public long? TryGetLikeCount() => _root
-            .GetPropertyOrNull("likes")?
-            .GetInt64();
+        public long? TryGetLikeCount() => default;
 
-        public long? TryGetDislikeCount() => _root
-            .GetPropertyOrNull("dislikes")?
-            .GetInt64();
+        public long? TryGetDislikeCount() => default;
 
         public IEnumerable<Video> GetPlaylistVideos() => Fallback.ToEmpty(
-            _root
+                _root
                 .GetPropertyOrNull("contents")?
                 .GetPropertyOrNull("twoColumnBrowseResultsRenderer")?
                 .GetPropertyOrNull("tabs")?
@@ -91,10 +84,10 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .EnumerateArray()
                 .Where(j => j.TryGetProperty("playlistVideoRenderer", out _))
                 .Select(j => new Video(j.GetProperty("playlistVideoRenderer")))
-        );
+                );
 
         public IEnumerable<Video> GetVideos() => Fallback.ToEmpty(
-            _root
+                _root
                 .GetPropertyOrNull("contents")?
                 .GetPropertyOrNull("twoColumnSearchResultsRenderer")?
                 .GetPropertyOrNull("primaryContents")?
@@ -107,7 +100,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .EnumerateArray()
                 .Where(j => j.TryGetProperty("videoRenderer", out _))
                 .Select(j => new Video(j.GetProperty("videoRenderer")))
-        );
+                );
     }
 
     internal partial class PlaylistResponse
@@ -125,17 +118,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public string GetAuthor() => _root // Video from search results
                 .GetPropertyOrNull("ownerText")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArray()
-                .FirstOrDefault()
-                .GetPropertyOrNull("text")?
-                .GetString() ?? _root // Video from playlist
+                .Flatten() ?? _root // Video from playlist
                 .GetPropertyOrNull("shortBylineText")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArray()
-                .FirstOrDefault()
-                .GetPropertyOrNull("text")?
-                .GetString() ?? "";
+                .Flatten() ?? "";
 
             public string GetChannelId() => _root // Video from search results
                 .GetPropertyOrNull("ownerText")?
@@ -158,27 +143,22 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             public DateTimeOffset GetUploadDate() => default;
 
             public string GetTitle() => _root
-                .GetProperty("title")
-                .GetProperty("runs")
-                .EnumerateArray()
-                .First()
-                .GetProperty("text")
-                .GetString();
+                .GetPropertyOrNull("title")?
+                .Flatten() ?? "";
 
-            public string GetDescription() => string.Concat(
-                _root
+            // Incomplete description
+            public string GetDescription() => _root
                 .GetPropertyOrNull("descriptionSnippet")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArray()
-                .Select(x => x.GetPropertyOrNull("text")?.GetString()) ?? Enumerable.Empty<string>()
-                );
+                .Flatten() ?? "";
 
+            // Streams do not have duration
             public TimeSpan GetDuration() => _root
-                .GetProperty("lengthText")
-                .GetProperty("simpleText")
-                .GetString()
-                .Pipe(p => TimeSpan.ParseExact(p, _timeFormats, CultureInfo.InvariantCulture));
+                .GetPropertyOrNull("lengthText")?
+                .GetPropertyOrNull("simpleText")?
+                .GetString()?
+                .Pipe(p => p == null ? default : TimeSpan.ParseExact(p, _timeFormats, CultureInfo.InvariantCulture)) ?? default;
 
+            // Streams and some paid videos do not have views
             public long GetViewCount() => _root
                 .GetPropertyOrNull("viewCountText")?
                 .GetPropertyOrNull("simpleText")?
@@ -196,9 +176,9 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
     internal partial class PlaylistResponse
     {
-        public static PlaylistResponse Parse(string raw) => new PlaylistResponse(
-            raw.Pipe(s => Regex.Match(s, @"(window\[""ytInitialData""]|var ytInitialData)\s*=\s*(.*);</script>").Groups[2].Value)
-                .Pipe(Json.TryParse) ?? throw TransientFailureException.Generic("Playlist response is broken."));
+        public static PlaylistResponse Parse(string raw) => new(
+            raw.Pipe(s => Regex.Match(s, @"(window\[""ytInitialData""]|var ytInitialData)\s*=\s*(.*)\s*;</script>").Groups[2].Value)
+               .Pipe(Json.TryParse) ?? throw TransientFailureException.Generic("Playlist response is broken."));
 
         public static async Task<PlaylistResponse> GetAsync(YoutubeHttpClient httpClient, string id, int index = 0) =>
             await Retry.WrapAsync(async () =>
@@ -219,7 +199,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             {
                 var queryEncoded = Uri.EscapeUriString(query);
 
-                var url = $"https://youtube.com/results?search_query={queryEncoded}&hl=en&persist_hl=1";
+                var url = $"https://www.youtube.com/results?search_query={queryEncoded}&hl=en&persist_hl=1";
 
                 // Don't ensure success here but rather return an empty list
                 var raw = await httpClient.GetStringAsync(url);

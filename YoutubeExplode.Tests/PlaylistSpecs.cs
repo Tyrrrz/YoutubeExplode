@@ -58,8 +58,6 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
-        [InlineData("RD1hu8-y6fKg0")] // video mix
-        //[InlineData("RDMMU-ty-2B02VY")] // my mix
         [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
         [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
         [InlineData("PL601B2E69B03FAB9D")]
@@ -103,12 +101,8 @@ namespace YoutubeExplode.Tests
         [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
         [InlineData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk")] // large
         [InlineData("OLAK5uy_mtOdjCW76nDvf5yOzgcAVMYpJ5gcW5uKU")] // large 2
-        //[InlineData("RD1hu8-y6fKg0")] // video mix
-        //[InlineData("RDMMU-ty-2B02VY")] // my mix
         [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
-        //[InlineData("ULl6WWX-BgIiE")] // channel video mix
         [InlineData("UUTMt7iMWa7jy0fNXIktwyLA")] // user uploads
-        //[InlineData("PUTMt7iMWa7jy0fNXIktwyLA")] // popular user uploads
         [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
         [InlineData("PL601B2E69B03FAB9D")]
         public async Task I_can_get_videos_included_in_any_available_YouTube_playlist(string playlistId)
