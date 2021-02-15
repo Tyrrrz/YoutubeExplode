@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using YoutubeExplode.Common;
+using YoutubeExplode.Playlists;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
-using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Search
 {
@@ -27,7 +27,7 @@ namespace YoutubeExplode.Search
         /// <param name="searchQuery">The term to look for.</param>
         /// <param name="startPage">Sets how many page should be skipped from the beginning of the search.</param>
         /// <param name="pageCount">Limits how many page should be requested to complete the search.</param>
-        public async IAsyncEnumerable<Video> GetVideosAsync(string searchQuery, int startPage, int pageCount)
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(string searchQuery, int startPage, int pageCount)
         {
             var encounteredVideoIds = new HashSet<string>();
 
@@ -44,21 +44,15 @@ namespace YoutubeExplode.Search
                     if (!encounteredVideoIds.Add(videoId))
                         continue;
 
-                    yield return new Video(
+                    yield return new PlaylistVideo(
                         videoId,
                         video.GetTitle(),
                         video.GetAuthor(),
                         video.GetChannelId(),
-                        video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),
-                        new ThumbnailSet(videoId),
-                        video.GetKeywords(),
-                        new Engagement(
-                            video.GetViewCount(),
-                            video.GetLikeCount(),
-                            video.GetDislikeCount()
-                        )
+                        video.GetViewCount(),
+                        new ThumbnailSet(videoId)
                     );
 
                     countDelta++;
@@ -74,7 +68,7 @@ namespace YoutubeExplode.Search
         /// Enumerates videos returned by the specified search query.
         /// </summary>
         // This needs to be an overload to maintain backwards compatibility
-        public IAsyncEnumerable<Video> GetVideosAsync(string searchQuery) =>
+        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(string searchQuery) =>
             GetVideosAsync(searchQuery, 0, int.MaxValue);
     }
 }

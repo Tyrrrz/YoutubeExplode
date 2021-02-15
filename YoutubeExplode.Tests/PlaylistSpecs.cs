@@ -24,14 +24,12 @@ namespace YoutubeExplode.Tests
             playlist.Title.Should().Be("osu! Highlights");
             playlist.Author.Should().Be("Tyrrrz");
             playlist.Description.Should().Be("My best osu! plays");
+            playlist.ViewCount.Should().BeGreaterOrEqualTo(133);
             playlist.Thumbnails?.LowResUrl.Should().NotBeNullOrWhiteSpace();
             playlist.Thumbnails?.MediumResUrl.Should().NotBeNullOrWhiteSpace();
             playlist.Thumbnails?.HighResUrl.Should().NotBeNullOrWhiteSpace();
             playlist.Thumbnails?.StandardResUrl.Should().NotBeNullOrWhiteSpace();
             playlist.Thumbnails?.MaxResUrl.Should().NotBeNullOrWhiteSpace();
-            //playlist.Engagement.ViewCount.Should().BeGreaterOrEqualTo(133);
-            //playlist.Engagement.LikeCount.Should().BeGreaterOrEqualTo(0);
-            //playlist.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
         }
 
         [Fact]

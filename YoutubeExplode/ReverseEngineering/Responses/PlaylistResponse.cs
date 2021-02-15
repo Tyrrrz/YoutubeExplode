@@ -54,13 +54,11 @@ namespace YoutubeExplode.ReverseEngineering.Responses
             .GetPropertyOrNull("playlistSidebarPrimaryInfoRenderer")?
             .GetPropertyOrNull("stats")?
             .EnumerateArray()
-            .FirstOrDefault()
+            .ElementAtOrDefault(1)
             .GetPropertyOrNull("simpleText")?
-            .GetInt64();
-
-        public long? TryGetLikeCount() => default;
-
-        public long? TryGetDislikeCount() => default;
+            .GetString()?
+            .StripNonDigit()
+            .ParseLong();
 
         public IEnumerable<Video> GetPlaylistVideos() => Fallback.ToEmpty(
                 _root
@@ -140,8 +138,6 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetPropertyOrNull("browseId")?
                 .GetString() ?? "";
 
-            public DateTimeOffset GetUploadDate() => default;
-
             public string GetTitle() => _root
                 .GetPropertyOrNull("title")?
                 .Flatten() ?? "";
@@ -156,7 +152,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetPropertyOrNull("lengthText")?
                 .GetPropertyOrNull("simpleText")?
                 .GetString()?
-                .Pipe(p => p == null ? default : TimeSpan.ParseExact(p, _timeFormats, CultureInfo.InvariantCulture)) ?? default;
+                .Pipe(p => TimeSpan.ParseExact(p, _timeFormats, CultureInfo.InvariantCulture)) ?? default;
 
             // Streams and some paid videos do not have views
             public long GetViewCount() => _root
@@ -165,12 +161,6 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetString()?
                 .StripNonDigit()
                 .ParseLong() ?? default;
-
-            public long GetLikeCount() => default;
-
-            public long GetDislikeCount() => default;
-            
-            public IReadOnlyList<string> GetKeywords() => Array.Empty<string>();
         }
     }
 

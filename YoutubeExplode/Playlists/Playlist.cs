@@ -34,27 +34,28 @@ namespace YoutubeExplode.Playlists
         public string Description { get; }
 
         /// <summary>
+        /// View count.
+        /// </summary>
+        public long ViewCount { get; }
+
+        /// <summary>
         /// Available thumbnails for this playlist.
         /// Can be null if the playlist is empty.
         /// </summary>
         public ThumbnailSet? Thumbnails { get; }
 
-        /// <summary>
-        /// Engagement statistics.
-        /// </summary>
-        public Engagement Engagement { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Playlist"/>.
         /// </summary>
-        public Playlist(PlaylistId id, string title, string? author, string description, ThumbnailSet? thumbnails, Engagement engagement)
+        public Playlist(PlaylistId id, string title, string? author, string description, long viewCount, ThumbnailSet? thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
             Description = description;
+            ViewCount = viewCount;
             Thumbnails = thumbnails;
-            Engagement = engagement;
         }
 
         /// <inheritdoc />

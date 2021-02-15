@@ -5,7 +5,6 @@ using YoutubeExplode.Common;
 using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
-using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists
 {
@@ -42,18 +41,15 @@ namespace YoutubeExplode.Playlists
                 response.TryGetTitle() ?? "",
                 response.TryGetAuthor() ?? "",
                 response.TryGetDescription() ?? "",
-                thumbnails,
-                new Engagement(
-                    response.TryGetViewCount() ?? 0,
-                    response.TryGetLikeCount() ?? 0,
-                    response.TryGetDislikeCount() ?? 0
-                ));
+                response.TryGetViewCount() ?? 0,
+                thumbnails
+                );
         }
 
         /// <summary>
         /// Enumerates videos included in the specified playlist.
         /// </summary>
-        public async IAsyncEnumerable<Video> GetVideosAsync(PlaylistId id)
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId id)
         {
             var encounteredVideoIds = new HashSet<string>();
 
@@ -75,21 +71,15 @@ namespace YoutubeExplode.Playlists
                     if (string.IsNullOrEmpty(video.GetChannelId()))
                         continue;
 
-                    yield return new Video(
+                    yield return new PlaylistVideo(
                         videoId,
                         video.GetTitle(),
                         video.GetAuthor(),
                         video.GetChannelId(),
-                        video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),
-                        new ThumbnailSet(videoId),
-                        video.GetKeywords(),
-                        new Engagement(
-                            video.GetViewCount(),
-                            video.GetLikeCount(),
-                            video.GetDislikeCount()
-                        )
+                        video.GetViewCount(),
+                        new ThumbnailSet(videoId)
                     );
 
                     countDelta++;
