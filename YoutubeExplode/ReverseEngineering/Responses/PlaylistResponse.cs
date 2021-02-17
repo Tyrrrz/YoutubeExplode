@@ -160,6 +160,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .GetPropertyOrNull("simpleText")?
                 .GetString()?
                 .StripNonDigit()
+                .NullIfWhiteSpace()?
                 .ParseLong() ?? default;
         }
     }
