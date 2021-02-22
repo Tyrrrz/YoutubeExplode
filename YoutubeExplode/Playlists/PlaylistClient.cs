@@ -52,13 +52,12 @@ namespace YoutubeExplode.Playlists
         public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId id)
         {
             var encounteredVideoIds = new HashSet<string>();
+            var continuationToken = "";
 
-            var index = 0;
             while (true)
             {
-                var response = await PlaylistResponse.GetAsync(_httpClient, id, index);
+                var response = await PlaylistResponse.GetAsync(_httpClient, id, continuationToken);
 
-                var countDelta = 0;
                 foreach (var video in response.GetPlaylistVideos())
                 {
                     var videoId = video.GetId();
@@ -81,15 +80,11 @@ namespace YoutubeExplode.Playlists
                         video.GetViewCount(),
                         new ThumbnailSet(videoId)
                     );
-
-                    countDelta++;
                 }
 
-                // Videos loop around, so break when we stop seeing new videos
-                if (countDelta <= 0)
+                continuationToken = response.TryGetContinuationToken();
+                if (string.IsNullOrEmpty(continuationToken))
                     break;
-
-                index += countDelta;
             }
         }
     }
