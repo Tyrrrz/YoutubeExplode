@@ -67,7 +67,7 @@ namespace YoutubeExplode.Channels
         /// <summary>
         /// Enumerates videos uploaded by the specified channel.
         /// </summary>
-        public IAsyncEnumerable<Video> GetUploadsAsync(ChannelId id)
+        public IAsyncEnumerable<PlaylistVideo> GetUploadsAsync(ChannelId id)
         {
             var playlistId = "UU" + id.Value.SubstringAfter("UC");
             return new PlaylistClient(_httpClient).GetVideosAsync(playlistId);

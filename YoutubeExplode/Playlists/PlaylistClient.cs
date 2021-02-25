@@ -5,7 +5,6 @@ using YoutubeExplode.Common;
 using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
-using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists
 {
@@ -32,38 +31,34 @@ namespace YoutubeExplode.Playlists
             var response = await PlaylistResponse.GetAsync(_httpClient, id);
 
             var thumbnails = response
-                .GetVideos()
+                .GetPlaylistVideos()
                 .FirstOrDefault()?
                 .GetId()
                 .Pipe(i => new ThumbnailSet(i));
 
             return new Playlist(
                 id,
-                response.GetTitle(),
-                response.TryGetAuthor(),
+                response.TryGetTitle() ?? "",
+                response.TryGetAuthor() ?? "",
                 response.TryGetDescription() ?? "",
-                thumbnails,
-                new Engagement(
-                    response.TryGetViewCount() ?? 0,
-                    response.TryGetLikeCount() ?? 0,
-                    response.TryGetDislikeCount() ?? 0
-                ));
+                response.TryGetViewCount() ?? 0,
+                thumbnails
+                );
         }
 
         /// <summary>
         /// Enumerates videos included in the specified playlist.
         /// </summary>
-        public async IAsyncEnumerable<Video> GetVideosAsync(PlaylistId id)
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId id)
         {
             var encounteredVideoIds = new HashSet<string>();
+            var continuationToken = "";
 
-            var index = 0;
             while (true)
             {
-                var response = await PlaylistResponse.GetAsync(_httpClient, id, index);
+                var response = await PlaylistResponse.GetAsync(_httpClient, id, continuationToken);
 
-                var countDelta = 0;
-                foreach (var video in response.GetVideos())
+                foreach (var video in response.GetPlaylistVideos())
                 {
                     var videoId = video.GetId();
 
@@ -71,31 +66,25 @@ namespace YoutubeExplode.Playlists
                     if (!encounteredVideoIds.Add(videoId))
                         continue;
 
-                    yield return new Video(
+                    // Skip deleted videos
+                    if (string.IsNullOrEmpty(video.GetChannelId()))
+                        continue;
+
+                    yield return new PlaylistVideo(
                         videoId,
                         video.GetTitle(),
                         video.GetAuthor(),
                         video.GetChannelId(),
-                        video.GetUploadDate(),
                         video.GetDescription(),
                         video.GetDuration(),
-                        new ThumbnailSet(videoId),
-                        video.GetKeywords(),
-                        new Engagement(
-                            video.GetViewCount(),
-                            video.GetLikeCount(),
-                            video.GetDislikeCount()
-                        )
+                        video.GetViewCount(),
+                        new ThumbnailSet(videoId)
                     );
-
-                    countDelta++;
                 }
 
-                // Videos loop around, so break when we stop seeing new videos
-                if (countDelta <= 0)
+                continuationToken = response.TryGetContinuationToken();
+                if (string.IsNullOrEmpty(continuationToken))
                     break;
-
-                index += countDelta;
             }
         }
     }
