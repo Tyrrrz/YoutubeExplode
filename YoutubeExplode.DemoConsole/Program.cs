@@ -25,7 +25,7 @@ namespace YoutubeExplode.DemoConsole
             // Get media streams & choose the best muxed stream
             var streams = await youtube.Videos.Streams.GetManifestAsync(videoId);
             var streamInfo = streams.GetMuxed().WithHighestVideoQuality();
-            if (streamInfo == null)
+            if (streamInfo is null)
             {
                 Console.Error.WriteLine("This videos has no streams");
                 return -1;

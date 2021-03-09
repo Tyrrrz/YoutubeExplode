@@ -14,7 +14,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public ChannelPage(IHtmlDocument root) => _root = root;
 
         private bool IsOk() => _root
-            .QuerySelector("meta[property=\"og:url\"]") != null;
+            .QuerySelector("meta[property=\"og:url\"]") is not null;
 
         public string GetChannelUrl() => _root
             .QuerySelectorOrThrow("meta[property=\"og:url\"]")

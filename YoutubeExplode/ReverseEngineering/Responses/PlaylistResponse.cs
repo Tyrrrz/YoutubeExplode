@@ -20,7 +20,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public PlaylistResponse(JsonElement root) => _root = root;
 
         public bool IsPlaylistAvailable() => _root
-            .GetPropertyOrNull("metadata") != null;
+            .GetPropertyOrNull("metadata") is not null;
 
         public string? TryGetTitle() => _root
             .GetPropertyOrNull("metadata")?
@@ -65,7 +65,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public string? TryGetContinuationToken() =>
             (GetVideosContent() ?? GetPlaylistVideosContent())?
             .EnumerateArray()
-            .FirstOrDefault(j => j.GetPropertyOrNull("continuationItemRenderer") != null)
+            .FirstOrDefault(j => j.GetPropertyOrNull("continuationItemRenderer") is not null)
             .GetPropertyOrNull("continuationItemRenderer")?
             .GetPropertyOrNull("continuationEndpoint")?
             .GetPropertyOrNull("continuationCommand")?

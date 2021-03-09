@@ -19,10 +19,10 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public WatchPage(IHtmlDocument root) => _root = root;
 
         private bool IsOk() =>
-            _root.Body.QuerySelector("#player") != null;
+            _root.Body.QuerySelector("#player") is not null;
 
         public bool IsVideoAvailable() => _root
-            .QuerySelector("meta[property=\"og:url\"]") != null;
+            .QuerySelector("meta[property=\"og:url\"]") is not null;
 
         public string? TryGetPlayerSourceUrl() => _root
             .GetElementsByTagName("script")

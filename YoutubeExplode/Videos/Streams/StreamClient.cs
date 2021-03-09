@@ -116,7 +116,7 @@ namespace YoutubeExplode.Videos.Streams
             var streamInfoProviders = new List<IStreamInfoProvider>();
 
             // Streams from player config
-            if (playerConfig != null)
+            if (playerConfig is not null)
             {
                 streamInfoProviders.AddRange(playerConfig.GetStreams());
             }
@@ -185,7 +185,7 @@ namespace YoutubeExplode.Videos.Streams
 
                     var videoWidth = streamInfo.TryGetVideoWidth();
                     var videoHeight = streamInfo.TryGetVideoHeight();
-                    var videoResolution = videoWidth != null && videoHeight != null
+                    var videoResolution = videoWidth is not null && videoHeight is not null
                         ? new VideoResolution(videoWidth.Value, videoHeight.Value)
                         : Heuristics.GetVideoResolution(videoQuality);
 

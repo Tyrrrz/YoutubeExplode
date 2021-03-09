@@ -87,7 +87,7 @@ var streamInfo = streamManifest
 Finally, you can get the actual `Stream` object represented by the metadata:
 
 ```csharp
-if (streamInfo != null)
+if (streamInfo is not null)
 {
     // Get the actual stream
     var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
@@ -145,7 +145,7 @@ var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("u_yIGG
 // Select a closed caption track in English
 var trackInfo = trackManifest.TryGetByLanguage("en");
 
-if (trackInfo != null)
+if (trackInfo is not null)
 {
     // Get the actual closed caption track
     var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -161,7 +161,7 @@ You can also download closed caption tracks as SRT files:
 ```csharp
 var trackInfo = trackManifest.TryGetByLanguage("en");
 
-if (trackInfo != null)
+if (trackInfo is not null)
 {
     await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
 }

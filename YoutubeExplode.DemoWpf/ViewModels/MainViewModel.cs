@@ -108,11 +108,11 @@ namespace YoutubeExplode.DemoWpf.ViewModels
         }
 
         public bool IsDataAvailable =>
-            Video != null && Channel != null &&
-            MuxedStreamInfos != null &&
-            AudioOnlyStreamInfos != null &&
-            VideoOnlyStreamInfos != null &&
-            ClosedCaptionTrackInfos != null;
+            Video is not null && Channel is not null &&
+            MuxedStreamInfos is not null &&
+            AudioOnlyStreamInfos is not null &&
+            VideoOnlyStreamInfos is not null &&
+            ClosedCaptionTrackInfos is not null;
 
         public double Progress
         {

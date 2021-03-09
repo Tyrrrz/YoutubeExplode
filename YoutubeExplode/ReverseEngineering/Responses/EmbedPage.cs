@@ -77,7 +77,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
                 var result = Parse(raw);
 
-                if (result.TryGetPlayerConfig() == null)
+                if (result.TryGetPlayerConfig() is null)
                     throw TransientFailureException.Generic("Failed to extract player config from embed page.");
 
                 return result;

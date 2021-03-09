@@ -56,7 +56,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .Pipe(WebUtility.UrlDecode)!;
 
             private bool IsAudioOnly() => _root
-                .Element("AudioChannelConfiguration") != null;
+                .Element("AudioChannelConfiguration") is not null;
 
             public string? TryGetAudioCodec() =>
                 IsAudioOnly()

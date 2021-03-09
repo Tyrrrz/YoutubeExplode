@@ -73,11 +73,11 @@ namespace YoutubeExplode.ReverseEngineering
                 return 0;
 
             // If current stream is not set - resolve it
-            if (_currentStream == null)
+            if (_currentStream is null)
             {
                 var from = Position;
 
-                var to = _segmentSize != null
+                var to = _segmentSize is not null
                     ? Position + _segmentSize - 1
                     : null;
 
