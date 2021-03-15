@@ -58,7 +58,8 @@ namespace YoutubeExplode.Tests
         [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
         [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
         [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
-        [InlineData("PL601B2E69B03FAB9D")]
+        [InlineData("PL601B2E69B03FAB9D")] // weird ID
+        [InlineData("PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs")] // very long videos
         public async Task I_can_get_metadata_of_any_available_YouTube_playlist(string playlistId)
         {
             // Arrange
@@ -102,7 +103,8 @@ namespace YoutubeExplode.Tests
         [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
         [InlineData("UUTMt7iMWa7jy0fNXIktwyLA")] // user uploads
         [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
-        [InlineData("PL601B2E69B03FAB9D")]
+        [InlineData("PL601B2E69B03FAB9D")] // weird ID
+        [InlineData("PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs")] // very long videos
         public async Task I_can_get_videos_included_in_any_available_YouTube_playlist(string playlistId)
         {
             // Arrange
