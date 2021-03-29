@@ -20,6 +20,19 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
+        public async Task I_can_search_for_YouTube_videos_with_escaped_characters()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act
+            var videos = await youtube.Search.GetVideosAsync("Kill la Kill Gomen ne, Iiko ja Irarenai.");
+
+            // Assert
+            videos.Should().NotBeEmpty();
+        }
+
+        [Fact]
         public async Task I_can_search_for_YouTube_videos_and_get_a_subset_of_results()
         {
             // Arrange
