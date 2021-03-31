@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.Playlists;
+using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode

@@ -1,6 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos
 {
@@ -14,12 +14,7 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="VideoId"/>.
-        /// </summary>
-        public VideoId(string idOrUrl) =>
-            Value = TryNormalize(idOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube video ID or URL: '{idOrUrl}'.");
+        private VideoId(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -77,6 +72,24 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public static VideoId? TryParse(string? idOrUrl) =>
             TryNormalize(idOrUrl)?.Pipe(id => new VideoId(id));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube video ID or URL.
+        /// Throws an exception in case of failure.
+        /// </summary>
+        public static VideoId Parse(string idOrUrl) =>
+            TryParse(idOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube video ID or URL: '{idOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator VideoId(string idOrUrl) => Parse(idOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(VideoId id) => id.ToString();
     }
 
     public partial struct VideoId : IEquatable<VideoId>
@@ -99,15 +112,5 @@ namespace YoutubeExplode.Videos
         /// Equality check.
         /// </summary>
         public static bool operator !=(VideoId left, VideoId right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator VideoId(string idOrUrl) => new(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(VideoId id) => id.ToString();
     }
 }

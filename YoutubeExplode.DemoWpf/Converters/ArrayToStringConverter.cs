@@ -11,15 +11,13 @@ namespace YoutubeExplode.DemoWpf.Converters
     {
         public static ArrayToStringConverter Instance { get; } = new();
 
-        public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is null)
-                return default(string);
-
-            var enumerable = (IEnumerable) value;
-            var separator = parameter as string ?? ", ";
-            return string.Join(separator, enumerable.Cast<object>());
-        }
+        public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture) =>
+            value is IEnumerable enumerableValue
+                ? string.Join(
+                    parameter as string ?? ", ",
+                    enumerableValue.Cast<object>()
+                )
+                : default;
 
         public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>
             throw new NotSupportedException();

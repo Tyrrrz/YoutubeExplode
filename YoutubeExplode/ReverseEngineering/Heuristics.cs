@@ -1,5 +1,5 @@
 using System;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.ReverseEngineering

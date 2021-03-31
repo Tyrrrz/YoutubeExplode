@@ -18,7 +18,7 @@ namespace YoutubeExplode.Tests
         [Theory]
         [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
-        public async Task I_can_get_available_closed_caption_tracks_of_any_available_YouTube_video(string videoId)
+        public async Task User_can_get_available_closed_caption_tracks_of_a_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -33,7 +33,7 @@ namespace YoutubeExplode.Tests
         [Theory]
         [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
-        public async Task I_can_get_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
+        public async Task User_can_get_a_specific_closed_caption_track_of_a_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -48,7 +48,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task I_can_extract_a_closed_caption_that_appears_at_a_specific_time_on_an_available_YouTube_video()
+        public async Task User_can_get_an_individual_closed_caption_that_appears_at_a_specific_time_in_a_track()
         {
             // Arrange
             const string videoUrl = "https://www.youtube.com/watch?v=YltHGKX80Y8";
@@ -71,7 +71,7 @@ namespace YoutubeExplode.Tests
         [Theory]
         [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
-        public async Task I_can_download_a_specific_closed_caption_track_of_any_available_YouTube_video(string videoId)
+        public async Task User_can_download_a_specific_closed_caption_track_of_a_video(string videoId)
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();

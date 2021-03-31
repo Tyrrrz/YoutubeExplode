@@ -3,14 +3,13 @@ using System.Net;
 using System.Net.Http;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Playlists;
-using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.Search;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode
 {
     /// <summary>
-    /// Entry point for <see cref="YoutubeExplode"/>.
+    /// Client for interacting with YouTube.
     /// </summary>
     public partial class YoutubeClient
     {
@@ -37,7 +36,7 @@ namespace YoutubeExplode
         /// <summary>
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
-        internal YoutubeClient(YoutubeHttpClient httpClient)
+        public YoutubeClient(HttpClient httpClient)
         {
             Videos = new VideoClient(httpClient);
             Playlists = new PlaylistClient(httpClient);
@@ -48,23 +47,15 @@ namespace YoutubeExplode
         /// <summary>
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
-        public YoutubeClient(HttpClient httpClient)
-            : this(new YoutubeHttpClient(httpClient))
-        {
-        }
-
-        /// <summary>
-        /// Initializes an instance of <see cref="YoutubeClient"/>.
-        /// </summary>
         public YoutubeClient()
-            : this(LazyHttpClient.Value)
+            : this(HttpClientLazy.Value)
         {
         }
     }
 
     public partial class YoutubeClient
     {
-        private static readonly Lazy<HttpClient> LazyHttpClient = new(() =>
+        private static readonly Lazy<HttpClient> HttpClientLazy = new(() =>
         {
             var handler = new HttpClientHandler();
 

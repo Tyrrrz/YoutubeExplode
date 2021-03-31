@@ -11,52 +11,39 @@ namespace YoutubeExplode.Tests
         [InlineData("9bZkp7q19f0")]
         [InlineData("_kmeFXjjGfk")]
         [InlineData("AI7ULzgf8RU")]
-        public void I_can_specify_a_valid_video_id(string videoId)
+        public void Video_ID_can_be_parsed_from_an_ID_string(string videoId)
         {
             // Act
-            var result = new VideoId(videoId);
-            var maybeResult = VideoId.TryParse(videoId);
+            var parsed = VideoId.Parse(videoId);
 
             // Assert
-            result.Value.Should().Be(videoId);
-            maybeResult.Should().Be(result);
+            parsed.Value.Should().Be(videoId);
         }
 
         [Theory]
         [InlineData("youtube.com/watch?v=yIVRs6YSbOM", "yIVRs6YSbOM")]
         [InlineData("youtu.be/yIVRs6YSbOM", "yIVRs6YSbOM")]
         [InlineData("youtube.com/embed/yIVRs6YSbOM", "yIVRs6YSbOM")]
-        public void I_can_specify_a_valid_video_url_in_place_of_an_id(string videoUrl, string expectedVideoId)
+        public void Video_ID_can_be_parsed_from_a_URL_string(string videoUrl, string expectedVideoId)
         {
             // Act
-            var result = new VideoId(videoUrl);
-            var maybeResult = VideoId.TryParse(videoUrl);
+            var parsed = VideoId.Parse(videoUrl);
 
             // Assert
-            result.Value.Should().Be(expectedVideoId);
-            maybeResult.Should().Be(result);
+            parsed.Value.Should().Be(expectedVideoId);
         }
 
         [Theory]
         [InlineData("")]
         [InlineData("pI2I2zqzeK")]
         [InlineData("pI2I2z zeKg")]
-        public void I_cannot_specify_an_invalid_video_id(string videoId)
-        {
-            // Act & assert
-            Assert.Throws<ArgumentException>(() => new VideoId(videoId));
-            VideoId.TryParse(videoId).Should().BeNull();
-        }
-
-        [Theory]
         [InlineData("youtube.com/xxx?v=pI2I2zqzeKg")]
         [InlineData("youtu.be/watch?v=xxx")]
         [InlineData("youtube.com/embed/")]
-        public void I_cannot_specify_an_invalid_video_url_in_place_of_an_id(string videoUrl)
+        public void Video_ID_cannot_be_parsed_from_an_invalid_string(string videoId)
         {
             // Act & assert
-            Assert.Throws<ArgumentException>(() => new VideoId(videoUrl));
-            VideoId.TryParse(videoUrl).Should().BeNull();
+            Assert.Throws<ArgumentException>(() => VideoId.Parse(videoId));
         }
     }
 }

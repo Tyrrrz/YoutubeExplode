@@ -7,7 +7,7 @@ namespace YoutubeExplode.Tests
     public class SearchSpecs
     {
         [Fact]
-        public async Task I_can_search_for_YouTube_videos()
+        public async Task User_can_search_for_videos()
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -20,22 +20,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task I_can_search_for_YouTube_videos_and_get_a_subset_of_results()
-        {
-            // Arrange
-            const int maxVideoCount = 50;
-            var youtube = new YoutubeClient();
-
-            // Act
-            var videos = await youtube.Search.GetVideosAsync("billie eilish").BufferAsync(maxVideoCount);
-
-            // Assert
-            videos.Should().NotBeEmpty();
-            videos.Should().HaveCountLessOrEqualTo(maxVideoCount);
-        }
-
-        [Fact]
-        public async Task I_can_search_for_YouTube_videos_and_get_a_subset_of_results_from_a_specific_page()
+        public async Task User_can_search_for_videos_and_retrieve_a_subset_of_results()
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -46,6 +31,19 @@ namespace YoutubeExplode.Tests
             // Assert
             videos.Should().NotBeEmpty();
             videos.Should().HaveCountLessOrEqualTo(30);
+        }
+
+        [Fact]
+        public async Task User_can_search_for_YouTube_videos_using_a_query_that_contains_special_characters()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act
+            var videos = await youtube.Search.GetVideosAsync("Kill la Kill Gomen ne, Iiko ja Irarenai.");
+
+            // Assert
+            videos.Should().NotBeEmpty();
         }
     }
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.ReverseEngineering.Responses
 {

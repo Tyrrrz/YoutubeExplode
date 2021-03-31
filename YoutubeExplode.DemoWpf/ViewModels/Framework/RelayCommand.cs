@@ -21,11 +21,14 @@ namespace YoutubeExplode.DemoWpf.ViewModels.Framework
         {
         }
 
-        public bool CanExecute(object? parameter) => _canExecute(parameter is not null ? (T) parameter : default!);
+        public bool CanExecute(object? parameter) =>
+            _canExecute(parameter is not null ? (T) parameter : default!);
 
-        public void Execute(object? parameter) => _execute(parameter is not null ? (T) parameter : default!);
+        public void Execute(object? parameter) =>
+            _execute(parameter is not null ? (T) parameter : default!);
 
-        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        public void RaiseCanExecuteChanged() =>
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public class RelayCommand : ICommand
@@ -50,6 +53,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels.Framework
 
         public void Execute(object? parameter) => _execute();
 
-        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        public void RaiseCanExecuteChanged() =>
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

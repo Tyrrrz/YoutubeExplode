@@ -26,7 +26,7 @@ namespace YoutubeExplode.Tests
         [InlineData("rsAAeyAr-9Y")] // recording of a live stream
         [InlineData("AI7ULzgf8RU")] // has DASH manifest
         [InlineData("-xNN-bJQ4vI")] // 360° video
-        public async Task I_can_get_available_streams_of_any_playable_YouTube_video(string videoId)
+        public async Task User_can_get_available_streams_of_a_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -38,38 +38,56 @@ namespace YoutubeExplode.Tests
             manifest.Streams.Should().NotBeEmpty();
         }
 
-        [Theory]
-        [InlineData("5qap5aO4i9A")] // live stream
-        public async Task I_cannot_get_available_streams_of_an_unplayable_YouTube_video(string videoId)
+        [Fact]
+        public async Task User_cannot_get_available_streams_of_an_unplayable_video()
         {
             // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=5qap5aO4i9A"; // live stream
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnplayableException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+            );
         }
 
-        [Theory]
-        [InlineData("p3dDcKOFXQg")] // requires purchase
-        public async Task I_cannot_get_available_streams_of_a_YouTube_video_that_requires_purchase(string videoId)
+        [Fact]
+        public async Task User_cannot_get_available_streams_of_a_paid_video()
         {
             // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=p3dDcKOFXQg";
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+            );
         }
 
-        [Theory]
-        [InlineData("qld9w0b-1ao")] // doesn't exist
-        [InlineData("pb_hHv3fByo")] // private
-        public async Task I_cannot_get_available_streams_of_an_unavailable_YouTube_video(string videoId)
+        [Fact]
+        public async Task User_cannot_get_available_streams_of_a_private_video()
         {
             // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=pb_hHv3fByo";
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+            );
+        }
+
+        [Fact]
+        public async Task User_cannot_get_available_streams_of_a_non_existing_video()
+        {
+            // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=qld9w0b-1ao";
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+            );
         }
 
         [Theory]
@@ -83,7 +101,7 @@ namespace YoutubeExplode.Tests
         [InlineData("rsAAeyAr-9Y")] // recording of a live stream
         [InlineData("AI7ULzgf8RU")] // has DASH manifest
         [InlineData("-xNN-bJQ4vI")] // 360° video
-        public async Task I_can_get_a_specific_stream_of_any_playable_YouTube_video(string videoId)
+        public async Task User_can_get_a_specific_stream_of_a_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -119,7 +137,7 @@ namespace YoutubeExplode.Tests
         [InlineData("rsAAeyAr-9Y")] // recording of a live stream
         [InlineData("AI7ULzgf8RU")] // has DASH manifest
         [InlineData("-xNN-bJQ4vI")] // 360° video
-        public async Task I_can_download_a_specific_stream_of_any_playable_YouTube_video(string videoId)
+        public async Task User_can_download_a_specific_stream_of_a_video(string videoId)
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();
@@ -135,15 +153,15 @@ namespace YoutubeExplode.Tests
             File.Exists(filePath).Should().BeTrue();
         }
 
-        [Theory]
-        [InlineData("5qap5aO4i9A")] // live stream
-        public async Task I_can_get_http_live_stream_url_of_any_ongoing_YouTube_live_stream_video(string videoId)
+        [Fact]
+        public async Task User_can_get_HTTP_live_stream_URL_of_a_live_video()
         {
             // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=5qap5aO4i9A";
             var youtube = new YoutubeClient();
 
             // Act
-            var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(videoId);
+            var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(videoUrl);
 
             // Assert
             url.Should().NotBeNullOrWhiteSpace();

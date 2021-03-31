@@ -41,7 +41,7 @@ namespace YoutubeExplode.Videos.Streams
     /// </summary>
     public static class StreamInfoExtensions
     {
-        internal static bool IsRateLimited(this IStreamInfo streamInfo) =>
+        internal static bool IsThrottled(this IStreamInfo streamInfo) =>
             !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes");
 
         /// <summary>

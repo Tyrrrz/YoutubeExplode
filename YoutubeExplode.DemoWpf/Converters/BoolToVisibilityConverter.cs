@@ -12,15 +12,13 @@ namespace YoutubeExplode.DemoWpf.Converters
 
         public virtual object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
         {
-            var falseVisibility = Visibility.Hidden;
-            if (parameter is Visibility parameterVisibility)
-                falseVisibility = parameterVisibility;
+            var falseVisibility = parameter is Visibility visibilityParameter
+                ? visibilityParameter
+                : Visibility.Hidden;
 
-            if (value is null)
-                return falseVisibility;
-
-            var valueBool = (bool) value;
-            return valueBool ? Visibility.Visible : falseVisibility;
+            return value is bool boolValue && boolValue
+                ? Visibility.Visible
+                : falseVisibility;
         }
 
         public virtual object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>

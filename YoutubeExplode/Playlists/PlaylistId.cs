@@ -1,6 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Playlists
 {
@@ -14,12 +14,7 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="PlaylistId"/>.
-        /// </summary>
-        public PlaylistId(string idOrUrl) =>
-            Value = TryNormalize(idOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube playlist ID or URL: '{idOrUrl}'.");
+        private PlaylistId(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -97,11 +92,29 @@ namespace YoutubeExplode.Playlists
         }
 
         /// <summary>
-        /// Attempts to parse the specified string as a playlist ID or URL.
+        /// Attempts to parse the specified string as a YouTube playlist ID or URL.
         /// Returns null in case of failure.
         /// </summary>
         public static PlaylistId? TryParse(string? idOrUrl) =>
             TryNormalize(idOrUrl)?.Pipe(id => new PlaylistId(id));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube playlist ID or URL.
+        /// Throws an exception in case of failure.
+        /// </summary>
+        public static PlaylistId Parse(string idOrUrl) =>
+            TryParse(idOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube playlist ID or URL: '{idOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator PlaylistId(string idOrUrl) => Parse(idOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(PlaylistId id) => id.ToString();
     }
 
     public partial struct PlaylistId : IEquatable<PlaylistId>
@@ -124,15 +137,5 @@ namespace YoutubeExplode.Playlists
         /// Equality check.
         /// </summary>
         public static bool operator !=(PlaylistId left, PlaylistId right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator PlaylistId(string idOrUrl) => new(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(PlaylistId id) => id.ToString();
     }
 }

@@ -1,6 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Channels
 {
@@ -14,12 +14,7 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="ChannelId"/>.
-        /// </summary>
-        public ChannelId(string idOrUrl) =>
-            Value = TryNormalize(idOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube channel ID or URL: '{idOrUrl}'.");
+        private ChannelId(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -64,11 +59,29 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Attempts to parse the specified string as a channel ID or URL.
+        /// Attempts to parse the specified string as a YouTube channel ID or URL.
         /// Returns null in case of failure.
         /// </summary>
         public static ChannelId? TryParse(string? idOrUrl) =>
             TryNormalize(idOrUrl)?.Pipe(id => new ChannelId(id));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube channel ID or URL.
+        /// Throws an exception in case of failure.
+        /// </summary>
+        public static ChannelId Parse(string idOrUrl) =>
+            TryParse(idOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube channel ID or URL: '{idOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator ChannelId(string idOrUrl) => Parse(idOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(ChannelId id) => id.ToString();
     }
 
     public partial struct ChannelId : IEquatable<ChannelId>
@@ -91,15 +104,5 @@ namespace YoutubeExplode.Channels
         /// Equality check.
         /// </summary>
         public static bool operator !=(ChannelId left, ChannelId right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator ChannelId(string idOrUrl) => new(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(ChannelId id) => id.ToString();
     }
 }

@@ -18,7 +18,7 @@
         <viewModels:MainViewModel />
     </Window.DataContext>
     <DockPanel>
-        <!--  Toolbar  -->
+        <!--  Header  -->
         <Border
             Background="{DynamicResource PrimaryHueMidBrush}"
             DockPanel.Dock="Top"

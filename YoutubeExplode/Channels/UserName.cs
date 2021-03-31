@@ -1,6 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Channels
 {
@@ -14,12 +14,7 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="UserName"/>.
-        /// </summary>
-        public UserName(string nameOrUrl) =>
-            Value = TryNormalize(nameOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube username or URL: '{nameOrUrl}'.");
+        private UserName(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -60,11 +55,29 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Attempts to parse the specified string as a username or URL.
+        /// Attempts to parse the specified string as a YouTube username or URL.
         /// Returns null in case of failure.
         /// </summary>
         public static UserName? TryParse(string? nameOrUrl) =>
             TryNormalize(nameOrUrl)?.Pipe(name => new UserName(name));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube username.
+        /// Throws an exception in case of failure.
+        /// </summary>
+        public static UserName Parse(string nameOrUrl) =>
+            TryParse(nameOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube username or URL: '{nameOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to user name.
+        /// </summary>
+        public static implicit operator UserName(string nameOrUrl) => Parse(nameOrUrl);
+
+        /// <summary>
+        /// Converts user name to string.
+        /// </summary>
+        public static implicit operator string(UserName id) => id.ToString();
     }
 
     public partial struct UserName : IEquatable<UserName>
@@ -87,15 +100,5 @@ namespace YoutubeExplode.Channels
         /// Equality check.
         /// </summary>
         public static bool operator !=(UserName left, UserName right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to user name.
-        /// </summary>
-        public static implicit operator UserName(string nameOrUrl) => new(nameOrUrl);
-
-        /// <summary>
-        /// Converts user name to string.
-        /// </summary>
-        public static implicit operator string(UserName id) => id.ToString();
     }
 }

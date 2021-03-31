@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.ReverseEngineering.Responses
 {

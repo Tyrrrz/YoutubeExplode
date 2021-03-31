@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
-using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Playlists
 {
@@ -13,12 +14,12 @@ namespace YoutubeExplode.Playlists
     /// </summary>
     public class PlaylistClient
     {
-        private readonly YoutubeHttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="PlaylistClient"/>.
         /// </summary>
-        internal PlaylistClient(YoutubeHttpClient httpClient)
+        public PlaylistClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -26,7 +27,7 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Gets the metadata associated with the specified playlist.
         /// </summary>
-        public async Task<Playlist> GetAsync(PlaylistId id)
+        public async ValueTask<Playlist> GetAsync(PlaylistId id)
         {
             var response = await PlaylistResponse.GetAsync(_httpClient, id);
 
@@ -49,14 +50,14 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Enumerates videos included in the specified playlist.
         /// </summary>
-        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId id)
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId playlistId)
         {
             var encounteredVideoIds = new HashSet<string>();
             var continuationToken = "";
 
             while (true)
             {
-                var response = await PlaylistResponse.GetAsync(_httpClient, id, continuationToken);
+                var response = await PlaylistResponse.GetAsync(_httpClient, playlistId, continuationToken);
 
                 foreach (var video in response.GetPlaylistVideos())
                 {

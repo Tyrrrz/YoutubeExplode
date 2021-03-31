@@ -11,29 +11,25 @@ namespace YoutubeExplode.Tests
         [InlineData("TheTyrrr")]
         [InlineData("KannibalenRecords")]
         [InlineData("JClayton1994")]
-        public void I_can_specify_a_valid_user_name(string userName)
+        public void User_name_can_be_parsed_from_a_user_name_string(string userName)
         {
             // Act
-            var result = new UserName(userName);
-            var maybeResult = UserName.TryParse(userName);
+            var parsed = UserName.Parse(userName);
 
             // Assert
-            result.Value.Should().Be(userName);
-            maybeResult.Should().Be(result);
+            parsed.Value.Should().Be(userName);
         }
 
         [Theory]
         [InlineData("youtube.com/user/ProZD", "ProZD")]
         [InlineData("youtube.com/user/TheTyrrr", "TheTyrrr")]
-        public void I_can_specify_a_valid_user_url_in_place_of_a_user_name(string userUrl, string expecteduserName)
+        public void User_name_can_be_parsed_from_a_URL_string(string userUrl, string expectedUserName)
         {
             // Act
-            var result = new UserName(userUrl);
-            var maybeResult = UserName.TryParse(userUrl);
+            var parsed = UserName.Parse(userUrl);
 
             // Assert
-            result.Value.Should().Be(expecteduserName);
-            maybeResult.Should().Be(result);
+            parsed.Value.Should().Be(expectedUserName);
         }
 
         [Theory]
@@ -42,21 +38,12 @@ namespace YoutubeExplode.Tests
         [InlineData("0123456789ABCDEFGHIJK")]
         [InlineData("A1B2C3-")]
         [InlineData("=0123456789ABCDEF")]
-        public void I_cannot_specify_an_invalid_user_name(string userName)
-        {
-            // Act & assert
-            Assert.Throws<ArgumentException>(() => new UserName(userName));
-            UserName.TryParse(userName).Should().BeNull();
-        }
-
-        [Theory]
         [InlineData("youtube.com/user/P_roZD")]
         [InlineData("example.com/user/ProZD")]
-        public void I_cannot_specify_an_invalid_user_url_in_place_of_a_user_name(string userUrl)
+        public void User_name_cannot_be_parsed_from_an_invalid_string(string userName)
         {
             // Act & assert
-            Assert.Throws<ArgumentException>(() => new UserName(userUrl));
-            UserName.TryParse(userUrl).Should().BeNull();
+            Assert.Throws<ArgumentException>(() => UserName.Parse(userName));
         }
     }
 }

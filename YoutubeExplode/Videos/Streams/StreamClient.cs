@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Extensions;
 using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.ReverseEngineering.Cipher;
 using YoutubeExplode.ReverseEngineering.Responses;
+using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
+using YoutubeExplode.Videos.Streams.Resolving.Cipher;
 
 namespace YoutubeExplode.Videos.Streams
 {
@@ -18,17 +19,17 @@ namespace YoutubeExplode.Videos.Streams
     /// </summary>
     public partial class StreamClient
     {
-        private readonly YoutubeHttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="StreamClient"/>.
         /// </summary>
-        internal StreamClient(YoutubeHttpClient httpClient)
+        public StreamClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        private async Task<DashManifest> GetDashManifestAsync(
+        private async ValueTask<DashManifest> GetDashManifestAsync(
             string dashManifestUrl,
             IReadOnlyList<ICipherOperation> cipherOperations)
         {
@@ -43,7 +44,7 @@ namespace YoutubeExplode.Videos.Streams
             return await DashManifest.GetAsync(_httpClient, dashManifestUrl);
         }
 
-        private async Task<StreamContext> GetSteamContextFromVideoInfoAsync(VideoId videoId)
+        private async ValueTask<StreamContext> GetSteamContextFromVideoInfoAsync(VideoId videoId)
         {
             var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
             var playerConfig =
@@ -86,7 +87,7 @@ namespace YoutubeExplode.Videos.Streams
             return new StreamContext(streamInfoProviders, cipherOperations);
         }
 
-        private async Task<StreamContext> GetStreamContextFromWatchPageAsync(VideoId videoId)
+        private async ValueTask<StreamContext> GetStreamContextFromWatchPageAsync(VideoId videoId)
         {
             var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
             var playerConfig = watchPage.TryGetPlayerConfig();
@@ -135,7 +136,7 @@ namespace YoutubeExplode.Videos.Streams
             return new StreamContext(streamInfoProviders, cipherOperations);
         }
 
-        private async Task<StreamManifest> GetManifestAsync(StreamContext streamContext)
+        private async ValueTask<StreamManifest> GetManifestAsync(StreamContext streamContext)
         {
             // To make sure there are no duplicates streams, group them by tag
             var streams = new Dictionary<int, IStreamInfo>();
@@ -249,7 +250,7 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Gets the manifest that contains information about available streams in the specified video.
         /// </summary>
-        public async Task<StreamManifest> GetManifestAsync(VideoId videoId)
+        public async ValueTask<StreamManifest> GetManifestAsync(VideoId videoId)
         {
             // We can try to extract the manifest from two sources: get_video_info and the video watch page.
             // In some cases one works, in some cases another does.
@@ -269,7 +270,7 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it's a live video stream).
         /// </summary>
-        public async Task<string> GetHttpLiveStreamUrlAsync(VideoId videoId)
+        public async ValueTask<string> GetHttpLiveStreamUrlAsync(VideoId videoId)
         {
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
             var playerResponse = videoInfoResponse.GetPlayerResponse();
@@ -285,32 +286,32 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Gets the actual stream which is identified by the specified metadata.
         /// </summary>
-        public Task<Stream> GetAsync(IStreamInfo streamInfo)
+        public ValueTask<Stream> GetAsync(IStreamInfo streamInfo)
         {
-            // YouTube streams are often rate-limited -- they return data at about the same rate
-            // as the actual video is going. This helps them avoid unnecessary bandwidth by not loading
-            // all data eagerly. On the other hand, we want to download the streams as fast as possible,
-            // so we'll be splitting the stream into small segments and retrieving them separately, to
-            // work around rate limiting.
+            // For most streams, YouTube limits transfer speed to match the video playback rate.
+            // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
+            // we want to download the stream as fast as possible.
+            // To solve this, we divide the logical stream up into multiple segments and download
+            // them all separately.
 
-            var segmentSize = streamInfo.IsRateLimited()
+            var segmentSize = streamInfo.IsThrottled()
                 ? 9_898_989 // this number was carefully devised through research
                 : (long?) null; // don't use segmentation for non-rate-limited streams
 
-            var stream = new YoutubeMediaStream(
+            var stream = new SegmentedHttpStream(
                 _httpClient,
                 streamInfo.Url,
                 streamInfo.Size.TotalBytes,
                 segmentSize
             );
 
-            return Task.FromResult<Stream>(stream);
+            return new ValueTask<Stream>(stream);
         }
 
         /// <summary>
         /// Copies the actual stream which is identified by the specified metadata to the specified stream.
         /// </summary>
-        public async Task CopyToAsync(IStreamInfo streamInfo, Stream destination,
+        public async ValueTask CopyToAsync(IStreamInfo streamInfo, Stream destination,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
             using var input = await GetAsync(streamInfo);
@@ -320,7 +321,7 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Download the actual stream which is identified by the specified metadata to the specified file.
         /// </summary>
-        public async Task DownloadAsync(IStreamInfo streamInfo, string filePath,
+        public async ValueTask DownloadAsync(IStreamInfo streamInfo, string filePath,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
         {
             using var destination = File.Create(filePath);

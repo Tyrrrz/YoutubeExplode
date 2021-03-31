@@ -1,6 +1,6 @@
+using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
-using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
@@ -12,7 +12,7 @@ namespace YoutubeExplode.Videos
     /// </summary>
     public class VideoClient
     {
-        private readonly YoutubeHttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
         /// <summary>
         /// Queries related to media streams of YouTube videos.
@@ -27,7 +27,7 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Initializes an instance of <see cref="VideoClient"/>.
         /// </summary>
-        internal VideoClient(YoutubeHttpClient httpClient)
+        public VideoClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
 
@@ -35,22 +35,22 @@ namespace YoutubeExplode.Videos
             ClosedCaptions = new ClosedCaptionClient(httpClient);
         }
 
-        private async Task<Video> GetVideoFromWatchPageAsync(VideoId id)
+        private async ValueTask<Video> GetVideoFromWatchPageAsync(VideoId videoId)
         {
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, id);
+            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
             var playerResponse = videoInfoResponse.GetPlayerResponse();
 
-            var watchPage = await WatchPage.GetAsync(_httpClient, id);
+            var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
 
             return new Video(
-                id,
+                videoId,
                 playerResponse.GetVideoTitle(),
                 playerResponse.GetVideoAuthor(),
                 playerResponse.GetVideoChannelId(),
                 playerResponse.GetVideoUploadDate(),
                 playerResponse.GetVideoDescription(),
                 playerResponse.GetVideoDuration(),
-                new ThumbnailSet(id),
+                new ThumbnailSet(videoId),
                 playerResponse.GetVideoKeywords(),
                 new Engagement(
                     playerResponse.TryGetVideoViewCount() ?? 0,
@@ -59,11 +59,11 @@ namespace YoutubeExplode.Videos
                 )
             );
         }
-        
+
         /// <summary>
         /// Gets the metadata associated with the specified video.
         /// </summary>
-        public async Task<Video> GetAsync(VideoId id)
+        public async ValueTask<Video> GetAsync(VideoId id)
         {
             return await GetVideoFromWatchPageAsync(id);
         }

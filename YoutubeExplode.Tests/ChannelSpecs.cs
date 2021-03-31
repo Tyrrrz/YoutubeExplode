@@ -8,7 +8,7 @@ namespace YoutubeExplode.Tests
     public class ChannelSpecs
     {
         [Fact]
-        public async Task I_can_get_metadata_of_a_YouTube_channel()
+        public async Task User_can_get_metadata_of_a_channel()
         {
             // Arrange
             const string channelUrl = "https://www.youtube.com/channel/UCEnBXANsKmyj2r9xVyKoDiQ";
@@ -28,7 +28,7 @@ namespace YoutubeExplode.Tests
         [InlineData("UC46807r_RiRjH8IU-h_DrDQ")]
         [InlineData("UCJ6td3C9QlPO9O_J5dF4ZzA")]
         [InlineData("UCiGm_E4ZwYSHV3bcW1pnSeQ")]
-        public async Task I_can_get_metadata_of_any_available_YouTube_channel(string channelId)
+        public async Task User_can_get_metadata_of_any_available_channel(string channelId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -42,7 +42,7 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("TheTyrrr", "UCEnBXANsKmyj2r9xVyKoDiQ")]
-        public async Task I_can_get_metadata_of_any_available_YouTube_channel_by_user(string userName, string expectedChannelId)
+        public async Task User_can_get_metadata_of_a_channel_by_user_name(string userName, string expectedChannelId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -56,7 +56,7 @@ namespace YoutubeExplode.Tests
 
         [Theory]
         [InlineData("5NmxuoNyDss", "UCEnBXANsKmyj2r9xVyKoDiQ")]
-        public async Task I_can_get_metadata_of_any_available_YouTube_channel_by_video(string videoId, string expectedChannelId)
+        public async Task User_can_get_metadata_of_any_available_channel_by_video_ID(string videoId, string expectedChannelId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -69,7 +69,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task I_can_get_videos_uploaded_by_a_YouTube_channel()
+        public async Task User_can_get_videos_uploaded_by_a_channel()
         {
             // Arrange
             const string channelUrl = "https://www.youtube.com/channel/UCEnBXANsKmyj2r9xVyKoDiQ";
@@ -87,7 +87,7 @@ namespace YoutubeExplode.Tests
         [InlineData("UC46807r_RiRjH8IU-h_DrDQ")]
         [InlineData("UCJ6td3C9QlPO9O_J5dF4ZzA")]
         [InlineData("UCiGm_E4ZwYSHV3bcW1pnSeQ")]
-        public async Task I_can_get_videos_uploaded_by_any_available_YouTube_channel(string channelId)
+        public async Task User_can_get_videos_uploaded_by_any_available_channel(string channelId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -98,25 +98,6 @@ namespace YoutubeExplode.Tests
             // Assert
             videos.Should().NotBeEmpty();
             videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == channelId);
-        }
-
-        [Theory]
-        [InlineData("UC46807r_RiRjH8IU-h_DrDQ")]
-        [InlineData("UCJ6td3C9QlPO9O_J5dF4ZzA")]
-        [InlineData("UCiGm_E4ZwYSHV3bcW1pnSeQ")]
-        public async Task I_can_get_a_subset_videos_uploaded_by_any_available_YouTube_channel(string channelId)
-        {
-            // Arrange
-            const int maxVideoCount = 50;
-            var youtube = new YoutubeClient();
-
-            // Act
-            var videos = await youtube.Channels.GetUploadsAsync(channelId).BufferAsync(maxVideoCount);
-
-            // Assert
-            videos.Should().NotBeEmpty();
-            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == channelId);
-            videos.Should().HaveCountLessOrEqualTo(maxVideoCount);
         }
     }
 }

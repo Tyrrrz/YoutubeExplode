@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net.Http;
 using YoutubeExplode.Common;
 using YoutubeExplode.Playlists;
 using YoutubeExplode.ReverseEngineering;
@@ -11,12 +12,12 @@ namespace YoutubeExplode.Search
     /// </summary>
     public class SearchClient
     {
-        private readonly YoutubeHttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="SearchClient"/>.
         /// </summary>
-        internal SearchClient(YoutubeHttpClient httpClient)
+        public SearchClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }

@@ -5,8 +5,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.ReverseEngineering.Responses
 {

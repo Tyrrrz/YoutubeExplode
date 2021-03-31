@@ -9,7 +9,7 @@ namespace YoutubeExplode.Tests
     public class VideoSpecs
     {
         [Fact]
-        public async Task I_can_get_metadata_of_a_YouTube_video()
+        public async Task User_can_get_metadata_of_a_video()
         {
             // Arrange
             const string videoUrl = "https://www.youtube.com/watch?v=AI7ULzgf8RU";
@@ -38,13 +38,39 @@ namespace YoutubeExplode.Tests
             video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
         }
 
+        [Fact]
+        public async Task User_cannot_get_metadata_of_a_private_video()
+        {
+            // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=pb_hHv3fByo";
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.GetAsync(videoUrl)
+            );
+        }
+
+        [Fact]
+        public async Task User_cannot_get_metadata_of_a_non_existing_video()
+        {
+            // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=qld9w0b-1ao";
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.GetAsync(videoUrl)
+            );
+        }
+
         [Theory]
         [InlineData("9bZkp7q19f0")] // very popular
         [InlineData("SkRSXFQerZs")] // age-restricted
         [InlineData("5VGm0dczmHc")] // rating not allowed
         [InlineData("ZGdLIwrGHG8")] // unlisted
         [InlineData("5qap5aO4i9A")] // ongoing live stream
-        public async Task I_can_get_metadata_of_any_available_YouTube_video(string videoId)
+        public async Task User_can_get_metadata_of_any_available_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -54,18 +80,6 @@ namespace YoutubeExplode.Tests
 
             // Assert
             video.Id.Value.Should().Be(videoId);
-        }
-
-        [Theory]
-        [InlineData("qld9w0b-1ao")] // doesn't exist
-        [InlineData("pb_hHv3fByo")] // private
-        public async Task I_cannot_get_metadata_of_an_unavailable_YouTube_video(string videoId)
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
-
-            // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(() => youtube.Videos.GetAsync(videoId));
         }
     }
 }

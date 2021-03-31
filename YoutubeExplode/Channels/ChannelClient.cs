@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Channels.Resolving;
 using YoutubeExplode.Playlists;
-using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.ReverseEngineering.Responses;
+using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Channels
@@ -13,12 +13,12 @@ namespace YoutubeExplode.Channels
     /// </summary>
     public class ChannelClient
     {
-        private readonly YoutubeHttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
         /// <summary>
         /// Initializes an instance of <see cref="ChannelClient"/>.
         /// </summary>
-        internal ChannelClient(YoutubeHttpClient httpClient)
+        public ChannelClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -26,42 +26,38 @@ namespace YoutubeExplode.Channels
         /// <summary>
         /// Gets the metadata associated with the specified channel.
         /// </summary>
-        public async Task<Channel> GetAsync(ChannelId id)
+        public async ValueTask<Channel> GetAsync(ChannelId channelId)
         {
-            var channelPage = await ChannelPage.GetAsync(_httpClient, id);
+            var resolver = new ChannelResolver(_httpClient, channelId);
 
             return new Channel(
-                id,
-                channelPage.GetChannelTitle(),
-                channelPage.GetChannelLogoUrl()
+                channelId,
+                await resolver.GetChannelTitleAsync(),
+                await resolver.GetChannelLogoUrlAsync()
             );
         }
 
         /// <summary>
         /// Gets the metadata associated with the channel of the specified user.
         /// </summary>
-        public async Task<Channel> GetByUserAsync(UserName userName)
+        public async ValueTask<Channel> GetByUserAsync(UserName userName)
         {
-            var channelPage = await ChannelPage.GetByUserNameAsync(_httpClient, userName);
+            var resolver = new ChannelResolver(_httpClient, userName);
 
             return new Channel(
-                channelPage.GetChannelId(),
-                channelPage.GetChannelTitle(),
-                channelPage.GetChannelLogoUrl()
+                await resolver.GetChannelIdAsync(),
+                await resolver.GetChannelTitleAsync(),
+                await resolver.GetChannelLogoUrlAsync()
             );
         }
 
         /// <summary>
         /// Gets the metadata associated with the channel that uploaded the specified video.
         /// </summary>
-        public async Task<Channel> GetByVideoAsync(VideoId videoId)
+        public async ValueTask<Channel> GetByVideoAsync(VideoId videoId)
         {
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
-            var playerResponse = videoInfoResponse.GetPlayerResponse();
-
-            var channelId = playerResponse.GetVideoChannelId();
-
-            return await GetAsync(channelId);
+            var video = await new VideoClient(_httpClient).GetAsync(videoId);
+            return await GetAsync(video.ChannelId);
         }
 
         /// <summary>
