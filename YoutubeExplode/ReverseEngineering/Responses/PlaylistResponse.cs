@@ -233,10 +233,8 @@ namespace YoutubeExplode.ReverseEngineering.Responses
         public static async Task<PlaylistResponse> GetSearchResultsAsync(YoutubeHttpClient httpClient, string query, string continuationToken = "") =>
             await Retry.WrapAsync(async () =>
             {
-                var queryEncoded = Uri.EscapeUriString(query);
-
                 const string url = "https://www.youtube.com/youtubei/v1/search?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
-                var payload = BuildPayload(queryEncoded, continuationToken);
+                var payload = BuildPayload(query, continuationToken);
                 var request = new HttpRequestMessage(HttpMethod.Post, url)
                 {
                     Content = new StringContent(payload, Encoding.UTF8, "application/json")

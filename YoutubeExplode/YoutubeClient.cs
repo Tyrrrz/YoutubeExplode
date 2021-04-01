@@ -48,20 +48,20 @@ namespace YoutubeExplode
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
         public YoutubeClient()
-            : this(HttpClientLazy.Value)
+            : this(LazyHttpClient.Value)
         {
         }
     }
 
     public partial class YoutubeClient
     {
-        private static readonly Lazy<HttpClient> HttpClientLazy = new(() =>
+        private static readonly Lazy<HttpClient> LazyHttpClient = new(() =>
         {
             var handler = new HttpClientHandler();
 
             if (handler.SupportsAutomaticDecompression)
                 handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
+            handler.CookieContainer.Add(new Cookie("CONSENT", $"YES+cb", "/", ".youtube.com"));
             var httpClient = new HttpClient(handler, true);
 
             httpClient.DefaultRequestHeaders.Add(
