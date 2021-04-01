@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos.Streams.Resolving.Cipher;
@@ -179,17 +178,17 @@ namespace YoutubeExplode.Videos.Streams
                 {
                     var framerate = new Framerate(streamInfo.TryGetFramerate() ?? 24);
 
+                    var videoQuality = VideoQuality.FromTag(tag);
+
                     var videoQualityLabel =
                         streamInfo.TryGetVideoQualityLabel() ??
-                        Heuristics.GetVideoQualityLabel(tag, framerate.FramesPerSecond);
-
-                    var videoQuality = Heuristics.GetVideoQuality(videoQualityLabel);
+                        videoQuality.FormatLabel(framerate);
 
                     var videoWidth = streamInfo.TryGetVideoWidth();
                     var videoHeight = streamInfo.TryGetVideoHeight();
                     var videoResolution = videoWidth is not null && videoHeight is not null
                         ? new VideoResolution(videoWidth.Value, videoHeight.Value)
-                        : Heuristics.GetVideoResolution(videoQuality);
+                        : videoQuality.GetDefaultResolution();
 
                     // Muxed
                     if (!string.IsNullOrWhiteSpace(audioCodec))

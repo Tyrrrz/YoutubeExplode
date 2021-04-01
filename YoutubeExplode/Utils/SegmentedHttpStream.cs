@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Videos.Streams
+namespace YoutubeExplode.Utils
 {
     // Special abstraction that works around YouTube's stream throttling
     // and provides seeking support.

@@ -1,7 +1,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
-using YoutubeExplode.ReverseEngineering.Responses;
+using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
@@ -35,7 +35,10 @@ namespace YoutubeExplode.Videos
             ClosedCaptions = new ClosedCaptionClient(httpClient);
         }
 
-        private async ValueTask<Video> GetVideoFromWatchPageAsync(VideoId videoId)
+        /// <summary>
+        /// Gets the metadata associated with the specified video.
+        /// </summary>
+        public async ValueTask<Video> GetAsync(VideoId videoId)
         {
             var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
             var playerResponse = videoInfoResponse.GetPlayerResponse();
@@ -58,14 +61,6 @@ namespace YoutubeExplode.Videos
                     watchPage.TryGetVideoDislikeCount() ?? 0
                 )
             );
-        }
-
-        /// <summary>
-        /// Gets the metadata associated with the specified video.
-        /// </summary>
-        public async ValueTask<Video> GetAsync(VideoId id)
-        {
-            return await GetVideoFromWatchPageAsync(id);
         }
     }
 }

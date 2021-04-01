@@ -3,7 +3,6 @@ using System.Net.Http;
 using YoutubeExplode.Common;
 using YoutubeExplode.Playlists;
 using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.ReverseEngineering.Responses;
 
 namespace YoutubeExplode.Search
 {
@@ -23,7 +22,7 @@ namespace YoutubeExplode.Search
         }
 
         /// <summary>
-        /// Enumerates videos returned by the specified search query.
+        /// Enumerates the videos returned by the specified search query.
         /// </summary>
         /// <param name="searchQuery">The term to look for.</param>
         /// <param name="startPage">Sets how many page should be skipped from the beginning of the search.</param>
@@ -67,7 +66,7 @@ namespace YoutubeExplode.Search
         }
 
         /// <summary>
-        /// Enumerates videos returned by the specified search query.
+        /// Enumerates the videos returned by the specified search query.
         /// </summary>
         // This needs to be an overload to maintain backwards compatibility
         public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(string searchQuery) =>

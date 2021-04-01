@@ -1,4 +1,4 @@
-namespace YoutubeExplode.ReverseEngineering.Responses
+namespace YoutubeExplode.ReverseEngineering
 {
     internal interface IStreamInfoProvider
     {

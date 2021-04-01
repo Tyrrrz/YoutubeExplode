@@ -9,7 +9,7 @@ using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.ReverseEngineering.Responses
+namespace YoutubeExplode.ReverseEngineering
 {
     internal partial class EmbedPage
     {

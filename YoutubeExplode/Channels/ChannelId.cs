@@ -22,35 +22,35 @@ namespace YoutubeExplode.Channels
 
     public partial struct ChannelId
     {
-        private static bool IsValid(string? id)
+        private static bool IsValid(string? channelId)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            if (string.IsNullOrWhiteSpace(channelId))
                 return false;
 
             // Channel IDs should start with these characters
-            if (!id.StartsWith("UC", StringComparison.Ordinal))
+            if (!channelId.StartsWith("UC", StringComparison.Ordinal))
                 return false;
 
             // Channel IDs are always 24 characters
-            if (id.Length != 24)
+            if (channelId.Length != 24)
                 return false;
 
-            return !Regex.IsMatch(id, @"[^0-9a-zA-Z_\-]");
+            return !Regex.IsMatch(channelId, @"[^0-9a-zA-Z_\-]");
         }
 
-        private static string? TryNormalize(string? idOrUrl)
+        private static string? TryNormalize(string? channelIdOrUrl)
         {
-            if (string.IsNullOrWhiteSpace(idOrUrl))
+            if (string.IsNullOrWhiteSpace(channelIdOrUrl))
                 return null;
 
             // Id
             // UC3xnGqlcL3y-GXz5N3wiTJQ
-            if (IsValid(idOrUrl))
-                return idOrUrl;
+            if (IsValid(channelIdOrUrl))
+                return channelIdOrUrl;
 
             // URL
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
-            var regularMatch = Regex.Match(idOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(channelIdOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
                 return regularMatch;
 
@@ -62,26 +62,26 @@ namespace YoutubeExplode.Channels
         /// Attempts to parse the specified string as a YouTube channel ID or URL.
         /// Returns null in case of failure.
         /// </summary>
-        public static ChannelId? TryParse(string? idOrUrl) =>
-            TryNormalize(idOrUrl)?.Pipe(id => new ChannelId(id));
+        public static ChannelId? TryParse(string? channelIdOrUrl) =>
+            TryNormalize(channelIdOrUrl)?.Pipe(id => new ChannelId(id));
 
         /// <summary>
         /// Parses the specified string as a YouTube channel ID or URL.
         /// Throws an exception in case of failure.
         /// </summary>
-        public static ChannelId Parse(string idOrUrl) =>
-            TryParse(idOrUrl) ??
-            throw new ArgumentException($"Invalid YouTube channel ID or URL: '{idOrUrl}'.");
+        public static ChannelId Parse(string channelIdOrUrl) =>
+            TryParse(channelIdOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube channel ID or URL: '{channelIdOrUrl}'.");
 
         /// <summary>
         /// Converts string to ID.
         /// </summary>
-        public static implicit operator ChannelId(string idOrUrl) => Parse(idOrUrl);
+        public static implicit operator ChannelId(string channelIdOrUrl) => Parse(channelIdOrUrl);
 
         /// <summary>
         /// Converts ID to string.
         /// </summary>
-        public static implicit operator string(ChannelId id) => id.ToString();
+        public static implicit operator string(ChannelId channelId) => channelId.ToString();
     }
 
     public partial struct ChannelId : IEquatable<ChannelId>

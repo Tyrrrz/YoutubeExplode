@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.ReverseEngineering.Responses
+namespace YoutubeExplode.ReverseEngineering
 {
     internal partial class DashManifest
     {
@@ -53,7 +53,7 @@ namespace YoutubeExplode.ReverseEngineering.Responses
 
             public string GetContainer() => GetUrl()
                 .Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
-                .Pipe(WebUtility.UrlDecode)!;
+                .Pipe(WebUtility.UrlDecode);
 
             private bool IsAudioOnly() => _root
                 .Element("AudioChannelConfiguration") is not null;

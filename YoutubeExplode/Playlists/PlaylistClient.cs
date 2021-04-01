@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
 using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.ReverseEngineering.Responses;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Playlists
@@ -27,9 +26,9 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Gets the metadata associated with the specified playlist.
         /// </summary>
-        public async ValueTask<Playlist> GetAsync(PlaylistId id)
+        public async ValueTask<Playlist> GetAsync(PlaylistId playlistId)
         {
-            var response = await PlaylistResponse.GetAsync(_httpClient, id);
+            var response = await PlaylistResponse.GetAsync(_httpClient, playlistId);
 
             var thumbnails = response
                 .GetPlaylistVideos()
@@ -38,7 +37,7 @@ namespace YoutubeExplode.Playlists
                 .Pipe(i => new ThumbnailSet(i));
 
             return new Playlist(
-                id,
+                playlistId,
                 response.TryGetTitle() ?? "",
                 response.TryGetAuthor() ?? "",
                 response.TryGetDescription() ?? "",
@@ -48,7 +47,7 @@ namespace YoutubeExplode.Playlists
         }
 
         /// <summary>
-        /// Enumerates videos included in the specified playlist.
+        /// Enumerates the videos included in the specified playlist.
         /// </summary>
         public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId playlistId)
         {
