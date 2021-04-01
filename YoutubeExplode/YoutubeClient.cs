@@ -48,6 +48,9 @@ namespace YoutubeExplode
         /// <summary>
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
+        /// <remarks>
+        /// Your HttpClient needs to have the CONSENT cookie set!
+        /// </remarks>
         public YoutubeClient(HttpClient httpClient)
             : this(new YoutubeHttpClient(httpClient))
         {
@@ -70,7 +73,7 @@ namespace YoutubeExplode
 
             if (handler.SupportsAutomaticDecompression)
                 handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
+            handler.CookieContainer.Add(new Cookie("CONSENT", $"YES+cb", "/", ".youtube.com"));
             var httpClient = new HttpClient(handler, true);
 
             httpClient.DefaultRequestHeaders.Add(

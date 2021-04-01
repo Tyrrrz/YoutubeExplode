@@ -46,6 +46,16 @@ namespace YoutubeExplode.ReverseEngineering.Responses
                 .NullIfWhiteSpace()?
                 .Pipe(Json.Extract)
                 .Pipe(Json.Parse)
+                .Pipe(j => new PlayerConfig(j)) ??
+
+            _root
+                .GetElementsByTagName("script")
+                .Select(e => e.Text())
+                .Select(s => Regex.Match(s, @"ytcfg.set\((\{.*\})").Groups[1].Value)
+                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
+                .NullIfWhiteSpace()?
+                .Pipe(Json.Extract)
+                .Pipe(Json.Parse)
                 .Pipe(j => new PlayerConfig(j));
     }
 
