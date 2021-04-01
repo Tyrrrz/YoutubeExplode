@@ -52,8 +52,8 @@ namespace YoutubeExplode.Videos.Streams
             streamInfos.Select(s => s.VideoQualityLabel).ToHashSet();
 
         /// <summary>
-        /// Gets the video stream with highest video quality.
-        /// Returns null if sequence is empty.
+        /// Gets the video stream with the highest video quality.
+        /// Returns null if the sequence is empty.
         /// </summary>
         public static IVideoStreamInfo? WithHighestVideoQuality(this IEnumerable<IVideoStreamInfo> streamInfos) =>
             streamInfos.OrderByDescending(s => s.VideoQuality).ThenByDescending(s => s.Framerate).FirstOrDefault();

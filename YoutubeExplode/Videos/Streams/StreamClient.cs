@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -238,9 +239,7 @@ namespace YoutubeExplode.Videos.Streams
                 }
                 else
                 {
-#if DEBUG
-                    throw FatalFailureException.Generic("Stream info doesn't contain audio/video codec information.");
-#endif
+                    Debug.Fail("Stream info doesn't contain audio/video codec information.");
                 }
             }
 
@@ -286,7 +285,7 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Gets the actual stream which is identified by the specified metadata.
         /// </summary>
-        public ValueTask<Stream> GetAsync(IStreamInfo streamInfo)
+        public async ValueTask<Stream> GetAsync(IStreamInfo streamInfo)
         {
             // For most streams, YouTube limits transfer speed to match the video playback rate.
             // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
@@ -296,7 +295,7 @@ namespace YoutubeExplode.Videos.Streams
 
             var segmentSize = streamInfo.IsThrottled()
                 ? 9_898_989 // this number was carefully devised through research
-                : (long?) null; // don't use segmentation for non-rate-limited streams
+                : (long?) null; // don't use segmentation for non-throttled streams
 
             var stream = new SegmentedHttpStream(
                 _httpClient,
@@ -305,11 +304,13 @@ namespace YoutubeExplode.Videos.Streams
                 segmentSize
             );
 
-            return new ValueTask<Stream>(stream);
+            await stream.PrepareAsync();
+
+            return stream;
         }
 
         /// <summary>
-        /// Copies the actual stream which is identified by the specified metadata to the specified stream.
+        /// Copies the actual stream which is identified by the specified metadata to the destination stream.
         /// </summary>
         public async ValueTask CopyToAsync(IStreamInfo streamInfo, Stream destination,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)
@@ -319,7 +320,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Download the actual stream which is identified by the specified metadata to the specified file.
+        /// Download the actual stream which is identified by the specified metadata to the destination file.
         /// </summary>
         public async ValueTask DownloadAsync(IStreamInfo streamInfo, string filePath,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default)

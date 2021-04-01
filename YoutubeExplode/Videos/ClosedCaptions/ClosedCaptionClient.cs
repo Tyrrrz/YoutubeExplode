@@ -46,7 +46,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <summary>
-        /// Writes the actual closed caption track which is identified by the specified metadata to the specified writer.
+        /// Writes the actual closed caption track which is identified by the specified metadata to the destination writer.
         /// Closed captions are written in the SRT file format.
         /// </summary>
         public async ValueTask WriteToAsync(ClosedCaptionTrackInfo trackInfo, TextWriter writer,
@@ -80,7 +80,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <summary>
-        /// Downloads the actual closed caption track which is identified by the specified metadata to the specified file.
+        /// Downloads the actual closed caption track which is identified by the specified metadata to the destination file.
         /// Closed captions are written in the SRT file format.
         /// </summary>
         public async ValueTask DownloadAsync(ClosedCaptionTrackInfo trackInfo, string filePath,

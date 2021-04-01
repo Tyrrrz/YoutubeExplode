@@ -45,8 +45,8 @@ namespace YoutubeExplode.Videos.Streams
             !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes");
 
         /// <summary>
-        /// Gets the stream with highest bitrate.
-        /// Returns null if sequence is empty.
+        /// Gets the stream with the highest bitrate.
+        /// Returns null if the sequence is empty.
         /// </summary>
         public static IStreamInfo? WithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
             streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
