@@ -176,51 +176,45 @@ namespace YoutubeExplode.Videos.Streams
                 // Muxed or Video-only
                 if (!string.IsNullOrWhiteSpace(videoCodec))
                 {
-                    var framerate = new Framerate(streamInfo.TryGetFramerate() ?? 24);
+                    var framerate = streamInfo.TryGetFramerate() ?? 24;
 
-                    var videoQuality = VideoQuality.FromTag(tag);
+                    var videoQualityLabel = streamInfo.TryGetVideoQualityLabel();
 
-                    var videoQualityLabel =
-                        streamInfo.TryGetVideoQualityLabel() ??
-                        videoQuality.FormatLabel(framerate);
+                    var videoQuality = !string.IsNullOrWhiteSpace(videoQualityLabel)
+                        ? VideoQuality.FromLabel(videoQualityLabel, framerate)
+                        : VideoQuality.FromTag(tag, framerate);
 
                     var videoWidth = streamInfo.TryGetVideoWidth();
                     var videoHeight = streamInfo.TryGetVideoHeight();
                     var videoResolution = videoWidth is not null && videoHeight is not null
                         ? new VideoResolution(videoWidth.Value, videoHeight.Value)
-                        : videoQuality.GetDefaultResolution();
+                        : VideoResolution.FromVideoQuality(videoQuality);
 
                     // Muxed
                     if (!string.IsNullOrWhiteSpace(audioCodec))
                     {
                         streams[tag] = new MuxedStreamInfo(
-                            tag,
                             url,
                             container,
                             fileSize,
                             bitrate,
                             audioCodec,
                             videoCodec,
-                            videoQualityLabel,
                             videoQuality,
-                            videoResolution,
-                            framerate
+                            videoResolution
                         );
                     }
                     // Video-only
                     else
                     {
                         streams[tag] = new VideoOnlyStreamInfo(
-                            tag,
                             url,
                             container,
                             fileSize,
                             bitrate,
                             videoCodec,
-                            videoQualityLabel,
                             videoQuality,
-                            videoResolution,
-                            framerate
+                            videoResolution
                         );
                     }
                 }
@@ -228,7 +222,6 @@ namespace YoutubeExplode.Videos.Streams
                 else if (!string.IsNullOrWhiteSpace(audioCodec))
                 {
                     streams[tag] = new AudioOnlyStreamInfo(
-                        tag,
                         url,
                         container,
                         fileSize,

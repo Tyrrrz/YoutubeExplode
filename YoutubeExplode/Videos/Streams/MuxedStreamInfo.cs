@@ -6,9 +6,6 @@ namespace YoutubeExplode.Videos.Streams
     public class MuxedStreamInfo : IAudioStreamInfo, IVideoStreamInfo
     {
         /// <inheritdoc />
-        public int Tag { get; }
-
-        /// <inheritdoc />
         public string Url { get; }
 
         /// <inheritdoc />
@@ -27,47 +24,35 @@ namespace YoutubeExplode.Videos.Streams
         public string VideoCodec { get; }
 
         /// <inheritdoc />
-        public string VideoQualityLabel { get; }
-
-        /// <inheritdoc />
         public VideoQuality VideoQuality { get; }
 
         /// <inheritdoc />
-        public VideoResolution Resolution { get; }
-
-        /// <inheritdoc />
-        public Framerate Framerate { get; }
+        public VideoResolution VideoResolution { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
         /// </summary>
         public MuxedStreamInfo(
-            int tag,
             string url,
             Container container,
             FileSize size,
             Bitrate bitrate,
             string audioCodec,
             string videoCodec,
-            string videoQualityLabel,
             VideoQuality videoQuality,
-            VideoResolution resolution,
-            Framerate framerate)
+            VideoResolution resolution)
         {
-            Tag = tag;
             Url = url;
             Container = container;
             Size = size;
             Bitrate = bitrate;
             AudioCodec = audioCodec;
             VideoCodec = videoCodec;
-            VideoQualityLabel = videoQualityLabel;
             VideoQuality = videoQuality;
-            Resolution = resolution;
-            Framerate = framerate;
+            VideoResolution = resolution;
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"Muxed ({Tag} | {VideoQualityLabel} | {Container})";
+        public override string ToString() => $"Muxed ({VideoQuality} | {Container})";
     }
 }

@@ -10,12 +10,6 @@ namespace YoutubeExplode.Videos.Streams
     public interface IStreamInfo
     {
         /// <summary>
-        /// Stream tag.
-        /// Uniquely identifies a stream inside a manifest.
-        /// </summary>
-        int Tag { get; }
-
-        /// <summary>
         /// Stream URL.
         /// </summary>
         string Url { get; }

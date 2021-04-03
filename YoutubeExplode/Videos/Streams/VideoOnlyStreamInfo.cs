@@ -6,9 +6,6 @@ namespace YoutubeExplode.Videos.Streams
     public class VideoOnlyStreamInfo : IVideoStreamInfo
     {
         /// <inheritdoc />
-        public int Tag { get; }
-
-        /// <inheritdoc />
         public string Url { get; }
 
         /// <inheritdoc />
@@ -24,45 +21,33 @@ namespace YoutubeExplode.Videos.Streams
         public string VideoCodec { get; }
 
         /// <inheritdoc />
-        public string VideoQualityLabel { get; }
-
-        /// <inheritdoc />
         public VideoQuality VideoQuality { get; }
 
         /// <inheritdoc />
-        public VideoResolution Resolution { get; }
-
-        /// <inheritdoc />
-        public Framerate Framerate { get; }
+        public VideoResolution VideoResolution { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="VideoOnlyStreamInfo"/>.
         /// </summary>
         public VideoOnlyStreamInfo(
-            int tag,
             string url,
             Container container,
             FileSize size,
             Bitrate bitrate,
             string videoCodec,
-            string videoQualityLabel,
             VideoQuality videoQuality,
-            VideoResolution resolution,
-            Framerate framerate)
+            VideoResolution videoResolution)
         {
-            Tag = tag;
             Url = url;
             Container = container;
             Size = size;
             Bitrate = bitrate;
             VideoCodec = videoCodec;
-            VideoQualityLabel = videoQualityLabel;
             VideoQuality = videoQuality;
-            Resolution = resolution;
-            Framerate = framerate;
+            VideoResolution = videoResolution;
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"Video-only ({Tag} | {VideoQualityLabel} | {Container})";
+        public override string ToString() => $"Video-only ({VideoQuality} | {Container})";
     }
 }
