@@ -7,7 +7,7 @@ namespace YoutubeExplode.Utils.Extensions
 {
     internal static class StreamExtensions
     {
-        public static async ValueTask<int> CopyBufferedToAsync(
+        private static async ValueTask<int> CopyBufferedToAsync(
             this Stream source,
             Stream destination,
             byte[] buffer,

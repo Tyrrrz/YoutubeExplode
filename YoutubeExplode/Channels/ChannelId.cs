@@ -71,7 +71,7 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public static ChannelId Parse(string channelIdOrUrl) =>
             TryParse(channelIdOrUrl) ??
-            throw new ArgumentException($"Invalid YouTube channel ID or URL: '{channelIdOrUrl}'.");
+            throw new ArgumentException($"Invalid YouTube channel ID or URL '{channelIdOrUrl}'.");
 
         /// <summary>
         /// Converts string to ID.

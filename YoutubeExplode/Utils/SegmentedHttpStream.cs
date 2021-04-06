@@ -61,7 +61,7 @@ namespace YoutubeExplode.Utils
             _currentStream = null;
         }
 
-        private async ValueTask<Stream> ResolveCurrentStreamAsync()
+        private async ValueTask<Stream> ResolveCurrentStreamAsync(CancellationToken cancellationToken = default)
         {
             if (_currentStream is not null)
                 return _currentStream;
@@ -72,12 +72,13 @@ namespace YoutubeExplode.Utils
                 ? Position + _segmentSize - 1
                 : null;
 
-            var stream = await _httpClient.GetStreamAsync(_url, from, to);
+            var stream = await _httpClient.GetStreamAsync(_url, from, to, true, cancellationToken);
 
             return _currentStream = stream;
         }
 
-        public async ValueTask PrepareAsync() => await ResolveCurrentStreamAsync();
+        public async ValueTask PrepareAsync(CancellationToken cancellationToken = default) =>
+            await ResolveCurrentStreamAsync(cancellationToken);
 
         public override async Task<int> ReadAsync(
             byte[] buffer,
@@ -88,7 +89,7 @@ namespace YoutubeExplode.Utils
             if (Position >= Length)
                 return 0;
 
-            var stream = await ResolveCurrentStreamAsync();
+            var stream = await ResolveCurrentStreamAsync(cancellationToken);
 
             var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
             _position += bytesRead;

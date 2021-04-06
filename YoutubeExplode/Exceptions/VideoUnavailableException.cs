@@ -10,8 +10,7 @@ namespace YoutubeExplode.Exceptions
         /// <summary>
         /// Initializes an instance of <see cref="VideoUnavailableException"/>.
         /// </summary>
-        public VideoUnavailableException(string message)
-            : base(message)
+        public VideoUnavailableException(string message) : base(message)
         {
         }
     }

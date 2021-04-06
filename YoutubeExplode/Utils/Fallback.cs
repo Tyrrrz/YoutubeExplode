@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace YoutubeExplode.Utils
 {
+    // TODO: remove
     internal static class Fallback
     {
         public static IEnumerable<T> ToEmpty<T>(IEnumerable<T>? maybeSequence) => maybeSequence ?? Enumerable.Empty<T>();

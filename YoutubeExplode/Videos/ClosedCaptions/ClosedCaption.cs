@@ -10,24 +10,26 @@ namespace YoutubeExplode.Videos.ClosedCaptions
     public class ClosedCaption
     {
         /// <summary>
-        /// Text displayed by this caption.
+        /// Text displayed by the caption.
         /// </summary>
         public string Text { get; }
 
         /// <summary>
-        /// Time of this caption.
+        /// Time at which the caption is displayed.
         /// </summary>
         public TimeSpan Offset { get; }
 
         /// <summary>
-        /// Duration of this caption.
+        /// Duration of the caption.
         /// </summary>
         public TimeSpan Duration { get; }
 
         /// <summary>
         /// Caption parts (usually individual words).
-        /// May be empty because not all captions contain parts.
         /// </summary>
+        /// <remarks>
+        /// Some captions may not have parts.
+        /// </remarks>
         public IReadOnlyList<ClosedCaptionPart> Parts { get; }
 
         /// <summary>
@@ -42,10 +44,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <summary>
-        /// Gets the caption part displayed at the specified point in time, relative to this caption's offset.
+        /// Gets the caption part displayed at the specified point in time, relative to the caption's offset.
         /// Returns null if not found.
-        /// Note that some captions may not have any parts at all.
         /// </summary>
+        /// <remarks>
+        /// Some captions may not have parts.
+        /// </remarks>
         public ClosedCaptionPart? TryGetPartByTime(TimeSpan offset) =>
             Parts.FirstOrDefault(p => p.Offset >= offset);
 

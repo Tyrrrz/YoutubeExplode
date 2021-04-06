@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Common;
-using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.Utils.Extensions;
+using YoutubeExplode.Extraction;
 
 namespace YoutubeExplode.Playlists
 {
@@ -13,28 +11,34 @@ namespace YoutubeExplode.Playlists
     /// </summary>
     public class PlaylistClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeController _youtubeController;
+
+        internal PlaylistClient(YoutubeController youtubeController)
+        {
+            _youtubeController = youtubeController;
+        }
 
         /// <summary>
         /// Initializes an instance of <see cref="PlaylistClient"/>.
         /// </summary>
         public PlaylistClient(HttpClient httpClient)
+            : this(new YoutubeController(httpClient))
         {
-            _httpClient = httpClient;
         }
 
         /// <summary>
         /// Gets the metadata associated with the specified playlist.
         /// </summary>
-        public async ValueTask<Playlist> GetAsync(PlaylistId playlistId)
+        public async ValueTask<Playlist> GetAsync(
+            PlaylistId playlistId,
+            CancellationToken cancellationToken = default)
         {
             var response = await PlaylistResponse.GetAsync(_httpClient, playlistId);
 
             var thumbnails = response
                 .GetPlaylistVideos()
                 .FirstOrDefault()?
-                .GetId()
-                .Pipe(i => new ThumbnailSet(i));
+                .Thumbnails;
 
             return new Playlist(
                 playlistId,
@@ -43,13 +47,15 @@ namespace YoutubeExplode.Playlists
                 response.TryGetDescription() ?? "",
                 response.TryGetViewCount() ?? 0,
                 thumbnails
-                );
+            );
         }
 
         /// <summary>
         /// Enumerates the videos included in the specified playlist.
         /// </summary>
-        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(PlaylistId playlistId)
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+            PlaylistId playlistId,
+            CancellationToken cancellationToken = default)
         {
             var encounteredVideoIds = new HashSet<string>();
             var continuationToken = "";

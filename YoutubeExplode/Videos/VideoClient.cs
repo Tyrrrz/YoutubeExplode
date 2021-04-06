@@ -1,7 +1,9 @@
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
-using YoutubeExplode.ReverseEngineering;
+using YoutubeExplode.Exceptions;
+using YoutubeExplode.Extraction;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
@@ -12,7 +14,7 @@ namespace YoutubeExplode.Videos
     /// </summary>
     public class VideoClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeController _youtubeController;
 
         /// <summary>
         /// Queries related to media streams of YouTube videos.
@@ -29,7 +31,7 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public VideoClient(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            _youtubeController = new YoutubeController(httpClient);
 
             Streams = new StreamClient(httpClient);
             ClosedCaptions = new ClosedCaptionClient(httpClient);
@@ -38,27 +40,74 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Gets the metadata associated with the specified video.
         /// </summary>
-        public async ValueTask<Video> GetAsync(VideoId videoId)
+        public async ValueTask<Video> GetAsync(
+            VideoId videoId,
+            CancellationToken cancellationToken = default)
         {
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
-            var playerResponse = videoInfoResponse.GetPlayerResponse();
+            var videoInfoResponse = await _youtubeController.GetVideoInfoResponseAsync(
+                videoId,
+                cancellationToken
+            );
 
-            var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
+            var playerResponse =
+                videoInfoResponse.TryGetPlayerResponse() ??
+                throw new YoutubeExplodeException("Could not extract player response.");
+
+            var watchPage = await _youtubeController.GetVideoWatchPageAsync(
+                videoId,
+                cancellationToken
+            );
+
+            var title =
+                playerResponse.TryGetVideoTitle() ??
+                throw new YoutubeExplodeException("Could not extract video title.");
+
+            var author =
+                playerResponse.TryGetVideoAuthor() ??
+                throw new YoutubeExplodeException("Could not extract video author.");
+
+            var channelId =
+                playerResponse.TryGetVideoChannelId() ??
+                throw new YoutubeExplodeException("Could not extract video channel ID.");
+
+            var uploadDate =
+                playerResponse.TryGetVideoUploadDate() ??
+                throw new YoutubeExplodeException("Could not extract video upload date.");
+
+            var description =
+                playerResponse.TryGetVideoDescription() ??
+                throw new YoutubeExplodeException("Could not extract video description.");
+
+            var duration =
+                playerResponse.TryGetVideoDuration() ??
+                throw new YoutubeExplodeException("Could not extract video duration.");
+
+            var viewCount =
+                playerResponse.TryGetVideoViewCount() ??
+                throw new YoutubeExplodeException("Could not extract video view count.");
+
+            var likeCount =
+                watchPage.TryGetVideoLikeCount() ??
+                0; // like count is inaccessible if likes are disabled
+
+            var dislikeCount =
+                watchPage.TryGetVideoDislikeCount() ??
+                0; // dislike count is inaccessible if likes are disabled
 
             return new Video(
                 videoId,
-                playerResponse.GetVideoTitle(),
-                playerResponse.GetVideoAuthor(),
-                playerResponse.GetVideoChannelId(),
-                playerResponse.GetVideoUploadDate(),
-                playerResponse.GetVideoDescription(),
-                playerResponse.GetVideoDuration(),
+                title,
+                author,
+                channelId,
+                uploadDate,
+                description,
+                duration,
                 new ThumbnailSet(videoId),
                 playerResponse.GetVideoKeywords(),
                 new Engagement(
-                    playerResponse.TryGetVideoViewCount() ?? 0,
-                    watchPage.TryGetVideoLikeCount() ?? 0,
-                    watchPage.TryGetVideoDislikeCount() ?? 0
+                    viewCount,
+                    likeCount,
+                    dislikeCount
                 )
             );
         }

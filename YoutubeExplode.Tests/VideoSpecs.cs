@@ -27,11 +27,7 @@ namespace YoutubeExplode.Tests
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
             video.Duration.Should().BeCloseTo(new TimeSpan(00, 01, 48), 1000);
-            video.Thumbnails.LowResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.MediumResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.HighResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.StandardResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.MaxResUrl.Should().NotBeNullOrWhiteSpace();
+            video.Thumbnails.Should().NotBeEmpty();
             video.Keywords.Should().BeEquivalentTo("osu", "mouse", "rhythm game");
             video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
             video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(5);

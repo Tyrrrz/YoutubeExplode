@@ -53,7 +53,7 @@ namespace YoutubeExplode.Videos
         /// <summary>
         /// Available thumbnails for this video.
         /// </summary>
-        public ThumbnailSet Thumbnails { get; }
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Search keywords used for this video.
@@ -76,7 +76,7 @@ namespace YoutubeExplode.Videos
             DateTimeOffset uploadDate,
             string description,
             TimeSpan duration,
-            ThumbnailSet thumbnails,
+            IReadOnlyList<Thumbnail> thumbnails,
             IReadOnlyList<string> keywords,
             Engagement engagement)
         {
@@ -91,7 +91,6 @@ namespace YoutubeExplode.Videos
             Keywords = keywords;
             Engagement = engagement;
         }
-
 
         /// <inheritdoc />
         public override string ToString() => $"Video ({Title})";

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
-using YoutubeExplode.Common;
 using YoutubeExplode.Playlists;
-using YoutubeExplode.ReverseEngineering;
 
 namespace YoutubeExplode.Search
 {

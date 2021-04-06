@@ -1,3 +1,5 @@
+using YoutubeExplode.Playlists;
+
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
@@ -16,7 +18,7 @@ namespace YoutubeExplode.Exceptions
 
     public partial class PlaylistUnavailableException
     {
-        internal static PlaylistUnavailableException Unavailable(string playlistId)
+        internal static PlaylistUnavailableException Unavailable(PlaylistId playlistId)
         {
             var message = $@"
 Playlist '{playlistId}' is unavailable.

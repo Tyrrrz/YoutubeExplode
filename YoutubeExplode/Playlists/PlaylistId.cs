@@ -104,7 +104,7 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public static PlaylistId Parse(string playlistIdOrUrl) =>
             TryParse(playlistIdOrUrl) ??
-            throw new ArgumentException($"Invalid YouTube playlist ID or URL: '{playlistIdOrUrl}'.");
+            throw new ArgumentException($"Invalid YouTube playlist ID or URL '{playlistIdOrUrl}'.");
 
         /// <summary>
         /// Converts string to ID.

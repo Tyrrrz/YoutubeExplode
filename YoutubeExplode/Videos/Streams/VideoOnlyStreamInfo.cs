@@ -1,3 +1,5 @@
+using YoutubeExplode.Common;
+
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
@@ -24,7 +26,7 @@ namespace YoutubeExplode.Videos.Streams
         public VideoQuality VideoQuality { get; }
 
         /// <inheritdoc />
-        public VideoResolution VideoResolution { get; }
+        public Resolution VideoResolution { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="VideoOnlyStreamInfo"/>.
@@ -36,7 +38,7 @@ namespace YoutubeExplode.Videos.Streams
             Bitrate bitrate,
             string videoCodec,
             VideoQuality videoQuality,
-            VideoResolution videoResolution)
+            Resolution videoResolution)
         {
             Url = url;
             Container = container;

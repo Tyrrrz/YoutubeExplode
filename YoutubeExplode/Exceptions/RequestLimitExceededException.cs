@@ -10,15 +10,14 @@ namespace YoutubeExplode.Exceptions
         /// <summary>
         /// Initializes an instance of <see cref="RequestLimitExceededException"/>.
         /// </summary>
-        public RequestLimitExceededException(string message)
-            : base(message)
+        public RequestLimitExceededException(string message) : base(message)
         {
         }
     }
 
     public partial class RequestLimitExceededException
     {
-        internal static RequestLimitExceededException FailedHttpRequest(HttpResponseMessage response)
+        internal static RequestLimitExceededException Create(HttpResponseMessage response)
         {
             var message = $@"
 Failed to perform an HTTP request to YouTube because of rate limiting.

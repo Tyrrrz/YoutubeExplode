@@ -8,7 +8,7 @@ namespace YoutubeExplode.Exceptions
     public partial class VideoRequiresPurchaseException : VideoUnplayableException
     {
         /// <summary>
-        /// ID of a free preview video for this video.
+        /// ID of a free preview video which is used as promotion for the original video.
         /// </summary>
         public VideoId PreviewVideoId { get; }
 
@@ -21,14 +21,14 @@ namespace YoutubeExplode.Exceptions
 
     public partial class VideoRequiresPurchaseException
     {
-        internal static VideoRequiresPurchaseException Preview(VideoId videoId, VideoId previewVideoId)
+        internal static VideoRequiresPurchaseException Create(VideoId videoId, VideoId previewVideoId)
         {
             var message = $@"
 Video '{videoId}' is unplayable because it requires purchase.
 Streams are not available for this video.
 There is a preview video available: '{previewVideoId}'.";
 
-            return new VideoRequiresPurchaseException(message, previewVideoId);
+            return new VideoRequiresPurchaseException(message.Trim(), previewVideoId);
         }
     }
 }

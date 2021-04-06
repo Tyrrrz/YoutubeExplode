@@ -54,20 +54,6 @@ namespace YoutubeExplode.Tests
             channel.Id.Value.Should().Be(expectedChannelId);
         }
 
-        [Theory]
-        [InlineData("5NmxuoNyDss", "UCEnBXANsKmyj2r9xVyKoDiQ")]
-        public async Task User_can_get_metadata_of_any_available_channel_by_video_ID(string videoId, string expectedChannelId)
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
-
-            // Act
-            var channel = await youtube.Channels.GetByVideoAsync(videoId);
-
-            // Assert
-            channel.Id.Value.Should().Be(expectedChannelId);
-        }
-
         [Fact]
         public async Task User_can_get_videos_uploaded_by_a_channel()
         {

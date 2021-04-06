@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Channels.Resolving;
+using YoutubeExplode.Exceptions;
+using YoutubeExplode.Extraction;
 using YoutubeExplode.Playlists;
-using YoutubeExplode.Utils.Extensions;
-using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Channels
 {
@@ -13,60 +13,79 @@ namespace YoutubeExplode.Channels
     /// </summary>
     public class ChannelClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeController _youtubeController;
 
         /// <summary>
         /// Initializes an instance of <see cref="ChannelClient"/>.
         /// </summary>
         public ChannelClient(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            _youtubeController = new YoutubeController(httpClient);
         }
 
         /// <summary>
         /// Gets the metadata associated with the specified channel.
         /// </summary>
-        public async ValueTask<Channel> GetAsync(ChannelId channelId)
+        public async ValueTask<Channel> GetAsync(
+            ChannelId channelId,
+            CancellationToken cancellationToken = default)
         {
-            var resolver = new ChannelResolver(_httpClient, channelId);
+            var channelPage = await _youtubeController.GetChannelPageAsync(channelId, cancellationToken);
+
+            var title =
+                channelPage.TryGetChannelTitle() ??
+                throw new YoutubeExplodeException("Could not extract channel title.");
+
+            var logoUrl =
+                channelPage.TryGetChannelLogoUrl() ??
+                throw new YoutubeExplodeException("Could not extract channel logo URL.");
 
             return new Channel(
                 channelId,
-                await resolver.GetChannelTitleAsync(),
-                await resolver.GetChannelLogoUrlAsync()
+                title,
+                logoUrl
             );
         }
 
         /// <summary>
         /// Gets the metadata associated with the channel of the specified user.
         /// </summary>
-        public async ValueTask<Channel> GetByUserAsync(UserName userName)
+        public async ValueTask<Channel> GetByUserAsync(
+            UserName userName,
+            CancellationToken cancellationToken = default)
         {
-            var resolver = new ChannelResolver(_httpClient, userName);
+            var channelPage = await _youtubeController.GetChannelPageAsync(userName, cancellationToken);
+
+            var channelId =
+                channelPage.TryGetChannelId() ??
+                throw new YoutubeExplodeException("Could not extract channel ID.");
+
+            var title =
+                channelPage.TryGetChannelTitle() ??
+                throw new YoutubeExplodeException("Could not extract channel title.");
+
+            var logoUrl =
+                channelPage.TryGetChannelLogoUrl() ??
+                throw new YoutubeExplodeException("Could not extract channel logo URL.");
 
             return new Channel(
-                await resolver.GetChannelIdAsync(),
-                await resolver.GetChannelTitleAsync(),
-                await resolver.GetChannelLogoUrlAsync()
+                channelId,
+                title,
+                logoUrl
             );
-        }
-
-        /// <summary>
-        /// Gets the metadata associated with the channel that uploaded the specified video.
-        /// </summary>
-        public async ValueTask<Channel> GetByVideoAsync(VideoId videoId)
-        {
-            var video = await new VideoClient(_httpClient).GetAsync(videoId);
-            return await GetAsync(video.ChannelId);
         }
 
         /// <summary>
         /// Enumerates the videos uploaded by the specified channel.
         /// </summary>
-        public IAsyncEnumerable<PlaylistVideo> GetUploadsAsync(ChannelId channelId)
+        public IAsyncEnumerable<PlaylistVideo> GetUploadsAsync(
+            ChannelId channelId,
+            CancellationToken cancellationToken = default)
         {
-            var playlistId = "UU" + channelId.Value.SubstringAfter("UC");
-            return new PlaylistClient(_httpClient).GetVideosAsync(playlistId);
+            // Replace 'UC' in channel ID with 'UU'
+            var playlistId = "UU" + channelId.Value.Substring(2);
+
+            return new PlaylistClient(_youtubeController).GetVideosAsync(playlistId, cancellationToken);
         }
     }
 }

@@ -79,7 +79,7 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public static VideoId Parse(string videoIdOrUrl) =>
             TryParse(videoIdOrUrl) ??
-            throw new ArgumentException($"Invalid YouTube video ID or URL: '{videoIdOrUrl}'.");
+            throw new ArgumentException($"Invalid YouTube video ID or URL '{videoIdOrUrl}'.");
 
         /// <summary>
         /// Converts string to ID.

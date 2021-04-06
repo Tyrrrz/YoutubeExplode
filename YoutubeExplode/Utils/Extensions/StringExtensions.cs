@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,26 +16,23 @@ namespace YoutubeExplode.Utils.Extensions
             StringComparison comparison = StringComparison.Ordinal)
         {
             var index = s.IndexOf(sub, comparison);
-            return index < 0 ? s : s.Substring(0, index);
+
+            return index < 0
+                ? s
+                : s.Substring(0, index);
         }
 
         public static string SubstringAfter(this string s, string sub,
             StringComparison comparison = StringComparison.Ordinal)
         {
             var index = s.IndexOf(sub, comparison);
-            return index < 0 ? string.Empty : s.Substring(index + sub.Length, s.Length - index - sub.Length);
+
+            return index < 0
+                ? string.Empty
+                : s.Substring(index + sub.Length, s.Length - index - sub.Length);
         }
 
         public static string StripNonDigit(this string s) => Regex.Replace(s, "\\D", "");
-
-        public static int ParseInt(this string s) =>
-            int.Parse(s, NumberFormatInfo.InvariantInfo);
-
-        public static long ParseLong(this string s) =>
-            long.Parse(s, NumberFormatInfo.InvariantInfo);
-
-        public static double ParseDouble(this string s) =>
-            double.Parse(s, NumberFormatInfo.InvariantInfo);
 
         public static string Reverse(this string s)
         {
@@ -54,7 +50,24 @@ namespace YoutubeExplode.Utils.Extensions
             [secondCharIndex] = s[firstCharIndex]
         }.ToString();
 
-        public static string JoinToString<T>(this IEnumerable<T> source, string separator) =>
-            string.Join(separator, source);
+        public static int? ParseIntOrNull(this string s) =>
+            int.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
+                ? result
+                : null;
+
+        public static int ParseInt(this string s) =>
+            ParseIntOrNull(s) ??
+            throw new FormatException($"Cannot parse integer number from string '{s}'.");
+
+        public static long? ParseLongOrNull(this string s) =>
+            long.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
+                ? result
+                : null;
+
+        public static double? ParseDoubleOrNull(this string s) =>
+            double.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo,
+                out var result)
+                ? result
+                : null;
     }
 }

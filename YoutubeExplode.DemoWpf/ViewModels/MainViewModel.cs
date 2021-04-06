@@ -197,7 +197,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoIdOrUrl);
 
                 Video = await _youtube.Videos.GetAsync(videoIdOrUrl);
-                Channel = await _youtube.Channels.GetByVideoAsync(videoIdOrUrl);
+                Channel = await _youtube.Channels.GetAsync(Video.ChannelId);
                 MuxedStreamInfos = streamManifest.GetMuxed().ToArray();
                 AudioOnlyStreamInfos = streamManifest.GetAudioOnly().ToArray();
                 VideoOnlyStreamInfos = streamManifest.GetVideoOnly().ToArray();

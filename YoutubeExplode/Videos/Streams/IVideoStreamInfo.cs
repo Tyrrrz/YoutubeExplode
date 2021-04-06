@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Videos.Streams
 {
@@ -21,7 +22,7 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Video resolution.
         /// </summary>
-        VideoResolution VideoResolution { get; }
+        Resolution VideoResolution { get; }
     }
 
     /// <summary>

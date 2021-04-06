@@ -5,7 +5,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Manifest that contains information about available closed caption tracks in a specific video.
+    /// Contains information about available closed caption tracks for a specific video.
     /// </summary>
     public class ClosedCaptionManifest
     {
@@ -29,6 +29,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public ClosedCaptionTrackInfo? TryGetByLanguage(string language) =>
             Tracks.FirstOrDefault(t =>
                 string.Equals(t.Language.Code, language, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase));
+                string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase)
+            );
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 using YoutubeExplode.Videos;
@@ -51,9 +52,9 @@ namespace YoutubeExplode.Playlists
         public long ViewCount { get; }
 
         /// <summary>
-        /// Available thumbnails for this video.
+        /// Available thumbnails.
         /// </summary>
-        public ThumbnailSet Thumbnails { get; }
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Video"/>.
@@ -66,7 +67,7 @@ namespace YoutubeExplode.Playlists
             string description,
             TimeSpan duration,
             long viewCount,
-            ThumbnailSet thumbnails)
+            IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
@@ -77,7 +78,6 @@ namespace YoutubeExplode.Playlists
             ViewCount = viewCount;
             Thumbnails = thumbnails;
         }
-
 
         /// <inheritdoc />
         public override string ToString() => $"Playlist Video ({Title})";

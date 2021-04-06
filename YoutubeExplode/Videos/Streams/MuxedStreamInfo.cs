@@ -1,3 +1,5 @@
+using YoutubeExplode.Common;
+
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
@@ -27,7 +29,7 @@ namespace YoutubeExplode.Videos.Streams
         public VideoQuality VideoQuality { get; }
 
         /// <inheritdoc />
-        public VideoResolution VideoResolution { get; }
+        public Resolution VideoResolution { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="MuxedStreamInfo"/>.
@@ -40,7 +42,7 @@ namespace YoutubeExplode.Videos.Streams
             string audioCodec,
             string videoCodec,
             VideoQuality videoQuality,
-            VideoResolution resolution)
+            Resolution resolution)
         {
             Url = url;
             Container = container;

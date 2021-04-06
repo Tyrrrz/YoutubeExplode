@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Playlists
@@ -39,16 +40,15 @@ namespace YoutubeExplode.Playlists
         public long ViewCount { get; }
 
         /// <summary>
-        /// Available thumbnails for this playlist.
+        /// Available thumbnails for the playlist.
         /// Can be null if the playlist is empty.
         /// </summary>
-        public ThumbnailSet? Thumbnails { get; }
-
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Playlist"/>.
         /// </summary>
-        public Playlist(PlaylistId id, string title, string? author, string description, long viewCount, ThumbnailSet? thumbnails)
+        public Playlist(PlaylistId id, string title, string? author, string description, long viewCount, IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;

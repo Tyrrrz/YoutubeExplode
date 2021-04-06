@@ -1,4 +1,5 @@
 using System;
+using YoutubeExplode.Common;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.Streams
@@ -14,12 +15,12 @@ namespace YoutubeExplode.Videos.Streams
         public string Label { get; }
 
         /// <summary>
-        /// Maximum height of the video.
+        /// Maximum height of the video stream.
         /// </summary>
         public int MaxHeight { get; }
 
         /// <summary>
-        /// Video framerate.
+        /// Video stream framerate (in frames per second).
         /// </summary>
         public int Framerate { get; }
 
@@ -45,6 +46,22 @@ namespace YoutubeExplode.Videos.Streams
             : this(FormatLabel(maxHeight, framerate), maxHeight, framerate)
         {
         }
+
+        internal Resolution GetDefaultResolution() => MaxHeight switch
+        {
+            144 => new Resolution(256, 144),
+            240 => new Resolution(426, 240),
+            360 => new Resolution(640, 360),
+            480 => new Resolution(854, 480),
+            720 => new Resolution(1280, 720),
+            1080 => new Resolution(1920, 1080),
+            1440 => new Resolution(2560, 1440),
+            2160 => new Resolution(3840, 2160),
+            2880 => new Resolution(5120, 2880),
+            3072 => new Resolution(4096, 3072),
+            4320 => new Resolution(7680, 4320),
+            _ => new Resolution(16 * MaxHeight / 9, MaxHeight)
+        };
 
         /// <inheritdoc />
         public override string ToString() => Label;

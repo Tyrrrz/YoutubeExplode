@@ -34,7 +34,7 @@ namespace YoutubeExplode.DemoConsole
 
             // Download the stream
             Console.Write(
-                $"Downloading stream: {streamInfo.VideoQualityLabel} / {streamInfo.Container.Name}... "
+                $"Downloading stream: {streamInfo.VideoQuality.Label} / {streamInfo.Container.Name}... "
             );
 
             var fileName = $"{videoIdOrUrl}.{streamInfo.Container.Name}";

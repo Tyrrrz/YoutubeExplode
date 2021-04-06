@@ -8,12 +8,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions
     public readonly partial struct Language
     {
         /// <summary>
-        /// ISO 639-1 code of this language.
+        /// ISO 639-1 code of the language.
         /// </summary>
         public string Code { get; }
 
         /// <summary>
-        /// Full English name of this language.
+        /// Full English name of the language.
         /// </summary>
         public string Name { get; }
 

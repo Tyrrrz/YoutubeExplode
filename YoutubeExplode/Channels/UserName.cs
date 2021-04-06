@@ -67,7 +67,7 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public static UserName Parse(string userNameOrUrl) =>
             TryParse(userNameOrUrl) ??
-            throw new ArgumentException($"Invalid YouTube username or URL: '{userNameOrUrl}'.");
+            throw new ArgumentException($"Invalid YouTube username or URL '{userNameOrUrl}'.");
 
         /// <summary>
         /// Converts string to user name.
