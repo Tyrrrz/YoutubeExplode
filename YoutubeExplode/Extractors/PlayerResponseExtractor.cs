@@ -5,24 +5,24 @@ using System.Text.Json;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal class PlayerResponse
+    internal class PlayerResponseExtractor
     {
-        private readonly JsonElement _root;
+        private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
-        public PlayerResponse(JsonElement root) => _root = root;
+        public PlayerResponseExtractor(JsonElement content) => _content = content;
 
         private string? TryGetVideoPlayabilityStatus() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("playabilityStatus")?
                 .GetPropertyOrNull("status")?
                 .GetStringOrNull()
         );
 
         public string? TryGetVideoPlayabilityError() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("playabilityStatus")?
                 .GetPropertyOrNull("reason")?
                 .GetStringOrNull()
@@ -37,21 +37,21 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public string? TryGetVideoTitle() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("videoDetails")?
                 .GetPropertyOrNull("title")?
                 .GetStringOrNull()
         );
 
         public string? TryGetVideoAuthor() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("videoDetails")?
                 .GetPropertyOrNull("author")?
                 .GetStringOrNull()
         );
 
         public DateTimeOffset? TryGetVideoUploadDate() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("microformat")?
                 .GetPropertyOrNull("playerMicroformatRenderer")?
                 .GetPropertyOrNull("uploadDate")?
@@ -59,14 +59,14 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public string? TryGetVideoChannelId() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("videoDetails")?
                 .GetPropertyOrNull("channelId")?
                 .GetStringOrNull()
         );
 
         public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("videoDetails")?
                 .GetPropertyOrNull("lengthSeconds")?
                 .GetStringOrNull()?
@@ -75,25 +75,26 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public IReadOnlyList<string> GetVideoKeywords() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("videoDetails")?
                 .GetPropertyOrNull("keywords")?
-                .EnumerateArray()
-                .Select(j => j.GetString())
+                .EnumerateArrayOrEmpty()
+                .Select(j => j.GetStringOrNull())
+                .WhereNotNull()
                 .ToArray() ??
 
             Array.Empty<string>()
         );
 
         public string? TryGetVideoDescription() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("videoDetails")?
                 .GetPropertyOrNull("shortDescription")?
                 .GetStringOrNull()
         );
 
         public long? TryGetVideoViewCount() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetProperty("videoDetails")
                 .GetPropertyOrNull("viewCount")?
                 .GetStringOrNull()?
@@ -101,14 +102,14 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public string? TryGetPreviewVideoId() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("playabilityStatus")?
                 .GetPropertyOrNull("errorScreen")?
                 .GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")?
                 .GetPropertyOrNull("trailerVideoId")?
                 .GetStringOrNull() ??
 
-            _root
+            _content
                 .GetPropertyOrNull("playabilityStatus")?
                 .GetPropertyOrNull("errorScreen")?
                 .GetPropertyOrNull("ypcTrailerRenderer")?
@@ -119,35 +120,35 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public bool IsLive() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetProperty("videoDetails")
                 .GetPropertyOrNull("isLive")?
                 .GetBoolean() ?? false
         );
 
         public string? TryGetDashManifestUrl() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("streamingData")?
                 .GetPropertyOrNull("dashManifestUrl")?
                 .GetStringOrNull()
         );
 
         public string? TryGetHlsManifestUrl() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("streamingData")?
                 .GetPropertyOrNull("hlsManifestUrl")?
                 .GetStringOrNull()
         );
 
-        public IReadOnlyList<IStreamInfoResponse> GetStreams() => _memo.Wrap(() =>
+        public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
         {
-            var result = new List<IStreamInfoResponse>();
+            var result = new List<IStreamInfoExtractor>();
 
-            var muxedStreams = _root
+            var muxedStreams = _content
                 .GetPropertyOrNull("streamingData")?
                 .GetPropertyOrNull("formats")?
-                .EnumerateArray()
-                .Select(j => new PlayerStreamInfoResponse(j))
+                .EnumerateArrayOrEmpty()
+                .Select(j => new PlayerStreamInfoExtractor(j))
                 .Where(s => !string.Equals(s.TryGetCodecs(), "unknown", StringComparison.OrdinalIgnoreCase));
 
             if (muxedStreams is not null)
@@ -155,11 +156,11 @@ namespace YoutubeExplode.Extraction.Responses
 
             // TODO: unknown codecs might be av01
             // https://github.com/ytdl-org/youtube-dl/blob/162bf9e10a4e6a08f5ed156a68054ef9b4d2b60e/youtube_dl/extractor/youtube.py#L1187-L1191
-            var adaptiveStreams = _root
+            var adaptiveStreams = _content
                 .GetPropertyOrNull("streamingData")?
                 .GetPropertyOrNull("adaptiveFormats")?
-                .EnumerateArray()
-                .Select(j => new PlayerStreamInfoResponse(j))
+                .EnumerateArrayOrEmpty()
+                .Select(j => new PlayerStreamInfoExtractor(j))
                 .Where(s => !string.Equals(s.TryGetCodecs(), "unknown", StringComparison.OrdinalIgnoreCase));
 
             if (adaptiveStreams is not null)
@@ -168,16 +169,16 @@ namespace YoutubeExplode.Extraction.Responses
             return result;
         });
 
-        public IReadOnlyList<PlayerClosedCaptionTrackInfoResponse> GetClosedCaptionTracks() => _memo.Wrap(() =>
-            _root
+        public IReadOnlyList<PlayerClosedCaptionTrackInfoExtractor> GetClosedCaptionTracks() => _memo.Wrap(() =>
+            _content
                 .GetPropertyOrNull("captions")?
                 .GetPropertyOrNull("playerCaptionsTracklistRenderer")?
                 .GetPropertyOrNull("captionTracks")?
-                .EnumerateArray()
-                .Select(j => new PlayerClosedCaptionTrackInfoResponse(j))
+                .EnumerateArrayOrEmpty()
+                .Select(j => new PlayerClosedCaptionTrackInfoExtractor(j))
                 .ToArray() ??
 
-            Array.Empty<PlayerClosedCaptionTrackInfoResponse>()
+            Array.Empty<PlayerClosedCaptionTrackInfoExtractor>()
         );
     }
 }

@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extraction;
+using YoutubeExplode.Extractors;
 using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Channels

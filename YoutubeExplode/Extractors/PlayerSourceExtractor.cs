@@ -1,33 +1,34 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Extraction.Responses.Signature;
+using YoutubeExplode.Extractors.Signature;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal class PlayerSource
+    internal partial class PlayerSourceExtractor
     {
-        private readonly string _root;
+        private readonly string _content;
         private readonly Memo _memo = new();
 
-        public PlayerSource(string root) => _root = root;
+        public PlayerSourceExtractor(string content) => _content = content;
 
         public string? TryGetSignatureTimestamp() => _memo.Wrap(() =>
-            _root
+            _content
                 .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;[\w\s]+=)\d+").Value)
                 .NullIfWhiteSpace() ??
 
-            _root
+            _content
                 .Pipe(s => Regex.Match(s, @"(?<=signatureTimestamp[=\:])\d+").Value)
                 .NullIfWhiteSpace()
         );
 
         private string? TryGetScramblerBody() => _memo.Wrap(() =>
-            Regex.Match(_root,
+            Regex.Match(_content,
                     @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}")
                 .Groups[0]
                 .Value
+                .NullIfWhiteSpace()
         );
 
         private string? TryGetScramblerDefinition() => _memo.Wrap(() =>
@@ -45,14 +46,14 @@ namespace YoutubeExplode.Extraction.Responses
 
             var escapedObjName = Regex.Escape(objName);
 
-            return Regex.Match(_root, $@"var\s+{escapedObjName}=\{{(\w+:function\(\w+(,\w+)?\)\{{(.*?)\}}),?\}};",
+            return Regex.Match(_content, $@"var\s+{escapedObjName}=\{{(\w+:function\(\w+(,\w+)?\)\{{(.*?)\}}),?\}};",
                     RegexOptions.Singleline)
                 .Groups[0]
                 .Value
                 .NullIfWhiteSpace();
         });
 
-        public Scrambler? TryGetSignatureScrambler() => _memo.Wrap(() =>
+        public Scrambler? TryGetScrambler() => _memo.Wrap(() =>
         {
             var scramblerBody = TryGetScramblerBody();
             if (string.IsNullOrWhiteSpace(scramblerBody))
@@ -97,5 +98,10 @@ namespace YoutubeExplode.Extraction.Responses
 
             return new Scrambler(operations);
         });
+    }
+
+    internal partial class PlayerSourceExtractor
+    {
+        public static PlayerSourceExtractor Create(string raw) => new(raw);
     }
 }

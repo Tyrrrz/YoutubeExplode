@@ -5,35 +5,35 @@ using System.Text.RegularExpressions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal class PlayerStreamInfoResponse : IStreamInfoResponse
+    internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
     {
-        private readonly JsonElement _root;
+        private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
-        public PlayerStreamInfoResponse(JsonElement root) => _root = root;
+        public PlayerStreamInfoExtractor(JsonElement content) => _content = content;
 
-        public int? TryGetTag() => _memo.Wrap(() =>
-            _root
+        public int? TryGetItag() => _memo.Wrap(() =>
+            _content
                 .GetPropertyOrNull("itag")?
                 .GetInt32OrNull()
         );
 
         private IReadOnlyDictionary<string, string>? TryGetCipherData() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("cipher")?
                 .GetStringOrNull()?
                 .Pipe(Url.SplitQuery) ??
 
-            _root
+            _content
                 .GetPropertyOrNull("signatureCipher")?
                 .GetStringOrNull()?
                 .Pipe(Url.SplitQuery)
         );
 
         public string? TryGetUrl() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("url")?
                 .GetStringOrNull() ??
 
@@ -49,7 +49,7 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public long? TryGetContentLength() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("contentLength")?
                 .GetStringOrNull()?
                 .ParseLongOrNull() ??
@@ -61,13 +61,13 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public long? TryGetBitrate() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("bitrate")?
                 .GetInt64OrNull()
         );
 
         private string? TryGetMimeType() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("mimeType")?
                 .GetStringOrNull()
         );
@@ -101,25 +101,25 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public string? TryGetVideoQualityLabel() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("qualityLabel")?
                 .GetStringOrNull()
         );
 
         public int? TryGetVideoWidth() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("width")?
                 .GetInt32OrNull()
         );
 
         public int? TryGetVideoHeight() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("height")?
                 .GetInt32OrNull()
         );
 
         public int? TryGetFramerate() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetPropertyOrNull("fps")?
                 .GetInt32OrNull()
         );

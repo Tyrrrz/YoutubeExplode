@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses.Signature
+namespace YoutubeExplode.Extractors.Signature
 {
     internal class SwapScramblerOperation : IScramblerOperation
     {

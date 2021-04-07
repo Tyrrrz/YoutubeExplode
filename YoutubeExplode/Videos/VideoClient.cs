@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extraction;
+using YoutubeExplode.Extractors;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
@@ -44,7 +44,7 @@ namespace YoutubeExplode.Videos
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfoResponse = await _youtubeController.GetVideoInfoResponseAsync(
+            var videoInfoResponse = await _youtubeController.GetVideoInfoAsync(
                 videoId,
                 cancellationToken
             );

@@ -4,11 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extraction.Responses;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Videos;
 
-namespace YoutubeExplode.Extraction
+namespace YoutubeExplode.Extractors
 {
     internal class YoutubeController
     {
@@ -16,7 +15,7 @@ namespace YoutubeExplode.Extraction
 
         public YoutubeController(HttpClient httpClient) => _httpClient = httpClient;
 
-        private async ValueTask<string> GetStringAsync(
+        private async ValueTask<string> SendHttpRequestAsync(
             string url,
             CancellationToken cancellationToken = default)
         {
@@ -32,10 +31,7 @@ namespace YoutubeExplode.Extraction
             }
 
             // Consent cookie
-            request.Headers.Add(
-                "Cookie",
-                "CONSENT=YES+cb"
-            );
+            request.Headers.Add("Cookie", "CONSENT=YES+cb");
 
             using var response = await _httpClient.SendAsync(
                 request,
@@ -51,40 +47,56 @@ namespace YoutubeExplode.Extraction
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync(cancellationToken);
         }
 
-        private async ValueTask<ChannelPage> GetChannelPageAsync(
+        private async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
             string channelRoute,
             CancellationToken cancellationToken = default)
         {
             var url = $"https://www.youtube.com/{channelRoute}?hl=en";
-            var raw = await GetStringAsync(url, cancellationToken);
 
-            return new ChannelPage(Html.Parse(raw));
+            for (var retry = 0; retry <= 5; retry++)
+            {
+                var raw = await SendHttpRequestAsync(url, cancellationToken);
+
+                var channelPage = ChannelPageExtractor.TryCreate(raw);
+                if (channelPage is not null)
+                    return channelPage;
+            }
+
+            throw new YoutubeExplodeException("Channel page is broken. Try again in a few minutes.");
         }
 
-        public async ValueTask<ChannelPage> GetChannelPageAsync(
+        public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
             ChannelId channelId,
             CancellationToken cancellationToken = default) =>
             await GetChannelPageAsync("channel/" + channelId, cancellationToken);
 
-        public async ValueTask<ChannelPage> GetChannelPageAsync(
+        public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
             UserName userName,
             CancellationToken cancellationToken = default) =>
             await GetChannelPageAsync("user/" + userName, cancellationToken);
 
-        public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
+        public async ValueTask<VideoWatchPageExtractor> GetVideoWatchPageAsync(
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
             var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
-            var raw = await GetStringAsync(url, cancellationToken);
 
-            return new VideoWatchPage(Html.Parse(raw));
+            for (var retry = 0; retry <= 5; retry++)
+            {
+                var raw = await SendHttpRequestAsync(url, cancellationToken);
+
+                var watchPage = VideoWatchPageExtractor.TryCreate(raw);
+                if (watchPage is not null)
+                    return watchPage;
+            }
+
+            throw new YoutubeExplodeException("Video watch page is broken. Try again in a few minutes.");
         }
 
-        public async ValueTask<VideoInfoResponse> GetVideoInfoResponseAsync(
+        public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
             VideoId videoId,
             string signatureTimestamp,
             CancellationToken cancellationToken = default)
@@ -99,26 +111,42 @@ namespace YoutubeExplode.Extraction
                 $"&eurl={eurl}" +
                 "&hl=en";
 
-            var raw = await GetStringAsync(url, cancellationToken);
+            var raw = await SendHttpRequestAsync(url, cancellationToken);
 
-            return new VideoInfoResponse(Url.SplitQuery(raw));
+            return VideoInfoExtractor.Create(raw);
         }
 
-        public async ValueTask<VideoInfoResponse> GetVideoInfoResponseAsync(
+        public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
             VideoId videoId,
             CancellationToken cancellationToken = default) =>
-            await GetVideoInfoResponseAsync(videoId, "", cancellationToken);
+            await GetVideoInfoAsync(videoId, "", cancellationToken);
 
-        public async ValueTask<ClosedCaptionTrackResponse> GetClosedCaptionTrackResponseAsync(
+        public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackResponseAsync(
             string url,
             CancellationToken cancellationToken = default)
         {
             // Enforce known format
             var urlWithFormat = Url.SetQueryParameter(url, "format", "3");
 
-            var raw = await GetStringAsync(urlWithFormat, cancellationToken);
+            var raw = await SendHttpRequestAsync(urlWithFormat, cancellationToken);
 
-            return new ClosedCaptionTrackResponse(Xml.Parse(raw));
+            return ClosedCaptionTrackExtractor.Create(raw);
+        }
+
+        public async ValueTask<PlayerSourceExtractor> GetPlayerSourceAsync(
+            string url,
+            CancellationToken cancellationToken = default)
+        {
+            var raw = await SendHttpRequestAsync(url, cancellationToken);
+            return PlayerSourceExtractor.Create(raw);
+        }
+
+        public async ValueTask<DashManifestExtractor> GetDashManifestAsync(
+            string url,
+            CancellationToken cancellationToken = default)
+        {
+            var raw = await SendHttpRequestAsync(url, cancellationToken);
+            return DashManifestExtractor.Create(raw);
         }
     }
 }

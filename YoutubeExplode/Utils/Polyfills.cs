@@ -1,11 +1,13 @@
 // ReSharper disable CheckNamespace
+// ReSharper disable RedundantUsingDirective
 
-#if NETSTANDARD2_0 || NET461
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if NETSTANDARD2_0 || NET461
 internal static partial class PolyfillExtensions
 {
     public static bool Contains(
@@ -51,5 +53,18 @@ internal static partial class PolyfillExtensions
 {
     public static async Task<int> ReadAsync(this Stream stream, byte[] buffer, CancellationToken cancellationToken) =>
         await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+}
+#endif
+
+#if !NET5_0
+internal static partial class PolyfillExtensions
+{
+    public static async Task<string> ReadAsStringAsync(
+        this HttpContent httpContent,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return await httpContent.ReadAsStringAsync();
+    }
 }
 #endif

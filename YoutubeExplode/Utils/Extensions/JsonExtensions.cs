@@ -37,6 +37,11 @@ namespace YoutubeExplode.Utils.Extensions
                 ? result
                 : null;
 
+        public static JsonElement.ArrayEnumerator EnumerateArrayOrEmpty(this JsonElement element) =>
+            element.ValueKind == JsonValueKind.Array
+                ? element.EnumerateArray()
+                : default;
+
         public static string Flatten(this JsonElement element) => string.Concat(
             element
             .GetPropertyOrNull("runs")?

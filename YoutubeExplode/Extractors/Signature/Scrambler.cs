@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace YoutubeExplode.Extraction.Responses.Signature
+namespace YoutubeExplode.Extractors.Signature
 {
-    internal class Scrambler
+    internal partial class Scrambler
     {
         private IReadOnlyList<IScramblerOperation> Operations { get; }
 
@@ -12,5 +13,10 @@ namespace YoutubeExplode.Extraction.Responses.Signature
 
         public string Unscramble(string input) =>
             Operations.Aggregate(input, (acc, op) => op.Unscramble(acc));
+    }
+
+    internal partial class Scrambler
+    {
+        public static Scrambler Null { get; } = new(Array.Empty<IScramblerOperation>());
     }
 }

@@ -61,7 +61,8 @@ namespace YoutubeExplode.Utils
             _currentStream = null;
         }
 
-        private async ValueTask<Stream> ResolveCurrentStreamAsync(CancellationToken cancellationToken = default)
+        private async ValueTask<Stream> ResolveCurrentStreamAsync(
+            CancellationToken cancellationToken = default)
         {
             if (_currentStream is not null)
                 return _currentStream;
@@ -77,7 +78,7 @@ namespace YoutubeExplode.Utils
             return _currentStream = stream;
         }
 
-        public async ValueTask PrepareAsync(CancellationToken cancellationToken = default) =>
+        public async ValueTask PreloadAsync(CancellationToken cancellationToken = default) =>
             await ResolveCurrentStreamAsync(cancellationToken);
 
         public override async Task<int> ReadAsync(

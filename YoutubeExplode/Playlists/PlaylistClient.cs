@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Extraction;
+using YoutubeExplode.Extractors;
 
 namespace YoutubeExplode.Playlists
 {
@@ -33,7 +33,7 @@ namespace YoutubeExplode.Playlists
             PlaylistId playlistId,
             CancellationToken cancellationToken = default)
         {
-            var response = await PlaylistResponse.GetAsync(_httpClient, playlistId);
+            var response = await PlaylistExtractor.GetAsync(_httpClient, playlistId);
 
             var thumbnails = response
                 .GetPlaylistVideos()
@@ -62,7 +62,7 @@ namespace YoutubeExplode.Playlists
 
             while (true)
             {
-                var response = await PlaylistResponse.GetAsync(_httpClient, playlistId, continuationToken);
+                var response = await PlaylistExtractor.GetAsync(_httpClient, playlistId, continuationToken);
 
                 foreach (var video in response.GetPlaylistVideos())
                 {

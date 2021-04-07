@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extraction;
-using YoutubeExplode.Extraction.Responses;
-using YoutubeExplode.Extraction.Responses.Signature;
+using YoutubeExplode.Extractors;
+using YoutubeExplode.Extractors.Signature;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -30,11 +30,11 @@ namespace YoutubeExplode.Videos.Streams
             _youtubeController = new YoutubeController(httpClient);
         }
 
-        private async ValueTask<DashManifest> GetDashManifestAsync(
+        private async ValueTask<DashManifestExtractor> GetDashManifestAsync(
             string dashManifestUrl,
             IReadOnlyList<IScramblerOperation> cipherOperations)
         {
-            var signature = DashManifest.TryGetSignatureFromUrl(dashManifestUrl);
+            var signature = DashManifestExtractor.TryGetSignatureFromUrl(dashManifestUrl);
 
             if (!string.IsNullOrWhiteSpace(signature))
             {
@@ -42,7 +42,7 @@ namespace YoutubeExplode.Videos.Streams
                 dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", signature);
             }
 
-            return await DashManifest.GetAsync(_httpClient, dashManifestUrl);
+            return await DashManifestExtractor.GetAsync(_httpClient, dashManifestUrl);
         }
 
         /// <summary>
@@ -52,17 +52,69 @@ namespace YoutubeExplode.Videos.Streams
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
+            // Collect stream info extractors
+            var streamInfoExtractors = new List<IStreamInfoExtractor>();
+
             var watchPage = await _youtubeController.GetVideoWatchPageAsync(videoId, cancellationToken);
+
+            // Get signature scrambler
+            var playerSourceUrl = watchPage.TryGetPlayerSourceUrl();
+            var playerSource = !string.IsNullOrWhiteSpace(playerSourceUrl)
+                ? await _youtubeController.GetPlayerSourceAsync(playerSourceUrl, cancellationToken)
+                : null;
+
+            var scrambler = playerSource?.TryGetScrambler() ?? Scrambler.Null;
+
+            // Get player response
+            var playerResponse = watchPage.TryGetPlayerResponse();
+            if (playerResponse is null)
+            {
+                // We can still try to get video info with a dummy signature timestamp,
+                // but it won't work on signature-protected videos.
+                var signatureTimestamp = playerSource?.TryGetSignatureTimestamp() ?? "";
+
+                var videoInfo = await _youtubeController.GetVideoInfoAsync(
+                    videoId,
+                    signatureTimestamp,
+                    cancellationToken
+                );
+
+                playerResponse =
+                    videoInfo.TryGetPlayerResponse() ??
+                    throw new YoutubeExplodeException("Could not extract player response.");
+
+                streamInfoExtractors.AddRange(videoInfo.GetStreams());
+            }
+
+            streamInfoExtractors.AddRange(playerResponse.GetStreams());
+
+            // Get DASH manifest
+            var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
+            if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+            {
+                var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+
+                if (!string.IsNullOrWhiteSpace(signature))
+                {
+                    var unscrambledSignature = scrambler.Unscramble(signature);
+                    dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
+                }
+
+                var dashManifest = await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+
+                streamInfoExtractors.AddRange(dashManifest.GetStreams());
+            }
+
         }
 
         /// <summary>
-        /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it's a live video stream).
+        /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
         /// </summary>
         public async ValueTask<string> GetHttpLiveStreamUrlAsync(
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfoResponse = await _youtubeController.GetVideoInfoResponseAsync(videoId, cancellationToken);
+            var videoInfoResponse = await _youtubeController.GetVideoInfoAsync(videoId, cancellationToken);
 
             var playerResponse =
                 videoInfoResponse.TryGetPlayerResponse() ??
@@ -73,7 +125,7 @@ namespace YoutubeExplode.Videos.Streams
 
             return
                 playerResponse.TryGetHlsManifestUrl() ??
-                throw new YoutubeExplodeException("Could not extract HLS URL (the video is likely not a live stream).");
+                throw new YoutubeExplodeException("Could not extract HLS URL (video is likely not a live stream).");
         }
 
         /// <summary>
@@ -100,7 +152,8 @@ namespace YoutubeExplode.Videos.Streams
                 segmentSize
             );
 
-            await stream.PrepareAsync(cancellationToken);
+            // Pre-resolve inner stream eagerly
+            await stream.PreloadAsync(cancellationToken);
 
             return stream;
         }

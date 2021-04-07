@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extraction;
+using YoutubeExplode.Extractors;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
@@ -32,7 +32,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfoResponse = await _youtubeController.GetVideoInfoResponseAsync(videoId, cancellationToken);
+            var videoInfoResponse = await _youtubeController.GetVideoInfoAsync(videoId, cancellationToken);
 
             var playerResponse =
                 videoInfoResponse.TryGetPlayerResponse() ??

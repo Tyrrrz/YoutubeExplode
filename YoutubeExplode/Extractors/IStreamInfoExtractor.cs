@@ -1,8 +1,8 @@
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal interface IStreamInfoResponse
+    internal interface IStreamInfoExtractor
     {
-        int? TryGetTag();
+        int? TryGetItag();
 
         string? TryGetUrl();
 

@@ -4,34 +4,34 @@ using System.Text.RegularExpressions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal class UrlEncodedStreamInfoResponse : IStreamInfoResponse
+    internal class UrlEncodedStreamInfoExtractor : IStreamInfoExtractor
     {
-        private readonly IReadOnlyDictionary<string, string> _root;
+        private readonly IReadOnlyDictionary<string, string> _content;
         private readonly Memo _memo = new();
 
-        public UrlEncodedStreamInfoResponse(IReadOnlyDictionary<string, string> root) =>
-            _root = root;
+        public UrlEncodedStreamInfoExtractor(IReadOnlyDictionary<string, string> content) =>
+            _content = content;
 
-        public int? TryGetTag() => _memo.Wrap(() =>
-            _root.GetValueOrDefault("itag")?.ParseIntOrNull()
+        public int? TryGetItag() => _memo.Wrap(() =>
+            _content.GetValueOrDefault("itag")?.ParseIntOrNull()
         );
 
         public string? TryGetUrl() => _memo.Wrap(()
-            => _root.GetValueOrDefault("url")
+            => _content.GetValueOrDefault("url")
         );
 
         public string? TryGetSignature() => _memo.Wrap(() =>
-            _root.GetValueOrDefault("s")
+            _content.GetValueOrDefault("s")
         );
 
         public string? TryGetSignatureParameter() => _memo.Wrap(() =>
-            _root.GetValueOrDefault("sp")
+            _content.GetValueOrDefault("sp")
         );
 
         public long? TryGetContentLength() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetValueOrDefault("clen")?
                 .ParseLongOrNull() ??
 
@@ -42,10 +42,10 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public long? TryGetBitrate() => _memo.Wrap(() =>
-            _root.GetValueOrDefault("bitrate")?.ParseLongOrNull()
+            _content.GetValueOrDefault("bitrate")?.ParseLongOrNull()
         );
 
-        private string? TryGetMimeType() => _memo.Wrap(() => _root.GetValueOrDefault("type"));
+        private string? TryGetMimeType() => _memo.Wrap(() => _content.GetValueOrDefault("type"));
 
         public string? TryGetContainer() => _memo.Wrap(() =>
             TryGetMimeType()?
@@ -76,11 +76,11 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public string? TryGetVideoQualityLabel() => _memo.Wrap(() =>
-            _root.GetValueOrDefault("quality_label")
+            _content.GetValueOrDefault("quality_label")
         );
 
         private string? TryGetVideoResolution() => _memo.Wrap(() =>
-            _root.GetValueOrDefault("size")
+            _content.GetValueOrDefault("size")
         );
 
         public int? TryGetVideoWidth() => _memo.Wrap(() =>
@@ -98,7 +98,7 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public int? TryGetFramerate() => _memo.Wrap(() =>
-            _root
+            _content
                 .GetValueOrDefault("fps")?
                 .ParseIntOrNull()
         );

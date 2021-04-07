@@ -6,24 +6,24 @@ using System.Text.Json;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal partial class PlaylistResponse
+    internal partial class PlaylistExtractor
     {
-        private readonly JsonElement _root;
+        private readonly JsonElement _content;
 
-        public PlaylistResponse(JsonElement root) => _root = root;
+        public PlaylistExtractor(JsonElement content) => _content = content;
 
-        public bool IsPlaylistAvailable() => _root
+        public bool IsPlaylistAvailable() => _content
             .GetPropertyOrNull("metadata") is not null;
 
-        public string? TryGetTitle() => _root
+        public string? TryGetTitle() => _content
             .GetPropertyOrNull("metadata")?
             .GetPropertyOrNull("playlistMetadataRenderer")?
             .GetPropertyOrNull("title")?
             .GetStringOrNull();
 
-        public string? TryGetAuthor() => _root
+        public string? TryGetAuthor() => _content
             .GetPropertyOrNull("sidebar")?
             .GetPropertyOrNull("playlistSidebarRenderer")?
             .GetPropertyOrNull("items")?
@@ -35,13 +35,13 @@ namespace YoutubeExplode.Extraction.Responses
             .GetPropertyOrNull("title")?
             .Flatten();
 
-        public string? TryGetDescription() => _root
+        public string? TryGetDescription() => _content
             .GetPropertyOrNull("metadata")?
             .GetPropertyOrNull("playlistMetadataRenderer")?
             .GetPropertyOrNull("description")?
             .GetStringOrNull();
 
-        public long? TryGetViewCount() => _root
+        public long? TryGetViewCount() => _content
             .GetPropertyOrNull("sidebar")?
             .GetPropertyOrNull("playlistSidebarRenderer")?
             .GetPropertyOrNull("items")?
@@ -67,7 +67,7 @@ namespace YoutubeExplode.Extraction.Responses
             .GetPropertyOrNull("token")?
             .GetStringOrNull();
 
-        public JsonElement? GetPlaylistVideosContent() =>_root
+        public JsonElement? GetPlaylistVideosContent() =>_content
             .GetPropertyOrNull("contents")?
             .GetPropertyOrNull("twoColumnBrowseResultsRenderer")?
             .GetPropertyOrNull("tabs")?
@@ -84,7 +84,7 @@ namespace YoutubeExplode.Extraction.Responses
             .EnumerateArray()
             .FirstOrDefault()
             .GetPropertyOrNull("playlistVideoListRenderer")?
-            .GetPropertyOrNull("contents") ?? _root
+            .GetPropertyOrNull("contents") ?? _content
             .GetPropertyOrNull("onResponseReceivedActions")?
             .EnumerateArray()
             .FirstOrDefault()
@@ -98,12 +98,12 @@ namespace YoutubeExplode.Extraction.Responses
                 .Select(j => new Video(j.GetProperty("playlistVideoRenderer")))
         );
 
-        public JsonElement? GetVideosContent() => _root
+        public JsonElement? GetVideosContent() => _content
             .GetPropertyOrNull("contents")?
             .GetPropertyOrNull("twoColumnSearchResultsRenderer")?
             .GetPropertyOrNull("primaryContents")?
             .GetPropertyOrNull("sectionListRenderer")?
-            .GetPropertyOrNull("contents") ?? _root
+            .GetPropertyOrNull("contents") ?? _content
             .GetPropertyOrNull("onResponseReceivedCommands")?
             .EnumerateArray()
             .FirstOrDefault()
@@ -122,26 +122,26 @@ namespace YoutubeExplode.Extraction.Responses
         );
     }
 
-    internal partial class PlaylistResponse
+    internal partial class PlaylistExtractor
     {
         public class Video
         {
-            private readonly JsonElement _root;
+            private readonly JsonElement _content;
             private static readonly string[] _timeFormats = { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" };
 
-            public Video(JsonElement root) => _root = root;
+            public Video(JsonElement root) => _content = root;
 
-            public string GetId() => _root
+            public string GetId() => _content
                 .GetProperty("videoId")
-                .GetString();
+                .GetString()!;
 
-            public string GetAuthor() => _root // Video from search results
+            public string GetAuthor() => _content // Video from search results
                 .GetPropertyOrNull("ownerText")?
-                .Flatten() ?? _root // Video from playlist
+                .Flatten() ?? _content // Video from playlist
                 .GetPropertyOrNull("shortBylineText")?
                 .Flatten() ?? "";
 
-            public string GetChannelId() => _root // Video from search results
+            public string GetChannelId() => _content // Video from search results
                 .GetPropertyOrNull("ownerText")?
                 .GetPropertyOrNull("runs")?
                 .EnumerateArray()
@@ -149,7 +149,7 @@ namespace YoutubeExplode.Extraction.Responses
                 .GetPropertyOrNull("navigationEndpoint")?
                 .GetPropertyOrNull("browseEndpoint")?
                 .GetPropertyOrNull("browseId")?
-                .GetStringOrNull() ?? _root // Video from playlist
+                .GetStringOrNull() ?? _content // Video from playlist
                 .GetPropertyOrNull("shortBylineText")?
                 .GetPropertyOrNull("runs")?
                 .EnumerateArray()
@@ -159,24 +159,24 @@ namespace YoutubeExplode.Extraction.Responses
                 .GetPropertyOrNull("browseId")?
                 .GetStringOrNull() ?? "";
 
-            public string GetTitle() => _root
+            public string GetTitle() => _content
                 .GetPropertyOrNull("title")?
                 .Flatten() ?? "";
 
             // Incomplete description
-            public string GetDescription() => _root
+            public string GetDescription() => _content
                 .GetPropertyOrNull("descriptionSnippet")?
                 .Flatten() ?? "";
 
             // Streams do not have duration
-            public TimeSpan GetDuration() => _root
+            public TimeSpan GetDuration() => _content
                 .GetPropertyOrNull("lengthText")?
                 .GetPropertyOrNull("simpleText")?
                 .GetStringOrNull()?
                 .Pipe(p => TimeSpan.TryParseExact(p, _timeFormats, CultureInfo.InvariantCulture, out var duration) ? duration : default) ?? default;
 
             // Streams and some paid videos do not have views
-            public long GetViewCount() => _root
+            public long GetViewCount() => _content
                 .GetPropertyOrNull("viewCountText")?
                 .GetPropertyOrNull("simpleText")?
                 .GetStringOrNull()?

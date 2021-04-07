@@ -4,21 +4,21 @@ using System.Xml.Linq;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extraction.Responses
+namespace YoutubeExplode.Extractors
 {
-    internal class DashStreamInfoResponse : IStreamInfoResponse
+    internal class DashStreamInfoExtractor : IStreamInfoExtractor
     {
-        private readonly XElement _root;
+        private readonly XElement _content;
         private readonly Memo _memo = new();
 
-        public DashStreamInfoResponse(XElement root) => _root = root;
+        public DashStreamInfoExtractor(XElement content) => _content = content;
 
-        public int? TryGetTag() => _memo.Wrap(() =>
-            (int?) _root.Attribute("id")
+        public int? TryGetItag() => _memo.Wrap(() =>
+            (int?) _content.Attribute("id")
         );
 
         public string? TryGetUrl() => _memo.Wrap(() =>
-            (string?) _root.Element("BaseURL")
+            (string?) _content.Element("BaseURL")
         );
 
         // DASH streams don't have signatures
@@ -28,7 +28,7 @@ namespace YoutubeExplode.Extraction.Responses
         public string? TryGetSignatureParameter() => null;
 
         public long? TryGetContentLength() => _memo.Wrap(() =>
-            (long?) _root.Attribute("contentLength") ??
+            (long?) _content.Attribute("contentLength") ??
 
             TryGetUrl()?
                 .Pipe(s => Regex.Match(s, @"[/\?]clen[/=](\d+)").Groups[1].Value)
@@ -37,7 +37,7 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         public long? TryGetBitrate() => _memo.Wrap(() =>
-            (long?) _root.Attribute("bandwidth")
+            (long?) _content.Attribute("bandwidth")
         );
 
         public string? TryGetContainer() => _memo.Wrap(() =>
@@ -47,33 +47,33 @@ namespace YoutubeExplode.Extraction.Responses
         );
 
         private bool IsAudioOnly() => _memo.Wrap(() =>
-            _root.Element("AudioChannelConfiguration") is not null
+            _content.Element("AudioChannelConfiguration") is not null
         );
 
         public string? TryGetAudioCodec() => _memo.Wrap(() =>
             IsAudioOnly()
-                ? (string?) _root.Attribute("codecs")
+                ? (string?) _content.Attribute("codecs")
                 : null
         );
 
         public string? TryGetVideoCodec() => _memo.Wrap(() =>
             IsAudioOnly()
                 ? null
-                : (string?) _root.Attribute("codecs")
+                : (string?) _content.Attribute("codecs")
         );
 
         public string? TryGetVideoQualityLabel() => null;
 
         public int? TryGetVideoWidth() => _memo.Wrap(() =>
-            (int?) _root.Attribute("width")
+            (int?) _content.Attribute("width")
         );
 
         public int? TryGetVideoHeight() => _memo.Wrap(() =>
-            (int?) _root.Attribute("height")
+            (int?) _content.Attribute("height")
         );
 
         public int? TryGetFramerate() => _memo.Wrap(() =>
-            (int?) _root.Attribute("frameRate")
+            (int?) _content.Attribute("frameRate")
         );
     }
 }
