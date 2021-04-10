@@ -98,7 +98,14 @@ namespace YoutubeExplode.Bridge
 
                 var watchPage = VideoWatchPageExtractor.TryCreate(raw);
                 if (watchPage is not null)
+                {
+                    if (!watchPage.IsVideoAvailable())
+                    {
+                        throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+                    }
+
                     return watchPage;
+                }
             }
 
             throw new YoutubeExplodeException(
@@ -124,7 +131,14 @@ namespace YoutubeExplode.Bridge
 
             var raw = await SendHttpRequestAsync(url, cancellationToken);
 
-            return VideoInfoExtractor.Create(raw);
+            var videoInfo = VideoInfoExtractor.Create(raw);
+
+            if (!videoInfo.IsVideoAvailable())
+            {
+                throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+            }
+
+            return videoInfo;
         }
 
         public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(

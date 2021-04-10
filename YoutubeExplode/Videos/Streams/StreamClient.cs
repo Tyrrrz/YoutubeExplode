@@ -168,44 +168,55 @@ namespace YoutubeExplode.Videos.Streams
             var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
             if (playerResponseFromWatchPage is not null)
             {
-                // todo: check
-
-                // Extract streams from watch page
-                await PopulateStreamInfosAsync(
-                    streamInfos,
-                    watchPage.GetStreams(),
-                    scrambler,
-                    cancellationToken
-                );
-
-                // Extract streams from player response
-                await PopulateStreamInfosAsync(
-                    streamInfos,
-                    playerResponseFromWatchPage.GetStreams(),
-                    scrambler,
-                    cancellationToken
-                );
-
-                // Extract stream from DASH manifest
-                var dashManifestUrl = playerResponseFromWatchPage.TryGetDashManifestUrl();
-                if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                var purchasePreviewVideoId = playerResponseFromWatchPage.TryGetPreviewVideoId();
+                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
                 {
-                    var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+                    throw new VideoRequiresPurchaseException(
+                        $"Video '{videoId}' requires purchase and cannot be played.",
+                        purchasePreviewVideoId
+                    );
+                }
 
-                    if (!string.IsNullOrWhiteSpace(signature))
-                    {
-                        var unscrambledSignature = scrambler.Unscramble(signature);
-                        dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
-                    }
-
-                    var dashManifest = await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-
+                if (playerResponseFromWatchPage.IsVideoPlayable())
+                {
+                    // Extract streams from watch page
                     await PopulateStreamInfosAsync(
                         streamInfos,
-                        dashManifest.GetStreams(),
+                        watchPage.GetStreams(),
                         scrambler,
                         cancellationToken
                     );
+
+                    // Extract streams from player response
+                    await PopulateStreamInfosAsync(
+                        streamInfos,
+                        playerResponseFromWatchPage.GetStreams(),
+                        scrambler,
+                        cancellationToken
+                    );
+
+                    // Extract stream from DASH manifest
+                    var dashManifestUrl = playerResponseFromWatchPage.TryGetDashManifestUrl();
+                    if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                    {
+                        var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+
+                        if (!string.IsNullOrWhiteSpace(signature))
+                        {
+                            var unscrambledSignature = scrambler.Unscramble(signature);
+                            dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
+                        }
+
+                        var dashManifest =
+                            await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+
+                        await PopulateStreamInfosAsync(
+                            streamInfos,
+                            dashManifest.GetStreams(),
+                            scrambler,
+                            cancellationToken
+                        );
+                    }
                 }
 
                 // If successfully retrieved streams, return
@@ -222,44 +233,60 @@ namespace YoutubeExplode.Videos.Streams
             var playerResponseFromVideoInfo = videoInfo.TryGetPlayerResponse();
             if (playerResponseFromVideoInfo is not null)
             {
-                // todo: check
-
-                // Extract streams from video info
-                await PopulateStreamInfosAsync(
-                    streamInfos,
-                    videoInfo.GetStreams(),
-                    scrambler,
-                    cancellationToken
-                );
-
-                // Extract streams from player response
-                await PopulateStreamInfosAsync(
-                    streamInfos,
-                    playerResponseFromVideoInfo.GetStreams(),
-                    scrambler,
-                    cancellationToken
-                );
-
-                // Extract stream from DASH manifest
-                var dashManifestUrl = playerResponseFromVideoInfo.TryGetDashManifestUrl();
-                if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                var purchasePreviewVideoId = playerResponseFromVideoInfo.TryGetPreviewVideoId();
+                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
                 {
-                    var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+                    throw new VideoRequiresPurchaseException(
+                        $"Video '{videoId}' requires purchase and cannot be played.",
+                        purchasePreviewVideoId
+                    );
+                }
 
-                    if (!string.IsNullOrWhiteSpace(signature))
-                    {
-                        var unscrambledSignature = scrambler.Unscramble(signature);
-                        dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
-                    }
-
-                    var dashManifest = await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-
+                if (playerResponseFromVideoInfo.IsVideoPlayable())
+                {
+                    // Extract streams from video info
                     await PopulateStreamInfosAsync(
                         streamInfos,
-                        dashManifest.GetStreams(),
+                        videoInfo.GetStreams(),
                         scrambler,
                         cancellationToken
                     );
+
+                    // Extract streams from player response
+                    await PopulateStreamInfosAsync(
+                        streamInfos,
+                        playerResponseFromVideoInfo.GetStreams(),
+                        scrambler,
+                        cancellationToken
+                    );
+
+                    // Extract stream from DASH manifest
+                    var dashManifestUrl = playerResponseFromVideoInfo.TryGetDashManifestUrl();
+                    if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                    {
+                        var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+
+                        if (!string.IsNullOrWhiteSpace(signature))
+                        {
+                            var unscrambledSignature = scrambler.Unscramble(signature);
+                            dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
+                        }
+
+                        var dashManifest =
+                            await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+
+                        await PopulateStreamInfosAsync(
+                            streamInfos,
+                            dashManifest.GetStreams(),
+                            scrambler,
+                            cancellationToken
+                        );
+                    }
+                }
+                else
+                {
+                    var errorMessage = playerResponseFromVideoInfo.TryGetVideoPlayabilityError() ?? "<reason unspecified>";
+                    throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
                 }
             }
         }
@@ -276,7 +303,7 @@ namespace YoutubeExplode.Videos.Streams
 
             if (!streamInfos.Any())
             {
-                throw VideoUnplayableException.Unplayable(videoId);
+                throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
             }
 
             return new StreamManifest(streamInfos);
@@ -296,7 +323,10 @@ namespace YoutubeExplode.Videos.Streams
                 throw new YoutubeExplodeException("Could not extract player response.");
 
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
+            {
+                var errorMessage = playerResponse.TryGetVideoPlayabilityError() ?? "<reason unspecified>";
+                throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
+            }
 
             var hlsUrl = playerResponse.TryGetHlsManifestUrl();
             if (string.IsNullOrWhiteSpace(hlsUrl))

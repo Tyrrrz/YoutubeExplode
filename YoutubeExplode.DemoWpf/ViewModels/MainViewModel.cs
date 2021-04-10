@@ -198,10 +198,10 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
                 Video = await _youtube.Videos.GetAsync(videoIdOrUrl);
                 Channel = await _youtube.Channels.GetAsync(Video.ChannelId);
-                MuxedStreamInfos = streamManifest.GetMuxed().ToArray();
-                AudioOnlyStreamInfos = streamManifest.GetAudioOnly().ToArray();
-                VideoOnlyStreamInfos = streamManifest.GetVideoOnly().ToArray();
-                ClosedCaptionTrackInfos = trackManifest.Tracks;
+                MuxedStreamInfos = streamManifest.GetMuxed().OrderByDescending(s => s.VideoQuality).ToArray();
+                AudioOnlyStreamInfos = streamManifest.GetAudioOnly().OrderByDescending(s => s.Bitrate).ToArray();
+                VideoOnlyStreamInfos = streamManifest.GetVideoOnly().OrderByDescending(s => s.VideoQuality).ToArray();
+                ClosedCaptionTrackInfos = trackManifest.Tracks.OrderBy(t => t.Language.Name).ToArray();
             }
             finally
             {
