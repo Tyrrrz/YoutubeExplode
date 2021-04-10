@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,7 +39,14 @@ namespace YoutubeExplode.Videos.Streams
         /// Gets the stream with the highest bitrate.
         /// Returns null if the sequence is empty.
         /// </summary>
-        public static IStreamInfo? WithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
+        public static IStreamInfo? TryGetWithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
             streamInfos.OrderByDescending(s => s.Bitrate).FirstOrDefault();
+
+        /// <summary>
+        /// Gets the stream with the highest bitrate.
+        /// </summary>
+        public static IStreamInfo GetWithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
+            streamInfos.TryGetWithHighestBitrate() ??
+            throw new InvalidOperationException("Input stream collection is empty.");
     }
 }

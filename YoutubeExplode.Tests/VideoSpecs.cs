@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.Ids;
 
@@ -21,21 +22,20 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_metadata_of_a_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=AI7ULzgf8RU";
             var youtube = new YoutubeClient();
 
             // Act
-            var video = await youtube.Videos.GetAsync(videoUrl);
+            var video = await youtube.Videos.GetAsync(VideoIds.ContainsDashManifest);
 
             // Assert
-            video.Id.Value.Should().Be("AI7ULzgf8RU");
-            video.Url.Should().Be(videoUrl);
+            video.Id.Value.Should().Be(VideoIds.ContainsDashManifest);
+            video.Url.Should().NotBeNullOrWhiteSpace();
             video.Title.Should().Be("Aka no Ha [Another] +HDHR");
             video.Author.Should().Be("Tyrrrz");
             video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
-            video.Duration.Should().BeCloseTo(new TimeSpan(00, 01, 48), 1000);
+            video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(108), 1000);
             video.Thumbnails.Should().NotBeEmpty();
             video.Keywords.Should().BeEquivalentTo("osu", "mouse", "rhythm game");
             video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
@@ -47,12 +47,11 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_metadata_of_a_private_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=pb_hHv3fByo";
             var youtube = new YoutubeClient();
 
             // Act & assert
             var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-                await youtube.Videos.GetAsync(videoUrl)
+                await youtube.Videos.GetAsync(VideoIds.Private)
             );
 
             _testOutput.WriteLine(ex.Message);
@@ -62,12 +61,11 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_metadata_of_a_non_existing_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=qld9w0b-1ao";
             var youtube = new YoutubeClient();
 
             // Act & assert
             var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-                await youtube.Videos.GetAsync(videoUrl)
+                await youtube.Videos.GetAsync(VideoIds.NonExisting)
             );
 
             _testOutput.WriteLine(ex.Message);
@@ -91,6 +89,21 @@ namespace YoutubeExplode.Tests
 
             // Assert
             video.Id.Value.Should().Be(videoId);
+        }
+
+        [Fact]
+        public async Task User_can_get_thumbnail_of_a_video_with_highest_resolution()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act
+            var video = await youtube.Videos.GetAsync(VideoIds.ContainsDashManifest);
+            var thumbnail = video.Thumbnails.WithHighestResolution();
+
+            // Assert
+            thumbnail.Should().NotBeNull();
+            thumbnail?.Url.Should().NotBeNullOrWhiteSpace();
         }
     }
 }

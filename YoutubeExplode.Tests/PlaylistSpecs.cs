@@ -4,6 +4,7 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
@@ -40,12 +41,11 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_metadata_of_a_private_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBr";
             var youtube = new YoutubeClient();
 
             // Act & assert
             var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
-                await youtube.Playlists.GetAsync(playlistUrl)
+                await youtube.Playlists.GetAsync(PlaylistIds.Private)
             );
 
             _testOutput.WriteLine(ex.Message);
@@ -55,23 +55,22 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_metadata_of_a_non_existing_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBx";
             var youtube = new YoutubeClient();
 
             // Act & assert
             var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
-                await youtube.Playlists.GetAsync(playlistUrl)
+                await youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
             );
 
             _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]
-        [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
-        [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
-        [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
-        [InlineData("PL601B2E69B03FAB9D")] // weird ID
-        [InlineData("PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs")] // very long videos
+        [InlineData(PlaylistIds.Normal)]
+        [InlineData(PlaylistIds.MusicMix)]
+        [InlineData(PlaylistIds.MusicAlbum)]
+        [InlineData(PlaylistIds.ContainsLongVideos)]
+        [InlineData(PlaylistIds.Weird)]
         public async Task User_can_get_metadata_of_any_available_playlist(string playlistId)
         {
             // Arrange
@@ -109,14 +108,13 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
-        [InlineData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk")] // large
-        [InlineData("OLAK5uy_mtOdjCW76nDvf5yOzgcAVMYpJ5gcW5uKU")] // large 2
-        [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
-        [InlineData("UUTMt7iMWa7jy0fNXIktwyLA")] // user uploads
-        [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
-        [InlineData("PL601B2E69B03FAB9D")] // weird ID
-        [InlineData("PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs")] // very long videos
+        [InlineData(PlaylistIds.Normal)]
+        [InlineData(PlaylistIds.Large)]
+        [InlineData(PlaylistIds.MusicMix)]
+        [InlineData(PlaylistIds.MusicAlbum)]
+        [InlineData(PlaylistIds.UserUploads)]
+        [InlineData(PlaylistIds.ContainsLongVideos)]
+        [InlineData(PlaylistIds.Weird)]
         public async Task User_can_get_videos_included_in_any_available_playlist(string playlistId)
         {
             // Arrange

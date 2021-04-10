@@ -72,29 +72,26 @@ Once you get the manifest, you can filter through the streams and choose the one
 
 ```csharp
 // Get highest quality muxed stream
-var streamInfo = streamManifest.GetMuxed().WithHighestVideoQuality();
+var streamInfo = streamManifest.GetMuxed().GetWithHighestVideoQuality();
 
 // ...or highest bitrate audio-only stream
-var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
+var streamInfo = streamManifest.GetAudioOnly().GetWithHighestBitrate();
 
 // ...or highest quality MP4 video-only stream
 var streamInfo = streamManifest
     .GetVideoOnly()
     .Where(s => s.Container == Container.Mp4)
-    .WithHighestVideoQuality()
+    .GetWithHighestVideoQuality()
 ```
 
 Finally, you can get the actual `Stream` object represented by the metadata:
 
 ```csharp
-if (streamInfo is not null)
-{
-    // Get the actual stream
-    var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+// Get the actual stream
+var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 
-    // Download the stream to file
-    await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
-}
+// Download the stream to a file
+await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
 While it may be tempting to just always use muxed streams, it's important to note that they are limited in quality.
@@ -143,28 +140,21 @@ var youtube = new YoutubeClient();
 var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("u_yIGGhubZs");
 
 // Select a closed caption track in English
-var trackInfo = trackManifest.TryGetByLanguage("en");
+var trackInfo = trackManifest.GetByLanguage("en");
 
-if (trackInfo is not null)
-{
-    // Get the actual closed caption track
-    var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
+// Get the actual closed caption track
+var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
-    // Get the caption displayed at 0:35
-    var caption = track.TryGetByTime(TimeSpan.FromSeconds(35));
-    var text = caption?.Text;
-}
+// Get the caption displayed at 0:35
+var caption = track.GetByTime(TimeSpan.FromSeconds(35));
+var text = caption.Text;
 ```
 
 You can also download closed caption tracks as SRT files:
 
 ```csharp
-var trackInfo = trackManifest.TryGetByLanguage("en");
-
-if (trackInfo is not null)
-{
-    await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
-}
+var trackInfo = trackManifest.GetByLanguage("en");
+await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
 ```
 
 ## Etymology
