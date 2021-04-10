@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using YoutubeExplode.Videos;
 
@@ -29,6 +30,7 @@ namespace YoutubeExplode.Common
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Thumbnail ({Resolution})";
     }
 

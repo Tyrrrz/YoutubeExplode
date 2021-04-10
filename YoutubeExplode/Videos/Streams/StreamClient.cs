@@ -369,7 +369,7 @@ namespace YoutubeExplode.Videos.Streams
             var stream = new SegmentedHttpStream(
                 _httpClient,
                 streamInfo.Url,
-                streamInfo.Size.TotalBytes,
+                streamInfo.Size.Bytes,
                 segmentSize
             );
 

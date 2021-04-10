@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 
@@ -93,6 +94,7 @@ namespace YoutubeExplode.Videos
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Video ({Title})";
     }
 }

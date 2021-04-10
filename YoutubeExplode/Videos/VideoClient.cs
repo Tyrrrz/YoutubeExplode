@@ -90,7 +90,7 @@ namespace YoutubeExplode.Videos
                     throw new YoutubeExplodeException("Could not extract thumbnail width.");
 
                 var thumbnailHeight =
-                    thumbnailExtractor.TryGetWidth() ??
+                    thumbnailExtractor.TryGetHeight() ??
                     throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
                 var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);

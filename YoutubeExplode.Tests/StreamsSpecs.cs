@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.Fixtures;
 using YoutubeExplode.Tests.Ids;
@@ -11,10 +12,14 @@ namespace YoutubeExplode.Tests
 {
     public class StreamsSpecs : IClassFixture<TempOutputFixture>
     {
+        private readonly ITestOutputHelper _testOutput;
         private readonly TempOutputFixture _tempOutputFixture;
 
-        public StreamsSpecs(TempOutputFixture tempOutputFixture) =>
+        public StreamsSpecs(ITestOutputHelper testOutput, TempOutputFixture tempOutputFixture)
+        {
+            _testOutput = testOutput;
             _tempOutputFixture = tempOutputFixture;
+        }
 
         [Theory]
         [InlineData(VideoIds.Normal)]
@@ -45,9 +50,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
+            var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
                 await youtube.Videos.Streams.GetManifestAsync(VideoIds.LiveStream)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
@@ -62,6 +69,8 @@ namespace YoutubeExplode.Tests
             );
 
             ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
@@ -71,9 +80,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
                 await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
@@ -83,9 +94,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
                 await youtube.Videos.Streams.GetManifestAsync(VideoIds.NonExisting)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]
@@ -140,7 +153,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             fileInfo.Exists.Should().BeTrue();
-            fileInfo.Length.Should().BeGreaterThan(0);
+            fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
         }
 
         [Fact]
@@ -163,9 +176,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
+            var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
                 await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
@@ -175,9 +190,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>
+            var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>
                 await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
     }
 }

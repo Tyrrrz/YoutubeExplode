@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YoutubeExplode.Common
 {
@@ -32,6 +33,7 @@ namespace YoutubeExplode.Common
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"{Width}x{Height}";
     }
 

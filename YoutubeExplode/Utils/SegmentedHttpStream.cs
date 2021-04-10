@@ -16,8 +16,8 @@ namespace YoutubeExplode.Utils
         private readonly string _url;
         private readonly long? _segmentSize;
 
-        private Stream? _currentStream;
-        private long _position;
+        private Stream? _segmentStream;
+        private long _actualPosition;
 
         [ExcludeFromCodeCoverage]
         public override bool CanRead => true;
@@ -30,22 +30,7 @@ namespace YoutubeExplode.Utils
 
         public override long Length { get; }
 
-        public override long Position
-        {
-            get => _position;
-            set
-            {
-                if (value < 0)
-                    throw new IOException("An attempt was made to move the position before the beginning of the stream.");
-
-                if (_position == value)
-                    return;
-
-                _position = value;
-
-                ResetCurrentStream();
-            }
-        }
+        public override long Position { get; set; }
 
         public SegmentedHttpStream(HttpClient httpClient, string url, long length, long? segmentSize)
         {
@@ -55,17 +40,17 @@ namespace YoutubeExplode.Utils
             _segmentSize = segmentSize;
         }
 
-        private void ResetCurrentStream()
+        private void ResetSegmentStream()
         {
-            _currentStream?.Dispose();
-            _currentStream = null;
+            _segmentStream?.Dispose();
+            _segmentStream = null;
         }
 
-        private async ValueTask<Stream> ResolveCurrentStreamAsync(
+        private async ValueTask<Stream> ResolveSegmentStreamAsync(
             CancellationToken cancellationToken = default)
         {
-            if (_currentStream is not null)
-                return _currentStream;
+            if (_segmentStream is not null)
+                return _segmentStream;
 
             var from = Position;
 
@@ -75,11 +60,11 @@ namespace YoutubeExplode.Utils
 
             var stream = await _httpClient.GetStreamAsync(_url, from, to, true, cancellationToken);
 
-            return _currentStream = stream;
+            return _segmentStream = stream;
         }
 
         public async ValueTask PreloadAsync(CancellationToken cancellationToken = default) =>
-            await ResolveCurrentStreamAsync(cancellationToken);
+            await ResolveSegmentStreamAsync(cancellationToken);
 
         public override async Task<int> ReadAsync(
             byte[] buffer,
@@ -87,18 +72,23 @@ namespace YoutubeExplode.Utils
             int count,
             CancellationToken cancellationToken)
         {
+            // Check if consumer changed position between reads
+            if (_actualPosition != Position)
+                ResetSegmentStream();
+
+            // Check if finished reading
             if (Position >= Length)
                 return 0;
 
-            var stream = await ResolveCurrentStreamAsync(cancellationToken);
+            var stream = await ResolveSegmentStreamAsync(cancellationToken);
 
             var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
-            _position += bytesRead;
+            Position = _actualPosition += bytesRead;
 
-            // Stream reached the end of the segment - reset and read again
+            // Stream reached the end of the current segment - reset and read again
             if (bytesRead == 0)
             {
-                ResetCurrentStream();
+                ResetSegmentStream();
                 return await ReadAsync(buffer, offset, count, cancellationToken);
             }
 
@@ -136,7 +126,7 @@ namespace YoutubeExplode.Utils
 
             if (disposing)
             {
-                ResetCurrentStream();
+                ResetSegmentStream();
             }
         }
     }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Videos.Streams
@@ -55,6 +56,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Muxed ({VideoQuality} | {Container})";
     }
 }

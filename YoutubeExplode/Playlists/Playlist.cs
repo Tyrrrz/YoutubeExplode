@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Playlists
@@ -65,6 +66,7 @@ namespace YoutubeExplode.Playlists
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Playlist ({Title})";
     }
 }

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YoutubeExplode.Common
 {
     /// <summary>
@@ -38,6 +40,7 @@ namespace YoutubeExplode.Common
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"{ViewCount:N0} views | {LikeCount:N0} likes | {DislikeCount:N0} dislikes";
     }
 }

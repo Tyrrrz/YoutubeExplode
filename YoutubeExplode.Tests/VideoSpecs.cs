@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.Ids;
 
@@ -9,6 +10,13 @@ namespace YoutubeExplode.Tests
 {
     public class VideoSpecs
     {
+        private readonly ITestOutputHelper _testOutput;
+
+        public VideoSpecs(ITestOutputHelper testOutput)
+        {
+            _testOutput = testOutput;
+        }
+
         [Fact]
         public async Task User_can_get_metadata_of_a_video()
         {
@@ -43,9 +51,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
                 await youtube.Videos.GetAsync(videoUrl)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
@@ -56,9 +66,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
                 await youtube.Videos.GetAsync(videoUrl)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]

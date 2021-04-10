@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YoutubeExplode.Channels
 {
     /// <summary>
@@ -36,6 +38,7 @@ namespace YoutubeExplode.Channels
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Channel ({Title})";
     }
 }

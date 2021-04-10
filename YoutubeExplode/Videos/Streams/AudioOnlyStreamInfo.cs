@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
@@ -38,6 +40,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Audio-only ({Container})";
     }
 }

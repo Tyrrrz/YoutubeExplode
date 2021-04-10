@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
@@ -31,6 +33,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"CC Track ({Language})";
     }
 }

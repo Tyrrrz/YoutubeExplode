@@ -127,12 +127,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetValueOrDefault("video_id")
         );
 
-        public bool IsLive() => _memo.Wrap(() =>
-            TryGetVideoDetails()?
-                .GetPropertyOrNull("isLive")?
-                .GetBoolean() ?? false
-        );
-
         private JsonElement? TryGetStreamingData() => _memo.Wrap(() =>
             _content.GetPropertyOrNull("streamingData")
         );

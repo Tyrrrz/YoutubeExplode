@@ -2,12 +2,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Tests
 {
     public class PlaylistSpecs
     {
+        private readonly ITestOutputHelper _testOutput;
+
+        public PlaylistSpecs(ITestOutputHelper testOutput)
+        {
+            _testOutput = testOutput;
+        }
+
         [Fact]
         public async Task User_can_get_metadata_of_a_playlist()
         {
@@ -36,9 +44,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
+            var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
                 await youtube.Playlists.GetAsync(playlistUrl)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
@@ -49,9 +59,11 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
+            var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
                 await youtube.Playlists.GetAsync(playlistUrl)
             );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]
