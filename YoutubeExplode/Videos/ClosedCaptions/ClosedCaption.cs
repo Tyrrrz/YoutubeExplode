@@ -44,14 +44,24 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <summary>
-        /// Gets the caption part displayed at the specified point in time, relative to the caption's offset.
+        /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.
         /// Returns null if not found.
         /// </summary>
         /// <remarks>
         /// Some captions may not have parts.
         /// </remarks>
-        public ClosedCaptionPart? TryGetPartByTime(TimeSpan offset) =>
-            Parts.FirstOrDefault(p => p.Offset >= offset);
+        public ClosedCaptionPart? TryGetPartByTime(TimeSpan time) =>
+            Parts.FirstOrDefault(p => p.Offset >= time);
+
+        /// <summary>
+        /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.
+        /// </summary>
+        /// <remarks>
+        /// Some captions may not have parts.
+        /// </remarks>
+        public ClosedCaptionPart GetPartByTime(TimeSpan time) =>
+            TryGetPartByTime(time) ??
+            throw new InvalidOperationException($"No closed caption part found at {time}.");
 
         /// <inheritdoc />
         public override string ToString() => Text;

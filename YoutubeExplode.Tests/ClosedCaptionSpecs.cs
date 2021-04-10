@@ -18,7 +18,7 @@ namespace YoutubeExplode.Tests
         [Theory]
         [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
-        public async Task User_can_get_available_closed_caption_tracks_of_a_video(string videoId)
+        public async Task User_can_get_the_list_of_available_closed_caption_tracks_on_a_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -33,7 +33,7 @@ namespace YoutubeExplode.Tests
         [Theory]
         [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
-        public async Task User_can_get_a_specific_closed_caption_track_of_a_video(string videoId)
+        public async Task User_can_get_a_specific_closed_caption_track_from_a_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -41,6 +41,7 @@ namespace YoutubeExplode.Tests
             // Act
             var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
             var trackInfo = manifest.Tracks.First();
+
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
             // Assert
@@ -48,7 +49,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_can_get_an_individual_closed_caption_that_appears_at_a_specific_time_in_a_track()
+        public async Task User_can_get_an_individual_closed_caption_that_appears_at_a_specific_time_on_a_video()
         {
             // Arrange
             const string videoUrl = "https://www.youtube.com/watch?v=YltHGKX80Y8";
@@ -56,22 +57,41 @@ namespace YoutubeExplode.Tests
 
             // Act
             var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
-            var trackInfo = manifest.TryGetByLanguage("en")!;
+            var trackInfo = manifest.GetByLanguage("en");
+
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
-            var caption = track.TryGetByTime(new TimeSpan(00, 10, 41))!;
-            var captionPart = caption.TryGetPartByTime(TimeSpan.FromSeconds(0.65))!;
+
+            var caption = track.GetByTime(TimeSpan.FromSeconds(641));
 
             // Assert
-            caption.Should().NotBeNull();
-            captionPart.Should().NotBeNull();
             caption.Text.Should().Be("know I worked really hard on not doing");
+        }
+
+        [Fact]
+        public async Task User_can_get_an_individual_closed_caption_part_that_appears_at_a_specific_time_on_a_video()
+        {
+            // Arrange
+            const string videoUrl = "https://www.youtube.com/watch?v=YltHGKX80Y8";
+            var youtube = new YoutubeClient();
+
+            // Act
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
+            var trackInfo = manifest.GetByLanguage("en");
+
+            var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
+
+            var captionPart = track
+                .GetByTime(TimeSpan.FromSeconds(641))
+                .GetPartByTime(TimeSpan.FromSeconds(0.65));
+
+            // Assert
             captionPart.Text.Should().Be(" hard");
         }
 
         [Theory]
         [InlineData("WOxr2dmLHLo")]
         [InlineData("YltHGKX80Y8")]
-        public async Task User_can_download_a_specific_closed_caption_track_of_a_video(string videoId)
+        public async Task User_can_download_a_specific_closed_caption_track_from_a_video(string videoId)
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();
@@ -80,10 +100,14 @@ namespace YoutubeExplode.Tests
             // Act
             var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
             var trackInfo = manifest.Tracks.First();
+
             await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath);
 
+            var fileInfo = new FileInfo(filePath);
+
             // Assert
-            File.Exists(filePath).Should().BeTrue();
+            fileInfo.Exists.Should().BeTrue();
+            fileInfo.Length.Should().BeGreaterThan(0);
         }
     }
 }

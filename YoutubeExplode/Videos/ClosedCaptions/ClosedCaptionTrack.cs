@@ -28,5 +28,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         /// </summary>
         public ClosedCaption? TryGetByTime(TimeSpan time) =>
             Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);
+
+        /// <summary>
+        /// Gets the caption displayed at the specified point in time.
+        /// </summary>
+        public ClosedCaption GetByTime(TimeSpan time) =>
+            TryGetByTime(time) ??
+            throw new InvalidOperationException($"No closed caption found at {time}.");
     }
 }

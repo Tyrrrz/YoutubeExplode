@@ -31,5 +31,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions
                 string.Equals(t.Language.Code, language, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase)
             );
+
+        /// <summary>
+        /// Gets the closed caption track in the specified language.
+        /// </summary>
+        public ClosedCaptionTrackInfo GetByLanguage(string language) =>
+            TryGetByLanguage(language) ??
+            throw new InvalidOperationException($"No closed caption track available for language '{language}'.");
     }
 }

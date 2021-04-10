@@ -114,16 +114,11 @@ namespace YoutubeExplode.Tests
                 var buffer = new byte[1024];
 
                 await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
-                await stream.ReadAsync(buffer);
-
-                var isBufferEmpty = buffer.Distinct().Count() <= 1;
+                var bytesRead = await stream.ReadAsync(buffer);
 
                 // Assert
-                isBufferEmpty.Should().BeFalse();
+                bytesRead.Should().BeGreaterThan(0);
             }
-
-            // Assert
-            manifest.Streams.Should().NotBeEmpty();
         }
 
         [Theory]
@@ -149,8 +144,11 @@ namespace YoutubeExplode.Tests
 
             await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 
+            var fileInfo = new FileInfo(filePath);
+
             // Assert
-            File.Exists(filePath).Should().BeTrue();
+            fileInfo.Exists.Should().BeTrue();
+            fileInfo.Length.Should().BeGreaterThan(0);
         }
 
         [Fact]
