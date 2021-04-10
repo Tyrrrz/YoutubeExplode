@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Bridge.Signature;
+using YoutubeExplode.Bridge.SignatureScrambling;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -53,7 +53,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .NullIfWhiteSpace();
         });
 
-        public Scrambler? TryGetScrambler() => _memo.Wrap(() =>
+        public SignatureScrambler? TryGetScrambler() => _memo.Wrap(() =>
         {
             var scramblerBody = TryGetScramblerBody();
             if (string.IsNullOrWhiteSpace(scramblerBody))
@@ -96,7 +96,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 }
             }
 
-            return new Scrambler(operations);
+            return new SignatureScrambler(operations);
         });
     }
 

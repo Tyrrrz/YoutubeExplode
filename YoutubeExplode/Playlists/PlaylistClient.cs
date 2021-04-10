@@ -13,11 +13,11 @@ namespace YoutubeExplode.Playlists
     /// </summary>
     public class PlaylistClient
     {
-        private readonly YoutubeController _youtubeController;
+        private readonly YoutubeController _controller;
 
-        internal PlaylistClient(YoutubeController youtubeController)
+        internal PlaylistClient(YoutubeController controller)
         {
-            _youtubeController = youtubeController;
+            _controller = controller;
         }
 
         /// <summary>

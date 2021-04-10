@@ -15,7 +15,7 @@ namespace YoutubeExplode.Videos
     /// </summary>
     public class VideoClient
     {
-        private readonly YoutubeController _youtubeController;
+        private readonly YoutubeController _controller;
 
         /// <summary>
         /// Queries related to media streams of YouTube videos.
@@ -32,7 +32,7 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public VideoClient(HttpClient httpClient)
         {
-            _youtubeController = new YoutubeController(httpClient);
+            _controller = new YoutubeController(httpClient);
 
             Streams = new StreamClient(httpClient);
             ClosedCaptions = new ClosedCaptionClient(httpClient);
@@ -45,7 +45,7 @@ namespace YoutubeExplode.Videos
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var watchPage = await _youtubeController.GetVideoWatchPageAsync(videoId, cancellationToken);
+            var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             var playerResponse =
                 watchPage.TryGetPlayerResponse() ??

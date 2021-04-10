@@ -15,14 +15,14 @@ namespace YoutubeExplode.Videos.ClosedCaptions
     /// </summary>
     public class ClosedCaptionClient
     {
-        private readonly YoutubeController _youtubeController;
+        private readonly YoutubeController _controller;
 
         /// <summary>
         /// Initializes an instance of <see cref="ClosedCaptionClient"/>.
         /// </summary>
         public ClosedCaptionClient(HttpClient httpClient)
         {
-            _youtubeController = new YoutubeController(httpClient);
+            _controller = new YoutubeController(httpClient);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfo = await _youtubeController.GetVideoInfoAsync(videoId, cancellationToken);
+            var videoInfo = await _controller.GetVideoInfoAsync(videoId, cancellationToken);
 
             var playerResponse =
                 videoInfo.TryGetPlayerResponse() ??
@@ -72,8 +72,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             ClosedCaptionTrackInfo trackInfo,
             CancellationToken cancellationToken = default)
         {
-            var trackExtractor =
-                await _youtubeController.GetClosedCaptionTrackAsync(trackInfo.Url, cancellationToken);
+            var trackExtractor = await _controller.GetClosedCaptionTrackAsync(trackInfo.Url, cancellationToken);
 
             var captions = new List<ClosedCaption>();
 

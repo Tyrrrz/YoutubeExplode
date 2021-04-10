@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YoutubeExplode.Bridge.Signature
+namespace YoutubeExplode.Bridge.SignatureScrambling
 {
-    internal partial class Scrambler
+    internal partial class SignatureScrambler
     {
         private IReadOnlyList<IScramblerOperation> Operations { get; }
 
-        public Scrambler(IReadOnlyList<IScramblerOperation> operations) =>
+        public SignatureScrambler(IReadOnlyList<IScramblerOperation> operations) =>
             Operations = operations;
 
         public string Unscramble(string input) =>
             Operations.Aggregate(input, (acc, op) => op.Unscramble(acc));
     }
 
-    internal partial class Scrambler
+    internal partial class SignatureScrambler
     {
-        public static Scrambler Null { get; } = new(Array.Empty<IScramblerOperation>());
+        public static SignatureScrambler Null { get; } = new(Array.Empty<IScramblerOperation>());
     }
 }

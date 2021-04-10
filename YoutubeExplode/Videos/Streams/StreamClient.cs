@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Bridge.Extractors;
-using YoutubeExplode.Bridge.Signature;
+using YoutubeExplode.Bridge.SignatureScrambling;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -23,7 +23,7 @@ namespace YoutubeExplode.Videos.Streams
     public class StreamClient
     {
         private readonly HttpClient _httpClient;
-        private readonly YoutubeController _youtubeController;
+        private readonly YoutubeController _controller;
 
         /// <summary>
         /// Initializes an instance of <see cref="StreamClient"/>.
@@ -31,13 +31,44 @@ namespace YoutubeExplode.Videos.Streams
         public StreamClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _youtubeController = new YoutubeController(httpClient);
+            _controller = new YoutubeController(httpClient);
+        }
+
+        private string UnscrambleStreamUrl(
+            SignatureScrambler signatureScrambler,
+            string streamUrl,
+            string? signature,
+            string? signatureParameter)
+        {
+            if (string.IsNullOrWhiteSpace(signature))
+                return streamUrl;
+
+            return Url.SetQueryParameter(
+                streamUrl,
+                signatureParameter ?? "signature",
+                signatureScrambler.Unscramble(signature)
+            );
+        }
+
+        private string UnscrambleDashManifestUrl(
+            SignatureScrambler signatureScrambler,
+            string dashManifestUrl)
+        {
+            var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+            if (string.IsNullOrWhiteSpace(signature))
+                return dashManifestUrl;
+
+            return Url.SetRouteParameter(
+                dashManifestUrl,
+                "signature",
+                signatureScrambler.Unscramble(signature)
+            );
         }
 
         private async ValueTask PopulateStreamInfosAsync(
             ICollection<IStreamInfo> streamInfos,
             IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
-            Scrambler scrambler,
+            SignatureScrambler signatureScrambler,
             CancellationToken cancellationToken = default)
         {
             foreach (var streamInfoExtractor in streamInfoExtractors)
@@ -46,21 +77,16 @@ namespace YoutubeExplode.Videos.Streams
                     streamInfoExtractor.TryGetItag() ??
                     throw new YoutubeExplodeException("Could not extract stream itag.");
 
-                var url =
+                var urlRaw =
                     streamInfoExtractor.TryGetUrl() ??
                     throw new YoutubeExplodeException("Could not extract stream URL.");
 
-                // Unscramble and apply signature
+                // Unscramble URL
                 var signature = streamInfoExtractor.TryGetSignature();
-                if (!string.IsNullOrWhiteSpace(signature))
-                {
-                    var signatureParameter = streamInfoExtractor.TryGetSignatureParameter() ?? "signature";
-                    var unscrambledSignature = scrambler.Unscramble(signature);
+                var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
+                var url = UnscrambleStreamUrl(signatureScrambler, urlRaw, signature, signatureParameter);
 
-                    url = Url.SetQueryParameter(url, signatureParameter, unscrambledSignature);
-                }
-
-                // Content length
+                // Get content length
                 var contentLength =
                     streamInfoExtractor.TryGetContentLength() ??
                     await _httpClient.TryGetContentLengthAsync(url, false, cancellationToken) ??
@@ -69,7 +95,6 @@ namespace YoutubeExplode.Videos.Streams
                 if (contentLength <= 0)
                     continue; // broken stream URL?
 
-                // Common metadata
                 var fileSize = new FileSize(contentLength);
 
                 var container =
@@ -88,12 +113,15 @@ namespace YoutubeExplode.Videos.Streams
                 {
                     var framerate = streamInfoExtractor.TryGetFramerate() ?? 24;
 
-                    var videoQuality =
-                        streamInfoExtractor.TryGetVideoQualityLabel()?.Pipe(s => VideoQuality.FromLabel(s, framerate)) ??
-                        VideoQuality.FromItag(itag, framerate);
+                    var videoQualityLabel = streamInfoExtractor.TryGetVideoQualityLabel();
+
+                    var videoQuality = !string.IsNullOrWhiteSpace(videoQualityLabel)
+                        ? VideoQuality.FromLabel(videoQualityLabel, framerate)
+                        : VideoQuality.FromItag(itag, framerate);
 
                     var videoWidth = streamInfoExtractor.TryGetVideoWidth();
                     var videoHeight = streamInfoExtractor.TryGetVideoHeight();
+
                     var videoResolution = videoWidth is not null && videoHeight is not null
                         ? new Resolution(videoWidth.Value, videoHeight.Value)
                         : videoQuality.GetDefaultVideoResolution();
@@ -155,15 +183,15 @@ namespace YoutubeExplode.Videos.Streams
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var watchPage = await _youtubeController.GetVideoWatchPageAsync(videoId, cancellationToken);
+            var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             // Try to get player source (failing is ok because there's a decent chance we won't need it)
             var playerSourceUrl = watchPage.TryGetPlayerSourceUrl();
             var playerSource = !string.IsNullOrWhiteSpace(playerSourceUrl)
-                ? await _youtubeController.GetPlayerSourceAsync(playerSourceUrl, cancellationToken)
+                ? await _controller.GetPlayerSourceAsync(playerSourceUrl, cancellationToken)
                 : null;
 
-            var scrambler = playerSource?.TryGetScrambler() ?? Scrambler.Null;
+            var signatureScrambler = playerSource?.TryGetScrambler() ?? SignatureScrambler.Null;
 
             var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
             if (playerResponseFromWatchPage is not null)
@@ -183,7 +211,7 @@ namespace YoutubeExplode.Videos.Streams
                     await PopulateStreamInfosAsync(
                         streamInfos,
                         watchPage.GetStreams(),
-                        scrambler,
+                        signatureScrambler,
                         cancellationToken
                     );
 
@@ -191,29 +219,21 @@ namespace YoutubeExplode.Videos.Streams
                     await PopulateStreamInfosAsync(
                         streamInfos,
                         playerResponseFromWatchPage.GetStreams(),
-                        scrambler,
+                        signatureScrambler,
                         cancellationToken
                     );
 
-                    // Extract stream from DASH manifest
-                    var dashManifestUrl = playerResponseFromWatchPage.TryGetDashManifestUrl();
-                    if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                    // Extract streams from DASH manifest
+                    var dashManifestUrlRaw = playerResponseFromWatchPage.TryGetDashManifestUrl();
+                    if (!string.IsNullOrWhiteSpace(dashManifestUrlRaw))
                     {
-                        var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
-
-                        if (!string.IsNullOrWhiteSpace(signature))
-                        {
-                            var unscrambledSignature = scrambler.Unscramble(signature);
-                            dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
-                        }
-
-                        var dashManifest =
-                            await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+                        var dashManifestUrl = UnscrambleDashManifestUrl(signatureScrambler, dashManifestUrlRaw);
+                        var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
 
                         await PopulateStreamInfosAsync(
                             streamInfos,
                             dashManifest.GetStreams(),
-                            scrambler,
+                            signatureScrambler,
                             cancellationToken
                         );
                     }
@@ -228,27 +248,18 @@ namespace YoutubeExplode.Videos.Streams
 
             // Try to get streams from video info
             var signatureTimestamp = playerSource?.TryGetSignatureTimestamp() ?? "";
-            var videoInfo = await _youtubeController.GetVideoInfoAsync(videoId, signatureTimestamp, cancellationToken);
+            var videoInfo = await _controller.GetVideoInfoAsync(videoId, signatureTimestamp, cancellationToken);
 
             var playerResponseFromVideoInfo = videoInfo.TryGetPlayerResponse();
             if (playerResponseFromVideoInfo is not null)
             {
-                var purchasePreviewVideoId = playerResponseFromVideoInfo.TryGetPreviewVideoId();
-                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
-                {
-                    throw new VideoRequiresPurchaseException(
-                        $"Video '{videoId}' requires purchase and cannot be played.",
-                        purchasePreviewVideoId
-                    );
-                }
-
                 if (playerResponseFromVideoInfo.IsVideoPlayable())
                 {
                     // Extract streams from video info
                     await PopulateStreamInfosAsync(
                         streamInfos,
                         videoInfo.GetStreams(),
-                        scrambler,
+                        signatureScrambler,
                         cancellationToken
                     );
 
@@ -256,39 +267,40 @@ namespace YoutubeExplode.Videos.Streams
                     await PopulateStreamInfosAsync(
                         streamInfos,
                         playerResponseFromVideoInfo.GetStreams(),
-                        scrambler,
+                        signatureScrambler,
                         cancellationToken
                     );
 
-                    // Extract stream from DASH manifest
-                    var dashManifestUrl = playerResponseFromVideoInfo.TryGetDashManifestUrl();
-                    if (!string.IsNullOrWhiteSpace(dashManifestUrl))
+                    // Extract streams from DASH manifest
+                    var dashManifestUrlRaw = playerResponseFromVideoInfo.TryGetDashManifestUrl();
+                    if (!string.IsNullOrWhiteSpace(dashManifestUrlRaw))
                     {
-                        var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
-
-                        if (!string.IsNullOrWhiteSpace(signature))
-                        {
-                            var unscrambledSignature = scrambler.Unscramble(signature);
-                            dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", unscrambledSignature);
-                        }
-
-                        var dashManifest =
-                            await _youtubeController.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+                        var dashManifestUrl = UnscrambleDashManifestUrl(signatureScrambler, dashManifestUrlRaw);
+                        var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
 
                         await PopulateStreamInfosAsync(
                             streamInfos,
                             dashManifest.GetStreams(),
-                            scrambler,
+                            signatureScrambler,
                             cancellationToken
                         );
+                    }
+
+                    // If successfully retrieved streams, return
+                    if (streamInfos.Any())
+                    {
+                        return;
                     }
                 }
                 else
                 {
-                    var errorMessage = playerResponseFromVideoInfo.TryGetVideoPlayabilityError() ?? "<reason unspecified>";
+                    var errorMessage = playerResponseFromVideoInfo.TryGetVideoPlayabilityError();
                     throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
                 }
             }
+
+            // Couldn't extract any streams
+            throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
         }
 
         /// <summary>
@@ -301,11 +313,6 @@ namespace YoutubeExplode.Videos.Streams
             var streamInfos = new List<IStreamInfo>();
             await PopulateStreamInfosAsync(streamInfos, videoId, cancellationToken);
 
-            if (!streamInfos.Any())
-            {
-                throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
-            }
-
             return new StreamManifest(streamInfos);
         }
 
@@ -316,7 +323,7 @@ namespace YoutubeExplode.Videos.Streams
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfo = await _youtubeController.GetVideoInfoAsync(videoId, cancellationToken);
+            var videoInfo = await _controller.GetVideoInfoAsync(videoId, cancellationToken);
 
             var playerResponse =
                 videoInfo.TryGetPlayerResponse() ??
@@ -324,7 +331,7 @@ namespace YoutubeExplode.Videos.Streams
 
             if (!playerResponse.IsVideoPlayable())
             {
-                var errorMessage = playerResponse.TryGetVideoPlayabilityError() ?? "<reason unspecified>";
+                var errorMessage = playerResponse.TryGetVideoPlayabilityError();
                 throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
             }
 
@@ -333,7 +340,7 @@ namespace YoutubeExplode.Videos.Streams
             {
                 throw new YoutubeExplodeException(
                     "Could not extract HTTP Live Stream manifest URL. " +
-                    "The video is likely not a live stream."
+                    $"Video '{videoId}' is likely not a live stream."
                 );
             }
 

@@ -13,14 +13,14 @@ namespace YoutubeExplode.Channels
     /// </summary>
     public class ChannelClient
     {
-        private readonly YoutubeController _youtubeController;
+        private readonly YoutubeController _controller;
 
         /// <summary>
         /// Initializes an instance of <see cref="ChannelClient"/>.
         /// </summary>
         public ChannelClient(HttpClient httpClient)
         {
-            _youtubeController = new YoutubeController(httpClient);
+            _controller = new YoutubeController(httpClient);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace YoutubeExplode.Channels
             ChannelId channelId,
             CancellationToken cancellationToken = default)
         {
-            var channelPage = await _youtubeController.GetChannelPageAsync(channelId, cancellationToken);
+            var channelPage = await _controller.GetChannelPageAsync(channelId, cancellationToken);
 
             var title =
                 channelPage.TryGetChannelTitle() ??
@@ -54,7 +54,7 @@ namespace YoutubeExplode.Channels
             UserName userName,
             CancellationToken cancellationToken = default)
         {
-            var channelPage = await _youtubeController.GetChannelPageAsync(userName, cancellationToken);
+            var channelPage = await _controller.GetChannelPageAsync(userName, cancellationToken);
 
             var channelId =
                 channelPage.TryGetChannelId() ??
@@ -85,7 +85,7 @@ namespace YoutubeExplode.Channels
             // Replace 'UC' in channel ID with 'UU'
             var playlistId = "UU" + channelId.Value.Substring(2);
 
-            return new PlaylistClient(_youtubeController).GetVideosAsync(playlistId, cancellationToken);
+            return new PlaylistClient(_controller).GetVideosAsync(playlistId, cancellationToken);
         }
     }
 }
