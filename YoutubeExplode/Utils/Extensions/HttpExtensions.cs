@@ -14,7 +14,11 @@ namespace YoutubeExplode.Utils.Extensions
             CancellationToken cancellationToken = default)
         {
             using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
-            return await httpClient.SendAsync(request, cancellationToken);
+            return await httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken
+            );
         }
 
         public static async ValueTask<string> GetStringAsync(
@@ -23,12 +27,16 @@ namespace YoutubeExplode.Utils.Extensions
             bool ensureSuccess = true,
             CancellationToken cancellationToken = default)
         {
-            using var response = await httpClient.GetAsync(requestUri, cancellationToken);
+            using var response = await httpClient.GetAsync(
+                requestUri,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken
+            );
 
             if (ensureSuccess)
                 response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync(cancellationToken);
         }
 
         public static async ValueTask<Stream> GetStreamAsync(
@@ -42,12 +50,16 @@ namespace YoutubeExplode.Utils.Extensions
             using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             request.Headers.Range = new RangeHeaderValue(from, to);
 
-            var response = await httpClient.SendAsync(request, cancellationToken);
+            var response = await httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken
+            );
 
             if (ensureSuccess)
                 response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStreamAsync();
+            return await response.Content.ReadAsStreamAsync(cancellationToken);
         }
 
         public static async ValueTask<long?> TryGetContentLengthAsync(

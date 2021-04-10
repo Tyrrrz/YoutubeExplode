@@ -44,8 +44,6 @@ namespace System.Collections.Generic
             this IReadOnlyDictionary<TKey, TValue> dic,
             TKey key) =>
             dic.TryGetValue(key!, out var result) ? result! : default!;
-
-        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source) => new(source);
     }
 }
 
@@ -59,6 +57,14 @@ internal static partial class PolyfillExtensions
 #if !NET5_0
 internal static partial class PolyfillExtensions
 {
+    public static async Task<Stream> ReadAsStreamAsync(
+        this HttpContent httpContent,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return await httpContent.ReadAsStreamAsync();
+    }
+
     public static async Task<string> ReadAsStringAsync(
         this HttpContent httpContent,
         CancellationToken cancellationToken)
