@@ -3,7 +3,7 @@ using System;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Part of a closed caption.
+    /// Individual closed caption part contained within a track.
     /// </summary>
     public class ClosedCaptionPart
     {
@@ -13,7 +13,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public string Text { get; }
 
         /// <summary>
-        /// Time at which the caption part is displayed (relative to the caption's own offset).
+        /// Time at which the caption part starts being displayed (relative to the caption's own offset).
         /// </summary>
         public TimeSpan Offset { get; }
 

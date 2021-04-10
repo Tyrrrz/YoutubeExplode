@@ -7,7 +7,7 @@ using YoutubeExplode.Videos;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// YouTube video metadata from playlists and search results.
+    /// Metadata associated with a YouTube video included in a playlist.
     /// </summary>
     public class PlaylistVideo
     {
@@ -42,17 +42,17 @@ namespace YoutubeExplode.Playlists
         public string Description { get; }
 
         /// <summary>
-        /// Duration of the video.
+        /// Video duration.
         /// </summary>
         public TimeSpan Duration { get; }
 
         /// <summary>
-        /// View count.
+        /// Video view count.
         /// </summary>
         public long ViewCount { get; }
 
         /// <summary>
-        /// Available thumbnails.
+        /// Available thumbnails for the video.
         /// </summary>
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 

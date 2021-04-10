@@ -5,12 +5,12 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// Encapsulates a valid YouTube video ID.
+    /// Represents a valid YouTube video ID.
     /// </summary>
     public readonly partial struct VideoId
     {
         /// <summary>
-        /// ID as a string.
+        /// Raw ID value.
         /// </summary>
         public string Value { get; }
 

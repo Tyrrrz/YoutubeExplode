@@ -9,7 +9,7 @@ using YoutubeExplode.Playlists;
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Queries related to YouTube channels.
+    /// Operations related to YouTube channels.
     /// </summary>
     public class ChannelClient
     {
@@ -76,7 +76,7 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Enumerates the videos uploaded by the specified channel.
+        /// Enumerates videos uploaded by the specified channel.
         /// </summary>
         public IAsyncEnumerable<PlaylistVideo> GetUploadsAsync(
             ChannelId channelId,

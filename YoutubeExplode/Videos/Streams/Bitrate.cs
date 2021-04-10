@@ -8,22 +8,22 @@ namespace YoutubeExplode.Videos.Streams
     public readonly partial struct Bitrate
     {
         /// <summary>
-        /// Bits per second.
+        /// Bitrate in bits per second.
         /// </summary>
         public long BitsPerSecond { get; }
 
         /// <summary>
-        /// Kilobits per second.
+        /// Bitrate in kilobits per second.
         /// </summary>
         public double KiloBitsPerSecond => BitsPerSecond / 1024.0;
 
         /// <summary>
-        /// Megabits per second.
+        /// Bitrate in megabits per second.
         /// </summary>
         public double MegaBitsPerSecond => KiloBitsPerSecond / 1024.0;
 
         /// <summary>
-        /// Gigabits per second
+        /// Bitrate in gigabits per second
         /// </summary>
         public double GigaBitsPerSecond => MegaBitsPerSecond / 1024.0;
 

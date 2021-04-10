@@ -3,22 +3,22 @@ using System;
 namespace YoutubeExplode.Common
 {
     /// <summary>
-    /// Image or video resolution.
+    /// Resolution of a video or an image.
     /// </summary>
     public readonly partial struct Resolution
     {
         /// <summary>
-        /// Viewport width.
+        /// Canvas width.
         /// </summary>
         public int Width { get; }
 
         /// <summary>
-        /// Viewport height.
+        /// Canvas height.
         /// </summary>
         public int Height { get; }
 
         /// <summary>
-        /// Viewport area (width multiplied by height).
+        /// Canvas area (width multiplied by height).
         /// </summary>
         public int Area => Width * Height;
 

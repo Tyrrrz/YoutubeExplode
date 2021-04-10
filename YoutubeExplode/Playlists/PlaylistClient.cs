@@ -9,7 +9,7 @@ using YoutubeExplode.Bridge.Extractors;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// Queries related to YouTube playlists.
+    /// Operations related to YouTube playlists.
     /// </summary>
     public class PlaylistClient
     {
@@ -39,7 +39,7 @@ namespace YoutubeExplode.Playlists
         }
 
         /// <summary>
-        /// Enumerates the videos included in the specified playlist.
+        /// Enumerates videos included in the specified playlist.
         /// </summary>
         public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
             PlaylistId playlistId,

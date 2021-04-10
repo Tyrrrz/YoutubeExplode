@@ -3,7 +3,7 @@ using System;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Encapsulates a human written language.
+    /// Language information.
     /// </summary>
     public readonly partial struct Language
     {
@@ -13,7 +13,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public string Code { get; }
 
         /// <summary>
-        /// Full English name of the language.
+        /// Full international name of the language.
         /// </summary>
         public string Name { get; }
 

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Search
 {
     /// <summary>
-    /// YouTube search queries.
+    /// Operations related to YouTube search.
     /// </summary>
     public class SearchClient
     {
@@ -23,19 +24,22 @@ namespace YoutubeExplode.Search
         /// <summary>
         /// Enumerates the videos returned by the specified search query.
         /// </summary>
-        /// <param name="searchQuery">The term to look for.</param>
-        /// <param name="startPage">Sets how many page should be skipped from the beginning of the search.</param>
-        /// <param name="pageCount">Limits how many page should be requested to complete the search.</param>
-        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(string searchQuery, int startPage, int pageCount)
+        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+            string searchQuery,
+            int startPage,
+            int pageCount,
+            CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Enumerates the videos returned by the specified search query.
+        /// Enumerates videos returned by the specified search query.
         /// </summary>
         // This needs to be an overload to maintain backwards compatibility
-        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(string searchQuery) =>
-            GetVideosAsync(searchQuery, 0, int.MaxValue);
+        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+            string searchQuery,
+            CancellationToken cancellationToken = default) =>
+            GetVideosAsync(searchQuery, 0, int.MaxValue, cancellationToken);
     }
 }

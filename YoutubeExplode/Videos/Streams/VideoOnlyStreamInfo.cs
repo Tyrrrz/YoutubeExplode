@@ -3,7 +3,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// YouTube media stream that only contains video.
+    /// Metadata associated with a video-only YouTube media stream.
     /// </summary>
     public class VideoOnlyStreamInfo : IVideoStreamInfo
     {

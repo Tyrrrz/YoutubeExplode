@@ -5,7 +5,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Text that gets displayed at specific time during video playback, as part of a <see cref="ClosedCaptionTrack"/>.
+    /// Individual closed caption contained within a track.
     /// </summary>
     public class ClosedCaption
     {
@@ -15,27 +15,31 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public string Text { get; }
 
         /// <summary>
-        /// Time at which the caption is displayed.
+        /// Time at which the caption starts being displayed.
         /// </summary>
         public TimeSpan Offset { get; }
 
         /// <summary>
-        /// Duration of the caption.
+        /// Caption duration.
         /// </summary>
         public TimeSpan Duration { get; }
 
         /// <summary>
-        /// Caption parts (usually individual words).
+        /// Caption parts (usually representing individual words).
         /// </summary>
         /// <remarks>
-        /// Some captions may not have parts.
+        /// May be empty because not all captions have parts.
         /// </remarks>
         public IReadOnlyList<ClosedCaptionPart> Parts { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="ClosedCaption"/>.
         /// </summary>
-        public ClosedCaption(string text, TimeSpan offset, TimeSpan duration, IReadOnlyList<ClosedCaptionPart> parts)
+        public ClosedCaption(
+            string text,
+            TimeSpan offset,
+            TimeSpan duration,
+            IReadOnlyList<ClosedCaptionPart> parts)
         {
             Text = text;
             Offset = offset;
@@ -47,18 +51,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.
         /// Returns null if not found.
         /// </summary>
-        /// <remarks>
-        /// Some captions may not have parts.
-        /// </remarks>
         public ClosedCaptionPart? TryGetPartByTime(TimeSpan time) =>
             Parts.FirstOrDefault(p => p.Offset >= time);
 
         /// <summary>
         /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.
         /// </summary>
-        /// <remarks>
-        /// Some captions may not have parts.
-        /// </remarks>
         public ClosedCaptionPart GetPartByTime(TimeSpan time) =>
             TryGetPartByTime(time) ??
             throw new InvalidOperationException($"No closed caption part found at {time}.");

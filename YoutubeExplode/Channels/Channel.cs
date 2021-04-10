@@ -1,7 +1,7 @@
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// YouTube channel metadata.
+    /// Metadata associated with a YouTube channel.
     /// </summary>
     public class Channel
     {
@@ -21,7 +21,7 @@ namespace YoutubeExplode.Channels
         public string Title { get; }
 
         /// <summary>
-        /// URL of the channel's logo image.
+        /// Channel logo image URL.
         /// </summary>
         public string LogoUrl { get; }
 

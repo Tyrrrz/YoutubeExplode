@@ -1,7 +1,7 @@
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// YouTube media stream that only contains audio.
+    /// Metadata associated with an audio-only YouTube media stream.
     /// </summary>
     public class AudioOnlyStreamInfo : IAudioStreamInfo
     {

@@ -5,7 +5,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// YouTube media stream that contains video.
+    /// Metadata associated with a YouTube media stream that contains video.
     /// </summary>
     public interface IVideoStreamInfo : IStreamInfo
     {
@@ -31,7 +31,7 @@ namespace YoutubeExplode.Videos.Streams
     public static class VideoStreamInfoExtensions
     {
         /// <summary>
-        /// Gets the video stream with the highest video quality.
+        /// Gets the video stream with the highest video quality (including framerate).
         /// Returns null if the sequence is empty.
         /// </summary>
         public static IVideoStreamInfo? WithHighestVideoQuality(this IEnumerable<IVideoStreamInfo> streamInfos) =>

@@ -5,12 +5,12 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// Encapsulates a valid YouTube playlist ID.
+    /// Represents a valid YouTube playlist ID.
     /// </summary>
     public readonly partial struct PlaylistId
     {
         /// <summary>
-        /// ID as a string.
+        /// Raw ID value.
         /// </summary>
         public string Value { get; }
 
@@ -100,7 +100,6 @@ namespace YoutubeExplode.Playlists
 
         /// <summary>
         /// Parses the specified string as a YouTube playlist ID or URL.
-        /// Throws an exception in case of failure.
         /// </summary>
         public static PlaylistId Parse(string playlistIdOrUrl) =>
             TryParse(playlistIdOrUrl) ??

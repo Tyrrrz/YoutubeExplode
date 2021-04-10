@@ -11,19 +11,19 @@ using YoutubeExplode.Videos.Streams;
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// Queries related to YouTube videos.
+    /// Operations related to YouTube videos.
     /// </summary>
     public class VideoClient
     {
         private readonly YoutubeController _controller;
 
         /// <summary>
-        /// Queries related to media streams of YouTube videos.
+        /// Operations related to media streams of YouTube videos.
         /// </summary>
         public StreamClient Streams { get; }
 
         /// <summary>
-        /// Queries related to closed captions of YouTube videos.
+        /// Operations related to closed captions of YouTube videos.
         /// </summary>
         public ClosedCaptionClient ClosedCaptions { get; }
 

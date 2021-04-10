@@ -5,12 +5,12 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Encapsulates a valid YouTube channel ID.
+    /// Represents a valid YouTube channel ID.
     /// </summary>
     public readonly partial struct ChannelId
     {
         /// <summary>
-        /// ID as a string.
+        /// Raw ID value.
         /// </summary>
         public string Value { get; }
 
@@ -67,7 +67,6 @@ namespace YoutubeExplode.Channels
 
         /// <summary>
         /// Parses the specified string as a YouTube channel ID or URL.
-        /// Throws an exception in case of failure.
         /// </summary>
         public static ChannelId Parse(string channelIdOrUrl) =>
             TryParse(channelIdOrUrl) ??

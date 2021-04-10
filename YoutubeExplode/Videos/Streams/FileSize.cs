@@ -10,22 +10,22 @@ namespace YoutubeExplode.Videos.Streams
     public readonly partial struct FileSize
     {
         /// <summary>
-        /// Total bytes.
+        /// Size in bytes.
         /// </summary>
         public long TotalBytes { get; }
 
         /// <summary>
-        /// Total kilobytes.
+        /// Size in kilobytes.
         /// </summary>
         public double TotalKiloBytes => TotalBytes / 1024.0;
 
         /// <summary>
-        /// Total megabytes.
+        /// Size in megabytes.
         /// </summary>
         public double TotalMegaBytes => TotalKiloBytes / 1024.0;
 
         /// <summary>
-        /// Total gigabytes.
+        /// Size in gigabytes.
         /// </summary>
         public double TotalGigaBytes => TotalMegaBytes / 1024.0;
 

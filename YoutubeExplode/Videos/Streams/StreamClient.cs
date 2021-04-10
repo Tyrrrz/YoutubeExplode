@@ -18,7 +18,7 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Queries related to media streams of YouTube videos.
+    /// Operations related to media streams of YouTube videos.
     /// </summary>
     public class StreamClient
     {
@@ -304,7 +304,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Gets the manifest that contains information about available streams in the specified video.
+        /// Gets the manifest containing information about available streams on the specified video.
         /// </summary>
         public async ValueTask<StreamManifest> GetManifestAsync(
             VideoId videoId,
@@ -348,7 +348,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Gets the actual stream which is identified by the specified metadata.
+        /// Gets the stream identified by the specified metadata.
         /// </summary>
         public async ValueTask<Stream> GetAsync(
             IStreamInfo streamInfo,
@@ -380,7 +380,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Copies the actual stream which is identified by the specified metadata to the destination stream.
+        /// Copies the stream identified by the specified metadata to the specified stream.
         /// </summary>
         public async ValueTask CopyToAsync(
             IStreamInfo streamInfo,
@@ -393,7 +393,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <summary>
-        /// Download the actual stream which is identified by the specified metadata to the destination file.
+        /// Downloads the stream identified by the specified metadata to the specified file.
         /// </summary>
         public async ValueTask DownloadAsync(
             IStreamInfo streamInfo,

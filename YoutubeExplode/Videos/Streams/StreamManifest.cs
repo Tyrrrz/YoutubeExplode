@@ -4,7 +4,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Contains information about available streams for a specific video.
+    /// Contains information about available media streams on a YouTube video.
     /// </summary>
     public class StreamManifest
     {

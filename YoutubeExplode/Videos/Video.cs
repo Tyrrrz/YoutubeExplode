@@ -6,7 +6,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// YouTube video metadata.
+    /// Metadata associated with a YouTube video.
     /// </summary>
     public class Video
     {
@@ -46,17 +46,17 @@ namespace YoutubeExplode.Videos
         public string Description { get; }
 
         /// <summary>
-        /// Duration of the video.
+        /// Video duration.
         /// </summary>
         public TimeSpan Duration { get; }
 
         /// <summary>
-        /// Available thumbnails for this video.
+        /// Available thumbnails for the video.
         /// </summary>
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Search keywords used for this video.
+        /// Available search keywords for the video.
         /// </summary>
         public IReadOnlyList<string> Keywords { get; }
 

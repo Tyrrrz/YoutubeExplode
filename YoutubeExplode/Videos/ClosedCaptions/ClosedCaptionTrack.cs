@@ -5,7 +5,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Track that contains closed captions in a specific language.
+    /// Contains closed captions in a specific language.
     /// </summary>
     public class ClosedCaptionTrack
     {

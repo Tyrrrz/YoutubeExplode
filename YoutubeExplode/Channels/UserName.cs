@@ -5,12 +5,12 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Encapsulates a valid YouTube user name.
+    /// Represents a valid YouTube user name.
     /// </summary>
     public readonly partial struct UserName
     {
         /// <summary>
-        /// User name as a string.
+        /// Raw user name value.
         /// </summary>
         public string Value { get; }
 
@@ -27,7 +27,7 @@ namespace YoutubeExplode.Channels
             if (string.IsNullOrWhiteSpace(userName))
                 return false;
 
-            // Usernames can't be longer than 20 characters
+            // User names can be up to 20 characters
             if (userName.Length > 20)
                 return false;
 
@@ -55,19 +55,18 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Attempts to parse the specified string as a YouTube username or URL.
+        /// Attempts to parse the specified string as a YouTube user name or URL.
         /// Returns null in case of failure.
         /// </summary>
         public static UserName? TryParse(string? userNameOrUrl) =>
             TryNormalize(userNameOrUrl)?.Pipe(name => new UserName(name));
 
         /// <summary>
-        /// Parses the specified string as a YouTube username.
-        /// Throws an exception in case of failure.
+        /// Parses the specified string as a YouTube user name.
         /// </summary>
         public static UserName Parse(string userNameOrUrl) =>
             TryParse(userNameOrUrl) ??
-            throw new ArgumentException($"Invalid YouTube username or URL '{userNameOrUrl}'.");
+            throw new ArgumentException($"Invalid YouTube user name or profile URL '{userNameOrUrl}'.");
 
         /// <summary>
         /// Converts string to user name.

@@ -11,12 +11,13 @@ namespace YoutubeExplode.Videos.Streams
     public readonly partial struct VideoQuality
     {
         /// <summary>
-        /// Quality label as seen on YouTube (e.g. 1080p or 720p60).
+        /// Quality label as seen on YouTube (e.g. 1080p, 720p60, etc).
         /// </summary>
         public string Label { get; }
 
         /// <summary>
-        /// Maximum height of the video stream.
+        /// Maximum allowed height of the video stream.
+        /// Actual height of the video stream may be smaller.
         /// </summary>
         public int MaxHeight { get; }
 

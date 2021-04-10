@@ -7,15 +7,15 @@ namespace YoutubeExplode.Utils.Extensions
     {
         public static async IAsyncEnumerable<T> TakeAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, int count)
         {
-            var current = 0;
+            var currentCount = 0;
 
             await foreach (var i in asyncEnumerable)
             {
-                if (current >= count)
+                if (currentCount >= count)
                     yield break;
 
                 yield return i;
-                current++;
+                currentCount++;
             }
         }
 

@@ -5,7 +5,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Contains information about available closed caption tracks for a specific video.
+    /// Contains information about available closed caption tracks on a YouTube video.
     /// </summary>
     public class ClosedCaptionManifest
     {
@@ -23,7 +23,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <summary>
-        /// Gets the closed caption track in the specified language.
+        /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).
         /// Returns null if not found.
         /// </summary>
         public ClosedCaptionTrackInfo? TryGetByLanguage(string language) =>
@@ -33,7 +33,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             );
 
         /// <summary>
-        /// Gets the closed caption track in the specified language.
+        /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).
         /// </summary>
         public ClosedCaptionTrackInfo GetByLanguage(string language) =>
             TryGetByLanguage(language) ??

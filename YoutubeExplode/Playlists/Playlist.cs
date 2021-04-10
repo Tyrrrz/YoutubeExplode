@@ -4,7 +4,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// YouTube playlist metadata.
+    /// Metadata associated with a YouTube playlist.
     /// </summary>
     public class Playlist
     {
@@ -35,20 +35,26 @@ namespace YoutubeExplode.Playlists
         public string Description { get; }
 
         /// <summary>
-        /// View count.
+        /// Playlist view count.
         /// </summary>
         public long ViewCount { get; }
 
         /// <summary>
         /// Available thumbnails for the playlist.
-        /// Can be null if the playlist is empty.
+        /// May be empty if the playlist is empty.
         /// </summary>
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Playlist"/>.
         /// </summary>
-        public Playlist(PlaylistId id, string title, string? author, string description, long viewCount, IReadOnlyList<Thumbnail> thumbnails)
+        public Playlist(
+            PlaylistId id,
+            string title,
+            string? author,
+            string description,
+            long viewCount,
+            IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;

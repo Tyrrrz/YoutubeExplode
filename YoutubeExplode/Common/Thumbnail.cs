@@ -9,12 +9,12 @@ namespace YoutubeExplode.Common
     public class Thumbnail
     {
         /// <summary>
-        /// URL of the thumbnail.
+        /// Thumbnail URL.
         /// </summary>
         public string Url { get; }
 
         /// <summary>
-        /// Resolution of the thumbnail.
+        /// Thumbnail resolution.
         /// </summary>
         public Resolution Resolution { get; }
 
@@ -37,7 +37,7 @@ namespace YoutubeExplode.Common
     public static class ThumbnailExtensions
     {
         /// <summary>
-        /// Gets the thumbnail with the highest resolution.
+        /// Gets the thumbnail with the highest resolution (by area).
         /// Returns null if the sequence is empty.
         /// </summary>
         public static Thumbnail? WithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>

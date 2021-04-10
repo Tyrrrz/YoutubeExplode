@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace YoutubeExplode.Utils
 {
+    // Helper utility used to cache the result of a function
     internal class Memo
     {
         private readonly Dictionary<string, object?> _cachedValues = new(StringComparer.Ordinal);
 
-        public T Wrap<T>(string key, Func<T> getValue)
+        private T Wrap<T>(string key, Func<T> getValue)
         {
             if (_cachedValues.TryGetValue(key, out var cachedValue) &&
                 cachedValue is T convertedCachedValue)

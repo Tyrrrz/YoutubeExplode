@@ -3,7 +3,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// YouTube media stream that contains both audio and video.
+    /// Metadata associated with a muxed (audio + video combined) YouTube media stream.
     /// </summary>
     public class MuxedStreamInfo : IAudioStreamInfo, IVideoStreamInfo
     {

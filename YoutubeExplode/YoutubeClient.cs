@@ -13,22 +13,22 @@ namespace YoutubeExplode
     public class YoutubeClient
     {
         /// <summary>
-        /// Queries related to YouTube videos.
+        /// Operations related to YouTube videos.
         /// </summary>
         public VideoClient Videos { get; }
 
         /// <summary>
-        /// Queries related to YouTube playlists.
+        /// Operations related to YouTube playlists.
         /// </summary>
         public PlaylistClient Playlists { get; }
 
         /// <summary>
-        /// Queries related to YouTube channels.
+        /// Operations related to YouTube channels.
         /// </summary>
         public ChannelClient Channels { get; }
 
         /// <summary>
-        /// YouTube search queries.
+        /// Operations related to YouTube search.
         /// </summary>
         public SearchClient Search { get; }
 
