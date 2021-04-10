@@ -14,16 +14,18 @@ namespace YoutubeExplode.Bridge.Extractors
 
         public PlayerResponseExtractor(JsonElement content) => _content = content;
 
+        private JsonElement? TryGetVideoPlayability() => _memo.Wrap(() =>
+            _content.GetPropertyOrNull("playabilityStatus")
+        );
+
         private string? TryGetVideoPlayabilityStatus() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("playabilityStatus")?
+            TryGetVideoPlayability()?
                 .GetPropertyOrNull("status")?
                 .GetStringOrNull()
         );
 
         public string? TryGetVideoPlayabilityError() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("playabilityStatus")?
+            TryGetVideoPlayability()?
                 .GetPropertyOrNull("reason")?
                 .GetStringOrNull()
         );
@@ -36,16 +38,18 @@ namespace YoutubeExplode.Bridge.Extractors
             string.Equals(TryGetVideoPlayabilityStatus(), "ok", StringComparison.OrdinalIgnoreCase)
         );
 
+        private JsonElement? TryGetVideoDetails() => _memo.Wrap(() =>
+            _content.GetPropertyOrNull("videoDetails")
+        );
+
         public string? TryGetVideoTitle() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("videoDetails")?
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("title")?
                 .GetStringOrNull()
         );
 
         public string? TryGetVideoAuthor() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("videoDetails")?
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("author")?
                 .GetStringOrNull()
         );
@@ -59,24 +63,32 @@ namespace YoutubeExplode.Bridge.Extractors
         );
 
         public string? TryGetVideoChannelId() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("videoDetails")?
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("channelId")?
                 .GetStringOrNull()
         );
 
         public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("videoDetails")?
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("lengthSeconds")?
                 .GetStringOrNull()?
                 .ParseDoubleOrNull()?
                 .Pipe(TimeSpan.FromSeconds)
         );
 
+        public IReadOnlyList<PlayerThumbnailExtractor> GetVideoThumbnails() => _memo.Wrap(() =>
+            TryGetVideoDetails()?
+                .GetPropertyOrNull("thumbnail")?
+                .GetPropertyOrNull("thumbnails")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => new PlayerThumbnailExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<PlayerThumbnailExtractor>()
+        );
+
         public IReadOnlyList<string> GetVideoKeywords() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("videoDetails")?
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("keywords")?
                 .EnumerateArrayOrEmpty()
                 .Select(j => j.GetStringOrNull())
@@ -87,30 +99,26 @@ namespace YoutubeExplode.Bridge.Extractors
         );
 
         public string? TryGetVideoDescription() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("videoDetails")?
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("shortDescription")?
                 .GetStringOrNull()
         );
 
         public long? TryGetVideoViewCount() => _memo.Wrap(() =>
-            _content
-                .GetProperty("videoDetails")
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("viewCount")?
                 .GetStringOrNull()?
                 .ParseLongOrNull()
         );
 
         public string? TryGetPreviewVideoId() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("playabilityStatus")?
+            TryGetVideoPlayability()?
                 .GetPropertyOrNull("errorScreen")?
                 .GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")?
                 .GetPropertyOrNull("trailerVideoId")?
                 .GetStringOrNull() ??
 
-            _content
-                .GetPropertyOrNull("playabilityStatus")?
+            TryGetVideoPlayability()?
                 .GetPropertyOrNull("errorScreen")?
                 .GetPropertyOrNull("ypcTrailerRenderer")?
                 .GetPropertyOrNull("playerVars")?
@@ -120,22 +128,23 @@ namespace YoutubeExplode.Bridge.Extractors
         );
 
         public bool IsLive() => _memo.Wrap(() =>
-            _content
-                .GetProperty("videoDetails")
+            TryGetVideoDetails()?
                 .GetPropertyOrNull("isLive")?
                 .GetBoolean() ?? false
         );
 
+        private JsonElement? TryGetStreamingData() => _memo.Wrap(() =>
+            _content.GetPropertyOrNull("streamingData")
+        );
+
         public string? TryGetDashManifestUrl() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("streamingData")?
+            TryGetStreamingData()?
                 .GetPropertyOrNull("dashManifestUrl")?
                 .GetStringOrNull()
         );
 
         public string? TryGetHlsManifestUrl() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("streamingData")?
+            TryGetStreamingData()?
                 .GetPropertyOrNull("hlsManifestUrl")?
                 .GetStringOrNull()
         );
@@ -144,8 +153,7 @@ namespace YoutubeExplode.Bridge.Extractors
         {
             var result = new List<IStreamInfoExtractor>();
 
-            var muxedStreams = _content
-                .GetPropertyOrNull("streamingData")?
+            var muxedStreams = TryGetStreamingData()?
                 .GetPropertyOrNull("formats")?
                 .EnumerateArrayOrEmpty()
                 .Select(j => new PlayerStreamInfoExtractor(j))
@@ -156,8 +164,7 @@ namespace YoutubeExplode.Bridge.Extractors
 
             // TODO: unknown codecs might be av01
             // https://github.com/ytdl-org/youtube-dl/blob/162bf9e10a4e6a08f5ed156a68054ef9b4d2b60e/youtube_dl/extractor/youtube.py#L1187-L1191
-            var adaptiveStreams = _content
-                .GetPropertyOrNull("streamingData")?
+            var adaptiveStreams = TryGetStreamingData()?
                 .GetPropertyOrNull("adaptiveFormats")?
                 .EnumerateArrayOrEmpty()
                 .Select(j => new PlayerStreamInfoExtractor(j))

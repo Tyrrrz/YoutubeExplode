@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Common
 {
     /// <summary>
     /// Thumbnail image.
     /// </summary>
-    public class Thumbnail
+    public partial class Thumbnail
     {
         /// <summary>
         /// Thumbnail URL.
@@ -29,6 +30,16 @@ namespace YoutubeExplode.Common
 
         /// <inheritdoc />
         public override string ToString() => $"Thumbnail ({Resolution})";
+    }
+
+    public partial class Thumbnail
+    {
+        internal static IReadOnlyList<Thumbnail> GetDefaultSet(VideoId videoId) => new[]
+        {
+            new Thumbnail($"https://img.youtube.com/vi/{videoId}/default.jpg", new Resolution(120, 90)),
+            new Thumbnail($"https://img.youtube.com/vi/{videoId}/mqdefault.jpg", new Resolution(320, 180)),
+            new Thumbnail($"https://img.youtube.com/vi/{videoId}/hqdefault.jpg", new Resolution(480, 360))
+        };
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Win32;
 using YoutubeExplode.Channels;
+using YoutubeExplode.Common;
 using YoutubeExplode.DemoWpf.ViewModels.Framework;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -59,6 +60,17 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             private set
             {
                 Set(ref _video, value);
+                RaisePropertyChanged(nameof(IsDataAvailable));
+            }
+        }
+
+        private Thumbnail? _thumbnail;
+        public Thumbnail? Thumbnail
+        {
+            get => _thumbnail;
+            private set
+            {
+                Set(ref _thumbnail, value);
                 RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
@@ -120,6 +132,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public bool IsDataAvailable =>
             Video is not null &&
+            Thumbnail is not null &&
             Channel is not null &&
             MuxedStreamInfos is not null &&
             AudioOnlyStreamInfos is not null &&
@@ -184,6 +197,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
                 // Reset data
                 Video = null;
+                Thumbnail = null;
                 Channel = null;
                 MuxedStreamInfos = null;
                 AudioOnlyStreamInfos = null;
@@ -197,6 +211,7 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoIdOrUrl);
 
                 Video = await _youtube.Videos.GetAsync(videoIdOrUrl);
+                Thumbnail = Video.Thumbnails.WithHighestResolution();
                 Channel = await _youtube.Channels.GetAsync(Video.ChannelId);
                 MuxedStreamInfos = streamManifest.GetMuxed().OrderByDescending(s => s.VideoQuality).ToArray();
                 AudioOnlyStreamInfos = streamManifest.GetAudioOnly().OrderByDescending(s => s.Bitrate).ToArray();

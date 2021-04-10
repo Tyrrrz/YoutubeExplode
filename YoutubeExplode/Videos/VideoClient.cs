@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,6 +75,33 @@ namespace YoutubeExplode.Videos
                 playerResponse.TryGetVideoDuration() ??
                 throw new YoutubeExplodeException("Could not extract video duration.");
 
+            var thumbnails = new List<Thumbnail>();
+
+            thumbnails.AddRange(Thumbnail.GetDefaultSet(videoId));
+
+            foreach (var thumbnailExtractor in playerResponse.GetVideoThumbnails())
+            {
+                var thumbnailUrl =
+                    thumbnailExtractor.TryGetUrl() ??
+                    throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+
+                var thumbnailWidth =
+                    thumbnailExtractor.TryGetWidth() ??
+                    throw new YoutubeExplodeException("Could not extract thumbnail width.");
+
+                var thumbnailHeight =
+                    thumbnailExtractor.TryGetWidth() ??
+                    throw new YoutubeExplodeException("Could not extract thumbnail height.");
+
+                var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+
+                var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
+
+                thumbnails.Add(thumbnail);
+            }
+
+            var keywords = playerResponse.GetVideoKeywords();
+
             var viewCount =
                 playerResponse.TryGetVideoViewCount() ??
                 throw new YoutubeExplodeException("Could not extract video view count.");
@@ -95,8 +122,8 @@ namespace YoutubeExplode.Videos
                 uploadDate,
                 description,
                 duration,
-                Array.Empty<Thumbnail>(), // todo
-                playerResponse.GetVideoKeywords(),
+                thumbnails,
+                keywords,
                 new Engagement(
                     viewCount,
                     likeCount,

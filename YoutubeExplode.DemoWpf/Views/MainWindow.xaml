@@ -73,7 +73,7 @@
             <StackPanel Orientation="Vertical">
                 <Grid HorizontalAlignment="Stretch" Background="Black">
                     <!--  Thumbnail  -->
-                    <Image Height="180" Source="{Binding Video.Thumbnails.MediumResUrl}" />
+                    <Image Height="180" Source="{Binding Thumbnail.Url}" />
 
                     <!--  Duration  -->
                     <TextBlock
