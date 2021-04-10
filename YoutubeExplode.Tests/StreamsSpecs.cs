@@ -5,6 +5,7 @@ using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.Fixtures;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
@@ -16,16 +17,15 @@ namespace YoutubeExplode.Tests
             _tempOutputFixture = tempOutputFixture;
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        [InlineData("-xNN-bJQ4vI")] // 360° video
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.Unlisted)]
+        [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsDashManifest)]
+        [InlineData(VideoIds.Omnidirectional)]
+        [InlineData(VideoIds.EmbedRestrictedByAuthor)]
+        [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
         public async Task User_can_get_the_list_of_available_streams_on_a_video(string videoId)
         {
             // Arrange
@@ -42,12 +42,11 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_the_list_of_available_streams_on_an_unplayable_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=5qap5aO4i9A"; // live stream
             var youtube = new YoutubeClient();
 
             // Act & assert
             await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
-                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.LiveStream)
             );
         }
 
@@ -55,25 +54,25 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_the_list_of_available_streams_on_a_paid_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=p3dDcKOFXQg";
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
-                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+            var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
             );
+
+            ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public async Task User_cannot_get_the_list_of_available_streams_on_a_private_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=pb_hHv3fByo";
             var youtube = new YoutubeClient();
 
             // Act & assert
             await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
             );
         }
 
@@ -81,26 +80,20 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_the_list_of_available_streams_on_a_non_existing_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=qld9w0b-1ao";
             var youtube = new YoutubeClient();
 
             // Act & assert
             await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-                await youtube.Videos.Streams.GetManifestAsync(videoUrl)
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.NonExisting)
             );
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        [InlineData("-xNN-bJQ4vI")] // 360° video
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsDashManifest)]
+        [InlineData(VideoIds.Omnidirectional)]
         public async Task User_can_get_a_specific_stream_from_a_video(string videoId)
         {
             // Arrange
@@ -122,16 +115,15 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        [InlineData("-xNN-bJQ4vI")] // 360° video
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.Unlisted)]
+        [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsDashManifest)]
+        [InlineData(VideoIds.Omnidirectional)]
+        [InlineData(VideoIds.EmbedRestrictedByAuthor)]
+        [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
         public async Task User_can_download_a_specific_stream_from_a_video(string videoId)
         {
             // Arrange
@@ -155,11 +147,10 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_HTTP_live_stream_URL_from_a_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=5qap5aO4i9A";
             var youtube = new YoutubeClient();
 
             // Act
-            var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(videoUrl);
+            var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.LiveStream);
 
             // Assert
             url.Should().NotBeNullOrWhiteSpace();
@@ -169,12 +160,11 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_HTTP_live_stream_URL_from_an_unplayable_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=p3dDcKOFXQg";
             var youtube = new YoutubeClient();
 
             // Act & assert
             await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
-                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(videoUrl)
+                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
             );
         }
 
@@ -182,12 +172,11 @@ namespace YoutubeExplode.Tests
         public async Task User_cannot_get_HTTP_live_stream_URL_from_a_non_live_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=9bZkp7q19f0";
             var youtube = new YoutubeClient();
 
             // Act & assert
             await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>
-                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(videoUrl)
+                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
             );
         }
     }

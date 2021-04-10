@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Tests.Fixtures;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
@@ -15,31 +16,27 @@ namespace YoutubeExplode.Tests
         public ClosedCaptionSpecs(TempOutputFixture tempOutputFixture) =>
             _tempOutputFixture = tempOutputFixture;
 
-        [Theory]
-        [InlineData("WOxr2dmLHLo")]
-        [InlineData("YltHGKX80Y8")]
-        public async Task User_can_get_the_list_of_available_closed_caption_tracks_on_a_video(string videoId)
+        [Fact]
+        public async Task User_can_get_the_list_of_available_closed_caption_tracks_on_a_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
 
             // Assert
             manifest.Tracks.Should().NotBeEmpty();
         }
 
-        [Theory]
-        [InlineData("WOxr2dmLHLo")]
-        [InlineData("YltHGKX80Y8")]
-        public async Task User_can_get_a_specific_closed_caption_track_from_a_video(string videoId)
+        [Fact]
+        public async Task User_can_get_a_specific_closed_caption_track_from_a_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
             var trackInfo = manifest.Tracks.First();
 
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -52,11 +49,10 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_an_individual_closed_caption_that_appears_at_a_specific_time_on_a_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=YltHGKX80Y8";
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
             var trackInfo = manifest.GetByLanguage("en");
 
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -71,11 +67,10 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_an_individual_closed_caption_part_that_appears_at_a_specific_time_on_a_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=YltHGKX80Y8";
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoUrl);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
             var trackInfo = manifest.GetByLanguage("en");
 
             var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -88,17 +83,15 @@ namespace YoutubeExplode.Tests
             captionPart.Text.Should().Be(" hard");
         }
 
-        [Theory]
-        [InlineData("WOxr2dmLHLo")]
-        [InlineData("YltHGKX80Y8")]
-        public async Task User_can_download_a_specific_closed_caption_track_from_a_video(string videoId)
+        [Fact]
+        public async Task User_can_download_a_specific_closed_caption_track_from_a_video()
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(videoId);
+            var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
             var trackInfo = manifest.Tracks.First();
 
             await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath);

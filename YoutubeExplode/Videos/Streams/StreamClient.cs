@@ -191,7 +191,7 @@ namespace YoutubeExplode.Videos.Streams
                 ? await _controller.GetPlayerSourceAsync(playerSourceUrl, cancellationToken)
                 : null;
 
-            var signatureScrambler = playerSource?.TryGetScrambler() ?? SignatureScrambler.Null;
+            var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
 
             var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
             if (playerResponseFromWatchPage is not null)

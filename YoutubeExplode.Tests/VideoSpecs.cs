@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
@@ -61,11 +62,13 @@ namespace YoutubeExplode.Tests
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age-restricted
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("5qap5aO4i9A")] // ongoing live stream
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.Unlisted)]
+        [InlineData(VideoIds.EmbedRestrictedByAuthor)]
+        [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+        [InlineData(VideoIds.RatingDisabled)]
         public async Task User_can_get_metadata_of_any_available_video(string videoId)
         {
             // Arrange

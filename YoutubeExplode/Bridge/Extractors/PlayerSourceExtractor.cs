@@ -53,7 +53,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .NullIfWhiteSpace();
         });
 
-        public SignatureScrambler? TryGetScrambler() => _memo.Wrap(() =>
+        public SignatureScrambler? TryGetSignatureScrambler() => _memo.Wrap(() =>
         {
             var scramblerBody = TryGetScramblerBody();
             if (string.IsNullOrWhiteSpace(scramblerBody))
