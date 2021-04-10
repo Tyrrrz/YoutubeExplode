@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YoutubeExplode.Extractors.Signature
+namespace YoutubeExplode.Bridge.Signature
 {
     internal partial class Scrambler
     {

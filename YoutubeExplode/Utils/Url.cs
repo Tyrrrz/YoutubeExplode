@@ -55,7 +55,7 @@ namespace YoutubeExplode.Utils
         {
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            var paramsEncoded = query.SubstringAfter("?").Split("&");
+            var paramsEncoded = query.Split("&");
 
             foreach (var paramEncoded in paramsEncoded)
             {

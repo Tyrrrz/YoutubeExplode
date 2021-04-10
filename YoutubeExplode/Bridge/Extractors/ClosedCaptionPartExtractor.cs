@@ -3,7 +3,7 @@ using System.Xml.Linq;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extractors
+namespace YoutubeExplode.Bridge.Extractors
 {
     internal class ClosedCaptionPartExtractor
     {
@@ -17,7 +17,8 @@ namespace YoutubeExplode.Extractors
         );
 
         public TimeSpan? TryGetOffset() => _memo.Wrap(() =>
-            ((double?) _content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds)
+            ((double?) _content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds) ??
+            ((double?) _content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds)
         );
     }
 }

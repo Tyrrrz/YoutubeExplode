@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Extractors;
+using YoutubeExplode.Bridge;
+using YoutubeExplode.Bridge.Extractors;
 
 namespace YoutubeExplode.Playlists
 {
@@ -33,65 +35,17 @@ namespace YoutubeExplode.Playlists
             PlaylistId playlistId,
             CancellationToken cancellationToken = default)
         {
-            var response = await PlaylistExtractor.GetAsync(_httpClient, playlistId);
-
-            var thumbnails = response
-                .GetPlaylistVideos()
-                .FirstOrDefault()?
-                .Thumbnails;
-
-            return new Playlist(
-                playlistId,
-                response.TryGetTitle() ?? "",
-                response.TryGetAuthor() ?? "",
-                response.TryGetDescription() ?? "",
-                response.TryGetViewCount() ?? 0,
-                thumbnails
-            );
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Enumerates the videos included in the specified playlist.
         /// </summary>
-        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
             PlaylistId playlistId,
             CancellationToken cancellationToken = default)
         {
-            var encounteredVideoIds = new HashSet<string>();
-            var continuationToken = "";
-
-            while (true)
-            {
-                var response = await PlaylistExtractor.GetAsync(_httpClient, playlistId, continuationToken);
-
-                foreach (var video in response.GetPlaylistVideos())
-                {
-                    var videoId = video.GetId();
-
-                    // Skip already encountered videos
-                    if (!encounteredVideoIds.Add(videoId))
-                        continue;
-
-                    // Skip deleted videos
-                    if (string.IsNullOrEmpty(video.GetChannelId()))
-                        continue;
-
-                    yield return new PlaylistVideo(
-                        videoId,
-                        video.GetTitle(),
-                        video.GetAuthor(),
-                        video.GetChannelId(),
-                        video.GetDescription(),
-                        video.GetDuration(),
-                        video.GetViewCount(),
-                        new ThumbnailSet(videoId)
-                    );
-                }
-
-                continuationToken = response.TryGetContinuationToken();
-                if (string.IsNullOrEmpty(continuationToken))
-                    break;
-            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace YoutubeExplode.Extractors.Signature
+namespace YoutubeExplode.Bridge.Signature
 {
     internal class SliceScramblerOperation : IScramblerOperation
     {

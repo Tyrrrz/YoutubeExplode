@@ -1,9 +1,10 @@
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extractors;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
@@ -44,19 +45,11 @@ namespace YoutubeExplode.Videos
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfoResponse = await _youtubeController.GetVideoInfoAsync(
-                videoId,
-                cancellationToken
-            );
+            var watchPage = await _youtubeController.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             var playerResponse =
-                videoInfoResponse.TryGetPlayerResponse() ??
+                watchPage.TryGetPlayerResponse() ??
                 throw new YoutubeExplodeException("Could not extract player response.");
-
-            var watchPage = await _youtubeController.GetVideoWatchPageAsync(
-                videoId,
-                cancellationToken
-            );
 
             var title =
                 playerResponse.TryGetVideoTitle() ??
@@ -102,7 +95,7 @@ namespace YoutubeExplode.Videos
                 uploadDate,
                 description,
                 duration,
-                new ThumbnailSet(videoId),
+                Array.Empty<Thumbnail>(), // todo
                 playerResponse.GetVideoKeywords(),
                 new Engagement(
                     viewCount,

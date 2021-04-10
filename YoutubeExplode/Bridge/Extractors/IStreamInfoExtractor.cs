@@ -1,4 +1,4 @@
-namespace YoutubeExplode.Extractors
+namespace YoutubeExplode.Bridge.Extractors
 {
     internal interface IStreamInfoExtractor
     {

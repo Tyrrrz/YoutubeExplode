@@ -1,4 +1,4 @@
-namespace YoutubeExplode.Extractors.Signature
+namespace YoutubeExplode.Bridge.Signature
 {
     internal interface IScramblerOperation
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using YoutubeExplode.Utils;
 
-namespace YoutubeExplode.Extractors
+namespace YoutubeExplode.Bridge.Extractors
 {
     internal partial class ClosedCaptionTrackExtractor
     {

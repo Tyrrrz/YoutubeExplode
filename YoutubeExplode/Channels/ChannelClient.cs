@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Extractors;
 using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Channels

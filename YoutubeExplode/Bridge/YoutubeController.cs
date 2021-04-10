@@ -2,12 +2,13 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge.Extractors;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Videos;
 
-namespace YoutubeExplode.Extractors
+namespace YoutubeExplode.Bridge
 {
     internal class YoutubeController
     {
@@ -39,10 +40,14 @@ namespace YoutubeExplode.Extractors
                 cancellationToken
             );
 
-            // Check for rate limiting
+            // Special case check for rate limiting errors
             if ((int) response.StatusCode == 429)
             {
-                throw RequestLimitExceededException.Create(response);
+                throw new RequestLimitExceededException(
+                    "Exceeded request limit. " +
+                    "Please try again in a few hours. " +
+                    "Alternatively, inject an instance of HttpClient that includes cookies for an authenticated user."
+                );
             }
 
             response.EnsureSuccessStatusCode();
@@ -65,7 +70,10 @@ namespace YoutubeExplode.Extractors
                     return channelPage;
             }
 
-            throw new YoutubeExplodeException("Channel page is broken. Try again in a few minutes.");
+            throw new YoutubeExplodeException(
+                "Channel page is broken. " +
+                "Please try again in a few minutes."
+            );
         }
 
         public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
@@ -93,7 +101,10 @@ namespace YoutubeExplode.Extractors
                     return watchPage;
             }
 
-            throw new YoutubeExplodeException("Video watch page is broken. Try again in a few minutes.");
+            throw new YoutubeExplodeException(
+                "Video watch page is broken. " +
+                "Please try again in a few minutes."
+            );
         }
 
         public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
@@ -121,7 +132,7 @@ namespace YoutubeExplode.Extractors
             CancellationToken cancellationToken = default) =>
             await GetVideoInfoAsync(videoId, "", cancellationToken);
 
-        public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackResponseAsync(
+        public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackAsync(
             string url,
             CancellationToken cancellationToken = default)
         {

@@ -22,6 +22,6 @@ namespace YoutubeExplode.Utils
             return value;
         }
 
-        public T Wrap<T>(Func<T> getValue) => Wrap("Auto_" + getValue.GetHashCode(), getValue);
+        public T Wrap<T>(Func<T> getValue) => Wrap("Auto_" + getValue.Method.GetHashCode(), getValue);
     }
 }

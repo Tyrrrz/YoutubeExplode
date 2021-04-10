@@ -27,7 +27,7 @@ namespace YoutubeExplode.Channels
             if (string.IsNullOrWhiteSpace(channelId))
                 return false;
 
-            // Channel IDs should start with these characters
+            // Channel IDs always start with 'UC'
             if (!channelId.StartsWith("UC", StringComparison.Ordinal))
                 return false;
 

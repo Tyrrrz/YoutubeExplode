@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Extractors.Signature;
+using YoutubeExplode.Bridge.Signature;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Extractors
+namespace YoutubeExplode.Bridge.Extractors
 {
     internal partial class PlayerSourceExtractor
     {

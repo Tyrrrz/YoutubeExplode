@@ -3,7 +3,7 @@ using System;
 namespace YoutubeExplode.Exceptions
 {
     /// <summary>
-    /// Parent class for domain exceptions thrown by <see cref="YoutubeExplode"/>.
+    /// Domain exception thrown by <see cref="YoutubeExplode"/>.
     /// </summary>
     public class YoutubeExplodeException : Exception
     {

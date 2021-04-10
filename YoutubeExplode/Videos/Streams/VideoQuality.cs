@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using YoutubeExplode.Common;
 using YoutubeExplode.Utils.Extensions;
 
@@ -47,7 +48,7 @@ namespace YoutubeExplode.Videos.Streams
         {
         }
 
-        internal Resolution GetDefaultResolution() => MaxHeight switch
+        internal Resolution GetDefaultVideoResolution() => MaxHeight switch
         {
             144 => new Resolution(256, 144),
             240 => new Resolution(426, 240),
@@ -82,8 +83,16 @@ namespace YoutubeExplode.Videos.Streams
 
         internal static VideoQuality FromLabel(string label, int framerateFallback)
         {
-            var maxHeight = label.SubstringUntil("p").ParseInt();
-            var framerate = label.SubstringAfter("p").NullIfWhiteSpace()?.ParseInt();
+            // Video quality labels can have the following formats:
+            // - 1080p (regular stream, regular fps)
+            // - 1080p60 (regular stream, high fps)
+            // - 1080s (360° stream, regular fps)
+            // - 1080s60 (360° stream, high fps)
+
+            var match = Regex.Match(label, @"^(\d+)\w+(\d+)?$");
+
+            var maxHeight = match.Groups[1].Value.ParseInt();
+            var framerate = match.Groups[2].Value.NullIfWhiteSpace()?.ParseIntOrNull();
 
             return new VideoQuality(
                 label,
@@ -92,9 +101,9 @@ namespace YoutubeExplode.Videos.Streams
             );
         }
 
-        internal static VideoQuality FromTag(int tag, int framerate)
+        internal static VideoQuality FromItag(int itag, int framerate)
         {
-            var maxHeight = tag switch
+            var maxHeight = itag switch
             {
                 5 => 144,
                 6 => 240,
@@ -180,7 +189,7 @@ namespace YoutubeExplode.Videos.Streams
                 335 => 1080,
                 336 => 1440,
                 337 => 2160,
-                _ => throw new ArgumentException($"Unrecognized tag '{tag}'.", nameof(tag))
+                _ => throw new ArgumentException($"Unrecognized itag '{itag}'.", nameof(itag))
             };
 
             return new VideoQuality(maxHeight, framerate);
