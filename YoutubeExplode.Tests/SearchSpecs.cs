@@ -13,24 +13,10 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetVideosAsync("undead corporation megalomania");
+            var videos = await youtube.Search.GetVideosAsync("billie eilish");
 
             // Assert
             videos.Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public async Task User_can_search_for_videos_and_retrieve_a_subset_of_results()
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
-
-            // Act
-            var videos = await youtube.Search.GetVideosAsync("billie eilish", 2, 1);
-
-            // Assert
-            videos.Should().NotBeEmpty();
-            videos.Should().HaveCountLessOrEqualTo(30);
         }
 
         [Fact]

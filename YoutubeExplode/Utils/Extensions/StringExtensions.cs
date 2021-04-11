@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace YoutubeExplode.Utils.Extensions
 {
@@ -32,7 +33,17 @@ namespace YoutubeExplode.Utils.Extensions
                 : s.Substring(index + sub.Length, s.Length - index - sub.Length);
         }
 
-        public static string StripNonDigit(this string s) => Regex.Replace(s, "\\D", "");
+        public static string StripNonDigit(this string s)
+        {
+            var buffer = new StringBuilder();
+
+            foreach (var c in s.Where(char.IsDigit))
+            {
+                buffer.Append(c);
+            }
+
+            return buffer.ToString();
+        }
 
         public static string Reverse(this string s)
         {
@@ -69,5 +80,12 @@ namespace YoutubeExplode.Utils.Extensions
                 out var result)
                 ? result
                 : null;
+
+        public static TimeSpan? ParseTimeSpanOrNull(this string s, string[] formats) =>
+            TimeSpan.TryParseExact(s, formats, DateTimeFormatInfo.InvariantInfo, out var result)
+                ? result
+                : null;
+
+        public static string ConcatToString<T>(this IEnumerable<T> source) => string.Concat(source);
     }
 }

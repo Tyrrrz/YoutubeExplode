@@ -201,8 +201,6 @@ namespace YoutubeExplode.Bridge
                     {
                         ["clientName"] = "WEB",
                         ["clientVersion"] = "2.20210408.08.00",
-                        ["browserName"] = "Chrome",
-                        ["browserVersion"] = "89.0.4389.114",
                         ["newVisitorCookie"] = true,
                         ["hl"] = "en",
                         ["gl"] = "US",
@@ -215,7 +213,7 @@ namespace YoutubeExplode.Bridge
                 }
             };
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, url)
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
                 Content = new JsonContent(payload)
             };

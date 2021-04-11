@@ -1,8 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using YoutubeExplode.Bridge;
+using YoutubeExplode.Common;
+using YoutubeExplode.Exceptions;
 using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Search
@@ -27,27 +29,85 @@ namespace YoutubeExplode.Search
         /// </summary>
         public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
             string searchQuery,
-            int startPage,
-            int pageCount,
-            CancellationToken cancellationToken = default)
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var continuationToken = "";
-            while (true)
+            var continuationToken = default(string?);
+
+            do
             {
+                // TODO: this requests only one page
                 var searchResults =
                     await _controller.GetSearchResultsAsync(searchQuery, continuationToken, cancellationToken);
-            }
 
-            yield break;
+                foreach (var videoExtractor in searchResults.GetVideos())
+                {
+                    var id =
+                        videoExtractor.TryGetVideoId() ??
+                        throw new YoutubeExplodeException("Could not extract video ID.");
+
+                    var title =
+                        videoExtractor.TryGetVideoTitle() ??
+                        throw new YoutubeExplodeException("Could not extract video title.");
+
+                    var author =
+                        videoExtractor.TryGetVideoAuthor() ??
+                        throw new YoutubeExplodeException("Could not extract video author.");
+
+                    var channelId =
+                        videoExtractor.TryGetVideoChannelId() ??
+                        throw new YoutubeExplodeException("Could not extract video channel ID.");
+
+                    var description = videoExtractor.TryGetVideoDescription() ?? "";
+
+                    var duration =
+                        videoExtractor.TryGetVideoDuration() ??
+                        throw new YoutubeExplodeException("Could not extract video duration.");
+
+                    var viewCount =
+                        videoExtractor.TryGetVideoViewCount() ??
+                        throw new YoutubeExplodeException("Could not extract video view count.");
+
+                    var thumbnails = new List<Thumbnail>();
+
+                    thumbnails.AddRange(Thumbnail.GetDefaultSet(id));
+
+                    foreach (var thumbnailExtractor in videoExtractor.GetVideoThumbnails())
+                    {
+                        var thumbnailUrl =
+                            thumbnailExtractor.TryGetUrl() ??
+                            throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+
+                        var thumbnailWidth =
+                            thumbnailExtractor.TryGetWidth() ??
+                            throw new YoutubeExplodeException("Could not extract thumbnail width.");
+
+                        var thumbnailHeight =
+                            thumbnailExtractor.TryGetHeight() ??
+                            throw new YoutubeExplodeException("Could not extract thumbnail height.");
+
+                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+
+                        var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
+
+                        thumbnails.Add(thumbnail);
+                    }
+
+                    var video = new PlaylistVideo(
+                        id,
+                        title,
+                        author,
+                        channelId,
+                        description,
+                        duration,
+                        viewCount,
+                        thumbnails
+                    );
+
+                    yield return video;
+                }
+
+                continuationToken = searchResults.TryGetContinuationToken();
+            } while (!string.IsNullOrWhiteSpace(continuationToken));
         }
-
-        /// <summary>
-        /// Enumerates videos returned by the specified search query.
-        /// </summary>
-        // This needs to be an overload to maintain backwards compatibility
-        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
-            string searchQuery,
-            CancellationToken cancellationToken = default) =>
-            GetVideosAsync(searchQuery, 0, int.MaxValue, cancellationToken);
     }
 }
