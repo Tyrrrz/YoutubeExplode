@@ -22,10 +22,6 @@ namespace YoutubeExplode.Bridge.Extractors
 
     internal partial class ClosedCaptionTrackExtractor
     {
-        public static ClosedCaptionTrackExtractor Create(string raw)
-        {
-            var content = Xml.Parse(raw);
-            return new ClosedCaptionTrackExtractor(content);
-        }
+        public static ClosedCaptionTrackExtractor Create(string raw) => new(Xml.Parse(raw));
     }
 }

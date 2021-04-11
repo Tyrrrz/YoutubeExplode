@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,17 +18,15 @@ namespace YoutubeExplode.Bridge
         public YoutubeController(HttpClient httpClient) => _httpClient = httpClient;
 
         private async ValueTask<string> SendHttpRequestAsync(
-            string url,
+            HttpRequestMessage request,
             CancellationToken cancellationToken = default)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
             // User-agent
             if (!request.Headers.Contains("User-Agent"))
             {
                 request.Headers.Add(
                     "User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
                 );
             }
 
@@ -53,6 +52,14 @@ namespace YoutubeExplode.Bridge
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync(cancellationToken);
+        }
+
+        private async ValueTask<string> SendHttpRequestAsync(
+            string url,
+            CancellationToken cancellationToken = default)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            return await SendHttpRequestAsync(request, cancellationToken);
         }
 
         private async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
@@ -90,7 +97,7 @@ namespace YoutubeExplode.Bridge
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
+            var url = $"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
 
             for (var retry = 0; retry <= 5; retry++)
             {
@@ -116,13 +123,13 @@ namespace YoutubeExplode.Bridge
 
         public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
             VideoId videoId,
-            string signatureTimestamp,
+            string? signatureTimestamp,
             CancellationToken cancellationToken = default)
         {
             var eurl = WebUtility.HtmlEncode($"https://youtube.googleapis.com/v/{videoId}");
 
             var url =
-                "https://youtube.com/get_video_info" +
+                "https://www.youtube.com/get_video_info" +
                 $"?video_id={videoId}" +
                 "&el=embedded" +
                 $"&sts={signatureTimestamp}" +
@@ -144,7 +151,7 @@ namespace YoutubeExplode.Bridge
         public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
             VideoId videoId,
             CancellationToken cancellationToken = default) =>
-            await GetVideoInfoAsync(videoId, "", cancellationToken);
+            await GetVideoInfoAsync(videoId, null, cancellationToken);
 
         public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackAsync(
             string url,
@@ -172,6 +179,49 @@ namespace YoutubeExplode.Bridge
         {
             var raw = await SendHttpRequestAsync(url, cancellationToken);
             return DashManifestExtractor.Create(raw);
+        }
+
+        public async ValueTask<SearchResultsExtractor> GetSearchResultsAsync(
+            string query,
+            string? continuationToken,
+            CancellationToken cancellationToken = default)
+        {
+            // API key appears to be static
+            const string key = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
+
+            var url = $"https://www.youtube.com/youtubei/v1/search?key={key}";
+
+            var payload = new Dictionary<string, object?>
+            {
+                ["query"] = query,
+                ["continuation"] = continuationToken,
+                ["context"] = new Dictionary<string, object?>
+                {
+                    ["client"] = new Dictionary<string, object?>
+                    {
+                        ["clientName"] = "WEB",
+                        ["clientVersion"] = "2.20210408.08.00",
+                        ["browserName"] = "Chrome",
+                        ["browserVersion"] = "89.0.4389.114",
+                        ["newVisitorCookie"] = true,
+                        ["hl"] = "en",
+                        ["gl"] = "US",
+                        ["utcOffsetMinutes"] = 0
+                    },
+                    ["user"] = new Dictionary<string, object?>
+                    {
+                        ["lockedSafetyMode"] = false
+                    }
+                }
+            };
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, url)
+            {
+                Content = new JsonContent(payload)
+            };
+
+            var raw = await SendHttpRequestAsync(request, cancellationToken);
+            return SearchResultsExtractor.Create(raw);
         }
     }
 }

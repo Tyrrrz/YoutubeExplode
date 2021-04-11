@@ -29,10 +29,6 @@ namespace YoutubeExplode.Bridge.Extractors
 
     internal partial class DashManifestExtractor
     {
-        public static DashManifestExtractor Create(string raw)
-        {
-            var content = Xml.Parse(raw);
-            return new DashManifestExtractor(content);
-        }
+        public static DashManifestExtractor Create(string raw) => new(Xml.Parse(raw));
     }
 }

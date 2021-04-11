@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
+using YoutubeExplode.Bridge;
 using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Search
@@ -11,26 +12,33 @@ namespace YoutubeExplode.Search
     /// </summary>
     public class SearchClient
     {
-        private readonly HttpClient _httpClient;
+        private readonly YoutubeController _controller;
 
         /// <summary>
         /// Initializes an instance of <see cref="SearchClient"/>.
         /// </summary>
         public SearchClient(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            _controller = new YoutubeController(httpClient);
         }
 
         /// <summary>
         /// Enumerates the videos returned by the specified search query.
         /// </summary>
-        public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
             string searchQuery,
             int startPage,
             int pageCount,
             CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var continuationToken = "";
+            while (true)
+            {
+                var searchResults =
+                    await _controller.GetSearchResultsAsync(searchQuery, continuationToken, cancellationToken);
+            }
+
+            yield break;
         }
 
         /// <summary>

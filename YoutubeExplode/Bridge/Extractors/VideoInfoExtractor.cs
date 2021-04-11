@@ -56,10 +56,6 @@ namespace YoutubeExplode.Bridge.Extractors
 
     internal partial class VideoInfoExtractor
     {
-        public static VideoInfoExtractor Create(string raw)
-        {
-            var content = Url.SplitQuery(raw);
-            return new VideoInfoExtractor(content);
-        }
+        public static VideoInfoExtractor Create(string raw) => new(Url.SplitQuery(raw));
     }
 }
