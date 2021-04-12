@@ -36,11 +36,6 @@ namespace YoutubeExplode.Playlists
         public string Description { get; }
 
         /// <summary>
-        /// Playlist view count.
-        /// </summary>
-        public long ViewCount { get; }
-
-        /// <summary>
         /// Available thumbnails for the playlist.
         /// May be empty if the playlist is empty.
         /// </summary>
@@ -54,14 +49,12 @@ namespace YoutubeExplode.Playlists
             string title,
             string? author,
             string description,
-            long viewCount,
             IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
             Description = description;
-            ViewCount = viewCount;
             Thumbnails = thumbnails;
         }
 

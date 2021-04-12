@@ -7,14 +7,14 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge.Extractors
 {
-    internal class SearchResultsVideoExtractor
+    internal class PlaylistVideoExtractor
     {
         private static readonly string[] DurationFormats = {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"};
 
         private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
-        public SearchResultsVideoExtractor(JsonElement content) => _content = content;
+        public PlaylistVideoExtractor(JsonElement content) => _content = content;
 
         public string? TryGetVideoId() => _memo.Wrap(() =>
             _content
@@ -31,28 +31,28 @@ namespace YoutubeExplode.Bridge.Extractors
             _content
                 .GetPropertyOrNull("title")?
                 .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString()
         );
 
-        private JsonElement? TryGetVideoAuthorDetails() => _memo.Wrap(() =>
+        private JsonElement? TryGetAuthorDetails() => _memo.Wrap(() =>
             _content
-                .GetPropertyOrNull("longBylineText")?
+                .GetPropertyOrNull("shortBylineText")?
                 .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .ElementAtOrNull(0)
         );
 
         public string? TryGetVideoAuthor() => _memo.Wrap(() =>
-            TryGetVideoAuthorDetails()?
+            TryGetAuthorDetails()?
                 .GetPropertyOrNull("text")?
                 .GetStringOrNull()
         );
 
         public string? TryGetVideoChannelId() => _memo.Wrap(() =>
-            TryGetVideoAuthorDetails()?
+            TryGetAuthorDetails()?
                 .GetPropertyOrNull("navigationEndpoint")?
                 .GetPropertyOrNull("browseEndpoint")?
                 .GetPropertyOrNull("browseId")?
@@ -60,6 +60,12 @@ namespace YoutubeExplode.Bridge.Extractors
         );
 
         public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>
+            _content
+                .GetPropertyOrNull("lengthSeconds")?
+                .GetStringOrNull()?
+                .ParseDoubleOrNull()?
+                .Pipe(TimeSpan.FromSeconds) ??
+
             _content
                 .GetPropertyOrNull("lengthText")?
                 .GetPropertyOrNull("simpleText")?
@@ -85,40 +91,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .ToArray() ??
 
             Array.Empty<ThumbnailExtractor>()
-        );
-
-        public string? TryGetVideoDescription() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("descriptionSnippet")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull() ??
-
-            _content
-                .GetPropertyOrNull("descriptionSnippet")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
-                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
-                .WhereNotNull()
-                .ConcatToString()
-        );
-
-        public long? TryGetVideoViewCount() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("viewCountText")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull()?
-                .StripNonDigit()
-                .ParseLongOrNull() ??
-
-            _content
-                .GetPropertyOrNull("viewCountText")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
-                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
-                .WhereNotNull()
-                .ConcatToString()
-                .StripNonDigit()
-                .ParseLongOrNull()
         );
     }
 }

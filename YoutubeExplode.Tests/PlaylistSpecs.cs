@@ -21,19 +21,17 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_metadata_of_a_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd";
             var youtube = new YoutubeClient();
 
             // Act
-            var playlist = await youtube.Playlists.GetAsync(playlistUrl);
+            var playlist = await youtube.Playlists.GetAsync(PlaylistIds.Normal);
 
             // Assert
-            playlist.Id.Value.Should().Be("PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd");
-            playlist.Url.Should().Be(playlistUrl);
-            playlist.Title.Should().Be("osu! Highlights");
-            playlist.Author.Should().Be("Tyrrrz");
-            playlist.Description.Should().Be("My best osu! plays");
-            playlist.ViewCount.Should().BeGreaterOrEqualTo(133);
+            playlist.Id.Value.Should().Be(PlaylistIds.Normal);
+            playlist.Url.Should().NotBeNullOrWhiteSpace();
+            playlist.Title.Should().Be("Analytics Academy - Digital Analytics Fundamentals");
+            playlist.Author.Should().Be("Google Analytics");
+            playlist.Description.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
             playlist.Thumbnails.Should().NotBeEmpty();
         }
 
@@ -87,29 +85,66 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_videos_included_in_a_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd";
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(playlistUrl);
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Normal);
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(19);
             videos.Select(v => v.Id.Value).Should().Contain(new[]
             {
-                "B6N8-_rBTh8",
-                "F1bvjgTckMc",
-                "kMBzljXOb9g",
-                "LsNPjFXIPT8",
-                "fXYPMPglYTs",
-                "AI7ULzgf8RU",
-                "Qzu-fTdjeFY"
+                "uPZSSdkGQhM",
+                "fi0w57kr_jY",
+                "xLJt5A-NeQI",
+                "EpDA3XaELqs",
+                "eyltEFyZ678",
+                "TW3gx4t4944",
+                "w9H_P2wAwSE",
+                "OyixJ7A9phg",
+                "dzwRzUEc_tA",
+                "vEpq3nYeZBc",
+                "4gYioQkIqKk",
+                "xyh8iG5mRIs",
+                "ORrYEEH_KPc",
+                "ii0T5JUO2BY",
+                "hgycbw6Beuc",
+                "Dz-zgq6OqTI",
+                "I1b4GT-GuEs",
+                "dN3gkBBffhs",
+                "8Kg-8ZjgLAQ",
+                "E9zfpKsw6f8",
+                "eBCw9sC5D40"
+            });
+        }
+
+        [Fact]
+        public async Task User_can_get_videos_included_in_a_large_playlist()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large);
+
+            // Assert
+            videos.Should().HaveCountGreaterOrEqualTo(1900);
+            videos.Select(v => v.Id.Value).Should().Contain(new[]
+            {
+                "RBumgq5yVrA",
+                "kN0iD0pI3o0",
+                "YqB8Dm65X18",
+                "jlvY1o6XKwA",
+                "-0kcet4aPpQ",
+                "RnGJ3KJri1g",
+                "x-IR7PtA7RA",
+                "N-8E9mHxDy0",
+                "5ly88Ju1N6A"
             });
         }
 
         [Theory]
         [InlineData(PlaylistIds.Normal)]
-        [InlineData(PlaylistIds.Large)]
         [InlineData(PlaylistIds.MusicMix)]
         [InlineData(PlaylistIds.MusicAlbum)]
         [InlineData(PlaylistIds.UserUploads)]
@@ -131,11 +166,10 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_a_subset_of_videos_included_in_a_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd";
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(playlistUrl).BufferAsync(10);
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large).BufferAsync(10);
 
             // Assert
             videos.Should().HaveCount(10);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using YoutubeExplode.Bridge.Extractors;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Playlists;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Videos;
 
@@ -13,6 +14,9 @@ namespace YoutubeExplode.Bridge
 {
     internal class YoutubeController
     {
+        // This key doesn't appear to change
+        private const string InternalApiKey = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
+
         private readonly HttpClient _httpClient;
 
         public YoutubeController(HttpClient httpClient) => _httpClient = httpClient;
@@ -181,15 +185,62 @@ namespace YoutubeExplode.Bridge
             return DashManifestExtractor.Create(raw);
         }
 
+        public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
+            PlaylistId playlistId,
+            string? continuationToken,
+            CancellationToken cancellationToken = default)
+        {
+            var url = $"https://www.youtube.com/youtubei/v1/browse?key={InternalApiKey}";
+
+            var payload = new Dictionary<string, object?>
+            {
+                ["browseId"] = "VL" + playlistId,
+                ["continuation"] = continuationToken,
+                ["context"] = new Dictionary<string, object?>
+                {
+                    ["client"] = new Dictionary<string, object?>
+                    {
+                        ["clientName"] = "WEB",
+                        ["clientVersion"] = "2.20210408.08.00",
+                        ["newVisitorCookie"] = true,
+                        ["hl"] = "en",
+                        ["gl"] = "US",
+                        ["utcOffsetMinutes"] = 0
+                    },
+                    ["user"] = new Dictionary<string, object?>
+                    {
+                        ["lockedSafetyMode"] = false
+                    }
+                }
+            };
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new JsonContent(payload)
+            };
+
+            var raw = await SendHttpRequestAsync(request, cancellationToken);
+            var playlist = PlaylistExtractor.Create(raw);
+
+            if (!playlist.IsPlaylistAvailable())
+            {
+                throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
+            }
+
+            return playlist;
+        }
+
+        public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
+            PlaylistId playlistId,
+            CancellationToken cancellationToken = default) =>
+            await GetPlaylistAsync(playlistId, null, cancellationToken);
+
         public async ValueTask<SearchResultsExtractor> GetSearchResultsAsync(
             string query,
             string? continuationToken,
             CancellationToken cancellationToken = default)
         {
-            // API key appears to be static
-            const string key = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
-
-            var url = $"https://www.youtube.com/youtubei/v1/search?key={key}";
+            var url = $"https://www.youtube.com/youtubei/v1/search?key={InternalApiKey}";
 
             var payload = new Dictionary<string, object?>
             {

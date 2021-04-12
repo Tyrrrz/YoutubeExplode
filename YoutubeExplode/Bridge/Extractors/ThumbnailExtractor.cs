@@ -4,12 +4,12 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge.Extractors
 {
-    internal class PlayerThumbnailExtractor
+    internal class ThumbnailExtractor
     {
         private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
-        public PlayerThumbnailExtractor(JsonElement content) => _content = content;
+        public ThumbnailExtractor(JsonElement content) => _content = content;
 
         public string? TryGetUrl() => _memo.Wrap(() =>
             _content.GetPropertyOrNull("url")?.GetStringOrNull()

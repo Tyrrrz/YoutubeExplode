@@ -76,15 +76,15 @@ namespace YoutubeExplode.Bridge.Extractors
                 .Pipe(TimeSpan.FromSeconds)
         );
 
-        public IReadOnlyList<PlayerThumbnailExtractor> GetVideoThumbnails() => _memo.Wrap(() =>
+        public IReadOnlyList<ThumbnailExtractor> GetVideoThumbnails() => _memo.Wrap(() =>
             TryGetVideoDetails()?
                 .GetPropertyOrNull("thumbnail")?
                 .GetPropertyOrNull("thumbnails")?
                 .EnumerateArrayOrEmpty()
-                .Select(j => new PlayerThumbnailExtractor(j))
+                .Select(j => new ThumbnailExtractor(j))
                 .ToArray() ??
 
-            Array.Empty<PlayerThumbnailExtractor>()
+            Array.Empty<ThumbnailExtractor>()
         );
 
         public IReadOnlyList<string> GetVideoKeywords() => _memo.Wrap(() =>

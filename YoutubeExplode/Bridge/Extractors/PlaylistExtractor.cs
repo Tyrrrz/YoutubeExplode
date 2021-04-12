@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using YoutubeExplode.Utils;
@@ -11,178 +10,163 @@ namespace YoutubeExplode.Bridge.Extractors
     internal partial class PlaylistExtractor
     {
         private readonly JsonElement _content;
+        private readonly Memo _memo = new();
 
         public PlaylistExtractor(JsonElement content) => _content = content;
 
-        public bool IsPlaylistAvailable() => _content
-            .GetPropertyOrNull("metadata") is not null;
-
-        public string? TryGetTitle() => _content
-            .GetPropertyOrNull("metadata")?
-            .GetPropertyOrNull("playlistMetadataRenderer")?
-            .GetPropertyOrNull("title")?
-            .GetStringOrNull();
-
-        public string? TryGetAuthor() => _content
-            .GetPropertyOrNull("sidebar")?
-            .GetPropertyOrNull("playlistSidebarRenderer")?
-            .GetPropertyOrNull("items")?
-            .EnumerateArray()
-            .ElementAtOrDefault(1)
-            .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer")?
-            .GetPropertyOrNull("videoOwner")?
-            .GetPropertyOrNull("videoOwnerRenderer")?
-            .GetPropertyOrNull("title")?
-            .Flatten();
-
-        public string? TryGetDescription() => _content
-            .GetPropertyOrNull("metadata")?
-            .GetPropertyOrNull("playlistMetadataRenderer")?
-            .GetPropertyOrNull("description")?
-            .GetStringOrNull();
-
-        public long? TryGetViewCount() => _content
-            .GetPropertyOrNull("sidebar")?
-            .GetPropertyOrNull("playlistSidebarRenderer")?
-            .GetPropertyOrNull("items")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("playlistSidebarPrimaryInfoRenderer")?
-            .GetPropertyOrNull("stats")?
-            .EnumerateArray()
-            .ElementAtOrDefault(1)
-            .GetPropertyOrNull("simpleText")?
-            .GetStringOrNull()?
-            .StripNonDigit()
-            .NullIfWhiteSpace()?
-            .ParseLongOrNull();
-
-        public string? TryGetContinuationToken() =>
-            (GetVideosContent() ?? GetPlaylistVideosContent())?
-            .EnumerateArray()
-            .FirstOrDefault(j => j.GetPropertyOrNull("continuationItemRenderer") is not null)
-            .GetPropertyOrNull("continuationItemRenderer")?
-            .GetPropertyOrNull("continuationEndpoint")?
-            .GetPropertyOrNull("continuationCommand")?
-            .GetPropertyOrNull("token")?
-            .GetStringOrNull();
-
-        public JsonElement? GetPlaylistVideosContent() =>_content
-            .GetPropertyOrNull("contents")?
-            .GetPropertyOrNull("twoColumnBrowseResultsRenderer")?
-            .GetPropertyOrNull("tabs")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("tabRenderer")?
-            .GetPropertyOrNull("content")?
-            .GetPropertyOrNull("sectionListRenderer")?
-            .GetPropertyOrNull("contents")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("itemSectionRenderer")?
-            .GetPropertyOrNull("contents")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("playlistVideoListRenderer")?
-            .GetPropertyOrNull("contents") ?? _content
-            .GetPropertyOrNull("onResponseReceivedActions")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("appendContinuationItemsAction")?
-            .GetPropertyOrNull("continuationItems");
-
-        public IEnumerable<Video> GetPlaylistVideos() => Fallback.ToEmpty(
-            GetPlaylistVideosContent()?
-                .EnumerateArray()
-                .Where(j => j.TryGetProperty("playlistVideoRenderer", out _))
-                .Select(j => new Video(j.GetProperty("playlistVideoRenderer")))
+        private JsonElement? TryGetSidebar() => _memo.Wrap(() =>
+            _content
+                .GetPropertyOrNull("sidebar")?
+                .GetPropertyOrNull("playlistSidebarRenderer")?
+                .GetPropertyOrNull("items")
         );
 
-        public JsonElement? GetVideosContent() => _content
-            .GetPropertyOrNull("contents")?
-            .GetPropertyOrNull("twoColumnSearchResultsRenderer")?
-            .GetPropertyOrNull("primaryContents")?
-            .GetPropertyOrNull("sectionListRenderer")?
-            .GetPropertyOrNull("contents") ?? _content
-            .GetPropertyOrNull("onResponseReceivedCommands")?
-            .EnumerateArray()
-            .FirstOrDefault()
-            .GetPropertyOrNull("appendContinuationItemsAction")?
-            .GetPropertyOrNull("continuationItems");
+        private JsonElement? TryGetSidebarPrimary() => _memo.Wrap(() =>
+            TryGetSidebar()?
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0)?
+                .GetPropertyOrNull("playlistSidebarPrimaryInfoRenderer")
+        );
 
-        public IEnumerable<Video> GetVideos() => Fallback.ToEmpty(
-            GetVideosContent()?
-                .EnumerateArray()
-                .FirstOrDefault()
+        private JsonElement? TryGetSidebarSecondary() => _memo.Wrap(() =>
+            TryGetSidebar()?
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(1)?
+                .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer")
+        );
+
+        public bool IsPlaylistAvailable() => _memo.Wrap(() =>
+            TryGetSidebar() is not null
+        );
+
+        public string? TryGetPlaylistTitle() => _memo.Wrap(() =>
+            TryGetSidebarPrimary()?
+                .GetPropertyOrNull("title")?
+                .GetPropertyOrNull("simpleText")?
+                .GetStringOrNull() ??
+
+            TryGetSidebarPrimary()?
+                .GetPropertyOrNull("title")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+                .WhereNotNull()
+                .ConcatToString()
+        );
+
+        private JsonElement? TryGetPlaylistAuthorDetails() => _memo.Wrap(() =>
+            TryGetSidebarSecondary()?
+                .GetPropertyOrNull("videoOwner")?
+                .GetPropertyOrNull("videoOwnerRenderer")
+        );
+
+        public string? TryGetPlaylistAuthor() => _memo.Wrap(() =>
+            TryGetPlaylistAuthorDetails()?
+                .GetPropertyOrNull("title")?
+                .GetPropertyOrNull("simpleText")?
+                .GetStringOrNull() ??
+
+            TryGetPlaylistAuthorDetails()?
+                .GetPropertyOrNull("title")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+                .WhereNotNull()
+                .ConcatToString()
+        );
+
+        public string? TryGetPlaylistChannelId() => _memo.Wrap(() =>
+            TryGetPlaylistAuthorDetails()?
+                .GetPropertyOrNull("navigationEndpoint")?
+                .GetPropertyOrNull("browseEndpoint")?
+                .GetPropertyOrNull("browseId")?
+                .GetStringOrNull()
+        );
+
+        public string? TryGetPlaylistDescription() => _memo.Wrap(() =>
+            TryGetSidebarPrimary()?
+                .GetPropertyOrNull("description")?
+                .GetPropertyOrNull("simpleText")?
+                .GetStringOrNull() ??
+
+            TryGetSidebarPrimary()?
+                .GetPropertyOrNull("description")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+                .WhereNotNull()
+                .ConcatToString()
+        );
+
+        public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => _memo.Wrap(() =>
+            TryGetSidebarPrimary()?
+                .GetPropertyOrNull("thumbnailRenderer")?
+                .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
+                .GetPropertyOrNull("thumbnail")?
+                .GetPropertyOrNull("thumbnails")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => new ThumbnailExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<ThumbnailExtractor>()
+        );
+
+        private JsonElement? TryGetContentRoot() => _memo.Wrap(() =>
+            // Initial response
+            _content
+                .GetPropertyOrNull("contents")?
+                .GetPropertyOrNull("twoColumnBrowseResultsRenderer")?
+                .GetPropertyOrNull("tabs")?
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0)?
+                .GetPropertyOrNull("tabRenderer")?
+                .GetPropertyOrNull("content")?
+                .GetPropertyOrNull("sectionListRenderer")?
+                .GetPropertyOrNull("contents")?
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0)?
                 .GetPropertyOrNull("itemSectionRenderer")?
                 .GetPropertyOrNull("contents")?
-                .EnumerateArray()
-                .Where(j => j.TryGetProperty("videoRenderer", out _))
-                .Select(j => new Video(j.GetProperty("videoRenderer")))
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0)?
+                .GetPropertyOrNull("playlistVideoListRenderer")?
+                .GetPropertyOrNull("contents") ??
+
+            // Continuation response
+            _content
+                .GetPropertyOrNull("onResponseReceivedActions")?
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0)?
+                .GetPropertyOrNull("appendContinuationItemsAction")?
+                .GetPropertyOrNull("continuationItems")
+        );
+
+        public string? TryGetContinuationToken() => _memo.Wrap(() =>
+            TryGetContentRoot()?
+                .EnumerateArrayOrNull()?
+                .Select(j => j.GetPropertyOrNull("continuationItemRenderer"))
+                .WhereNotNull()
+                .FirstOrNull()?
+                .GetPropertyOrNull("continuationEndpoint")?
+                .GetPropertyOrNull("continuationCommand")?
+                .GetPropertyOrNull("token")?
+                .GetStringOrNull()
+        );
+
+        public IReadOnlyList<PlaylistVideoExtractor> GetVideos() => _memo.Wrap(() =>
+            TryGetContentRoot()?
+                .EnumerateArrayOrNull()?
+                .Select(j => j.GetPropertyOrNull("playlistVideoRenderer"))
+                .WhereNotNull()
+                .Select(j => new PlaylistVideoExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<PlaylistVideoExtractor>()
         );
     }
 
     internal partial class PlaylistExtractor
     {
-        public class Video
-        {
-            private readonly JsonElement _content;
-            private static readonly string[] _timeFormats = { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" };
-
-            public Video(JsonElement root) => _content = root;
-
-            public string GetId() => _content
-                .GetProperty("videoId")
-                .GetString()!;
-
-            public string GetAuthor() => _content // Video from search results
-                .GetPropertyOrNull("ownerText")?
-                .Flatten() ?? _content // Video from playlist
-                .GetPropertyOrNull("shortBylineText")?
-                .Flatten() ?? "";
-
-            public string GetChannelId() => _content // Video from search results
-                .GetPropertyOrNull("ownerText")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArray()
-                .FirstOrDefault()
-                .GetPropertyOrNull("navigationEndpoint")?
-                .GetPropertyOrNull("browseEndpoint")?
-                .GetPropertyOrNull("browseId")?
-                .GetStringOrNull() ?? _content // Video from playlist
-                .GetPropertyOrNull("shortBylineText")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArray()
-                .FirstOrDefault()
-                .GetPropertyOrNull("navigationEndpoint")?
-                .GetPropertyOrNull("browseEndpoint")?
-                .GetPropertyOrNull("browseId")?
-                .GetStringOrNull() ?? "";
-
-            public string GetTitle() => _content
-                .GetPropertyOrNull("title")?
-                .Flatten() ?? "";
-
-            // Incomplete description
-            public string GetDescription() => _content
-                .GetPropertyOrNull("descriptionSnippet")?
-                .Flatten() ?? "";
-
-            // Streams do not have duration
-            public TimeSpan GetDuration() => _content
-                .GetPropertyOrNull("lengthText")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull()?
-                .Pipe(p => TimeSpan.TryParseExact(p, _timeFormats, CultureInfo.InvariantCulture, out var duration) ? duration : default) ?? default;
-
-            // Streams and some paid videos do not have views
-            public long GetViewCount() => _content
-                .GetPropertyOrNull("viewCountText")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull()?
-                .StripNonDigit()
-                .NullIfWhiteSpace()?
-                .ParseLongOrNull() ?? default;
-        }
+        public static PlaylistExtractor Create(string raw) => new(Json.Parse(raw));
     }
 }
