@@ -10,31 +10,21 @@ namespace YoutubeExplode.Playlists
     /// <summary>
     /// Metadata associated with a YouTube video included in a playlist.
     /// </summary>
-    public class PlaylistVideo : IHasThumbnails
+    public class PlaylistVideo : IVideo
     {
-        /// <summary>
-        /// Video ID.
-        /// </summary>
+        /// <inheritdoc />
         public VideoId Id { get; }
 
-        /// <summary>
-        /// Video URL.
-        /// </summary>
+        /// <inheritdoc />
         public string Url => $"https://www.youtube.com/watch?v={Id}";
 
-        /// <summary>
-        /// Video title.
-        /// </summary>
+        /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// Video author.
-        /// </summary>
+        /// <inheritdoc />
         public string Author { get; }
 
-        /// <summary>
-        /// Video channel ID.
-        /// </summary>
+        /// <inheritdoc />
         public ChannelId ChannelId { get; }
 
         /// <summary>
@@ -42,12 +32,7 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public string Description { get; }
 
-        /// <summary>
-        /// Video duration.
-        /// </summary>
-        /// <remarks>
-        /// May be null if the video is an ongoing live stream.
-        /// </remarks>
+        /// <inheritdoc />
         public TimeSpan? Duration { get; }
 
         /// <summary>
@@ -55,9 +40,7 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public long ViewCount { get; }
 
-        /// <summary>
-        /// Available thumbnails for the video.
-        /// </summary>
+        /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>

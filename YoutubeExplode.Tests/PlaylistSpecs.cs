@@ -91,7 +91,7 @@ namespace YoutubeExplode.Tests
             var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Normal);
 
             // Assert
-            videos.Should().HaveCountGreaterOrEqualTo(19);
+            videos.Should().HaveCountGreaterOrEqualTo(21);
             videos.Select(v => v.Id.Value).Should().Contain(new[]
             {
                 "uPZSSdkGQhM",

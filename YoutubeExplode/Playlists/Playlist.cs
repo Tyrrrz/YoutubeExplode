@@ -35,10 +35,7 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public string Description { get; }
 
-        /// <summary>
-        /// Available thumbnails for the playlist.
-        /// May be empty if the playlist is empty.
-        /// </summary>
+        /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>

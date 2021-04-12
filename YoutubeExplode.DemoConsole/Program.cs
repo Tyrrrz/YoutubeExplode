@@ -23,7 +23,7 @@ namespace YoutubeExplode.DemoConsole
 
             // Get available streams and choose the best muxed (audio + video) stream
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoIdOrUrl);
-            var streamInfo = streamManifest.GetMuxed().TryGetWithHighestVideoQuality();
+            var streamInfo = streamManifest.GetMuxedStreams().TryGetWithHighestVideoQuality();
             if (streamInfo is null)
             {
                 // Available streams vary depending on the video and

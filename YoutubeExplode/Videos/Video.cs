@@ -9,31 +9,21 @@ namespace YoutubeExplode.Videos
     /// <summary>
     /// Metadata associated with a YouTube video.
     /// </summary>
-    public class Video : IHasThumbnails
+    public class Video : IVideo
     {
-        /// <summary>
-        /// Video ID.
-        /// </summary>
+        /// <inheritdoc />
         public VideoId Id { get; }
 
-        /// <summary>
-        /// Video URL.
-        /// </summary>
+        /// <inheritdoc />
         public string Url => $"https://www.youtube.com/watch?v={Id}";
 
-        /// <summary>
-        /// Video title.
-        /// </summary>
+        /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// Video author.
-        /// </summary>
+        /// <inheritdoc />
         public string Author { get; }
 
-        /// <summary>
-        /// Video channel ID.
-        /// </summary>
+        /// <inheritdoc />
         public ChannelId ChannelId { get; }
 
         /// <summary>
@@ -46,14 +36,10 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public string Description { get; }
 
-        /// <summary>
-        /// Video duration.
-        /// </summary>
-        public TimeSpan Duration { get; }
+        /// <inheritdoc />
+        public TimeSpan? Duration { get; }
 
-        /// <summary>
-        /// Available thumbnails for the video.
-        /// </summary>
+        /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
@@ -76,7 +62,7 @@ namespace YoutubeExplode.Videos
             ChannelId channelId,
             DateTimeOffset uploadDate,
             string description,
-            TimeSpan duration,
+            TimeSpan? duration,
             IReadOnlyList<Thumbnail> thumbnails,
             IReadOnlyList<string> keywords,
             Engagement engagement)

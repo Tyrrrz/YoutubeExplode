@@ -42,15 +42,15 @@ namespace YoutubeExplode.Tests
 
             // Assert
             manifest.Streams.Should().NotBeEmpty();
-            manifest.GetMuxed().Should().NotBeEmpty();
-            manifest.GetAudio().Should().NotBeEmpty();
-            manifest.GetVideo().Should().NotBeEmpty();
-            manifest.GetAudioOnly().Should().NotBeEmpty();
-            manifest.GetVideoOnly().Should().NotBeEmpty();
+            manifest.GetMuxedStreams().Should().NotBeEmpty();
+            manifest.GetAudioStreams().Should().NotBeEmpty();
+            manifest.GetVideoStreams().Should().NotBeEmpty();
+            manifest.GetAudioOnlyStreams().Should().NotBeEmpty();
+            manifest.GetVideoOnlyStreams().Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task User_cannot_get_the_list_of_available_streams_on_an_unplayable_video()
+        public async Task User_cannot_get_the_list_of_available_streams_of_an_unplayable_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -64,7 +64,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_cannot_get_the_list_of_available_streams_on_a_paid_video()
+        public async Task User_cannot_get_the_list_of_available_streams_of_a_paid_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -80,7 +80,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_cannot_get_the_list_of_available_streams_on_a_private_video()
+        public async Task User_cannot_get_the_list_of_available_streams_of_a_private_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -94,7 +94,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_cannot_get_the_list_of_available_streams_on_a_non_existing_video()
+        public async Task User_cannot_get_the_list_of_available_streams_of_a_non_existing_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -162,7 +162,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_can_download_highest_bitrate_stream_of_a_video()
+        public async Task User_can_download_the_highest_bitrate_stream_of_a_video()
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();
@@ -182,7 +182,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_can_download_highest_quality_stream_of_a_video()
+        public async Task User_can_download_the_highest_quality_stream_of_a_video()
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();
@@ -190,7 +190,7 @@ namespace YoutubeExplode.Tests
 
             // Act
             var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsDashManifest);
-            var streamInfo = manifest.GetVideo().GetWithHighestVideoQuality();
+            var streamInfo = manifest.GetVideoStreams().GetWithHighestVideoQuality();
 
             await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 

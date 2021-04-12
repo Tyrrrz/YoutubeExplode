@@ -24,9 +24,7 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public string Title { get; }
 
-        /// <summary>
-        /// Available thumbnails for the channel.
-        /// </summary>
+        /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>

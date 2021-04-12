@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using YoutubeExplode.Videos;
@@ -53,7 +54,14 @@ namespace YoutubeExplode.Common
         /// Gets the thumbnail with the highest resolution (by area).
         /// Returns null if the sequence is empty.
         /// </summary>
-        public static Thumbnail? WithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
+        public static Thumbnail? TryGetWithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
             thumbnails.OrderByDescending(t => t.Resolution.Area).FirstOrDefault();
+
+        /// <summary>
+        /// Gets the thumbnail with the highest resolution (by area).
+        /// </summary>
+        public static Thumbnail GetWithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
+            thumbnails.TryGetWithHighestResolution() ??
+            throw new InvalidOperationException("Input thumbnail collection is empty.");
     }
 }

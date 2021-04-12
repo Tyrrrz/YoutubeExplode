@@ -221,15 +221,15 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 var videoIdOrUrl = Query;
 
                 Video = await _youtube.Videos.GetAsync(videoIdOrUrl);
-                VideoThumbnail = Video.Thumbnails.WithHighestResolution();
+                VideoThumbnail = Video.Thumbnails.GetWithHighestResolution();
 
                 Channel = await _youtube.Channels.GetAsync(Video.ChannelId);
-                ChannelThumbnail = Channel.Thumbnails.WithHighestResolution();
+                ChannelThumbnail = Channel.Thumbnails.GetWithHighestResolution();
 
                 var streamManifest = await _youtube.Videos.Streams.GetManifestAsync(videoIdOrUrl);
-                MuxedStreamInfos = streamManifest.GetMuxed().OrderByDescending(s => s.VideoQuality).ToArray();
-                AudioOnlyStreamInfos = streamManifest.GetAudioOnly().OrderByDescending(s => s.Bitrate).ToArray();
-                VideoOnlyStreamInfos = streamManifest.GetVideoOnly().OrderByDescending(s => s.VideoQuality).ToArray();
+                MuxedStreamInfos = streamManifest.GetMuxedStreams().OrderByDescending(s => s.VideoQuality).ToArray();
+                AudioOnlyStreamInfos = streamManifest.GetAudioOnlyStreams().OrderByDescending(s => s.Bitrate).ToArray();
+                VideoOnlyStreamInfos = streamManifest.GetVideoOnlyStreams().OrderByDescending(s => s.VideoQuality).ToArray();
 
                 var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoIdOrUrl);
                 ClosedCaptionTrackInfos = trackManifest.Tracks.OrderBy(t => t.Language.Name).ToArray();

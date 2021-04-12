@@ -71,9 +71,8 @@ namespace YoutubeExplode.Videos
                 playerResponse.TryGetVideoDescription() ??
                 throw new YoutubeExplodeException("Could not extract video description.");
 
-            var duration =
-                playerResponse.TryGetVideoDuration() ??
-                throw new YoutubeExplodeException("Could not extract video duration.");
+            // Live streams don't have duration
+            var duration = playerResponse.TryGetVideoDuration();
 
             var thumbnails = new List<Thumbnail>();
 

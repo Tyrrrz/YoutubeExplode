@@ -92,18 +92,17 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_can_get_thumbnail_of_a_video_with_highest_resolution()
+        public async Task User_can_get_the_highest_resolution_thumbnail_of_a_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var video = await youtube.Videos.GetAsync(VideoIds.ContainsDashManifest);
-            var thumbnail = video.Thumbnails.WithHighestResolution();
+            var video = await youtube.Videos.GetAsync(VideoIds.Normal);
+            var thumbnail = video.Thumbnails.GetWithHighestResolution();
 
             // Assert
-            thumbnail.Should().NotBeNull();
-            thumbnail?.Url.Should().NotBeNullOrWhiteSpace();
+            thumbnail.Url.Should().NotBeNullOrWhiteSpace();
         }
     }
 }

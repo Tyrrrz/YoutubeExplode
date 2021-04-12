@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
@@ -11,15 +12,14 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_metadata_of_a_channel()
         {
             // Arrange
-            const string channelUrl = "https://www.youtube.com/channel/UCEnBXANsKmyj2r9xVyKoDiQ";
             var youtube = new YoutubeClient();
 
             // Act
-            var channel = await youtube.Channels.GetAsync(channelUrl);
+            var channel = await youtube.Channels.GetAsync(ChannelIds.Normal);
 
             // Assert
-            channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
-            channel.Url.Should().Be(channelUrl);
+            channel.Id.Value.Should().Be(ChannelIds.Normal);
+            channel.Url.Should().NotBeNullOrWhiteSpace();
             channel.Title.Should().Be("Tyrrrz");
             channel.Thumbnails.Should().NotBeEmpty();
         }
@@ -31,7 +31,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var channel = await youtube.Channels.GetByUserAsync("TheTyrrr");
+            var channel = await youtube.Channels.GetByUserAsync(UserNames.Normal);
 
             // Assert
             channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
@@ -41,15 +41,14 @@ namespace YoutubeExplode.Tests
         public async Task User_can_get_videos_uploaded_by_a_channel()
         {
             // Arrange
-            const string channelUrl = "https://www.youtube.com/channel/UCEnBXANsKmyj2r9xVyKoDiQ";
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Channels.GetUploadsAsync(channelUrl);
+            var videos = await youtube.Channels.GetUploadsAsync(ChannelIds.Normal);
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(80);
-            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == "UCEnBXANsKmyj2r9xVyKoDiQ");
+            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == ChannelIds.Normal);
         }
     }
 }
