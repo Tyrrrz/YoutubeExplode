@@ -14,36 +14,24 @@ namespace YoutubeExplode.Bridge.Extractors
 
         public SearchResultsExtractor(JsonElement content) => _content = content;
 
-        private JsonElement? TryGetContents() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("contents")?
-                .GetPropertyOrNull("twoColumnSearchResultsRenderer")?
-                .GetPropertyOrNull("primaryContents")?
-                .GetPropertyOrNull("sectionListRenderer")?
-                .GetPropertyOrNull("contents")
+        // Search results response is incredibly inconsistent (5+ variations),
+        // so we employ descendent searching, which is inefficient but resilient.
+        private JsonElement? TryGetContentRoot() => _memo.Wrap(() =>
+            _content.GetPropertyOrNull("contents") ??
+            _content.GetPropertyOrNull("onResponseReceivedCommands")
         );
 
         public string? TryGetContinuationToken() => _memo.Wrap(() =>
-            TryGetContents()?
-                .EnumerateArrayOrEmpty()
-                .ElementAtOrNull(1)?
-                .GetPropertyOrNull("continuationItemRenderer")?
-                .GetPropertyOrNull("continuationEndpoint")?
-                .GetPropertyOrNull("continuationCommand")?
+            TryGetContentRoot()?
+                .EnumerateDescendantProperties("continuationCommand")
+                .FirstOrNull()?
                 .GetPropertyOrNull("token")?
                 .GetStringOrNull()
         );
 
         public IReadOnlyList<SearchResultsVideoExtractor> GetVideos() => _memo.Wrap(() =>
-            TryGetContents()?
-                .EnumerateArrayOrEmpty()
-                .ElementAtOrNull(0)?
-                .GetPropertyOrNull("itemSectionRenderer")?
-                .GetPropertyOrNull("contents")?
-                .EnumerateArrayOrEmpty()
-                .Select(j => j.GetPropertyOrNull("videoRenderer"))
-                .WhereNotNull()
-                .Where(j => j.GetPropertyOrNull("videoId") is not null)
+            TryGetContentRoot()?
+                .EnumerateDescendantProperties("videoRenderer")
                 .Select(j => new SearchResultsVideoExtractor(j))
                 .ToArray() ??
 

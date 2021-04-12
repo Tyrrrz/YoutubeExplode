@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -31,11 +32,11 @@ namespace YoutubeExplode.Search
             string searchQuery,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            var encounteredVideoIds = new HashSet<string>(StringComparer.Ordinal);
             var continuationToken = default(string?);
 
             do
             {
-                // TODO: this requests only one page
                 var searchResults =
                     await _controller.GetSearchResultsAsync(searchQuery, continuationToken, cancellationToken);
 
@@ -44,6 +45,10 @@ namespace YoutubeExplode.Search
                     var id =
                         videoExtractor.TryGetVideoId() ??
                         throw new YoutubeExplodeException("Could not extract video ID.");
+
+                    // Don't yield the same video twice
+                    if (!encounteredVideoIds.Add(id))
+                        continue;
 
                     var title =
                         videoExtractor.TryGetVideoTitle() ??
@@ -59,13 +64,9 @@ namespace YoutubeExplode.Search
 
                     var description = videoExtractor.TryGetVideoDescription() ?? "";
 
-                    var duration =
-                        videoExtractor.TryGetVideoDuration() ??
-                        throw new YoutubeExplodeException("Could not extract video duration.");
+                    var duration = videoExtractor.TryGetVideoDuration();
 
-                    var viewCount =
-                        videoExtractor.TryGetVideoViewCount() ??
-                        throw new YoutubeExplodeException("Could not extract video view count.");
+                    var viewCount = videoExtractor.TryGetVideoViewCount() ?? 0;
 
                     var thumbnails = new List<Thumbnail>();
 

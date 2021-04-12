@@ -45,7 +45,10 @@ namespace YoutubeExplode.Playlists
         /// <summary>
         /// Video duration.
         /// </summary>
-        public TimeSpan Duration { get; }
+        /// <remarks>
+        /// May be null if the video is an ongoing live stream.
+        /// </remarks>
+        public TimeSpan? Duration { get; }
 
         /// <summary>
         /// Video view count.
@@ -66,7 +69,7 @@ namespace YoutubeExplode.Playlists
             string author,
             ChannelId channelId,
             string description,
-            TimeSpan duration,
+            TimeSpan? duration,
             long viewCount,
             IReadOnlyList<Thumbnail> thumbnails)
         {

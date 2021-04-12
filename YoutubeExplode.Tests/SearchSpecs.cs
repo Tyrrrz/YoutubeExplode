@@ -16,7 +16,7 @@ namespace YoutubeExplode.Tests
             var videos = await youtube.Search.GetVideosAsync("billie eilish");
 
             // Assert
-            videos.Should().NotBeEmpty();
+            videos.Should().HaveCountGreaterThan(200);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace YoutubeExplode.Tests
             var videos = await youtube.Search.GetVideosAsync("Kill la Kill Gomen ne, Iiko ja Irarenai.");
 
             // Assert
-            videos.Should().NotBeEmpty();
+            videos.Should().HaveCountGreaterThan(300);
         }
     }
 }

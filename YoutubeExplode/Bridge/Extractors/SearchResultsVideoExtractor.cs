@@ -9,6 +9,8 @@ namespace YoutubeExplode.Bridge.Extractors
 {
     internal class SearchResultsVideoExtractor
     {
+        private static readonly string[] DurationFormats = {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"};
+
         private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
@@ -21,6 +23,11 @@ namespace YoutubeExplode.Bridge.Extractors
         );
 
         public string? TryGetVideoTitle() => _memo.Wrap(() =>
+            _content
+                .GetPropertyOrNull("title")?
+                .GetPropertyOrNull("simpleText")?
+                .GetStringOrNull() ??
+
             _content
                 .GetPropertyOrNull("title")?
                 .GetPropertyOrNull("runs")?
@@ -57,7 +64,16 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("lengthText")?
                 .GetPropertyOrNull("simpleText")?
                 .GetStringOrNull()?
-                .ParseTimeSpanOrNull(new[] {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"})
+                .ParseTimeSpanOrNull(DurationFormats) ??
+
+            _content
+                .GetPropertyOrNull("lengthText")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+                .WhereNotNull()
+                .ConcatToString()
+                .ParseTimeSpanOrNull(DurationFormats)
         );
 
         public IReadOnlyList<SearchResultsVideoThumbnailExtractor> GetVideoThumbnails() => _memo.Wrap(() =>
@@ -74,6 +90,11 @@ namespace YoutubeExplode.Bridge.Extractors
         public string? TryGetVideoDescription() => _memo.Wrap(() =>
             _content
                 .GetPropertyOrNull("descriptionSnippet")?
+                .GetPropertyOrNull("simpleText")?
+                .GetStringOrNull() ??
+
+            _content
+                .GetPropertyOrNull("descriptionSnippet")?
                 .GetPropertyOrNull("runs")?
                 .EnumerateArrayOrEmpty()
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
@@ -86,6 +107,16 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("viewCountText")?
                 .GetPropertyOrNull("simpleText")?
                 .GetStringOrNull()?
+                .StripNonDigit()
+                .ParseLongOrNull() ??
+
+            _content
+                .GetPropertyOrNull("viewCountText")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrEmpty()
+                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+                .WhereNotNull()
+                .ConcatToString()
                 .StripNonDigit()
                 .ParseLongOrNull()
         );

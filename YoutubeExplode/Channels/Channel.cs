@@ -22,6 +22,7 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public string Title { get; }
 
+        // TODO: use thumbnail?
         /// <summary>
         /// Channel logo image URL.
         /// </summary>
