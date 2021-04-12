@@ -1,11 +1,13 @@
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Channels
 {
     /// <summary>
     /// Metadata associated with a YouTube channel.
     /// </summary>
-    public class Channel
+    public class Channel : IHasThumbnails
     {
         /// <summary>
         /// Channel ID.
@@ -22,20 +24,19 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public string Title { get; }
 
-        // TODO: use thumbnail?
         /// <summary>
-        /// Channel logo image URL.
+        /// Available thumbnails for the channel.
         /// </summary>
-        public string LogoUrl { get; }
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Channel"/>.
         /// </summary>
-        public Channel(ChannelId id, string title, string logoUrl)
+        public Channel(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
-            LogoUrl = logoUrl;
+            Thumbnails = thumbnails;
         }
 
         /// <inheritdoc />

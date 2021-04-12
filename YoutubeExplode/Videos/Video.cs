@@ -9,7 +9,7 @@ namespace YoutubeExplode.Videos
     /// <summary>
     /// Metadata associated with a YouTube video.
     /// </summary>
-    public class Video
+    public class Video : IHasThumbnails
     {
         /// <summary>
         /// Video ID.

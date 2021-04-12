@@ -64,13 +64,13 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             }
         }
 
-        private Thumbnail? _thumbnail;
-        public Thumbnail? Thumbnail
+        private Thumbnail? _videoThumbnail;
+        public Thumbnail? VideoThumbnail
         {
-            get => _thumbnail;
+            get => _videoThumbnail;
             private set
             {
-                Set(ref _thumbnail, value);
+                Set(ref _videoThumbnail, value);
                 RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
@@ -82,6 +82,17 @@ namespace YoutubeExplode.DemoWpf.ViewModels
             private set
             {
                 Set(ref _channel, value);
+                RaisePropertyChanged(nameof(IsDataAvailable));
+            }
+        }
+
+        private Thumbnail? _channelThumbnail;
+        public Thumbnail? ChannelThumbnail
+        {
+            get => _channelThumbnail;
+            private set
+            {
+                Set(ref _channelThumbnail, value);
                 RaisePropertyChanged(nameof(IsDataAvailable));
             }
         }
@@ -132,8 +143,9 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
         public bool IsDataAvailable =>
             Video is not null &&
-            Thumbnail is not null &&
+            VideoThumbnail is not null &&
             Channel is not null &&
+            ChannelThumbnail is not null &&
             MuxedStreamInfos is not null &&
             AudioOnlyStreamInfos is not null &&
             VideoOnlyStreamInfos is not null &&
@@ -197,8 +209,9 @@ namespace YoutubeExplode.DemoWpf.ViewModels
 
                 // Reset data
                 Video = null;
-                Thumbnail = null;
+                VideoThumbnail = null;
                 Channel = null;
+                ChannelThumbnail = null;
                 MuxedStreamInfos = null;
                 AudioOnlyStreamInfos = null;
                 VideoOnlyStreamInfos = null;
@@ -207,15 +220,18 @@ namespace YoutubeExplode.DemoWpf.ViewModels
                 // Get data
                 var videoIdOrUrl = Query;
 
-                var streamManifest = await _youtube.Videos.Streams.GetManifestAsync(videoIdOrUrl);
-                var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoIdOrUrl);
-
                 Video = await _youtube.Videos.GetAsync(videoIdOrUrl);
-                Thumbnail = Video.Thumbnails.WithHighestResolution();
+                VideoThumbnail = Video.Thumbnails.WithHighestResolution();
+
                 Channel = await _youtube.Channels.GetAsync(Video.ChannelId);
+                ChannelThumbnail = Channel.Thumbnails.WithHighestResolution();
+
+                var streamManifest = await _youtube.Videos.Streams.GetManifestAsync(videoIdOrUrl);
                 MuxedStreamInfos = streamManifest.GetMuxed().OrderByDescending(s => s.VideoQuality).ToArray();
                 AudioOnlyStreamInfos = streamManifest.GetAudioOnly().OrderByDescending(s => s.Bitrate).ToArray();
                 VideoOnlyStreamInfos = streamManifest.GetVideoOnly().OrderByDescending(s => s.VideoQuality).ToArray();
+
+                var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoIdOrUrl);
                 ClosedCaptionTrackInfos = trackManifest.Tracks.OrderBy(t => t.Language.Name).ToArray();
             }
             finally

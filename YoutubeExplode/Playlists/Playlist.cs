@@ -7,7 +7,7 @@ namespace YoutubeExplode.Playlists
     /// <summary>
     /// Metadata associated with a YouTube playlist.
     /// </summary>
-    public class Playlist
+    public class Playlist : IHasThumbnails
     {
         /// <summary>
         /// Playlist ID.

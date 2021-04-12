@@ -21,7 +21,7 @@ namespace YoutubeExplode.Tests
             channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
             channel.Url.Should().Be(channelUrl);
             channel.Title.Should().Be("Tyrrrz");
-            channel.LogoUrl.Should().NotBeNullOrWhiteSpace();
+            channel.Thumbnails.Should().NotBeEmpty();
         }
 
         [Fact]

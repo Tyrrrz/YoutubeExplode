@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Playlists;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Channels
 {
@@ -21,6 +25,23 @@ namespace YoutubeExplode.Channels
         public ChannelClient(HttpClient httpClient)
         {
             _controller = new YoutubeController(httpClient);
+        }
+
+        private IReadOnlyList<Thumbnail> GenerateThumbnails(string logoUrl)
+        {
+            var logoSize = Regex
+                .Matches(logoUrl, @"\bs(\d+)\b")
+                .Cast<Match>()
+                .LastOrDefault()?
+                .Groups[1]
+                .Value
+                .NullIfWhiteSpace()?
+                .ParseIntOrNull() ?? 100;
+
+            return new[]
+            {
+                new Thumbnail(logoUrl, new Resolution(logoSize, logoSize))
+            };
         }
 
         /// <summary>
@@ -40,10 +61,12 @@ namespace YoutubeExplode.Channels
                 channelPage.TryGetChannelLogoUrl() ??
                 throw new YoutubeExplodeException("Could not extract channel logo URL.");
 
+            var thumbnails = GenerateThumbnails(logoUrl);
+
             return new Channel(
                 channelId,
                 title,
-                logoUrl
+                thumbnails
             );
         }
 
@@ -68,10 +91,12 @@ namespace YoutubeExplode.Channels
                 channelPage.TryGetChannelLogoUrl() ??
                 throw new YoutubeExplodeException("Could not extract channel logo URL.");
 
+            var thumbnails = GenerateThumbnails(logoUrl);
+
             return new Channel(
                 channelId,
                 title,
-                logoUrl
+                thumbnails
             );
         }
 
