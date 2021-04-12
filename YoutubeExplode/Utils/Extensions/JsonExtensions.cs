@@ -82,12 +82,5 @@ namespace YoutubeExplode.Utils.Extensions
                 yield return deepDescendant;
             }
         }
-
-        public static string Flatten(this JsonElement element) => string.Concat(
-            element
-            .GetPropertyOrNull("runs")?
-            .EnumerateArray()
-            .Select(x => x.GetPropertyOrNull("text")?.GetString()) ?? Enumerable.Empty<string>()
-        );
     }
 }
