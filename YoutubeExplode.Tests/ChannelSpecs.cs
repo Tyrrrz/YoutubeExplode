@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using YoutubeExplode.Playlists;
 using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests

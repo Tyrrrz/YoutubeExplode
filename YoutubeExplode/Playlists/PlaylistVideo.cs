@@ -20,9 +20,7 @@ namespace YoutubeExplode.Playlists
         /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// Video author.
-        /// </summary>
+        /// <inheritdoc />
         public Author Author { get; }
 
         /// <inheritdoc />
@@ -50,6 +48,6 @@ namespace YoutubeExplode.Playlists
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override string ToString() => $"Playlist Video ({Title})";
+        public override string ToString() => $"Video ({Title})";
     }
 }

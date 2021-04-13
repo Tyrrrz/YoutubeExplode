@@ -4,6 +4,7 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Playlists;
 using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests

@@ -1,13 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 
-namespace YoutubeExplode.Channels
+namespace YoutubeExplode.Search
 {
     /// <summary>
-    /// Metadata associated with a YouTube channel.
+    /// Metadata associated with a YouTube channel returned by a search query.
     /// </summary>
-    public class Channel : IChannel
+    public class SearchResultChannel : ISearchResult, IChannel
     {
         /// <inheritdoc />
         public ChannelId Id { get; }
@@ -22,9 +23,9 @@ namespace YoutubeExplode.Channels
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="Channel"/>.
+        /// Initializes an instance of <see cref="SearchResultChannel"/>.
         /// </summary>
-        public Channel(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
+        public SearchResultChannel(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;

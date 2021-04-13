@@ -1,51 +1,53 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
+using YoutubeExplode.Videos;
 
-namespace YoutubeExplode.Playlists
+namespace YoutubeExplode.Search
 {
     /// <summary>
-    /// Metadata associated with a YouTube playlist.
+    /// Metadata associated with a YouTube video returned by a search query.
     /// </summary>
-    public class Playlist : IPlaylist
+    public class SearchResultVideo : ISearchResult, IVideo
     {
         /// <inheritdoc />
-        public PlaylistId Id { get; }
+        public VideoId Id { get; }
 
         /// <inheritdoc />
-        public string Url => $"https://www.youtube.com/playlist?list={Id}";
+        public string Url => $"https://www.youtube.com/watch?v={Id}";
 
         /// <inheritdoc />
         public string Title { get; }
 
         /// <inheritdoc />
-        public Author? Author { get; }
+        public Author Author { get; }
 
         /// <inheritdoc />
-        public string Description { get; }
+        public TimeSpan? Duration { get; }
 
         /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="Playlist"/>.
+        /// Initializes an instance of <see cref="SearchResultVideo"/>.
         /// </summary>
-        public Playlist(
-            PlaylistId id,
+        public SearchResultVideo(
+            VideoId id,
             string title,
-            Author? author,
-            string description,
+            Author author,
+            TimeSpan? duration,
             IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
-            Description = description;
+            Duration = duration;
             Thumbnails = thumbnails;
         }
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override string ToString() => $"Playlist ({Title})";
+        public override string ToString() => $"Video ({Title})";
     }
 }

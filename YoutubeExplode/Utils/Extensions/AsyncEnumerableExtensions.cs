@@ -5,7 +5,9 @@ namespace YoutubeExplode.Utils.Extensions
 {
     internal static class AsyncEnumerableExtensions
     {
-        public static async IAsyncEnumerable<T> TakeAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, int count)
+        public static async IAsyncEnumerable<T> TakeAsync<T>(
+            this IAsyncEnumerable<T> asyncEnumerable,
+            int count)
         {
             var currentCount = 0;
 

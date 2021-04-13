@@ -1,13 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
+using YoutubeExplode.Playlists;
 
-namespace YoutubeExplode.Playlists
+namespace YoutubeExplode.Search
 {
     /// <summary>
-    /// Metadata associated with a YouTube playlist.
+    /// Metadata associated with a YouTube playlist returned by a search query.
     /// </summary>
-    public class Playlist : IPlaylist
+    public class SearchResultPlaylist : ISearchResult, IPlaylist
     {
         /// <inheritdoc />
         public PlaylistId Id { get; }
@@ -28,9 +29,9 @@ namespace YoutubeExplode.Playlists
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="Playlist"/>.
+        /// Initializes an instance of <see cref="SearchResultPlaylist"/>.
         /// </summary>
-        public Playlist(
+        public SearchResultPlaylist(
             PlaylistId id,
             string title,
             Author? author,

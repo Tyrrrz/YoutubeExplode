@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace YoutubeExplode.Common
+namespace YoutubeExplode.Videos
 {
     /// <summary>
     /// Engagement statistics.

@@ -4,17 +4,17 @@ using YoutubeExplode.Channels;
 namespace YoutubeExplode.Common
 {
     /// <summary>
-    /// Reference to the channel that uploaded a video or created a playlist.
+    /// Reference to a channel that owns a specific video or playlist.
     /// </summary>
     public class Author
     {
         /// <summary>
-        /// Author channel ID.
+        /// Channel ID.
         /// </summary>
         public ChannelId ChannelId { get; }
 
         /// <summary>
-        /// Author channel title.
+        /// Channel title.
         /// </summary>
         public string Title { get; }
 
@@ -29,6 +29,6 @@ namespace YoutubeExplode.Common
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override string ToString() => $"Author ({Title})";
+        public override string ToString() => Title;
     }
 }

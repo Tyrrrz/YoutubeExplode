@@ -1,0 +1,42 @@
+﻿using System.Collections.Generic;
+using YoutubeExplode.Common;
+
+namespace YoutubeExplode.Playlists
+{
+    /// <summary>
+    /// Metadata properties shared by playlists of different types.
+    /// </summary>
+    public interface IPlaylist
+    {
+        /// <summary>
+        /// Playlist ID.
+        /// </summary>
+        PlaylistId Id { get; }
+
+        /// <summary>
+        /// Playlist URL.
+        /// </summary>
+        string Url { get; }
+
+        /// <summary>
+        /// Playlist title.
+        /// </summary>
+        string Title { get; }
+
+        /// <remarks>
+        /// May be null in case of a system playlist.
+        /// System playlist (e.g. mixes, topics, etc) are generated automatically and don't have an author.
+        /// </remarks>
+        Author? Author { get; }
+
+        /// <summary>
+        /// Playlist description.
+        /// </summary>
+        string Description { get; }
+
+        /// <summary>
+        /// Playlist thumbnails.
+        /// </summary>
+        IReadOnlyList<Thumbnail> Thumbnails { get; }
+    }
+}

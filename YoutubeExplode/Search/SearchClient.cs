@@ -6,7 +6,6 @@ using System.Threading;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Search
 {
@@ -26,9 +25,10 @@ namespace YoutubeExplode.Search
         }
 
         /// <summary>
-        /// Enumerates the videos returned by the specified search query.
+        /// Enumerates batches of search results returned for the specified query.
+        /// Each batch represents one request.
         /// </summary>
-        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+        public async IAsyncEnumerable<SearchResultBatch> GetResultBatchesAsync(
             string searchQuery,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -37,6 +37,8 @@ namespace YoutubeExplode.Search
 
             do
             {
+                var results = new List<ISearchResult>();
+
                 var searchResults =
                     await _controller.GetSearchResultsAsync(searchQuery, continuationToken, cancellationToken);
 
@@ -89,7 +91,7 @@ namespace YoutubeExplode.Search
                         thumbnails.Add(thumbnail);
                     }
 
-                    var video = new PlaylistVideo(
+                    var video = new SearchResultVideo(
                         id,
                         title,
                         new Author(channelId, channelTitle),
@@ -97,11 +99,29 @@ namespace YoutubeExplode.Search
                         thumbnails
                     );
 
-                    yield return video;
+                    results.Add(video);
                 }
+
+                yield return new SearchResultBatch(results);
 
                 continuationToken = searchResults.TryGetContinuationToken();
             } while (!string.IsNullOrWhiteSpace(continuationToken));
+        }
+
+        /// <summary>
+        /// Enumerates the search results returned for the specified query.
+        /// </summary>
+        public async IAsyncEnumerable<ISearchResult> GetResultsAsync(
+            string searchQuery,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var batch in GetResultBatchesAsync(searchQuery, cancellationToken))
+            {
+                foreach (var result in batch.Results)
+                {
+                    yield return result;
+                }
+            }
         }
     }
 }
