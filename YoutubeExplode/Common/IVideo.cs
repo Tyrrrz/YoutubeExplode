@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using YoutubeExplode.Channels;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Common
