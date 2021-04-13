@@ -30,7 +30,9 @@ namespace YoutubeExplode.Tests
             playlist.Id.Value.Should().Be(PlaylistIds.Normal);
             playlist.Url.Should().NotBeNullOrWhiteSpace();
             playlist.Title.Should().Be("Analytics Academy - Digital Analytics Fundamentals");
-            playlist.Author.Should().Be("Google Analytics");
+            playlist.Author.Should().NotBeNull();
+            playlist.Author?.ChannelId.Value.Should().Be("UCJ5UyIAa5nEGksjcdp43Ixw");
+            playlist.Author?.Title.Should().Be("Google Analytics");
             playlist.Description.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
             playlist.Thumbnails.Should().NotBeEmpty();
         }
