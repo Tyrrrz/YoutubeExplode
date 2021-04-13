@@ -48,7 +48,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(80);
-            videos.Select(v => v.ChannelId).Should().OnlyContain(i => i == ChannelIds.Normal);
+            videos.Select(v => v.Author.ChannelId).Should().OnlyContain(i => i == ChannelIds.Normal);
         }
     }
 }

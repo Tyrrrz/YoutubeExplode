@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Videos;
 
@@ -7,7 +8,7 @@ namespace YoutubeExplode.Common
     /// <summary>
     /// Metadata properties shared by videos of different types.
     /// </summary>
-    public interface IVideo : IHasThumbnails
+    public interface IVideo
     {
         /// <summary>
         /// Video ID.
@@ -27,12 +28,7 @@ namespace YoutubeExplode.Common
         /// <summary>
         /// Video author.
         /// </summary>
-        string Author { get; }
-
-        /// <summary>
-        /// Video channel ID.
-        /// </summary>
-        ChannelId ChannelId { get; }
+        Author Author { get; }
 
         /// <summary>
         /// Video duration.
@@ -41,5 +37,10 @@ namespace YoutubeExplode.Common
         /// May be null if the video is a currently ongoing live stream.
         /// </remarks>
         TimeSpan? Duration { get; }
+
+        /// <summary>
+        /// Video thumbnails.
+        /// </summary>
+        IReadOnlyList<Thumbnail> Thumbnails { get; }
     }
 }

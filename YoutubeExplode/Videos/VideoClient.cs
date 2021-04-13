@@ -55,7 +55,7 @@ namespace YoutubeExplode.Videos
                 playerResponse.TryGetVideoTitle() ??
                 throw new YoutubeExplodeException("Could not extract video title.");
 
-            var author =
+            var channelTitle =
                 playerResponse.TryGetVideoAuthor() ??
                 throw new YoutubeExplodeException("Could not extract video author.");
 
@@ -116,18 +116,13 @@ namespace YoutubeExplode.Videos
             return new Video(
                 videoId,
                 title,
-                author,
-                channelId,
+                new Author(channelId, channelTitle),
                 uploadDate,
                 description,
                 duration,
                 thumbnails,
                 keywords,
-                new Engagement(
-                    viewCount,
-                    likeCount,
-                    dislikeCount
-                )
+                new Engagement(viewCount, likeCount, dislikeCount)
             );
         }
     }

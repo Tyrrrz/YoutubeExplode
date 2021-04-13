@@ -31,8 +31,8 @@ namespace YoutubeExplode.Tests
             video.Id.Value.Should().Be(VideoIds.ContainsDashManifest);
             video.Url.Should().NotBeNullOrWhiteSpace();
             video.Title.Should().Be("Aka no Ha [Another] +HDHR");
-            video.Author.Should().Be("Tyrrrz");
-            video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+            video.Author.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+            video.Author.Title.Should().Be("Tyrrrz");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
             video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(108), 1000);

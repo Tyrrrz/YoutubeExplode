@@ -54,7 +54,7 @@ namespace YoutubeExplode.Search
                         videoExtractor.TryGetVideoTitle() ??
                         throw new YoutubeExplodeException("Could not extract video title.");
 
-                    var author =
+                    var channelTitle =
                         videoExtractor.TryGetVideoAuthor() ??
                         throw new YoutubeExplodeException("Could not extract video author.");
 
@@ -62,11 +62,7 @@ namespace YoutubeExplode.Search
                         videoExtractor.TryGetVideoChannelId() ??
                         throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-                    var description = videoExtractor.TryGetVideoDescription() ?? "";
-
                     var duration = videoExtractor.TryGetVideoDuration();
-
-                    var viewCount = videoExtractor.TryGetVideoViewCount() ?? 0;
 
                     var thumbnails = new List<Thumbnail>();
 
@@ -96,11 +92,8 @@ namespace YoutubeExplode.Search
                     var video = new PlaylistVideo(
                         id,
                         title,
-                        author,
-                        channelId,
-                        description,
+                        new Author(channelId, channelTitle),
                         duration,
-                        viewCount,
                         thumbnails
                     );
 

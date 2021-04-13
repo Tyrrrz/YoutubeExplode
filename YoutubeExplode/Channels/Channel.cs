@@ -7,7 +7,7 @@ namespace YoutubeExplode.Channels
     /// <summary>
     /// Metadata associated with a YouTube channel.
     /// </summary>
-    public class Channel : IHasThumbnails
+    public class Channel
     {
         /// <summary>
         /// Channel ID.
@@ -24,7 +24,9 @@ namespace YoutubeExplode.Channels
         /// </summary>
         public string Title { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Channel thumbnails.
+        /// </summary>
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>

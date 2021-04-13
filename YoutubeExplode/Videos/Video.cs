@@ -20,11 +20,10 @@ namespace YoutubeExplode.Videos
         /// <inheritdoc />
         public string Title { get; }
 
-        /// <inheritdoc />
-        public string Author { get; }
-
-        /// <inheritdoc />
-        public ChannelId ChannelId { get; }
+        /// <summary>
+        /// Video author.
+        /// </summary>
+        public Author Author { get; }
 
         /// <summary>
         /// Video upload date.
@@ -58,8 +57,7 @@ namespace YoutubeExplode.Videos
         public Video(
             VideoId id,
             string title,
-            string author,
-            ChannelId channelId,
+            Author author,
             DateTimeOffset uploadDate,
             string description,
             TimeSpan? duration,
@@ -70,7 +68,6 @@ namespace YoutubeExplode.Videos
             Id = id;
             Title = title;
             Author = author;
-            ChannelId = channelId;
             UploadDate = uploadDate;
             Description = description;
             Duration = duration;

@@ -7,7 +7,7 @@ namespace YoutubeExplode.Playlists
     /// <summary>
     /// Metadata associated with a YouTube playlist.
     /// </summary>
-    public class Playlist : IHasThumbnails
+    public class Playlist
     {
         /// <summary>
         /// Playlist ID.
@@ -24,18 +24,20 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         public string Title { get; }
 
-        /// <summary>
-        /// Playlist author.
-        /// Can be null if it's a system playlist (e.g. Video Mix, Topics, etc.).
-        /// </summary>
-        public string? Author { get; }
+        /// <remarks>
+        /// May be null in case of a system playlist.
+        /// System playlist (e.g. mixes, topics, etc) are generated automatically and don't have an author.
+        /// </remarks>
+        public Author? Author { get; }
 
         /// <summary>
         /// Playlist description.
         /// </summary>
         public string Description { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Playlist thumbnails.
+        /// </summary>
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace YoutubeExplode.Playlists
         public Playlist(
             PlaylistId id,
             string title,
-            string? author,
+            Author? author,
             string description,
             IReadOnlyList<Thumbnail> thumbnails)
         {

@@ -44,11 +44,12 @@ namespace YoutubeExplode.Playlists
                 throw new YoutubeExplodeException("Could not extract playlist title.");
 
             // System playlists have no author
-            var author = playlistExtractor.TryGetPlaylistAuthor();
-
-            // TODO: use this
-            // System playlists have no channel ID
             var channelId = playlistExtractor.TryGetPlaylistChannelId();
+            var channelTitle = playlistExtractor.TryGetPlaylistAuthor();
+
+            var author = channelId is not null && channelTitle is not null
+                ? new Author(channelId, channelTitle)
+                : null;
 
             var description = playlistExtractor.TryGetPlaylistDescription() ?? "";
 
@@ -113,7 +114,7 @@ namespace YoutubeExplode.Playlists
                         videoExtractor.TryGetVideoTitle() ??
                         throw new YoutubeExplodeException("Could not extract video title.");
 
-                    var author =
+                    var channelTitle =
                         videoExtractor.TryGetVideoAuthor() ??
                         throw new YoutubeExplodeException("Could not extract video author.");
 
@@ -151,11 +152,8 @@ namespace YoutubeExplode.Playlists
                     var video = new PlaylistVideo(
                         id,
                         title,
-                        author,
-                        channelId,
-                        "", // TODO: remove
+                        new Author(channelId, channelTitle),
                         duration,
-                        0, // TODO: remove
                         thumbnails
                     );
 

@@ -21,24 +21,13 @@ namespace YoutubeExplode.Playlists
         /// <inheritdoc />
         public string Title { get; }
 
-        /// <inheritdoc />
-        public string Author { get; }
-
-        /// <inheritdoc />
-        public ChannelId ChannelId { get; }
-
         /// <summary>
-        /// Video description.
+        /// Video author.
         /// </summary>
-        public string Description { get; }
+        public Author Author { get; }
 
         /// <inheritdoc />
         public TimeSpan? Duration { get; }
-
-        /// <summary>
-        /// Video view count.
-        /// </summary>
-        public long ViewCount { get; }
 
         /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
@@ -49,20 +38,14 @@ namespace YoutubeExplode.Playlists
         public PlaylistVideo(
             VideoId id,
             string title,
-            string author,
-            ChannelId channelId,
-            string description,
+            Author author,
             TimeSpan? duration,
-            long viewCount,
             IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
-            ChannelId = channelId;
-            Description = description;
             Duration = duration;
-            ViewCount = viewCount;
             Thumbnails = thumbnails;
         }
 
