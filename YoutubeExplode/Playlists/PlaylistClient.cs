@@ -86,9 +86,10 @@ namespace YoutubeExplode.Playlists
         }
 
         /// <summary>
-        /// Enumerates videos included in the specified playlist.
+        /// Enumerates batches of videos included in the specified playlist.
+        /// Each batch represents one request.
         /// </summary>
-        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+        public async IAsyncEnumerable<PlaylistVideoBatch> GetVideoBatchesAsync(
             PlaylistId playlistId,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -99,6 +100,8 @@ namespace YoutubeExplode.Playlists
             {
                 var playlistExtractor =
                     await _controller.GetPlaylistAsync(playlistId, continuationToken, cancellationToken);
+
+                var videos = new List<PlaylistVideo>();
 
                 foreach (var videoExtractor in playlistExtractor.GetVideos())
                 {
@@ -157,11 +160,29 @@ namespace YoutubeExplode.Playlists
                         thumbnails
                     );
 
-                    yield return video;
+                    videos.Add(video);
                 }
+
+                yield return new PlaylistVideoBatch(videos);
 
                 continuationToken = playlistExtractor.TryGetContinuationToken();
             } while (!string.IsNullOrWhiteSpace(continuationToken));
+        }
+
+        /// <summary>
+        /// Enumerates videos included in the specified playlist.
+        /// </summary>
+        public async IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
+            PlaylistId playlistId,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var batch in GetVideoBatchesAsync(playlistId, cancellationToken))
+            {
+                foreach (var video in batch.Videos)
+                {
+                    yield return video;
+                }
+            }
         }
     }
 }
