@@ -100,7 +100,6 @@ namespace YoutubeExplode.Channels
             );
         }
 
-        // TODO: replace this with PlaylistId.ForUserUploads(...)
         /// <summary>
         /// Enumerates videos uploaded by the specified channel.
         /// </summary>

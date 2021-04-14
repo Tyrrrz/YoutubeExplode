@@ -50,20 +50,6 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_cannot_get_the_list_of_available_streams_of_an_unplayable_video()
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
-
-            // Act & assert
-            var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
-                await youtube.Videos.Streams.GetManifestAsync(VideoIds.LiveStream)
-            );
-
-            _testOutput.WriteLine(ex.Message);
-        }
-
-        [Fact]
         public async Task User_cannot_get_the_list_of_available_streams_of_a_paid_video()
         {
             // Arrange
