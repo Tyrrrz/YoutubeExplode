@@ -15,10 +15,37 @@ namespace YoutubeExplode.Bridge.Extractors
         public SearchResultsExtractor(JsonElement content) => _content = content;
 
         // Search results response is incredibly inconsistent (5+ variations),
-        // so we employ descendent searching, which is inefficient but resilient.
+        // so we employ descendant searching, which is inefficient but resilient.
         private JsonElement? TryGetContentRoot() => _memo.Wrap(() =>
             _content.GetPropertyOrNull("contents") ??
             _content.GetPropertyOrNull("onResponseReceivedCommands")
+        );
+
+        public IReadOnlyList<SearchResultVideoExtractor> GetVideos() => _memo.Wrap(() =>
+            TryGetContentRoot()?
+                .EnumerateDescendantProperties("videoRenderer")
+                .Select(j => new SearchResultVideoExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<SearchResultVideoExtractor>()
+        );
+
+        public IReadOnlyList<SearchResultPlaylistExtractor> GetPlaylists() => _memo.Wrap(() =>
+            TryGetContentRoot()?
+                .EnumerateDescendantProperties("playlistRenderer")
+                .Select(j => new SearchResultPlaylistExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<SearchResultPlaylistExtractor>()
+        );
+
+        public IReadOnlyList<SearchResultChannelExtractor> GetChannels() => _memo.Wrap(() =>
+            TryGetContentRoot()?
+                .EnumerateDescendantProperties("channelRenderer")
+                .Select(j => new SearchResultChannelExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<SearchResultChannelExtractor>()
         );
 
         public string? TryGetContinuationToken() => _memo.Wrap(() =>
@@ -27,15 +54,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .FirstOrNull()?
                 .GetPropertyOrNull("token")?
                 .GetStringOrNull()
-        );
-
-        public IReadOnlyList<SearchResultsVideoExtractor> GetVideos() => _memo.Wrap(() =>
-            TryGetContentRoot()?
-                .EnumerateDescendantProperties("videoRenderer")
-                .Select(j => new SearchResultsVideoExtractor(j))
-                .ToArray() ??
-
-            Array.Empty<SearchResultsVideoExtractor>()
         );
     }
 

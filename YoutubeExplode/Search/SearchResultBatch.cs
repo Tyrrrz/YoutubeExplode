@@ -3,7 +3,7 @@
 namespace YoutubeExplode.Search
 {
     /// <summary>
-    /// Batch of search results returned for a specific query.
+    /// Batch of results returned by a search query.
     /// </summary>
     public class SearchResultBatch
     {

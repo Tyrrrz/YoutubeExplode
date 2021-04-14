@@ -21,7 +21,9 @@ namespace YoutubeExplode.Playlists
         /// <inheritdoc />
         public Author? Author { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Playlist description.
+        /// </summary>
         public string Description { get; }
 
         /// <inheritdoc />

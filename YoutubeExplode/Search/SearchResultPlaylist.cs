@@ -13,17 +13,14 @@ namespace YoutubeExplode.Search
         /// <inheritdoc />
         public PlaylistId Id { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPlaylist.Url" />
         public string Url => $"https://www.youtube.com/playlist?list={Id}";
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IPlaylist.Title" />
         public string Title { get; }
 
         /// <inheritdoc />
         public Author? Author { get; }
-
-        /// <inheritdoc />
-        public string Description { get; }
 
         /// <inheritdoc />
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
@@ -35,13 +32,11 @@ namespace YoutubeExplode.Search
             PlaylistId id,
             string title,
             Author? author,
-            string description,
             IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
-            Description = description;
             Thumbnails = thumbnails;
         }
 

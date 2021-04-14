@@ -7,14 +7,14 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge.Extractors
 {
-    internal class SearchResultsVideoExtractor
+    internal class SearchResultVideoExtractor
     {
         private static readonly string[] DurationFormats = {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"};
 
         private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
-        public SearchResultsVideoExtractor(JsonElement content) => _content = content;
+        public SearchResultVideoExtractor(JsonElement content) => _content = content;
 
         public string? TryGetVideoId() => _memo.Wrap(() =>
             _content

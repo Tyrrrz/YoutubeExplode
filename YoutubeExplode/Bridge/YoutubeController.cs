@@ -216,7 +216,7 @@ namespace YoutubeExplode.Bridge
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
-                Content = new JsonContent(payload)
+                Content = new JsonHttpContent(payload)
             };
 
             var raw = await SendHttpRequestAsync(request, cancellationToken);
@@ -236,7 +236,7 @@ namespace YoutubeExplode.Bridge
             await GetPlaylistAsync(playlistId, null, cancellationToken);
 
         public async ValueTask<SearchResultsExtractor> GetSearchResultsAsync(
-            string query,
+            string searchQuery,
             string? continuationToken,
             CancellationToken cancellationToken = default)
         {
@@ -244,7 +244,7 @@ namespace YoutubeExplode.Bridge
 
             var payload = new Dictionary<string, object?>
             {
-                ["query"] = query,
+                ["query"] = searchQuery,
                 ["continuation"] = continuationToken,
                 ["context"] = new Dictionary<string, object?>
                 {
@@ -266,7 +266,7 @@ namespace YoutubeExplode.Bridge
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
-                Content = new JsonContent(payload)
+                Content = new JsonHttpContent(payload)
             };
 
             var raw = await SendHttpRequestAsync(request, cancellationToken);

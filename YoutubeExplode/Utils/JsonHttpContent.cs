@@ -4,9 +4,9 @@ using System.Text.Json;
 
 namespace YoutubeExplode.Utils
 {
-    internal class JsonContent : StringContent
+    internal class JsonHttpContent : StringContent
     {
-        public JsonContent(object? content)
+        public JsonHttpContent(object? content)
             : base(JsonSerializer.Serialize(content), Encoding.UTF8, "application/json")
         {
         }

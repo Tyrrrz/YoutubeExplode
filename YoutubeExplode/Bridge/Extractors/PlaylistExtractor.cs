@@ -141,6 +141,17 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("continuationItems")
         );
 
+        public IReadOnlyList<PlaylistVideoExtractor> GetVideos() => _memo.Wrap(() =>
+            TryGetContentRoot()?
+                .EnumerateArrayOrNull()?
+                .Select(j => j.GetPropertyOrNull("playlistVideoRenderer"))
+                .WhereNotNull()
+                .Select(j => new PlaylistVideoExtractor(j))
+                .ToArray() ??
+
+            Array.Empty<PlaylistVideoExtractor>()
+        );
+
         public string? TryGetContinuationToken() => _memo.Wrap(() =>
             TryGetContentRoot()?
                 .EnumerateArrayOrNull()?
@@ -151,17 +162,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("continuationCommand")?
                 .GetPropertyOrNull("token")?
                 .GetStringOrNull()
-        );
-
-        public IReadOnlyList<PlaylistVideoExtractor> GetVideos() => _memo.Wrap(() =>
-            TryGetContentRoot()?
-                .EnumerateArrayOrNull()?
-                .Select(j => j.GetPropertyOrNull("playlistVideoRenderer"))
-                .WhereNotNull()
-                .Select(j => new PlaylistVideoExtractor(j))
-                .ToArray() ??
-
-            Array.Empty<PlaylistVideoExtractor>()
         );
     }
 

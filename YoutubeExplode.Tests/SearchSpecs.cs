@@ -14,10 +14,10 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetResultsAsync("billie eilish");
+            var results = await youtube.Search.GetResultsAsync("billie eilish");
 
             // Assert
-            videos.Should().HaveCountGreaterThan(200);
+            results.Should().HaveCountGreaterThan(300);
         }
 
         [Fact]
@@ -27,10 +27,10 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetResultsAsync("Kill la Kill Gomen ne, Iiko ja Irarenai.");
+            var results = await youtube.Search.GetResultsAsync("Kill la Kill Gomen ne, Iiko ja Irarenai.");
 
             // Assert
-            videos.Should().HaveCountGreaterThan(300);
+            results.Should().HaveCountGreaterThan(300);
         }
     }
 }

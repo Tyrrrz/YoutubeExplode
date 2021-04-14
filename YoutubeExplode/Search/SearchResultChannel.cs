@@ -13,10 +13,10 @@ namespace YoutubeExplode.Search
         /// <inheritdoc />
         public ChannelId Id { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChannel.Url" />
         public string Url => $"https://www.youtube.com/channel/{Id}";
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IChannel.Title" />
         public string Title { get; }
 
         /// <inheritdoc />

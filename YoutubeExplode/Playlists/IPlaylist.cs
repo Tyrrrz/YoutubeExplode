@@ -23,16 +23,13 @@ namespace YoutubeExplode.Playlists
         /// </summary>
         string Title { get; }
 
+        /// <summary>
+        /// Playlist title.
+        /// </summary>
         /// <remarks>
-        /// May be null in case of a system playlist.
-        /// System playlist (e.g. mixes, topics, etc) are generated automatically and don't have an author.
+        /// May be null in case of system playlists (e.g. mixes, topics, etc).
         /// </remarks>
         Author? Author { get; }
-
-        /// <summary>
-        /// Playlist description.
-        /// </summary>
-        string Description { get; }
 
         /// <summary>
         /// Playlist thumbnails.
