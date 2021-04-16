@@ -48,7 +48,7 @@ namespace YoutubeExplode.Bridge.Extractors
             TryGetSidebarPrimary()?
                 .GetPropertyOrNull("title")?
                 .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString()
@@ -69,7 +69,7 @@ namespace YoutubeExplode.Bridge.Extractors
             TryGetPlaylistAuthorDetails()?
                 .GetPropertyOrNull("title")?
                 .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString()
@@ -92,7 +92,7 @@ namespace YoutubeExplode.Bridge.Extractors
             TryGetSidebarPrimary()?
                 .GetPropertyOrNull("description")?
                 .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString()
@@ -104,7 +104,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
                 .GetPropertyOrNull("thumbnail")?
                 .GetPropertyOrNull("thumbnails")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => new ThumbnailExtractor(j))
                 .ToArray() ??
 

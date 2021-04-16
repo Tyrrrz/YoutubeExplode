@@ -80,7 +80,7 @@ namespace YoutubeExplode.Bridge.Extractors
             TryGetVideoDetails()?
                 .GetPropertyOrNull("thumbnail")?
                 .GetPropertyOrNull("thumbnails")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => new ThumbnailExtractor(j))
                 .ToArray() ??
 
@@ -90,7 +90,7 @@ namespace YoutubeExplode.Bridge.Extractors
         public IReadOnlyList<string> GetVideoKeywords() => _memo.Wrap(() =>
             TryGetVideoDetails()?
                 .GetPropertyOrNull("keywords")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => j.GetStringOrNull())
                 .WhereNotNull()
                 .ToArray() ??
@@ -149,20 +149,16 @@ namespace YoutubeExplode.Bridge.Extractors
 
             var muxedStreams = TryGetStreamingData()?
                 .GetPropertyOrNull("formats")?
-                .EnumerateArrayOrEmpty()
-                .Select(j => new PlayerStreamInfoExtractor(j))
-                .Where(s => !string.Equals(s.TryGetCodecs(), "unknown", StringComparison.OrdinalIgnoreCase));
+                .EnumerateArrayOrNull()?
+                .Select(j => new PlayerStreamInfoExtractor(j));
 
             if (muxedStreams is not null)
                 result.AddRange(muxedStreams);
 
-            // TODO: unknown codecs might be av01
-            // https://github.com/ytdl-org/youtube-dl/blob/162bf9e10a4e6a08f5ed156a68054ef9b4d2b60e/youtube_dl/extractor/youtube.py#L1187-L1191
             var adaptiveStreams = TryGetStreamingData()?
                 .GetPropertyOrNull("adaptiveFormats")?
-                .EnumerateArrayOrEmpty()
-                .Select(j => new PlayerStreamInfoExtractor(j))
-                .Where(s => !string.Equals(s.TryGetCodecs(), "unknown", StringComparison.OrdinalIgnoreCase));
+                .EnumerateArrayOrNull()?
+                .Select(j => new PlayerStreamInfoExtractor(j));
 
             if (adaptiveStreams is not null)
                 result.AddRange(adaptiveStreams);
@@ -175,7 +171,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("captions")?
                 .GetPropertyOrNull("playerCaptionsTracklistRenderer")?
                 .GetPropertyOrNull("captionTracks")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => new PlayerClosedCaptionTrackInfoExtractor(j))
                 .ToArray() ??
 

@@ -38,7 +38,6 @@ namespace YoutubeExplode.Utils.Extensions
                 ? result
                 : null;
 
-        // TODO: which overload to use?
         public static JsonElement.ArrayEnumerator? EnumerateArrayOrNull(this JsonElement element) =>
             element.ValueKind == JsonValueKind.Array
                 ? element.EnumerateArray()

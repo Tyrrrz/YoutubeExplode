@@ -52,11 +52,10 @@ namespace YoutubeExplode.Utils
             }
         }
 
-        public static HttpContent SerializeToHttpContent(object? obj) =>
-            new StringContent(
-                JsonSerializer.Serialize(obj),
-                Encoding.UTF8,
-                "application/json"
-            );
+        public static HttpContent SerializeToHttpContent(object? obj) => new StringContent(
+            JsonSerializer.Serialize(obj),
+            Encoding.UTF8,
+            "application/json"
+        );
     }
 }

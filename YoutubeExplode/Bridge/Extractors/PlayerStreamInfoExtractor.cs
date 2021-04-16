@@ -95,10 +95,17 @@ namespace YoutubeExplode.Bridge.Extractors
         );
 
         public string? TryGetVideoCodec() => _memo.Wrap(() =>
-            IsAudioOnly()
+        {
+            var codec = IsAudioOnly()
                 ? null
-                : TryGetCodecs()?.SubstringUntil(", ").NullIfWhiteSpace()
-        );
+                : TryGetCodecs()?.SubstringUntil(", ").NullIfWhiteSpace();
+
+            // "unknown" value indicates av01 codec
+            if (string.Equals(codec, "unknown", StringComparison.OrdinalIgnoreCase))
+                return "av01.0.05M.08";
+
+            return codec;
+        });
 
         public string? TryGetVideoQualityLabel() => _memo.Wrap(() =>
             _content

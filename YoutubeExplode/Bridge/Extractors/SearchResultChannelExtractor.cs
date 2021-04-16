@@ -30,7 +30,7 @@ namespace YoutubeExplode.Bridge.Extractors
             _content
                 .GetPropertyOrNull("title")?
                 .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString()
@@ -40,7 +40,7 @@ namespace YoutubeExplode.Bridge.Extractors
             _content
                 .GetPropertyOrNull("thumbnail")?
                 .GetPropertyOrNull("thumbnails")?
-                .EnumerateArrayOrEmpty()
+                .EnumerateArrayOrNull()?
                 .Select(j => new ThumbnailExtractor(j))
                 .ToArray() ??
 
