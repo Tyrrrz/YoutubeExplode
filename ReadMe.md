@@ -20,20 +20,13 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 
 - Retrieve metadata on videos, playlists, channels, streams, and closed captions
 - Execute search queries and get resulting videos
-- Get or download video streams, with support for seeking
+- Download media streams, with support for seeking
 - Get closed captions or download them as SRT files
 - Works with .NET Standard 2.0+, .NET Core 2.0+, .NET Framework 4.6.1+
 
 ## Screenshots
 
 ![demo](.screenshots/demo.png)
-
-## Usage
-
-- [Getting metadata of a video](#getting-metadata-of-a-video)
-- [Downloading a video stream](#downloading-a-video-stream)
-- [Working with playlists](#working-with-playlists)
-- [Extracting closed captions](#extracting-closed-captions)
 
 ### Getting metadata of a video
 
@@ -127,7 +120,7 @@ var playlistVideos = await youtube.Playlists.GetVideosAsync(playlist.Id);
 // Get first 20 playlist videos
 var somePlaylistVideos = await youtube.Playlists
     .GetVideosAsync(playlist.Id)
-    .BufferAsync(20);
+    .CollectAsync(20);
 ```
 
 ### Extracting closed captions
