@@ -9,7 +9,7 @@ namespace YoutubeExplode.Playlists
     /// <summary>
     /// Metadata associated with a YouTube video included in a playlist.
     /// </summary>
-    public class PlaylistVideo : IVideo
+    public class PlaylistVideo : IVideo, IBatchItem
     {
         /// <inheritdoc />
         public VideoId Id { get; }

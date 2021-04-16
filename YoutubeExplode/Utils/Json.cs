@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -50,5 +51,12 @@ namespace YoutubeExplode.Utils
                 return null;
             }
         }
+
+        public static HttpContent SerializeToHttpContent(object? obj) =>
+            new StringContent(
+                JsonSerializer.Serialize(obj),
+                Encoding.UTF8,
+                "application/json"
+            );
     }
 }

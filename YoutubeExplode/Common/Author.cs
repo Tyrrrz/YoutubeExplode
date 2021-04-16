@@ -4,7 +4,7 @@ using YoutubeExplode.Channels;
 namespace YoutubeExplode.Common
 {
     /// <summary>
-    /// Reference to a channel that owns a specific video or playlist.
+    /// Author of a YouTube video or playlist.
     /// </summary>
     public class Author
     {

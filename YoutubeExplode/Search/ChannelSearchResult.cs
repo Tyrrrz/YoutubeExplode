@@ -8,7 +8,7 @@ namespace YoutubeExplode.Search
     /// <summary>
     /// Metadata associated with a YouTube channel returned by a search query.
     /// </summary>
-    public class SearchResultChannel : ISearchResult, IChannel
+    public class ChannelSearchResult : ISearchResult, IChannel
     {
         /// <inheritdoc />
         public ChannelId Id { get; }
@@ -23,9 +23,9 @@ namespace YoutubeExplode.Search
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="SearchResultChannel"/>.
+        /// Initializes an instance of <see cref="ChannelSearchResult"/>.
         /// </summary>
-        public SearchResultChannel(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
+        public ChannelSearchResult(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;

@@ -6,6 +6,7 @@ using System.Threading;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Search
 {
@@ -28,7 +29,7 @@ namespace YoutubeExplode.Search
         /// Enumerates batches of search results returned for the specified query.
         /// Each batch represents one request.
         /// </summary>
-        public async IAsyncEnumerable<SearchResultBatch> GetResultBatchesAsync(
+        public async IAsyncEnumerable<Batch<ISearchResult>> GetResultBatchesAsync(
             string searchQuery,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -91,7 +92,7 @@ namespace YoutubeExplode.Search
                         thumbnails.Add(thumbnail);
                     }
 
-                    var video = new SearchResultVideo(
+                    var video = new VideoSearchResult(
                         id,
                         title,
                         new Author(channelId, channelTitle),
@@ -147,7 +148,7 @@ namespace YoutubeExplode.Search
                         thumbnails.Add(thumbnail);
                     }
 
-                    var playlist = new SearchResultPlaylist(
+                    var playlist = new PlaylistSearchResult(
                         id,
                         title,
                         author,
@@ -190,7 +191,7 @@ namespace YoutubeExplode.Search
                         thumbnails.Add(thumbnail);
                     }
 
-                    var channel = new SearchResultChannel(
+                    var channel = new ChannelSearchResult(
                         channelId,
                         title,
                         thumbnails
@@ -199,7 +200,7 @@ namespace YoutubeExplode.Search
                     results.Add(channel);
                 }
 
-                yield return new SearchResultBatch(results);
+                yield return Batch.Create(results);
 
                 continuationToken = searchResults.TryGetContinuationToken();
             } while (!string.IsNullOrWhiteSpace(continuationToken));
@@ -208,17 +209,39 @@ namespace YoutubeExplode.Search
         /// <summary>
         /// Enumerates the search results returned for the specified query.
         /// </summary>
-        public async IAsyncEnumerable<ISearchResult> GetResultsAsync(
+        public IAsyncEnumerable<ISearchResult> GetResultsAsync(
             string searchQuery,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            await foreach (var batch in GetResultBatchesAsync(searchQuery, cancellationToken))
-            {
-                foreach (var result in batch.Results)
-                {
-                    yield return result;
-                }
-            }
-        }
+            CancellationToken cancellationToken = default) =>
+            GetResultBatchesAsync(searchQuery, cancellationToken).FlattenAsync();
+
+        /// <summary>
+        /// Enumerates the search results returned for the specified query.
+        /// </summary>
+        public IAsyncEnumerable<VideoSearchResult> GetVideosAsync(
+            string searchQuery,
+            CancellationToken cancellationToken = default) =>
+            GetResultBatchesAsync(searchQuery, cancellationToken)
+                .FlattenAsync()
+                .OfType<ISearchResult, VideoSearchResult>();
+
+        /// <summary>
+        /// Enumerates the search results returned for the specified query.
+        /// </summary>
+        public IAsyncEnumerable<PlaylistSearchResult> GetPlaylistsAsync(
+            string searchQuery,
+            CancellationToken cancellationToken = default) =>
+            GetResultBatchesAsync(searchQuery, cancellationToken)
+                .FlattenAsync()
+                .OfType<ISearchResult, PlaylistSearchResult>();
+
+        /// <summary>
+        /// Enumerates the search results returned for the specified query.
+        /// </summary>
+        public IAsyncEnumerable<ChannelSearchResult> GetChannelsAsync(
+            string searchQuery,
+            CancellationToken cancellationToken = default) =>
+            GetResultBatchesAsync(searchQuery, cancellationToken)
+                .FlattenAsync()
+                .OfType<ISearchResult, ChannelSearchResult>();
     }
 }

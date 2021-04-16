@@ -216,7 +216,7 @@ namespace YoutubeExplode.Bridge
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
-                Content = new JsonHttpContent(payload)
+                Content = Json.SerializeToHttpContent(payload)
             };
 
             var raw = await SendHttpRequestAsync(request, cancellationToken);
@@ -266,7 +266,7 @@ namespace YoutubeExplode.Bridge
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url)
             {
-                Content = new JsonHttpContent(payload)
+                Content = Json.SerializeToHttpContent(payload)
             };
 
             var raw = await SendHttpRequestAsync(request, cancellationToken);

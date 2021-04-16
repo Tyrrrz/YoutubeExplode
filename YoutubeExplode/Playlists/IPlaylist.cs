@@ -4,7 +4,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// Metadata properties shared by playlists of different types.
+    /// Metadata properties shared by playlists resolved from different sources.
     /// </summary>
     public interface IPlaylist
     {

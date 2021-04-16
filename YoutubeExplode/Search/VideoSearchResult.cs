@@ -9,7 +9,7 @@ namespace YoutubeExplode.Search
     /// <summary>
     /// Metadata associated with a YouTube video returned by a search query.
     /// </summary>
-    public class SearchResultVideo : ISearchResult, IVideo
+    public class VideoSearchResult : ISearchResult, IVideo
     {
         /// <inheritdoc />
         public VideoId Id { get; }
@@ -30,9 +30,9 @@ namespace YoutubeExplode.Search
         public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Initializes an instance of <see cref="SearchResultVideo"/>.
+        /// Initializes an instance of <see cref="VideoSearchResult"/>.
         /// </summary>
-        public SearchResultVideo(
+        public VideoSearchResult(
             VideoId id,
             string title,
             Author author,

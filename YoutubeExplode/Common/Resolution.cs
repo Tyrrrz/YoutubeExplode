@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace YoutubeExplode.Common
 {
     /// <summary>
-    /// Resolution of an image or video.
+    /// Resolution of an image or a video.
     /// </summary>
     public readonly partial struct Resolution
     {

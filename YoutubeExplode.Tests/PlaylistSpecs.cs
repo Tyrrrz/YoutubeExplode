@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Playlists;
 using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
@@ -95,6 +95,7 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(21);
+
             videos.Select(v => v.Id.Value).Should().Contain(new[]
             {
                 "uPZSSdkGQhM",
@@ -119,6 +120,16 @@ namespace YoutubeExplode.Tests
                 "E9zfpKsw6f8",
                 "eBCw9sC5D40"
             });
+
+            foreach (var video in videos)
+            {
+                video.Id.Value.Should().NotBeNullOrWhiteSpace();
+                video.Title.Should().NotBeNullOrWhiteSpace();
+                video.Url.Should().NotBeNullOrWhiteSpace();
+                video.Author.ChannelId.Value.Should().NotBeNullOrWhiteSpace();
+                video.Author.Title.Should().NotBeNullOrWhiteSpace();
+                video.Thumbnails.Should().NotBeEmpty();
+            }
         }
 
         [Fact]
@@ -172,7 +183,7 @@ namespace YoutubeExplode.Tests
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large).BufferAsync(10);
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large).CollectAsync(10);
 
             // Assert
             videos.Should().HaveCount(10);
