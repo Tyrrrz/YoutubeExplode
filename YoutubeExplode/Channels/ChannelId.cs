@@ -22,11 +22,8 @@ namespace YoutubeExplode.Channels
 
     public partial struct ChannelId
     {
-        private static bool IsValid(string? channelId)
+        private static bool IsValid(string channelId)
         {
-            if (string.IsNullOrWhiteSpace(channelId))
-                return false;
-
             // Channel IDs always start with 'UC'
             if (!channelId.StartsWith("UC", StringComparison.Ordinal))
                 return false;

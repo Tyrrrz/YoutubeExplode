@@ -22,11 +22,8 @@ namespace YoutubeExplode.Videos
 
     public partial struct VideoId
     {
-        private static bool IsValid(string? videoId)
+        private static bool IsValid(string videoId)
         {
-            if (string.IsNullOrWhiteSpace(videoId))
-                return false;
-
             // Video IDs are always 11 characters
             if (videoId.Length != 11)
                 return false;

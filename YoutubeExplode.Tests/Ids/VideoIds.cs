@@ -8,6 +8,7 @@
         public const string NonExisting = "qld9w0b-1ao";
         public const string LiveStream = "5qap5aO4i9A";
         public const string LiveStreamRecording = "rsAAeyAr-9Y";
+        public const string ContainsHighQualityStreams = "V5Fsj_sCKdg";
         public const string ContainsDashManifest = "AI7ULzgf8RU";
         public const string Omnidirectional = "-xNN-bJQ4vI";
         public const string ContainsClosedCaptions = "YltHGKX80Y8";

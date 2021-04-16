@@ -22,11 +22,8 @@ namespace YoutubeExplode.Channels
 
     public partial struct UserName
     {
-        private static bool IsValid(string? userName)
+        private static bool IsValid(string userName)
         {
-            if (string.IsNullOrWhiteSpace(userName))
-                return false;
-
             // User names can be up to 20 characters
             if (userName.Length > 20)
                 return false;

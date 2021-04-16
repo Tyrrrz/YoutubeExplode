@@ -26,6 +26,7 @@ namespace YoutubeExplode.Tests
         [InlineData(VideoIds.Normal)]
         [InlineData(VideoIds.Unlisted)]
         [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsHighQualityStreams)]
         [InlineData(VideoIds.ContainsDashManifest)]
         [InlineData(VideoIds.Omnidirectional)]
         [InlineData(VideoIds.EmbedRestrictedByAuthor)]
@@ -47,6 +48,28 @@ namespace YoutubeExplode.Tests
             manifest.GetVideoStreams().Should().NotBeEmpty();
             manifest.GetAudioOnlyStreams().Should().NotBeEmpty();
             manifest.GetVideoOnlyStreams().Should().NotBeEmpty();
+
+            foreach (var stream in manifest.GetAudioStreams())
+            {
+                stream.Url.Should().NotBeNullOrWhiteSpace();
+                stream.Container.Name.Should().NotBeNullOrWhiteSpace();
+                stream.Size.GigaBytes.Should().BeGreaterThan(0);
+                stream.Bitrate.MegaBitsPerSecond.Should().BeGreaterThan(0);
+                stream.AudioCodec.Should().NotBeNullOrWhiteSpace();
+            }
+
+            foreach (var stream in manifest.GetVideoStreams())
+            {
+                stream.Url.Should().NotBeNullOrWhiteSpace();
+                stream.Container.Name.Should().NotBeNullOrWhiteSpace();
+                stream.Size.GigaBytes.Should().BeGreaterThan(0);
+                stream.Bitrate.MegaBitsPerSecond.Should().BeGreaterThan(0);
+                stream.VideoCodec.Should().NotBeNullOrWhiteSpace();
+                stream.VideoQuality.Label.Should().NotBeNullOrWhiteSpace();
+                stream.VideoQuality.Framerate.Should().BeGreaterThan(0);
+                stream.VideoQuality.MaxHeight.Should().BeGreaterThan(0);
+                stream.VideoResolution.Area.Should().BeGreaterThan(0);
+            }
         }
 
         [Fact]

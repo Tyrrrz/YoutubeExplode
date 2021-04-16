@@ -41,7 +41,6 @@ namespace YoutubeExplode.Videos
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override string ToString() =>
-            $"{ViewCount:N0} views | {LikeCount:N0} likes | {DislikeCount:N0} dislikes";
+        public override string ToString() => $"Rating: {AverageRating:N1}";
     }
 }

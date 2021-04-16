@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -128,6 +129,7 @@ namespace YoutubeExplode.Tests
                 video.Url.Should().NotBeNullOrWhiteSpace();
                 video.Author.ChannelId.Value.Should().NotBeNullOrWhiteSpace();
                 video.Author.Title.Should().NotBeNullOrWhiteSpace();
+                video.Duration.Should().NotBe(TimeSpan.Zero);
                 video.Thumbnails.Should().NotBeEmpty();
             }
         }

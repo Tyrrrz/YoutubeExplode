@@ -41,6 +41,7 @@ namespace YoutubeExplode.Tests
             video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
             video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(5);
             video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
+            video.Engagement.AverageRating.Should().BeGreaterOrEqualTo(0);
         }
 
         [Fact]

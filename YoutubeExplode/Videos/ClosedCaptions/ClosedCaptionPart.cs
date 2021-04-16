@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
@@ -27,6 +28,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Text;
     }
 }

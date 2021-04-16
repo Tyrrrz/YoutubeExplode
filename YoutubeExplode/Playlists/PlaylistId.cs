@@ -22,11 +22,8 @@ namespace YoutubeExplode.Playlists
 
     public partial struct PlaylistId
     {
-        private static bool IsValid(string? playlistId)
+        private static bool IsValid(string playlistId)
         {
-            if (string.IsNullOrWhiteSpace(playlistId))
-                return false;
-
             // Watch later playlist is special
             if (playlistId == "WL")
                 return true;

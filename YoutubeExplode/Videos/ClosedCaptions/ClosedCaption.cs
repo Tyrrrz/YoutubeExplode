@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
@@ -62,6 +63,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             throw new InvalidOperationException($"No closed caption part found at {time}.");
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Text;
     }
 }

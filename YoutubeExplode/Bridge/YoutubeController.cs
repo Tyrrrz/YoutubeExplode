@@ -47,9 +47,9 @@ namespace YoutubeExplode.Bridge
             if ((int) response.StatusCode == 429)
             {
                 throw new RequestLimitExceededException(
-                    "Exceeded request limit. " +
+                    "Exceeded request rate limit. " +
                     "Please try again in a few hours. " +
-                    "Alternatively, inject an instance of HttpClient that includes cookies for an authenticated user."
+                    "Alternatively, inject an instance of HttpClient that includes cookies for authenticated user."
                 );
             }
 
