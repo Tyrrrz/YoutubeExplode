@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -12,11 +13,11 @@ namespace YoutubeExplode.DemoWpf.ViewModels.Framework
 
         protected void Set<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
-            if (!Equals(field, value))
-            {
-                field = value;
-                RaisePropertyChanged(propertyName);
-            }
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return;
+
+            field = value;
+            RaisePropertyChanged(propertyName);
         }
     }
 }

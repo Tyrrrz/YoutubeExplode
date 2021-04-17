@@ -1,25 +1,20 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Encapsulates a valid YouTube user name.
+    /// Represents a syntactically valid YouTube user name.
     /// </summary>
     public readonly partial struct UserName
     {
         /// <summary>
-        /// User name as a string.
+        /// Raw user name value.
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="UserName"/>.
-        /// </summary>
-        public UserName(string nameOrUrl) =>
-            Value = TryNormalize(nameOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube username or URL: '{nameOrUrl}'.");
+        private UserName(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -27,31 +22,28 @@ namespace YoutubeExplode.Channels
 
     public partial struct UserName
     {
-        private static bool IsValid(string? name)
+        private static bool IsValid(string userName)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            // User names can be up to 20 characters
+            if (userName.Length > 20)
                 return false;
 
-            // Usernames can't be longer than 20 characters
-            if (name.Length > 20)
-                return false;
-
-            return !Regex.IsMatch(name, @"[^0-9a-zA-Z]");
+            return !Regex.IsMatch(userName, @"[^0-9a-zA-Z]");
         }
 
-        private static string? TryNormalize(string? nameOrUrl)
+        private static string? TryNormalize(string? userNameOrUrl)
         {
-            if (string.IsNullOrWhiteSpace(nameOrUrl))
+            if (string.IsNullOrWhiteSpace(userNameOrUrl))
                 return null;
 
             // Name
             // TheTyrrr
-            if (IsValid(nameOrUrl))
-                return nameOrUrl;
+            if (IsValid(userNameOrUrl))
+                return userNameOrUrl;
 
             // URL
             // https://www.youtube.com/user/TheTyrrr
-            var regularMatch = Regex.Match(nameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
                 return regularMatch;
 
@@ -60,11 +52,28 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Attempts to parse the specified string as a username or URL.
+        /// Attempts to parse the specified string as a YouTube user name or URL.
         /// Returns null in case of failure.
         /// </summary>
-        public static UserName? TryParse(string? nameOrUrl) =>
-            TryNormalize(nameOrUrl)?.Pipe(name => new UserName(name));
+        public static UserName? TryParse(string? userNameOrUrl) =>
+            TryNormalize(userNameOrUrl)?.Pipe(name => new UserName(name));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube user name.
+        /// </summary>
+        public static UserName Parse(string userNameOrUrl) =>
+            TryParse(userNameOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube user name or profile URL '{userNameOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to user name.
+        /// </summary>
+        public static implicit operator UserName(string userNameOrUrl) => Parse(userNameOrUrl);
+
+        /// <summary>
+        /// Converts user name to string.
+        /// </summary>
+        public static implicit operator string(UserName userName) => userName.ToString();
     }
 
     public partial struct UserName : IEquatable<UserName>
@@ -87,15 +96,5 @@ namespace YoutubeExplode.Channels
         /// Equality check.
         /// </summary>
         public static bool operator !=(UserName left, UserName right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to user name.
-        /// </summary>
-        public static implicit operator UserName(string nameOrUrl) => new(nameOrUrl);
-
-        /// <summary>
-        /// Converts user name to string.
-        /// </summary>
-        public static implicit operator string(UserName id) => id.ToString();
     }
 }

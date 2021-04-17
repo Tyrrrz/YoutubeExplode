@@ -1,64 +1,53 @@
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// YouTube playlist metadata.
+    /// Metadata associated with a YouTube playlist.
     /// </summary>
-    public class Playlist
+    public class Playlist : IPlaylist
     {
-        /// <summary>
-        /// Playlist ID.
-        /// </summary>
+        /// <inheritdoc />
         public PlaylistId Id { get; }
 
-        /// <summary>
-        /// Playlist URL.
-        /// </summary>
+        /// <inheritdoc />
         public string Url => $"https://www.youtube.com/playlist?list={Id}";
 
-        /// <summary>
-        /// Playlist title.
-        /// </summary>
+        /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// Playlist author.
-        /// Can be null if it's a system playlist (e.g. Video Mix, Topics, etc.).
-        /// </summary>
-        public string? Author { get; }
+        /// <inheritdoc />
+        public Author? Author { get; }
 
         /// <summary>
         /// Playlist description.
         /// </summary>
         public string Description { get; }
 
-        /// <summary>
-        /// View count.
-        /// </summary>
-        public long ViewCount { get; }
-
-        /// <summary>
-        /// Available thumbnails for this playlist.
-        /// Can be null if the playlist is empty.
-        /// </summary>
-        public ThumbnailSet? Thumbnails { get; }
-
+        /// <inheritdoc />
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Playlist"/>.
         /// </summary>
-        public Playlist(PlaylistId id, string title, string? author, string description, long viewCount, ThumbnailSet? thumbnails)
+        public Playlist(
+            PlaylistId id,
+            string title,
+            Author? author,
+            string description,
+            IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
             Description = description;
-            ViewCount = viewCount;
             Thumbnails = thumbnails;
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Playlist ({Title})";
     }
 }

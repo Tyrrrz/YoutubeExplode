@@ -19,15 +19,13 @@ namespace YoutubeExplode.Tests
         [InlineData("UUTMt7iMWa7jy0fNXIktwyLA")]
         [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")]
         [InlineData("FLEnBXANsKmyj2r9xVyKoDiQ")]
-        public void I_can_specify_a_valid_playlist_id(string playlistId)
+        public void Playlist_ID_can_be_parsed_from_an_ID_string(string playlistId)
         {
             // Act
-            var result = new PlaylistId(playlistId);
-            var maybeResult = PlaylistId.TryParse(playlistId);
+            var parsed = PlaylistId.Parse(playlistId);
 
             // Assert
-            result.Value.Should().Be(playlistId);
-            maybeResult.Should().Be(result);
+            parsed.Value.Should().Be(playlistId);
         }
 
         [Theory]
@@ -36,37 +34,26 @@ namespace YoutubeExplode.Tests
         [InlineData("youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
         [InlineData("youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
         [InlineData("youtube.com/watch?v=x2ZRoWQ0grU&list=RDEMNJhLy4rECJ_fG8NL-joqsg", "RDEMNJhLy4rECJ_fG8NL-joqsg")]
-        public void I_can_specify_a_valid_playlist_url_in_place_of_an_id(string playlistUrl, string expectedPlaylistId)
+        public void Playlist_ID_can_be_parsed_from_a_URL_string(string playlistUrl, string expectedPlaylistId)
         {
             // Act
-            var result = new PlaylistId(playlistUrl);
-            var maybeResult = PlaylistId.TryParse(playlistUrl);
+            var parsed = PlaylistId.Parse(playlistUrl);
 
             // Assert
-            result.Value.Should().Be(expectedPlaylistId);
-            maybeResult.Should().Be(result);
+            parsed.Value.Should().Be(expectedPlaylistId);
         }
 
         [Theory]
         [InlineData("")]
         [InlineData("PLm_3vnTS-pvmZFuF L1Pyhqf8kTTYVKjW")]
         [InlineData("PLm_3vnTS-pvmZFuF3L=Pyhqf8kTTYVKjW")]
-        public void I_cannot_specify_an_invalid_playlist_id(string playlistId)
-        {
-            // Act & assert
-            Assert.Throws<ArgumentException>(() => new PlaylistId(playlistId));
-            PlaylistId.TryParse(playlistId).Should().BeNull();
-        }
-
-        [Theory]
         [InlineData("youtube.com/playlist?lisp=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H")]
         [InlineData("youtube.com/playlist?list=asd")]
         [InlineData("youtube.com/")]
-        public void I_cannot_specify_an_invalid_playlist_url_in_place_of_an_id(string playlistUrl)
+        public void Playlist_ID_cannot_be_parsed_from_an_invalid_string(string playlistIdOrUrl)
         {
             // Act & assert
-            Assert.Throws<ArgumentException>(() => new PlaylistId(playlistUrl));
-            PlaylistId.TryParse(playlistUrl).Should().BeNull();
+            Assert.Throws<ArgumentException>(() => PlaylistId.Parse(playlistIdOrUrl));
         }
     }
 }

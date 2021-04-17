@@ -18,7 +18,7 @@
         <viewModels:MainViewModel />
     </Window.DataContext>
     <DockPanel>
-        <!--  Toolbar  -->
+        <!--  Header  -->
         <Border
             Background="{DynamicResource PrimaryHueMidBrush}"
             DockPanel.Dock="Top"
@@ -73,7 +73,7 @@
             <StackPanel Orientation="Vertical">
                 <Grid HorizontalAlignment="Stretch" Background="Black">
                     <!--  Thumbnail  -->
-                    <Image Height="180" Source="{Binding Video.Thumbnails.MediumResUrl}" />
+                    <Image Height="180" Source="{Binding VideoThumbnail.Url}" />
 
                     <!--  Duration  -->
                     <TextBlock
@@ -83,7 +83,7 @@
                         VerticalAlignment="Bottom"
                         Background="Black"
                         Foreground="{DynamicResource SecondaryInverseTextBrush}"
-                        Text="{Binding Video.Duration}" />
+                        Text="{Binding Video.Duration, TargetNullValue=Live}" />
                 </Grid>
 
                 <!--  Basic metadata  -->
@@ -105,7 +105,7 @@
                                 Margin="6,6,0,6"
                                 VerticalAlignment="Top"
                                 DockPanel.Dock="Left"
-                                Source="{Binding Channel.LogoUrl}" />
+                                Source="{Binding ChannelThumbnail.Url}" />
 
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -289,7 +289,7 @@
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQuality.Label, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />
@@ -330,7 +330,7 @@
                                             <!--  Stream info  -->
                                             <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text="Quality:" />
-                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQualityLabel, Mode=OneWay}" />
+                                                <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding VideoQuality.Label, Mode=OneWay}" />
                                                 <Run />
                                                 <Run Text="Container:" />
                                                 <Run Foreground="{DynamicResource PrimaryTextBrush}" Text="{Binding Container, Mode=OneWay}" />

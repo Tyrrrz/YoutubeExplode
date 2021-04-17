@@ -5,44 +5,44 @@ namespace YoutubeExplode.Videos.Streams
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
 
     /// <summary>
-    /// Encapsulates file size.
+    /// File size.
     /// </summary>
     public readonly partial struct FileSize
     {
         /// <summary>
-        /// Total bytes.
+        /// Size in bytes.
         /// </summary>
-        public long TotalBytes { get; }
+        public long Bytes { get; }
 
         /// <summary>
-        /// Total kilobytes.
+        /// Size in kilobytes.
         /// </summary>
-        public double TotalKiloBytes => TotalBytes / 1024.0;
+        public double KiloBytes => Bytes / 1024.0;
 
         /// <summary>
-        /// Total megabytes.
+        /// Size in megabytes.
         /// </summary>
-        public double TotalMegaBytes => TotalKiloBytes / 1024.0;
+        public double MegaBytes => KiloBytes / 1024.0;
 
         /// <summary>
-        /// Total gigabytes.
+        /// Size in gigabytes.
         /// </summary>
-        public double TotalGigaBytes => TotalMegaBytes / 1024.0;
+        public double GigaBytes => MegaBytes / 1024.0;
 
         /// <summary>
         /// Initializes an instance of <see cref="FileSize"/>.
         /// </summary>
-        public FileSize(long totalBytes) => TotalBytes = totalBytes;
+        public FileSize(long bytes) => Bytes = bytes;
 
         private string GetLargestWholeNumberSymbol()
         {
-            if (Math.Abs(TotalGigaBytes) >= 1)
+            if (Math.Abs(GigaBytes) >= 1)
                 return "GB";
 
-            if (Math.Abs(TotalMegaBytes) >= 1)
+            if (Math.Abs(MegaBytes) >= 1)
                 return "MB";
 
-            if (Math.Abs(TotalKiloBytes) >= 1)
+            if (Math.Abs(KiloBytes) >= 1)
                 return "KB";
 
             return "B";
@@ -50,16 +50,16 @@ namespace YoutubeExplode.Videos.Streams
 
         private double GetLargestWholeNumberValue()
         {
-            if (Math.Abs(TotalGigaBytes) >= 1)
-                return TotalGigaBytes;
+            if (Math.Abs(GigaBytes) >= 1)
+                return GigaBytes;
 
-            if (Math.Abs(TotalMegaBytes) >= 1)
-                return TotalMegaBytes;
+            if (Math.Abs(MegaBytes) >= 1)
+                return MegaBytes;
 
-            if (Math.Abs(TotalKiloBytes) >= 1)
-                return TotalKiloBytes;
+            if (Math.Abs(KiloBytes) >= 1)
+                return KiloBytes;
 
-            return TotalBytes;
+            return Bytes;
         }
 
         /// <inheritdoc />
@@ -69,7 +69,7 @@ namespace YoutubeExplode.Videos.Streams
     public partial struct FileSize : IComparable<FileSize>, IEquatable<FileSize>
     {
         /// <inheritdoc />
-        public int CompareTo(FileSize other) => TotalBytes.CompareTo(other.TotalBytes);
+        public int CompareTo(FileSize other) => Bytes.CompareTo(other.Bytes);
 
         /// <inheritdoc />
         public bool Equals(FileSize other) => CompareTo(other) == 0;
@@ -78,7 +78,7 @@ namespace YoutubeExplode.Videos.Streams
         public override bool Equals(object? obj) => obj is FileSize other && Equals(other);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(TotalBytes);
+        public override int GetHashCode() => HashCode.Combine(Bytes);
 
         /// <summary>
         /// Equality check.

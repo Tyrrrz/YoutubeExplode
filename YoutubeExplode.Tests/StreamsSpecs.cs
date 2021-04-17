@@ -3,30 +3,74 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.Fixtures;
+using YoutubeExplode.Tests.Ids;
+using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests
 {
     public class StreamsSpecs : IClassFixture<TempOutputFixture>
     {
+        private readonly ITestOutputHelper _testOutput;
         private readonly TempOutputFixture _tempOutputFixture;
 
-        public StreamsSpecs(TempOutputFixture tempOutputFixture) =>
+        public StreamsSpecs(ITestOutputHelper testOutput, TempOutputFixture tempOutputFixture)
+        {
+            _testOutput = testOutput;
             _tempOutputFixture = tempOutputFixture;
+        }
+
+        [Fact]
+        public async Task User_can_get_the_list_of_available_streams_on_a_video()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act
+            var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsHighQualityStreams);
+
+            // Assert
+            manifest.Streams.Should().NotBeEmpty();
+            manifest.GetMuxedStreams().Should().NotBeEmpty();
+            manifest.GetAudioStreams().Should().NotBeEmpty();
+            manifest.GetVideoStreams().Should().NotBeEmpty();
+
+            manifest.GetVideoStreams().Should().Contain(s =>
+                s.VideoQuality.MaxHeight == 2160 &&
+                s.VideoQuality.Framerate == 60 &&
+                s.VideoQuality.IsHighDefinition
+            );
+
+            manifest.GetVideoStreams().Should().Contain(s =>
+                s.VideoQuality.MaxHeight == 1080 &&
+                s.VideoQuality.Framerate == 60 &&
+                s.VideoQuality.IsHighDefinition
+            );
+
+            manifest.GetVideoStreams().Should().Contain(s =>
+                s.VideoQuality.MaxHeight == 720 &&
+                !s.VideoQuality.IsHighDefinition
+            );
+
+            manifest.GetVideoStreams().Should().Contain(s =>
+                s.VideoQuality.MaxHeight == 144 &&
+                !s.VideoQuality.IsHighDefinition
+            );
+        }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        [InlineData("-xNN-bJQ4vI")] // 360° video
-        public async Task I_can_get_available_streams_of_any_playable_YouTube_video(string videoId)
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.Unlisted)]
+        [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsDashManifest)]
+        [InlineData(VideoIds.Omnidirectional)]
+        [InlineData(VideoIds.EmbedRestrictedByAuthor)]
+        [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+        public async Task User_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -38,54 +82,60 @@ namespace YoutubeExplode.Tests
             manifest.Streams.Should().NotBeEmpty();
         }
 
-        [Theory]
-        [InlineData("5qap5aO4i9A")] // live stream
-        public async Task I_cannot_get_available_streams_of_an_unplayable_YouTube_video(string videoId)
+        [Fact]
+        public async Task User_cannot_get_the_list_of_available_streams_on_a_paid_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnplayableException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
+            );
+
+            ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
+
+            _testOutput.WriteLine(ex.Message);
         }
 
-        [Theory]
-        [InlineData("p3dDcKOFXQg")] // requires purchase
-        public async Task I_cannot_get_available_streams_of_a_YouTube_video_that_requires_purchase(string videoId)
+        [Fact]
+        public async Task User_cannot_get_the_list_of_available_streams_on_a_private_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoRequiresPurchaseException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
+            );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
-        [Theory]
-        [InlineData("qld9w0b-1ao")] // doesn't exist
-        [InlineData("pb_hHv3fByo")] // private
-        public async Task I_cannot_get_available_streams_of_an_unavailable_YouTube_video(string videoId)
+        [Fact]
+        public async Task User_cannot_get_the_list_of_available_streams_on_a_non_existing_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(() => youtube.Videos.Streams.GetManifestAsync(videoId));
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.Streams.GetManifestAsync(VideoIds.NonExisting)
+            );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        [InlineData("-xNN-bJQ4vI")] // 360° video
-        public async Task I_can_get_a_specific_stream_of_any_playable_YouTube_video(string videoId)
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsDashManifest)]
+        [InlineData(VideoIds.Omnidirectional)]
+        public async Task User_can_get_a_specific_stream_from_a_video(string videoId)
         {
             // Arrange
+            var buffer = new byte[1024];
             var youtube = new YoutubeClient();
 
             // Act
@@ -93,33 +143,25 @@ namespace YoutubeExplode.Tests
 
             foreach (var streamInfo in manifest.Streams)
             {
-                var buffer = new byte[1024];
-
                 await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
-                await stream.ReadAsync(buffer);
-
-                var isBufferEmpty = buffer.Distinct().Count() <= 1;
+                var bytesRead = await stream.ReadAsync(buffer);
 
                 // Assert
-                isBufferEmpty.Should().BeFalse();
+                bytesRead.Should().BeGreaterThan(0);
             }
-
-            // Assert
-            manifest.Streams.Should().NotBeEmpty();
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age restricted (embed allowed)
-        [InlineData("hySoCSoH-g8")] // age restricted (embed not allowed)
-        [InlineData("_kmeFXjjGfk")] // embed not allowed (type 1)
-        [InlineData("MeJVWBSsPAY")] // embed not allowed (type 2)
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("rsAAeyAr-9Y")] // recording of a live stream
-        [InlineData("AI7ULzgf8RU")] // has DASH manifest
-        [InlineData("-xNN-bJQ4vI")] // 360° video
-        public async Task I_can_download_a_specific_stream_of_any_playable_YouTube_video(string videoId)
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.Unlisted)]
+        [InlineData(VideoIds.LiveStreamRecording)]
+        [InlineData(VideoIds.ContainsDashManifest)]
+        [InlineData(VideoIds.Omnidirectional)]
+        [InlineData(VideoIds.EmbedRestrictedByAuthor)]
+        [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+        public async Task User_can_download_a_specific_stream_from_a_video(string videoId)
         {
             // Arrange
             var filePath = _tempOutputFixture.GetTempFilePath();
@@ -131,22 +173,92 @@ namespace YoutubeExplode.Tests
 
             await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 
+            var fileInfo = new FileInfo(filePath);
+
             // Assert
-            File.Exists(filePath).Should().BeTrue();
+            fileInfo.Exists.Should().BeTrue();
+            fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
         }
 
-        [Theory]
-        [InlineData("5qap5aO4i9A")] // live stream
-        public async Task I_can_get_http_live_stream_url_of_any_ongoing_YouTube_live_stream_video(string videoId)
+        [Fact]
+        public async Task User_can_download_the_highest_bitrate_stream_from_a_video()
+        {
+            // Arrange
+            var filePath = _tempOutputFixture.GetTempFilePath();
+            var youtube = new YoutubeClient();
+
+            // Act
+            var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsDashManifest);
+            var streamInfo = manifest.Streams.GetWithHighestBitrate();
+
+            await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
+
+            var fileInfo = new FileInfo(filePath);
+
+            // Assert
+            fileInfo.Exists.Should().BeTrue();
+            fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
+        }
+
+        [Fact]
+        public async Task User_can_download_the_highest_quality_stream_from_a_video()
+        {
+            // Arrange
+            var filePath = _tempOutputFixture.GetTempFilePath();
+            var youtube = new YoutubeClient();
+
+            // Act
+            var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsDashManifest);
+            var streamInfo = manifest.GetVideoStreams().GetWithHighestVideoQuality();
+
+            await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
+
+            var fileInfo = new FileInfo(filePath);
+
+            // Assert
+            fileInfo.Exists.Should().BeTrue();
+            fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
+        }
+
+        [Fact]
+        public async Task User_can_get_HTTP_live_stream_URL_from_a_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(videoId);
+            var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.LiveStream);
 
             // Assert
             url.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public async Task User_cannot_get_HTTP_live_stream_URL_from_an_unplayable_video()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
+                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
+            );
+
+            _testOutput.WriteLine(ex.Message);
+        }
+
+        [Fact]
+        public async Task User_cannot_get_HTTP_live_stream_URL_from_a_non_live_video()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>
+                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
+            );
+
+            _testOutput.WriteLine(ex.Message);
         }
     }
 }

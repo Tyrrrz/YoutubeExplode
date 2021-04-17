@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
-using YoutubeExplode.Tests.Internal;
+using YoutubeExplode.Tests.Utils;
 
 namespace YoutubeExplode.Tests.Fixtures
 {
@@ -14,7 +14,7 @@ namespace YoutubeExplode.Tests.Fixtures
         public TempOutputFixture()
         {
             DirPath = Path.Combine(
-                Path.GetDirectoryName(typeof(TempOutputFixture).Assembly.Location)!,
+                Path.GetDirectoryName(typeof(TempOutputFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
                 "Temp",
                 Interlocked.Increment(ref _instanceCount).ToString()
             );

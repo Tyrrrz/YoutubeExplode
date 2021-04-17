@@ -1,25 +1,20 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// Encapsulates a valid YouTube video ID.
+    /// Represents a syntactically valid YouTube video ID.
     /// </summary>
     public readonly partial struct VideoId
     {
         /// <summary>
-        /// ID as a string.
+        /// Raw ID value.
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="VideoId"/>.
-        /// </summary>
-        public VideoId(string idOrUrl) =>
-            Value = TryNormalize(idOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube video ID or URL: '{idOrUrl}'.");
+        private VideoId(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -27,43 +22,40 @@ namespace YoutubeExplode.Videos
 
     public partial struct VideoId
     {
-        private static bool IsValid(string? id)
+        private static bool IsValid(string videoId)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return false;
-
             // Video IDs are always 11 characters
-            if (id.Length != 11)
+            if (videoId.Length != 11)
                 return false;
 
-            return !Regex.IsMatch(id, @"[^0-9a-zA-Z_\-]");
+            return !Regex.IsMatch(videoId, @"[^0-9a-zA-Z_\-]");
         }
 
-        private static string? TryNormalize(string? idOrUrl)
+        private static string? TryNormalize(string? videoIdOrUrl)
         {
-            if (string.IsNullOrWhiteSpace(idOrUrl))
+            if (string.IsNullOrWhiteSpace(videoIdOrUrl))
                 return null;
 
             // Id
             // yIVRs6YSbOM
-            if (IsValid(idOrUrl))
-                return idOrUrl;
+            if (IsValid(videoIdOrUrl))
+                return videoIdOrUrl;
 
             // Regular URL
             // https://www.youtube.com/watch?v=yIVRs6YSbOM
-            var regularMatch = Regex.Match(idOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(videoIdOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
                 return regularMatch;
 
             // Short URL
             // https://youtu.be/yIVRs6YSbOM
-            var shortMatch = Regex.Match(idOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var shortMatch = Regex.Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(shortMatch) && IsValid(shortMatch))
                 return shortMatch;
 
             // Embed URL
             // https://www.youtube.com/embed/yIVRs6YSbOM
-            var embedMatch = Regex.Match(idOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var embedMatch = Regex.Match(videoIdOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(embedMatch) && IsValid(embedMatch))
                 return embedMatch;
 
@@ -75,8 +67,26 @@ namespace YoutubeExplode.Videos
         /// Attempts to parse the specified string as a video ID or URL.
         /// Returns null in case of failure.
         /// </summary>
-        public static VideoId? TryParse(string? idOrUrl) =>
-            TryNormalize(idOrUrl)?.Pipe(id => new VideoId(id));
+        public static VideoId? TryParse(string? videoIdOrUrl) =>
+            TryNormalize(videoIdOrUrl)?.Pipe(id => new VideoId(id));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube video ID or URL.
+        /// Throws an exception in case of failure.
+        /// </summary>
+        public static VideoId Parse(string videoIdOrUrl) =>
+            TryParse(videoIdOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube video ID or URL '{videoIdOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator VideoId(string videoIdOrUrl) => Parse(videoIdOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(VideoId videoId) => videoId.ToString();
     }
 
     public partial struct VideoId : IEquatable<VideoId>
@@ -99,15 +109,5 @@ namespace YoutubeExplode.Videos
         /// Equality check.
         /// </summary>
         public static bool operator !=(VideoId left, VideoId right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator VideoId(string idOrUrl) => new(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(VideoId id) => id.ToString();
     }
 }

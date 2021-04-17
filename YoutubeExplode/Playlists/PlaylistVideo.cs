@@ -1,85 +1,53 @@
 ﻿using System;
-using YoutubeExplode.Channels;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// YouTube video metadata from playlists and search results.
+    /// Metadata associated with a YouTube video included in a playlist.
     /// </summary>
-    public class PlaylistVideo
+    public class PlaylistVideo : IVideo, IBatchItem
     {
-        /// <summary>
-        /// Video ID.
-        /// </summary>
+        /// <inheritdoc />
         public VideoId Id { get; }
 
-        /// <summary>
-        /// Video URL.
-        /// </summary>
+        /// <inheritdoc />
         public string Url => $"https://www.youtube.com/watch?v={Id}";
 
-        /// <summary>
-        /// Video title.
-        /// </summary>
+        /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// Video author.
-        /// </summary>
-        public string Author { get; }
+        /// <inheritdoc />
+        public Author Author { get; }
+
+        /// <inheritdoc />
+        public TimeSpan? Duration { get; }
+
+        /// <inheritdoc />
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Video channel ID.
-        /// </summary>
-        public ChannelId ChannelId { get; }
-
-        /// <summary>
-        /// Video description.
-        /// </summary>
-        public string Description { get; }
-
-        /// <summary>
-        /// Duration of the video.
-        /// </summary>
-        public TimeSpan Duration { get; }
-
-        /// <summary>
-        /// View count.
-        /// </summary>
-        public long ViewCount { get; }
-
-        /// <summary>
-        /// Available thumbnails for this video.
-        /// </summary>
-        public ThumbnailSet Thumbnails { get; }
-
-        /// <summary>
-        /// Initializes an instance of <see cref="Video"/>.
+        /// Initializes an instance of <see cref="PlaylistVideo"/>.
         /// </summary>
         public PlaylistVideo(
             VideoId id,
             string title,
-            string author,
-            ChannelId channelId,
-            string description,
-            TimeSpan duration,
-            long viewCount,
-            ThumbnailSet thumbnails)
+            Author author,
+            TimeSpan? duration,
+            IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
             Author = author;
-            ChannelId = channelId;
-            Description = description;
             Duration = duration;
-            ViewCount = viewCount;
             Thumbnails = thumbnails;
         }
 
-
         /// <inheritdoc />
-        public override string ToString() => $"Playlist Video ({Title})";
+        [ExcludeFromCodeCoverage]
+        public override string ToString() => $"Video ({Title})";
     }
 }

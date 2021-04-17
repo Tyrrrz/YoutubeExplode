@@ -2,49 +2,85 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
     public class VideoSpecs
     {
+        private readonly ITestOutputHelper _testOutput;
+
+        public VideoSpecs(ITestOutputHelper testOutput)
+        {
+            _testOutput = testOutput;
+        }
+
         [Fact]
-        public async Task I_can_get_metadata_of_a_YouTube_video()
+        public async Task User_can_get_metadata_of_a_video()
         {
             // Arrange
-            const string videoUrl = "https://www.youtube.com/watch?v=AI7ULzgf8RU";
             var youtube = new YoutubeClient();
 
             // Act
-            var video = await youtube.Videos.GetAsync(videoUrl);
+            var video = await youtube.Videos.GetAsync(VideoIds.ContainsDashManifest);
 
             // Assert
-            video.Id.Value.Should().Be("AI7ULzgf8RU");
-            video.Url.Should().Be(videoUrl);
+            video.Id.Value.Should().Be(VideoIds.ContainsDashManifest);
+            video.Url.Should().NotBeNullOrWhiteSpace();
             video.Title.Should().Be("Aka no Ha [Another] +HDHR");
-            video.Author.Should().Be("Tyrrrz");
-            video.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+            video.Author.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+            video.Author.Title.Should().Be("Tyrrrz");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
-            video.Duration.Should().BeCloseTo(new TimeSpan(00, 01, 48), 1000);
-            video.Thumbnails.LowResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.MediumResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.HighResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.StandardResUrl.Should().NotBeNullOrWhiteSpace();
-            video.Thumbnails.MaxResUrl.Should().NotBeNullOrWhiteSpace();
+            video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(108), 1000);
+            video.Thumbnails.Should().NotBeEmpty();
             video.Keywords.Should().BeEquivalentTo("osu", "mouse", "rhythm game");
             video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
             video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(5);
             video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
+            video.Engagement.AverageRating.Should().BeGreaterOrEqualTo(0);
+        }
+
+        [Fact]
+        public async Task User_cannot_get_metadata_of_a_private_video()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.GetAsync(VideoIds.Private)
+            );
+
+            _testOutput.WriteLine(ex.Message);
+        }
+
+        [Fact]
+        public async Task User_cannot_get_metadata_of_a_non_existing_video()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act & assert
+            var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+                await youtube.Videos.GetAsync(VideoIds.NonExisting)
+            );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]
-        [InlineData("9bZkp7q19f0")] // very popular
-        [InlineData("SkRSXFQerZs")] // age-restricted
-        [InlineData("5VGm0dczmHc")] // rating not allowed
-        [InlineData("ZGdLIwrGHG8")] // unlisted
-        [InlineData("5qap5aO4i9A")] // ongoing live stream
-        public async Task I_can_get_metadata_of_any_available_YouTube_video(string videoId)
+        [InlineData(VideoIds.Normal)]
+        [InlineData(VideoIds.Unlisted)]
+        [InlineData(VideoIds.EmbedRestrictedByAuthor)]
+        [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+        [InlineData(VideoIds.AgeRestricted)]
+        [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+        [InlineData(VideoIds.RatingDisabled)]
+        public async Task User_can_get_metadata_of_any_available_video(string videoId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -56,16 +92,18 @@ namespace YoutubeExplode.Tests
             video.Id.Value.Should().Be(videoId);
         }
 
-        [Theory]
-        [InlineData("qld9w0b-1ao")] // doesn't exist
-        [InlineData("pb_hHv3fByo")] // private
-        public async Task I_cannot_get_metadata_of_an_unavailable_YouTube_video(string videoId)
+        [Fact]
+        public async Task User_can_get_the_highest_resolution_thumbnail_from_a_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
-            // Act & assert
-            await Assert.ThrowsAsync<VideoUnavailableException>(() => youtube.Videos.GetAsync(videoId));
+            // Act
+            var video = await youtube.Videos.GetAsync(VideoIds.Normal);
+            var thumbnail = video.Thumbnails.GetWithHighestResolution();
+
+            // Assert
+            thumbnail.Url.Should().NotBeNullOrWhiteSpace();
         }
     }
 }

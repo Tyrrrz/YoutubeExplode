@@ -1,43 +1,41 @@
-using System;
-using System.Net;
 using System.Net.Http;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Playlists;
-using YoutubeExplode.ReverseEngineering;
 using YoutubeExplode.Search;
+using YoutubeExplode.Utils;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode
 {
     /// <summary>
-    /// Entry point for <see cref="YoutubeExplode"/>.
+    /// Client for interacting with YouTube.
     /// </summary>
-    public partial class YoutubeClient
+    public class YoutubeClient
     {
         /// <summary>
-        /// Queries related to YouTube videos.
+        /// Operations related to YouTube videos.
         /// </summary>
         public VideoClient Videos { get; }
 
         /// <summary>
-        /// Queries related to YouTube playlists.
+        /// Operations related to YouTube playlists.
         /// </summary>
         public PlaylistClient Playlists { get; }
 
         /// <summary>
-        /// Queries related to YouTube channels.
+        /// Operations related to YouTube channels.
         /// </summary>
         public ChannelClient Channels { get; }
 
         /// <summary>
-        /// YouTube search queries.
+        /// Operations related to YouTube search.
         /// </summary>
         public SearchClient Search { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
-        internal YoutubeClient(YoutubeHttpClient httpClient)
+        public YoutubeClient(HttpClient httpClient)
         {
             Videos = new VideoClient(httpClient);
             Playlists = new PlaylistClient(httpClient);
@@ -48,40 +46,8 @@ namespace YoutubeExplode
         /// <summary>
         /// Initializes an instance of <see cref="YoutubeClient"/>.
         /// </summary>
-        /// <remarks>
-        /// Your HttpClient needs to have the CONSENT cookie set!
-        /// </remarks>
-        public YoutubeClient(HttpClient httpClient)
-            : this(new YoutubeHttpClient(httpClient))
+        public YoutubeClient() : this(Http.Client)
         {
         }
-
-        /// <summary>
-        /// Initializes an instance of <see cref="YoutubeClient"/>.
-        /// </summary>
-        public YoutubeClient()
-            : this(LazyHttpClient.Value)
-        {
-        }
-    }
-
-    public partial class YoutubeClient
-    {
-        private static readonly Lazy<HttpClient> LazyHttpClient = new(() =>
-        {
-            var handler = new HttpClientHandler();
-
-            if (handler.SupportsAutomaticDecompression)
-                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            handler.CookieContainer.Add(new Cookie("CONSENT", $"YES+cb", "/", ".youtube.com"));
-            var httpClient = new HttpClient(handler, true);
-
-            httpClient.DefaultRequestHeaders.Add(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
-            );
-
-            return httpClient;
-        });
     }
 }

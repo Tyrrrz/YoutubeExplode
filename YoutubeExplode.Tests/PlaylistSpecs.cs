@@ -2,65 +2,77 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Tests.Ids;
 
 namespace YoutubeExplode.Tests
 {
     public class PlaylistSpecs
     {
+        private readonly ITestOutputHelper _testOutput;
+
+        public PlaylistSpecs(ITestOutputHelper testOutput)
+        {
+            _testOutput = testOutput;
+        }
+
         [Fact]
-        public async Task I_can_get_metadata_of_a_YouTube_playlist()
+        public async Task User_can_get_metadata_of_a_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd";
             var youtube = new YoutubeClient();
 
             // Act
-            var playlist = await youtube.Playlists.GetAsync(playlistUrl);
+            var playlist = await youtube.Playlists.GetAsync(PlaylistIds.Normal);
 
             // Assert
-            playlist.Id.Value.Should().Be("PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd");
-            playlist.Url.Should().Be(playlistUrl);
-            playlist.Title.Should().Be("osu! Highlights");
-            playlist.Author.Should().Be("Tyrrrz");
-            playlist.Description.Should().Be("My best osu! plays");
-            playlist.ViewCount.Should().BeGreaterOrEqualTo(133);
-            playlist.Thumbnails?.LowResUrl.Should().NotBeNullOrWhiteSpace();
-            playlist.Thumbnails?.MediumResUrl.Should().NotBeNullOrWhiteSpace();
-            playlist.Thumbnails?.HighResUrl.Should().NotBeNullOrWhiteSpace();
-            playlist.Thumbnails?.StandardResUrl.Should().NotBeNullOrWhiteSpace();
-            playlist.Thumbnails?.MaxResUrl.Should().NotBeNullOrWhiteSpace();
+            playlist.Id.Value.Should().Be(PlaylistIds.Normal);
+            playlist.Url.Should().NotBeNullOrWhiteSpace();
+            playlist.Title.Should().Be("Analytics Academy - Digital Analytics Fundamentals");
+            playlist.Author.Should().NotBeNull();
+            playlist.Author?.ChannelId.Value.Should().Be("UCJ5UyIAa5nEGksjcdp43Ixw");
+            playlist.Author?.Title.Should().Be("Google Analytics");
+            playlist.Description.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
+            playlist.Thumbnails.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task I_cannot_get_metadata_of_a_private_YouTube_playlist()
+        public async Task User_cannot_get_metadata_of_a_private_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBr";
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<PlaylistUnavailableException>(() => youtube.Playlists.GetAsync(playlistUrl));
+            var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
+                await youtube.Playlists.GetAsync(PlaylistIds.Private)
+            );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Fact]
-        public async Task I_cannot_get_metadata_of_a_nonexistent_YouTube_playlist()
+        public async Task User_cannot_get_metadata_of_a_non_existing_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBx";
             var youtube = new YoutubeClient();
 
             // Act & assert
-            await Assert.ThrowsAsync<PlaylistUnavailableException>(() => youtube.Playlists.GetAsync(playlistUrl));
+            var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
+                await youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
+            );
+
+            _testOutput.WriteLine(ex.Message);
         }
 
         [Theory]
-        [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
-        [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
-        [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
-        [InlineData("PL601B2E69B03FAB9D")] // weird ID
-        [InlineData("PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs")] // very long videos
-        public async Task I_can_get_metadata_of_any_available_YouTube_playlist(string playlistId)
+        [InlineData(PlaylistIds.Normal)]
+        [InlineData(PlaylistIds.MusicMix)]
+        [InlineData(PlaylistIds.MusicAlbum)]
+        [InlineData(PlaylistIds.ContainsLongVideos)]
+        [InlineData(PlaylistIds.Weird)]
+        public async Task User_can_get_metadata_of_any_available_playlist(string playlistId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -73,39 +85,75 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task I_can_get_videos_included_in_a_YouTube_playlist()
+        public async Task User_can_get_videos_included_in_a_playlist()
         {
             // Arrange
-            const string playlistUrl = "https://www.youtube.com/playlist?list=PLr-IftNTIujSF-8tlGbZBQyGIT6TCF6Yd";
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(playlistUrl);
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Normal);
 
             // Assert
-            videos.Should().HaveCountGreaterOrEqualTo(19);
+            videos.Should().HaveCountGreaterOrEqualTo(21);
             videos.Select(v => v.Id.Value).Should().Contain(new[]
             {
-                "B6N8-_rBTh8",
-                "F1bvjgTckMc",
-                "kMBzljXOb9g",
-                "LsNPjFXIPT8",
-                "fXYPMPglYTs",
-                "AI7ULzgf8RU",
-                "Qzu-fTdjeFY"
+                "uPZSSdkGQhM",
+                "fi0w57kr_jY",
+                "xLJt5A-NeQI",
+                "EpDA3XaELqs",
+                "eyltEFyZ678",
+                "TW3gx4t4944",
+                "w9H_P2wAwSE",
+                "OyixJ7A9phg",
+                "dzwRzUEc_tA",
+                "vEpq3nYeZBc",
+                "4gYioQkIqKk",
+                "xyh8iG5mRIs",
+                "ORrYEEH_KPc",
+                "ii0T5JUO2BY",
+                "hgycbw6Beuc",
+                "Dz-zgq6OqTI",
+                "I1b4GT-GuEs",
+                "dN3gkBBffhs",
+                "8Kg-8ZjgLAQ",
+                "E9zfpKsw6f8",
+                "eBCw9sC5D40"
+            });
+        }
+
+        [Fact]
+        public async Task User_can_get_videos_included_in_a_large_playlist()
+        {
+            // Arrange
+            var youtube = new YoutubeClient();
+
+            // Act
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large);
+
+            // Assert
+            videos.Should().HaveCountGreaterOrEqualTo(1900);
+            videos.Select(v => v.Id.Value).Should().Contain(new[]
+            {
+                "RBumgq5yVrA",
+                "kN0iD0pI3o0",
+                "YqB8Dm65X18",
+                "jlvY1o6XKwA",
+                "-0kcet4aPpQ",
+                "RnGJ3KJri1g",
+                "x-IR7PtA7RA",
+                "N-8E9mHxDy0",
+                "5ly88Ju1N6A"
             });
         }
 
         [Theory]
-        [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
-        [InlineData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk")] // large
-        [InlineData("OLAK5uy_mtOdjCW76nDvf5yOzgcAVMYpJ5gcW5uKU")] // large 2
-        [InlineData("RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs")] // music mix
-        [InlineData("UUTMt7iMWa7jy0fNXIktwyLA")] // user uploads
-        [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")] // music album
-        [InlineData("PL601B2E69B03FAB9D")] // weird ID
-        [InlineData("PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs")] // very long videos
-        public async Task I_can_get_videos_included_in_any_available_YouTube_playlist(string playlistId)
+        [InlineData(PlaylistIds.Normal)]
+        [InlineData(PlaylistIds.MusicMix)]
+        [InlineData(PlaylistIds.MusicAlbum)]
+        [InlineData(PlaylistIds.UserUploads)]
+        [InlineData(PlaylistIds.ContainsLongVideos)]
+        [InlineData(PlaylistIds.Weird)]
+        public async Task User_can_get_videos_included_in_any_available_playlist(string playlistId)
         {
             // Arrange
             var youtube = new YoutubeClient();
@@ -117,22 +165,17 @@ namespace YoutubeExplode.Tests
             videos.Should().NotBeEmpty();
         }
 
-        [Theory]
-        [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")] // normal
-        [InlineData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk")] // large
-        [InlineData("OLAK5uy_mtOdjCW76nDvf5yOzgcAVMYpJ5gcW5uKU")] // large 2
-        public async Task I_can_get_a_subset_of_videos_included_in_any_available_YouTube_playlist(string playlistId)
+        [Fact]
+        public async Task User_can_get_a_subset_of_videos_included_in_a_playlist()
         {
             // Arrange
-            const int maxVideoCount = 50;
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Playlists.GetVideosAsync(playlistId).BufferAsync(maxVideoCount);
+            var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large).CollectAsync(10);
 
             // Assert
-            videos.Should().NotBeEmpty();
-            videos.Should().HaveCountLessOrEqualTo(maxVideoCount);
+            videos.Should().HaveCount(10);
         }
     }
 }

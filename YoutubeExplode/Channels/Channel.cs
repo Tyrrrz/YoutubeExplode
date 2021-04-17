@@ -1,41 +1,38 @@
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using YoutubeExplode.Common;
+
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// YouTube channel metadata.
+    /// Metadata associated with a YouTube channel.
     /// </summary>
-    public class Channel
+    public class Channel : IChannel
     {
-        /// <summary>
-        /// Channel ID.
-        /// </summary>
+        /// <inheritdoc />
         public ChannelId Id { get; }
 
-        /// <summary>
-        /// Channel URL.
-        /// </summary>
+        /// <inheritdoc />
         public string Url => $"https://www.youtube.com/channel/{Id}";
 
-        /// <summary>
-        /// Channel title.
-        /// </summary>
+        /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// URL of the channel's logo image.
-        /// </summary>
-        public string LogoUrl { get; }
+        /// <inheritdoc />
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
         /// Initializes an instance of <see cref="Channel"/>.
         /// </summary>
-        public Channel(ChannelId id, string title, string logoUrl)
+        public Channel(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
         {
             Id = id;
             Title = title;
-            LogoUrl = logoUrl;
+            Thumbnails = thumbnails;
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Channel ({Title})";
     }
 }

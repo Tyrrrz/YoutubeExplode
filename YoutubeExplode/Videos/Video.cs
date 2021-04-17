@@ -1,39 +1,28 @@
 using System;
 using System.Collections.Generic;
-using YoutubeExplode.Channels;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// YouTube video metadata.
+    /// Metadata associated with a YouTube video.
     /// </summary>
-    public class Video
+    public class Video : IVideo
     {
-        /// <summary>
-        /// Video ID.
-        /// </summary>
+        /// <inheritdoc />
         public VideoId Id { get; }
 
-        /// <summary>
-        /// Video URL.
-        /// </summary>
+        /// <inheritdoc />
         public string Url => $"https://www.youtube.com/watch?v={Id}";
 
-        /// <summary>
-        /// Video title.
-        /// </summary>
+        /// <inheritdoc />
         public string Title { get; }
 
         /// <summary>
         /// Video author.
         /// </summary>
-        public string Author { get; }
-
-        /// <summary>
-        /// Video channel ID.
-        /// </summary>
-        public ChannelId ChannelId { get; }
+        public Author Author { get; }
 
         /// <summary>
         /// Video upload date.
@@ -45,23 +34,19 @@ namespace YoutubeExplode.Videos
         /// </summary>
         public string Description { get; }
 
-        /// <summary>
-        /// Duration of the video.
-        /// </summary>
-        public TimeSpan Duration { get; }
+        /// <inheritdoc />
+        public TimeSpan? Duration { get; }
+
+        /// <inheritdoc />
+        public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
         /// <summary>
-        /// Available thumbnails for this video.
-        /// </summary>
-        public ThumbnailSet Thumbnails { get; }
-
-        /// <summary>
-        /// Search keywords used for this video.
+        /// Available search keywords for the video.
         /// </summary>
         public IReadOnlyList<string> Keywords { get; }
 
         /// <summary>
-        /// Engagement statistics for this video.
+        /// Engagement statistics for the video.
         /// </summary>
         public Engagement Engagement { get; }
 
@@ -71,19 +56,17 @@ namespace YoutubeExplode.Videos
         public Video(
             VideoId id,
             string title,
-            string author,
-            ChannelId channelId,
+            Author author,
             DateTimeOffset uploadDate,
             string description,
-            TimeSpan duration,
-            ThumbnailSet thumbnails,
+            TimeSpan? duration,
+            IReadOnlyList<Thumbnail> thumbnails,
             IReadOnlyList<string> keywords,
             Engagement engagement)
         {
             Id = id;
             Title = title;
             Author = author;
-            ChannelId = channelId;
             UploadDate = uploadDate;
             Description = description;
             Duration = duration;
@@ -92,8 +75,8 @@ namespace YoutubeExplode.Videos
             Engagement = engagement;
         }
 
-
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"Video ({Title})";
     }
 }

@@ -1,19 +1,20 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Part of a closed caption (usually a single word).
+    /// Individual closed caption part contained within a track.
     /// </summary>
     public class ClosedCaptionPart
     {
         /// <summary>
-        /// Text displayed by this caption part.
+        /// Text displayed by the caption part.
         /// </summary>
         public string Text { get; }
 
         /// <summary>
-        /// Time at which this caption part starts being displayed (relative to the caption's own offset).
+        /// Time at which the caption part starts being displayed (relative to the caption's own offset).
         /// </summary>
         public TimeSpan Offset { get; }
 
@@ -27,6 +28,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => Text;
     }
 }

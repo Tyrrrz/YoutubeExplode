@@ -1,64 +1,62 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Tests
 {
     public class SearchSpecs
     {
         [Fact]
-        public async Task I_can_search_for_YouTube_videos()
+        public async Task User_can_get_results_from_a_search_query()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetVideosAsync("undead corporation megalomania");
+            var results = await youtube.Search.GetResultsAsync("undead corporation");
 
             // Assert
-            videos.Should().NotBeEmpty();
+            results.Should().HaveCountGreaterOrEqualTo(100);
         }
 
         [Fact]
-        public async Task I_can_search_for_YouTube_videos_with_escaped_characters()
+        public async Task User_can_get_video_results_from_a_search_query()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetVideosAsync("Kill la Kill Gomen ne, Iiko ja Irarenai.");
+            var videos = await youtube.Search.GetVideosAsync("undead corporation");
 
             // Assert
-            videos.Should().NotBeEmpty();
+            videos.Should().HaveCountGreaterOrEqualTo(100);
         }
 
         [Fact]
-        public async Task I_can_search_for_YouTube_videos_and_get_a_subset_of_results()
+        public async Task User_can_get_playlist_results_from_a_search_query()
         {
             // Arrange
-            const int maxVideoCount = 50;
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetVideosAsync("billie eilish").BufferAsync(maxVideoCount);
+            var playlists = await youtube.Search.GetPlaylistsAsync("undead corporation");
 
             // Assert
-            videos.Should().NotBeEmpty();
-            videos.Should().HaveCountLessOrEqualTo(maxVideoCount);
+            playlists.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task I_can_search_for_YouTube_videos_and_get_a_subset_of_results_from_a_specific_page()
+        public async Task User_can_get_channel_results_from_a_search_query()
         {
             // Arrange
             var youtube = new YoutubeClient();
 
             // Act
-            var videos = await youtube.Search.GetVideosAsync("billie eilish", 2, 1);
+            var channels = await youtube.Search.GetChannelsAsync("undead corporation");
 
             // Assert
-            videos.Should().NotBeEmpty();
-            videos.Should().HaveCountLessOrEqualTo(30);
+            channels.Should().NotBeEmpty();
         }
     }
 }

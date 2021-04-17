@@ -1,25 +1,20 @@
 using System;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Internal.Extensions;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Encapsulates a valid YouTube channel ID.
+    /// Represents a syntactically valid YouTube channel ID.
     /// </summary>
     public readonly partial struct ChannelId
     {
         /// <summary>
-        /// ID as a string.
+        /// Raw ID value.
         /// </summary>
         public string Value { get; }
 
-        /// <summary>
-        /// Initializes an instance of <see cref="ChannelId"/>.
-        /// </summary>
-        public ChannelId(string idOrUrl) =>
-            Value = TryNormalize(idOrUrl) ??
-                    throw new ArgumentException($"Invalid YouTube channel ID or URL: '{idOrUrl}'.");
+        private ChannelId(string value) => Value = value;
 
         /// <inheritdoc />
         public override string ToString() => Value;
@@ -27,35 +22,32 @@ namespace YoutubeExplode.Channels
 
     public partial struct ChannelId
     {
-        private static bool IsValid(string? id)
+        private static bool IsValid(string channelId)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return false;
-
-            // Channel IDs should start with these characters
-            if (!id.StartsWith("UC", StringComparison.Ordinal))
+            // Channel IDs always start with 'UC'
+            if (!channelId.StartsWith("UC", StringComparison.Ordinal))
                 return false;
 
             // Channel IDs are always 24 characters
-            if (id.Length != 24)
+            if (channelId.Length != 24)
                 return false;
 
-            return !Regex.IsMatch(id, @"[^0-9a-zA-Z_\-]");
+            return !Regex.IsMatch(channelId, @"[^0-9a-zA-Z_\-]");
         }
 
-        private static string? TryNormalize(string? idOrUrl)
+        private static string? TryNormalize(string? channelIdOrUrl)
         {
-            if (string.IsNullOrWhiteSpace(idOrUrl))
+            if (string.IsNullOrWhiteSpace(channelIdOrUrl))
                 return null;
 
             // Id
             // UC3xnGqlcL3y-GXz5N3wiTJQ
-            if (IsValid(idOrUrl))
-                return idOrUrl;
+            if (IsValid(channelIdOrUrl))
+                return channelIdOrUrl;
 
             // URL
             // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
-            var regularMatch = Regex.Match(idOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+            var regularMatch = Regex.Match(channelIdOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)").Groups[1].Value;
             if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
                 return regularMatch;
 
@@ -64,11 +56,28 @@ namespace YoutubeExplode.Channels
         }
 
         /// <summary>
-        /// Attempts to parse the specified string as a channel ID or URL.
+        /// Attempts to parse the specified string as a YouTube channel ID or URL.
         /// Returns null in case of failure.
         /// </summary>
-        public static ChannelId? TryParse(string? idOrUrl) =>
-            TryNormalize(idOrUrl)?.Pipe(id => new ChannelId(id));
+        public static ChannelId? TryParse(string? channelIdOrUrl) =>
+            TryNormalize(channelIdOrUrl)?.Pipe(id => new ChannelId(id));
+
+        /// <summary>
+        /// Parses the specified string as a YouTube channel ID or URL.
+        /// </summary>
+        public static ChannelId Parse(string channelIdOrUrl) =>
+            TryParse(channelIdOrUrl) ??
+            throw new ArgumentException($"Invalid YouTube channel ID or URL '{channelIdOrUrl}'.");
+
+        /// <summary>
+        /// Converts string to ID.
+        /// </summary>
+        public static implicit operator ChannelId(string channelIdOrUrl) => Parse(channelIdOrUrl);
+
+        /// <summary>
+        /// Converts ID to string.
+        /// </summary>
+        public static implicit operator string(ChannelId channelId) => channelId.ToString();
     }
 
     public partial struct ChannelId : IEquatable<ChannelId>
@@ -91,15 +100,5 @@ namespace YoutubeExplode.Channels
         /// Equality check.
         /// </summary>
         public static bool operator !=(ChannelId left, ChannelId right) => !(left == right);
-
-        /// <summary>
-        /// Converts string to ID.
-        /// </summary>
-        public static implicit operator ChannelId(string idOrUrl) => new(idOrUrl);
-
-        /// <summary>
-        /// Converts ID to string.
-        /// </summary>
-        public static implicit operator string(ChannelId id) => id.ToString();
     }
 }

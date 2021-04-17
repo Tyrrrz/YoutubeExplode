@@ -1,19 +1,20 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Encapsulates a human written language.
+    /// Language information.
     /// </summary>
     public readonly partial struct Language
     {
         /// <summary>
-        /// ISO 639-1 code of this language.
+        /// ISO 639-1 code of the language.
         /// </summary>
         public string Code { get; }
 
         /// <summary>
-        /// Full English name of this language.
+        /// Full international name of the language.
         /// </summary>
         public string Name { get; }
 
@@ -27,6 +28,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"{Code} ({Name})";
     }
 

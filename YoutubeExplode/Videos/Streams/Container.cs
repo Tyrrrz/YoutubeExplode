@@ -8,7 +8,7 @@ namespace YoutubeExplode.Videos.Streams
     public readonly partial struct Container
     {
         /// <summary>
-        /// Container name.
+        /// Container name (e.g. mp4, webm, etc).
         /// Can be used as file extension.
         /// </summary>
         public string Name { get; }
@@ -25,17 +25,17 @@ namespace YoutubeExplode.Videos.Streams
     public partial struct Container
     {
         /// <summary>
-        /// MPEG-4 Part 14 (.mp4).
+        /// MPEG-4 Part 14 (mp4).
         /// </summary>
         public static Container Mp4 { get; } = new("mp4");
 
         /// <summary>
-        /// Web Media (.webm).
+        /// Web Media (webm).
         /// </summary>
         public static Container WebM { get; } = new("webm");
 
         /// <summary>
-        /// 3rd Generation Partnership Project (.3gpp).
+        /// 3rd Generation Partnership Project (3gpp).
         /// </summary>
         public static Container Tgpp { get; } = new("3gpp");
     }

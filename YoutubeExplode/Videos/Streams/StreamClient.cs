@@ -1,348 +1,411 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge;
+using YoutubeExplode.Bridge.Extractors;
+using YoutubeExplode.Bridge.SignatureScrambling;
+using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Internal;
-using YoutubeExplode.Internal.Extensions;
-using YoutubeExplode.ReverseEngineering;
-using YoutubeExplode.ReverseEngineering.Cipher;
-using YoutubeExplode.ReverseEngineering.Responses;
+using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Queries related to media streams of YouTube videos.
+    /// Operations related to media streams of YouTube videos.
     /// </summary>
-    public partial class StreamClient
+    public class StreamClient
     {
-        private readonly YoutubeHttpClient _httpClient;
+        private readonly HttpClient _httpClient;
+        private readonly YoutubeController _controller;
 
         /// <summary>
         /// Initializes an instance of <see cref="StreamClient"/>.
         /// </summary>
-        internal StreamClient(YoutubeHttpClient httpClient)
+        public StreamClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _controller = new YoutubeController(httpClient);
         }
 
-        private async Task<DashManifest> GetDashManifestAsync(
-            string dashManifestUrl,
-            IReadOnlyList<ICipherOperation> cipherOperations)
+        private string UnscrambleStreamUrl(
+            SignatureScrambler signatureScrambler,
+            string streamUrl,
+            string? signature,
+            string? signatureParameter)
         {
-            var signature = DashManifest.TryGetSignatureFromUrl(dashManifestUrl);
+            if (string.IsNullOrWhiteSpace(signature))
+                return streamUrl;
 
-            if (!string.IsNullOrWhiteSpace(signature))
-            {
-                signature = cipherOperations.Decipher(signature);
-                dashManifestUrl = Url.SetRouteParameter(dashManifestUrl, "signature", signature);
-            }
-
-            return await DashManifest.GetAsync(_httpClient, dashManifestUrl);
+            return Url.SetQueryParameter(
+                streamUrl,
+                signatureParameter ?? "signature",
+                signatureScrambler.Unscramble(signature)
+            );
         }
 
-        private async Task<StreamContext> GetSteamContextFromVideoInfoAsync(VideoId videoId)
+        private string UnscrambleDashManifestUrl(
+            SignatureScrambler signatureScrambler,
+            string dashManifestUrl)
         {
-            var embedPage = await EmbedPage.GetAsync(_httpClient, videoId);
-            var playerConfig =
-                embedPage.TryGetPlayerConfig() ??
-                throw VideoUnplayableException.Unplayable(videoId);
+            var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
+            if (string.IsNullOrWhiteSpace(signature))
+                return dashManifestUrl;
 
-            var playerSourceUrl = embedPage.TryGetPlayerSourceUrl() ?? playerConfig.GetPlayerSourceUrl();
-            var playerSource = await PlayerSource.GetAsync(_httpClient, playerSourceUrl);
-            var cipherOperations = playerSource.GetCipherOperations().ToArray();
-
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId, playerSource.GetSts());
-            var playerResponse = videoInfoResponse.GetPlayerResponse();
-
-            var previewVideoId = playerResponse.TryGetPreviewVideoId();
-            if (!string.IsNullOrWhiteSpace(previewVideoId))
-                throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
-
-            if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
-
-            if (playerResponse.IsLive())
-                throw VideoUnplayableException.LiveStream(videoId);
-
-            var streamInfoProviders = new List<IStreamInfoProvider>();
-
-            // Streams from video info
-            streamInfoProviders.AddRange(videoInfoResponse.GetStreams());
-
-            // Streams from player response
-            streamInfoProviders.AddRange(playerResponse.GetStreams());
-
-            // Streams from DASH manifest
-            var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
-            if (!string.IsNullOrWhiteSpace(dashManifestUrl))
-            {
-                var dashManifest = await GetDashManifestAsync(dashManifestUrl, cipherOperations);
-                streamInfoProviders.AddRange(dashManifest.GetStreams());
-            }
-
-            return new StreamContext(streamInfoProviders, cipherOperations);
+            return Url.SetRouteParameter(
+                dashManifestUrl,
+                "signature",
+                signatureScrambler.Unscramble(signature)
+            );
         }
 
-        private async Task<StreamContext> GetStreamContextFromWatchPageAsync(VideoId videoId)
+        private async ValueTask PopulateStreamInfosAsync(
+            ICollection<IStreamInfo> streamInfos,
+            IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
+            SignatureScrambler signatureScrambler,
+            CancellationToken cancellationToken = default)
         {
-            var watchPage = await WatchPage.GetAsync(_httpClient, videoId);
-            var playerConfig = watchPage.TryGetPlayerConfig();
-
-            var playerResponse =
-                playerConfig?.GetPlayerResponse() ??
-                watchPage.TryGetPlayerResponse() ??
-                throw VideoUnplayableException.Unplayable(videoId);
-
-            var previewVideoId = playerResponse.TryGetPreviewVideoId();
-            if (!string.IsNullOrWhiteSpace(previewVideoId))
-                throw VideoRequiresPurchaseException.Preview(videoId, previewVideoId);
-
-            var playerSourceUrl = watchPage.TryGetPlayerSourceUrl() ?? playerConfig?.GetPlayerSourceUrl();
-            var playerSource = !string.IsNullOrWhiteSpace(playerSourceUrl)
-                ? await PlayerSource.GetAsync(_httpClient, playerSourceUrl)
-                : null;
-
-            var cipherOperations = playerSource?.GetCipherOperations().ToArray() ?? Array.Empty<ICipherOperation>();
-
-            if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
-
-            if (playerResponse.IsLive())
-                throw VideoUnplayableException.LiveStream(videoId);
-
-            var streamInfoProviders = new List<IStreamInfoProvider>();
-
-            // Streams from player config
-            if (playerConfig is not null)
+            foreach (var streamInfoExtractor in streamInfoExtractors)
             {
-                streamInfoProviders.AddRange(playerConfig.GetStreams());
-            }
+                var itag =
+                    streamInfoExtractor.TryGetItag() ??
+                    throw new YoutubeExplodeException("Could not extract stream itag.");
 
-            // Streams from player response
-            streamInfoProviders.AddRange(playerResponse.GetStreams());
+                var urlRaw =
+                    streamInfoExtractor.TryGetUrl() ??
+                    throw new YoutubeExplodeException("Could not extract stream URL.");
 
-            // Streams from DASH manifest
-            var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
-            if (!string.IsNullOrWhiteSpace(dashManifestUrl))
-            {
-                var dashManifest = await GetDashManifestAsync(dashManifestUrl, cipherOperations);
-                streamInfoProviders.AddRange(dashManifest.GetStreams());
-            }
+                // Unscramble URL
+                var signature = streamInfoExtractor.TryGetSignature();
+                var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
+                var url = UnscrambleStreamUrl(signatureScrambler, urlRaw, signature, signatureParameter);
 
-            return new StreamContext(streamInfoProviders, cipherOperations);
-        }
-
-        private async Task<StreamManifest> GetManifestAsync(StreamContext streamContext)
-        {
-            // To make sure there are no duplicates streams, group them by tag
-            var streams = new Dictionary<int, IStreamInfo>();
-
-            foreach (var streamInfo in streamContext.StreamInfoProviders)
-            {
-                var tag = streamInfo.GetTag();
-                var url = streamInfo.GetUrl();
-
-                // Signature
-                var signature = streamInfo.TryGetSignature();
-                var signatureParameter = streamInfo.TryGetSignatureParameter() ?? "signature";
-
-                if (!string.IsNullOrWhiteSpace(signature))
-                {
-                    signature = streamContext.CipherOperations.Decipher(signature);
-                    url = Url.SetQueryParameter(url, signatureParameter, signature);
-                }
-
-                // Content length
+                // Get content length
                 var contentLength =
-                    streamInfo.TryGetContentLength() ??
-                    await _httpClient.TryGetContentLengthAsync(url, false) ??
+                    streamInfoExtractor.TryGetContentLength() ??
+                    await _httpClient.TryGetContentLengthAsync(url, false, cancellationToken) ??
                     0;
 
                 if (contentLength <= 0)
                     continue; // broken stream URL?
 
-                // Common
-                var container = new Container(streamInfo.GetContainer());
                 var fileSize = new FileSize(contentLength);
-                var bitrate = new Bitrate(streamInfo.GetBitrate());
 
-                var audioCodec = streamInfo.TryGetAudioCodec();
-                var videoCodec = streamInfo.TryGetVideoCodec();
+                var container =
+                    streamInfoExtractor.TryGetContainer()?.Pipe(s => new Container(s)) ??
+                    throw new YoutubeExplodeException("Could not extract stream container.");
 
-                // Muxed or Video-only
+                var bitrate =
+                    streamInfoExtractor.TryGetBitrate()?.Pipe(s => new Bitrate(s)) ??
+                    throw new YoutubeExplodeException("Could not extract stream bitrate.");
+
+                var audioCodec = streamInfoExtractor.TryGetAudioCodec();
+                var videoCodec = streamInfoExtractor.TryGetVideoCodec();
+
+                // Muxed or video-only stream
                 if (!string.IsNullOrWhiteSpace(videoCodec))
                 {
-                    var framerate = new Framerate(streamInfo.TryGetFramerate() ?? 24);
+                    var framerate = streamInfoExtractor.TryGetFramerate() ?? 24;
 
-                    var videoQualityLabel =
-                        streamInfo.TryGetVideoQualityLabel() ??
-                        Heuristics.GetVideoQualityLabel(tag, framerate.FramesPerSecond);
+                    var videoQualityLabel = streamInfoExtractor.TryGetVideoQualityLabel();
 
-                    var videoQuality = Heuristics.GetVideoQuality(videoQualityLabel);
+                    var videoQuality = !string.IsNullOrWhiteSpace(videoQualityLabel)
+                        ? VideoQuality.FromLabel(videoQualityLabel, framerate)
+                        : VideoQuality.FromItag(itag, framerate);
 
-                    var videoWidth = streamInfo.TryGetVideoWidth();
-                    var videoHeight = streamInfo.TryGetVideoHeight();
+                    var videoWidth = streamInfoExtractor.TryGetVideoWidth();
+                    var videoHeight = streamInfoExtractor.TryGetVideoHeight();
+
                     var videoResolution = videoWidth is not null && videoHeight is not null
-                        ? new VideoResolution(videoWidth.Value, videoHeight.Value)
-                        : Heuristics.GetVideoResolution(videoQuality);
+                        ? new Resolution(videoWidth.Value, videoHeight.Value)
+                        : videoQuality.GetDefaultVideoResolution();
 
                     // Muxed
                     if (!string.IsNullOrWhiteSpace(audioCodec))
                     {
-                        streams[tag] = new MuxedStreamInfo(
-                            tag,
+                        var streamInfo = new MuxedStreamInfo(
                             url,
                             container,
                             fileSize,
                             bitrate,
                             audioCodec,
                             videoCodec,
-                            videoQualityLabel,
                             videoQuality,
-                            videoResolution,
-                            framerate
+                            videoResolution
                         );
+
+                        streamInfos.Add(streamInfo);
                     }
                     // Video-only
                     else
                     {
-                        streams[tag] = new VideoOnlyStreamInfo(
-                            tag,
+                        var streamInfo = new VideoOnlyStreamInfo(
                             url,
                             container,
                             fileSize,
                             bitrate,
                             videoCodec,
-                            videoQualityLabel,
                             videoQuality,
-                            videoResolution,
-                            framerate
+                            videoResolution
                         );
+
+                        streamInfos.Add(streamInfo);
                     }
                 }
                 // Audio-only
                 else if (!string.IsNullOrWhiteSpace(audioCodec))
                 {
-                    streams[tag] = new AudioOnlyStreamInfo(
-                        tag,
+                    var streamInfo = new AudioOnlyStreamInfo(
                         url,
                         container,
                         fileSize,
                         bitrate,
                         audioCodec
                     );
+
+                    streamInfos.Add(streamInfo);
                 }
                 else
                 {
-#if DEBUG
-                    throw FatalFailureException.Generic("Stream info doesn't contain audio/video codec information.");
-#endif
+                    Debug.Fail("Stream doesn't contain neither audio nor video codec information.");
+                }
+            }
+        }
+
+        private async ValueTask PopulateStreamInfosAsync(
+            ICollection<IStreamInfo> streamInfos,
+            VideoId videoId,
+            CancellationToken cancellationToken = default)
+        {
+            var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
+
+            // Try to get player source (failing is ok because there's a decent chance we won't need it)
+            var playerSourceUrl = watchPage.TryGetPlayerSourceUrl();
+            var playerSource = !string.IsNullOrWhiteSpace(playerSourceUrl)
+                ? await _controller.GetPlayerSourceAsync(playerSourceUrl, cancellationToken)
+                : null;
+
+            var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
+
+            var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
+            if (playerResponseFromWatchPage is not null)
+            {
+                var purchasePreviewVideoId = playerResponseFromWatchPage.TryGetPreviewVideoId();
+                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
+                {
+                    throw new VideoRequiresPurchaseException(
+                        $"Video '{videoId}' requires purchase and cannot be played.",
+                        purchasePreviewVideoId
+                    );
+                }
+
+                if (playerResponseFromWatchPage.IsVideoPlayable())
+                {
+                    // Extract streams from watch page
+                    await PopulateStreamInfosAsync(
+                        streamInfos,
+                        watchPage.GetStreams(),
+                        signatureScrambler,
+                        cancellationToken
+                    );
+
+                    // Extract streams from player response
+                    await PopulateStreamInfosAsync(
+                        streamInfos,
+                        playerResponseFromWatchPage.GetStreams(),
+                        signatureScrambler,
+                        cancellationToken
+                    );
+
+                    // Extract streams from DASH manifest
+                    var dashManifestUrlRaw = playerResponseFromWatchPage.TryGetDashManifestUrl();
+                    if (!string.IsNullOrWhiteSpace(dashManifestUrlRaw))
+                    {
+                        var dashManifestUrl = UnscrambleDashManifestUrl(signatureScrambler, dashManifestUrlRaw);
+                        var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+
+                        await PopulateStreamInfosAsync(
+                            streamInfos,
+                            dashManifest.GetStreams(),
+                            signatureScrambler,
+                            cancellationToken
+                        );
+                    }
+                }
+
+                // If successfully retrieved streams, return
+                if (streamInfos.Any())
+                {
+                    return;
                 }
             }
 
-            return new StreamManifest(streams.Values.ToArray());
+            // Try to get streams from video info
+            // Note: it seems YouTube has stopped using get_video_info and replaced it with an
+            // internal API endpoint that resolves player response directly.
+            // This may be an area for future improvement.
+            var signatureTimestamp = playerSource?.TryGetSignatureTimestamp() ?? "";
+            var videoInfo = await _controller.GetVideoInfoAsync(videoId, signatureTimestamp, cancellationToken);
+
+            var playerResponseFromVideoInfo = videoInfo.TryGetPlayerResponse();
+            if (playerResponseFromVideoInfo is not null)
+            {
+                if (playerResponseFromVideoInfo.IsVideoPlayable())
+                {
+                    // Extract streams from video info
+                    await PopulateStreamInfosAsync(
+                        streamInfos,
+                        videoInfo.GetStreams(),
+                        signatureScrambler,
+                        cancellationToken
+                    );
+
+                    // Extract streams from player response
+                    await PopulateStreamInfosAsync(
+                        streamInfos,
+                        playerResponseFromVideoInfo.GetStreams(),
+                        signatureScrambler,
+                        cancellationToken
+                    );
+
+                    // Extract streams from DASH manifest
+                    var dashManifestUrlRaw = playerResponseFromVideoInfo.TryGetDashManifestUrl();
+                    if (!string.IsNullOrWhiteSpace(dashManifestUrlRaw))
+                    {
+                        var dashManifestUrl = UnscrambleDashManifestUrl(signatureScrambler, dashManifestUrlRaw);
+                        var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
+
+                        await PopulateStreamInfosAsync(
+                            streamInfos,
+                            dashManifest.GetStreams(),
+                            signatureScrambler,
+                            cancellationToken
+                        );
+                    }
+
+                    // If successfully retrieved streams, return
+                    if (streamInfos.Any())
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    var errorMessage = playerResponseFromVideoInfo.TryGetVideoPlayabilityError();
+                    throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
+                }
+            }
+
+            // Couldn't extract any streams
+            throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
         }
 
         /// <summary>
-        /// Gets the manifest that contains information about available streams in the specified video.
+        /// Gets the manifest containing information about available streams on the specified video.
         /// </summary>
-        public async Task<StreamManifest> GetManifestAsync(VideoId videoId)
+        public async ValueTask<StreamManifest> GetManifestAsync(
+            VideoId videoId,
+            CancellationToken cancellationToken = default)
         {
-            // We can try to extract the manifest from two sources: get_video_info and the video watch page.
-            // In some cases one works, in some cases another does.
+            var streamInfos = new List<IStreamInfo>();
+            await PopulateStreamInfosAsync(streamInfos, videoId, cancellationToken);
 
-            try
-            {
-                var context = await GetSteamContextFromVideoInfoAsync(videoId);
-                return await GetManifestAsync(context);
-            }
-            catch (YoutubeExplodeException)
-            {
-                var context = await GetStreamContextFromWatchPageAsync(videoId);
-                return await GetManifestAsync(context);
-            }
+            return new StreamManifest(streamInfos);
         }
 
         /// <summary>
-        /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it's a live video stream).
+        /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
         /// </summary>
-        public async Task<string> GetHttpLiveStreamUrlAsync(VideoId videoId)
+        public async ValueTask<string> GetHttpLiveStreamUrlAsync(
+            VideoId videoId,
+            CancellationToken cancellationToken = default)
         {
-            var videoInfoResponse = await VideoInfoResponse.GetAsync(_httpClient, videoId);
-            var playerResponse = videoInfoResponse.GetPlayerResponse();
+            var videoInfo = await _controller.GetVideoInfoAsync(videoId, cancellationToken);
+
+            var playerResponse =
+                videoInfo.TryGetPlayerResponse() ??
+                throw new YoutubeExplodeException("Could not extract player response.");
 
             if (!playerResponse.IsVideoPlayable())
-                throw VideoUnplayableException.Unplayable(videoId, playerResponse.TryGetVideoPlayabilityError());
+            {
+                var errorMessage = playerResponse.TryGetVideoPlayabilityError();
+                throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
+            }
 
-            return
-                playerResponse.TryGetHlsManifestUrl() ??
-                throw VideoUnplayableException.NotLiveStream(videoId);
+            var hlsUrl = playerResponse.TryGetHlsManifestUrl();
+            if (string.IsNullOrWhiteSpace(hlsUrl))
+            {
+                throw new YoutubeExplodeException(
+                    "Could not extract HTTP Live Stream manifest URL. " +
+                    $"Video '{videoId}' is likely not a live stream."
+                );
+            }
+
+            return hlsUrl;
         }
 
         /// <summary>
-        /// Gets the actual stream which is identified by the specified metadata.
+        /// Gets the stream identified by the specified metadata.
         /// </summary>
-        public Task<Stream> GetAsync(IStreamInfo streamInfo)
+        public async ValueTask<Stream> GetAsync(
+            IStreamInfo streamInfo,
+            CancellationToken cancellationToken = default)
         {
-            // YouTube streams are often rate-limited -- they return data at about the same rate
-            // as the actual video is going. This helps them avoid unnecessary bandwidth by not loading
-            // all data eagerly. On the other hand, we want to download the streams as fast as possible,
-            // so we'll be splitting the stream into small segments and retrieving them separately, to
-            // work around rate limiting.
+            // For most streams, YouTube limits transfer speed to match the video playback rate.
+            // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
+            // we want to download the stream as fast as possible.
+            // To solve this, we divide the logical stream up into multiple segments and download
+            // them all separately.
 
-            var segmentSize = streamInfo.IsRateLimited()
-                ? 9_898_989 // this number was carefully devised through research
-                : (long?) null; // don't use segmentation for non-rate-limited streams
+            var isThrottled = !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes");
 
-            var stream = new YoutubeMediaStream(
+            var segmentSize = isThrottled
+                ? 9_898_989 // breakpoint after which the throttling kicks in
+                : (long?) null; // no segmentation for non-throttled streams
+
+            var stream = new SegmentedHttpStream(
                 _httpClient,
                 streamInfo.Url,
-                streamInfo.Size.TotalBytes,
+                streamInfo.Size.Bytes,
                 segmentSize
             );
 
-            return Task.FromResult<Stream>(stream);
+            // Pre-resolve inner stream eagerly
+            await stream.PreloadAsync(cancellationToken);
+
+            return stream;
         }
 
         /// <summary>
-        /// Copies the actual stream which is identified by the specified metadata to the specified stream.
+        /// Copies the stream identified by the specified metadata to the specified stream.
         /// </summary>
-        public async Task CopyToAsync(IStreamInfo streamInfo, Stream destination,
-            IProgress<double>? progress = null, CancellationToken cancellationToken = default)
+        public async ValueTask CopyToAsync(
+            IStreamInfo streamInfo,
+            Stream destination,
+            IProgress<double>? progress = null,
+            CancellationToken cancellationToken = default)
         {
-            using var input = await GetAsync(streamInfo);
+            using var input = await GetAsync(streamInfo, cancellationToken);
             await input.CopyToAsync(destination, progress, cancellationToken);
         }
 
         /// <summary>
-        /// Download the actual stream which is identified by the specified metadata to the specified file.
+        /// Downloads the stream identified by the specified metadata to the specified file.
         /// </summary>
-        public async Task DownloadAsync(IStreamInfo streamInfo, string filePath,
-            IProgress<double>? progress = null, CancellationToken cancellationToken = default)
+        public async ValueTask DownloadAsync(
+            IStreamInfo streamInfo,
+            string filePath,
+            IProgress<double>? progress = null,
+            CancellationToken cancellationToken = default)
         {
             using var destination = File.Create(filePath);
             await CopyToAsync(streamInfo, destination, progress, cancellationToken);
-        }
-    }
-
-    public partial class StreamClient
-    {
-        private class StreamContext
-        {
-            public IReadOnlyList<IStreamInfoProvider> StreamInfoProviders { get; }
-
-            public IReadOnlyList<ICipherOperation> CipherOperations { get; }
-
-            public StreamContext(
-                IReadOnlyList<IStreamInfoProvider> streamInfoProviders,
-                IReadOnlyList<ICipherOperation> cipherOperations)
-            {
-                StreamInfoProviders = streamInfoProviders;
-                CipherOperations = cipherOperations;
-            }
         }
     }
 }

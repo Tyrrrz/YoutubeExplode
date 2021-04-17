@@ -1,13 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// YouTube media stream that only contains audio.
+    /// Metadata associated with an audio-only YouTube media stream.
     /// </summary>
     public class AudioOnlyStreamInfo : IAudioStreamInfo
     {
-        /// <inheritdoc />
-        public int Tag { get; }
-
         /// <inheritdoc />
         public string Url { get; }
 
@@ -26,14 +25,13 @@ namespace YoutubeExplode.Videos.Streams
         /// <summary>
         /// Initializes an instance of <see cref="AudioOnlyStreamInfo"/>.
         /// </summary>
-        public AudioOnlyStreamInfo(int tag,
+        public AudioOnlyStreamInfo(
             string url,
             Container container,
             FileSize size,
             Bitrate bitrate,
             string audioCodec)
         {
-            Tag = tag;
             Url = url;
             Container = container;
             Size = size;
@@ -42,6 +40,7 @@ namespace YoutubeExplode.Videos.Streams
         }
 
         /// <inheritdoc />
-        public override string ToString() => $"Audio-only ({Tag} | {Container})";
+        [ExcludeFromCodeCoverage]
+        public override string ToString() => $"Audio-only ({Container})";
     }
 }
