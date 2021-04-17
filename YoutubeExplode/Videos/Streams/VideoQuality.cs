@@ -16,8 +16,8 @@ namespace YoutubeExplode.Videos.Streams
         public string Label { get; }
 
         /// <summary>
-        /// Maximum allowed height of the video stream.
-        /// Actual height of the video stream may be smaller.
+        /// Maximum established height of the video stream.
+        /// Actual height can vary.
         /// </summary>
         public int MaxHeight { get; }
 

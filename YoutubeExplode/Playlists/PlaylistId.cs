@@ -5,7 +5,7 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// Represents a valid YouTube playlist ID.
+    /// Represents a syntactically valid YouTube playlist ID.
     /// </summary>
     public readonly partial struct PlaylistId
     {

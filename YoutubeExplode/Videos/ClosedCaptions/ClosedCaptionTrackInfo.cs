@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace YoutubeExplode.Videos.ClosedCaptions
 {
     /// <summary>
-    /// Metadata associated with a YouTube closed caption track.
+    /// Metadata associated with a closed caption track of a YouTube video.
     /// </summary>
     public class ClosedCaptionTrackInfo
     {

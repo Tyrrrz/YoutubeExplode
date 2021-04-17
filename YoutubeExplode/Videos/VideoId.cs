@@ -5,7 +5,7 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// Represents a valid YouTube video ID.
+    /// Represents a syntactically valid YouTube video ID.
     /// </summary>
     public readonly partial struct VideoId
     {

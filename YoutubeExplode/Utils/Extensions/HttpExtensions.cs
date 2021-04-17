@@ -21,24 +21,6 @@ namespace YoutubeExplode.Utils.Extensions
             );
         }
 
-        public static async ValueTask<string> GetStringAsync(
-            this HttpClient httpClient,
-            string requestUri,
-            bool ensureSuccess = true,
-            CancellationToken cancellationToken = default)
-        {
-            using var response = await httpClient.GetAsync(
-                requestUri,
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken
-            );
-
-            if (ensureSuccess)
-                response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync(cancellationToken);
-        }
-
         public static async ValueTask<Stream> GetStreamAsync(
             this HttpClient httpClient,
             string requestUri,

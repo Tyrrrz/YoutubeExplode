@@ -4,7 +4,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Playlists
 {
     /// <summary>
-    /// Metadata properties shared by playlists resolved from different sources.
+    /// Properties shared by playlist metadata resolved from different sources.
     /// </summary>
     public interface IPlaylist
     {
@@ -24,10 +24,10 @@ namespace YoutubeExplode.Playlists
         string Title { get; }
 
         /// <summary>
-        /// Playlist title.
+        /// Playlist author.
         /// </summary>
         /// <remarks>
-        /// May be null in case of system playlists (e.g. mixes, topics, etc).
+        /// May be null in case of auto-generated playlists (e.g. mixes, topics, etc).
         /// </remarks>
         Author? Author { get; }
 

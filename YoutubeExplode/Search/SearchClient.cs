@@ -26,8 +26,7 @@ namespace YoutubeExplode.Search
         }
 
         /// <summary>
-        /// Enumerates batches of search results returned for the specified query.
-        /// Each batch represents one request.
+        /// Enumerates batches of search results returned by the specified query.
         /// </summary>
         public async IAsyncEnumerable<Batch<ISearchResult>> GetResultBatchesAsync(
             string searchQuery,
@@ -207,7 +206,7 @@ namespace YoutubeExplode.Search
         }
 
         /// <summary>
-        /// Enumerates the search results returned for the specified query.
+        /// Enumerates search results returned by the specified query.
         /// </summary>
         public IAsyncEnumerable<ISearchResult> GetResultsAsync(
             string searchQuery,
@@ -215,7 +214,7 @@ namespace YoutubeExplode.Search
             GetResultBatchesAsync(searchQuery, cancellationToken).FlattenAsync();
 
         /// <summary>
-        /// Enumerates the search results returned for the specified query.
+        /// Enumerates video search results returned by the specified query.
         /// </summary>
         public IAsyncEnumerable<VideoSearchResult> GetVideosAsync(
             string searchQuery,
@@ -225,7 +224,7 @@ namespace YoutubeExplode.Search
                 .OfType<ISearchResult, VideoSearchResult>();
 
         /// <summary>
-        /// Enumerates the search results returned for the specified query.
+        /// Enumerates playlist search results returned by the specified query.
         /// </summary>
         public IAsyncEnumerable<PlaylistSearchResult> GetPlaylistsAsync(
             string searchQuery,
@@ -235,7 +234,7 @@ namespace YoutubeExplode.Search
                 .OfType<ISearchResult, PlaylistSearchResult>();
 
         /// <summary>
-        /// Enumerates the search results returned for the specified query.
+        /// Enumerates channel search results returned by the specified query.
         /// </summary>
         public IAsyncEnumerable<ChannelSearchResult> GetChannelsAsync(
             string searchQuery,

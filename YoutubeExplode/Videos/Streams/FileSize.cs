@@ -5,7 +5,7 @@ namespace YoutubeExplode.Videos.Streams
     // Loosely based on https://github.com/omar/ByteSize (MIT license)
 
     /// <summary>
-    /// Stream file size.
+    /// File size.
     /// </summary>
     public readonly partial struct FileSize
     {

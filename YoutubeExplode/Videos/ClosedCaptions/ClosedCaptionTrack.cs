@@ -10,7 +10,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
     public class ClosedCaptionTrack
     {
         /// <summary>
-        /// Closed captions.
+        /// Closed captions included in the track.
         /// </summary>
         public IReadOnlyList<ClosedCaption> Captions { get; }
 

@@ -5,7 +5,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos
 {
     /// <summary>
-    /// Metadata properties shared by videos of different types.
+    /// Properties shared by video metadata resolved from different sources.
     /// </summary>
     public interface IVideo
     {

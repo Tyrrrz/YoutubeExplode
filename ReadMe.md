@@ -33,6 +33,8 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 The following example shows how you can extract various metadata from a YouTube video:
 
 ```csharp
+using YoutubeExplode;
+
 var youtube = new YoutubeClient();
 
 // You can specify video ID or URL
@@ -56,6 +58,8 @@ On top of that, depending on the content of the stream, the streams are further 
 You can request the stream manifest to get available streams for a particular video:
 
 ```csharp
+using YoutubeExplode;
+
 var youtube = new YoutubeClient();
 
 var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs");
@@ -64,6 +68,9 @@ var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs"
 Once you get the manifest, you can filter through the streams and choose the one you're interested in downloading:
 
 ```csharp
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
+
 // Get highest quality muxed stream
 var streamInfo = streamManifest.GetMuxed().GetWithHighestVideoQuality();
 
@@ -80,6 +87,8 @@ var streamInfo = streamManifest
 Finally, you can get the actual `Stream` object represented by the metadata:
 
 ```csharp
+using YoutubeExplode;
+
 // Get the actual stream
 var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 
@@ -99,6 +108,9 @@ You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExp
 Among other things, YoutubeExplode also supports playlists:
 
 ```csharp
+using YoutubeExplode;
+using YoutubeExplode.Common;
+
 var youtube = new YoutubeClient();
 
 // Get playlist metadata
@@ -128,6 +140,8 @@ var somePlaylistVideos = await youtube.Playlists
 Similarly to streams, you can extract closed captions by getting the manifest and choosing the track you're interested in:
 
 ```csharp
+using YoutubeExplode;
+
 var youtube = new YoutubeClient();
 
 var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("u_yIGGhubZs");

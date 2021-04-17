@@ -4,7 +4,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Metadata associated with a muxed (audio + video combined) YouTube media stream.
+    /// Metadata associated with a muxed (audio + video combined) media stream.
     /// </summary>
     public class MuxedStreamInfo : IAudioStreamInfo, IVideoStreamInfo
     {

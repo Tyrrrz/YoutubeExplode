@@ -4,10 +4,11 @@ namespace YoutubeExplode.Search
 {
     /// <summary>
     /// <p>
-    ///     Search result.
+    ///     Abstract result returned by a search query.
+    ///     Use pattern matching to handle specific instances of this type.
     /// </p>
     /// <p>
-    ///     Can be one of the following:
+    ///     Can be either one of the following:
     ///     <list type="bullet">
     ///         <item><see cref="VideoSearchResult"/></item>
     ///         <item><see cref="PlaylistSearchResult"/></item>

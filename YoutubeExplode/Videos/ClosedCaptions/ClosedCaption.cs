@@ -21,7 +21,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions
         public TimeSpan Offset { get; }
 
         /// <summary>
-        /// Caption duration.
+        /// Duration of time for which the caption is displayed.
         /// </summary>
         public TimeSpan Duration { get; }
 

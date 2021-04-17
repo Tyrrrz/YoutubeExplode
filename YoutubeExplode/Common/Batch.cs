@@ -4,7 +4,7 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Common
 {
     /// <summary>
-    /// Batch of items.
+    /// Generic collection of items returned by a single request.
     /// </summary>
     public class Batch<T> where T : IBatchItem
     {

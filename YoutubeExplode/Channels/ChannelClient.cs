@@ -27,6 +27,7 @@ namespace YoutubeExplode.Channels
             _controller = new YoutubeController(httpClient);
         }
 
+        // TODO:
         private IReadOnlyList<Thumbnail> GenerateThumbnails(string logoUrl)
         {
             var logoSize = Regex

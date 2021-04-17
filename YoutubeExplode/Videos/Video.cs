@@ -46,7 +46,7 @@ namespace YoutubeExplode.Videos
         public IReadOnlyList<string> Keywords { get; }
 
         /// <summary>
-        /// Engagement statistics for this video.
+        /// Engagement statistics for the video.
         /// </summary>
         public Engagement Engagement { get; }
 

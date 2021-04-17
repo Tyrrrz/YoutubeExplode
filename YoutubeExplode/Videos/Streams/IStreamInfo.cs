@@ -5,7 +5,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Metadata associated with a YouTube media stream.
+    /// Metadata associated with a media stream of a YouTube video.
     /// </summary>
     public interface IStreamInfo
     {

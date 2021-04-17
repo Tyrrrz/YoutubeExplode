@@ -4,7 +4,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Metadata associated with a video-only YouTube media stream.
+    /// Metadata associated with a video-only media stream.
     /// </summary>
     public class VideoOnlyStreamInfo : IVideoStreamInfo
     {

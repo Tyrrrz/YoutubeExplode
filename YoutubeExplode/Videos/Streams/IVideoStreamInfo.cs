@@ -6,7 +6,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Metadata associated with a YouTube media stream that contains video.
+    /// Metadata associated with a media stream that contains video.
     /// </summary>
     public interface IVideoStreamInfo : IStreamInfo
     {

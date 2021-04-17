@@ -4,7 +4,7 @@ using YoutubeExplode.Common;
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Metadata properties shared by channels of different types.
+    /// Properties shared by channel metadata resolved from different sources.
     /// </summary>
     public interface IChannel
     {

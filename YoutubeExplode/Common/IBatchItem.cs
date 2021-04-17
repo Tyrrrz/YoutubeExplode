@@ -6,8 +6,8 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Common
 {
     /// <summary>
-    /// Item included in a batch.
-    /// Used as a marker interface to enable extension methods.
+    /// Represents an item that can be included in <see cref="Batch{T}"/>.
+    /// This interface is used as a marker to enable extension methods.
     /// </summary>
     public interface IBatchItem {}
 

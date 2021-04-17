@@ -1,7 +1,7 @@
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Metadata associated with a YouTube media stream that contains audio.
+    /// Metadata associated with a media stream that contains audio.
     /// </summary>
     public interface IAudioStreamInfo : IStreamInfo
     {

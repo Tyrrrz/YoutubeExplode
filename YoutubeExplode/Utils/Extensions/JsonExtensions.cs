@@ -54,9 +54,11 @@ namespace YoutubeExplode.Utils.Extensions
         public static JsonElement.ObjectEnumerator EnumerateObjectOrEmpty(this JsonElement element) =>
             element.EnumerateObjectOrNull() ?? default;
 
-        public static IEnumerable<JsonElement> EnumerateDescendantProperties(this JsonElement element, string propertyName)
+        public static IEnumerable<JsonElement> EnumerateDescendantProperties(
+            this JsonElement element,
+            string propertyName)
         {
-            // Check if this property exists on current object
+            // Check if this property exists on the current object
             var property = element.GetPropertyOrNull(propertyName);
             if (property is not null)
                 yield return property.Value;

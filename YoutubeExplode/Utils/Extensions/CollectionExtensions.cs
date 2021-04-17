@@ -40,13 +40,5 @@ namespace YoutubeExplode.Utils.Extensions
 
             return null;
         }
-
-        public static T? LastOrNull<T>(this IEnumerable<T> source) where T : struct
-        {
-            var sourceAsList = source as IReadOnlyList<T> ?? source.ToArray();
-            return sourceAsList.Count > 0
-                ? sourceAsList[sourceAsList.Count - 1]
-                : null;
-        }
     }
 }

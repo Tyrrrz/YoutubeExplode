@@ -5,7 +5,7 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Channels
 {
     /// <summary>
-    /// Represents a valid YouTube user name.
+    /// Represents a syntactically valid YouTube user name.
     /// </summary>
     public readonly partial struct UserName
     {

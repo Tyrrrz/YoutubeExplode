@@ -3,7 +3,7 @@ using System;
 namespace YoutubeExplode.Videos.Streams
 {
     /// <summary>
-    /// Stream bitrate.
+    /// Bitrate.
     /// </summary>
     public readonly partial struct Bitrate
     {

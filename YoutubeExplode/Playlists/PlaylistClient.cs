@@ -88,7 +88,6 @@ namespace YoutubeExplode.Playlists
 
         /// <summary>
         /// Enumerates batches of videos included in the specified playlist.
-        /// Each batch represents one request.
         /// </summary>
         public async IAsyncEnumerable<Batch<PlaylistVideo>> GetVideoBatchesAsync(
             PlaylistId playlistId,
