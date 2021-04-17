@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -96,7 +95,6 @@ namespace YoutubeExplode.Tests
 
             // Assert
             videos.Should().HaveCountGreaterOrEqualTo(21);
-
             videos.Select(v => v.Id.Value).Should().Contain(new[]
             {
                 "uPZSSdkGQhM",
@@ -121,17 +119,6 @@ namespace YoutubeExplode.Tests
                 "E9zfpKsw6f8",
                 "eBCw9sC5D40"
             });
-
-            foreach (var video in videos)
-            {
-                video.Id.Value.Should().NotBeNullOrWhiteSpace();
-                video.Title.Should().NotBeNullOrWhiteSpace();
-                video.Url.Should().NotBeNullOrWhiteSpace();
-                video.Author.ChannelId.Value.Should().NotBeNullOrWhiteSpace();
-                video.Author.Title.Should().NotBeNullOrWhiteSpace();
-                video.Duration.Should().NotBe(TimeSpan.Zero);
-                video.Thumbnails.Should().NotBeEmpty();
-            }
         }
 
         [Fact]

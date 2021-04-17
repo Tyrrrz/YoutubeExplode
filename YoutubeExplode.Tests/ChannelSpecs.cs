@@ -36,6 +36,9 @@ namespace YoutubeExplode.Tests
 
             // Assert
             channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+            channel.Url.Should().NotBeNullOrWhiteSpace();
+            channel.Title.Should().Be("Tyrrrz");
+            channel.Thumbnails.Should().NotBeEmpty();
         }
 
         [Fact]

@@ -93,7 +93,7 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
-        public async Task User_can_get_the_highest_resolution_thumbnail_of_a_video()
+        public async Task User_can_get_the_highest_resolution_thumbnail_from_a_video()
         {
             // Arrange
             var youtube = new YoutubeClient();
