@@ -19,9 +19,7 @@ namespace YoutubeExplode.Videos
         /// <inheritdoc />
         public string Title { get; }
 
-        /// <summary>
-        /// Video author.
-        /// </summary>
+        /// <inheritdoc />
         public Author Author { get; }
 
         /// <summary>
