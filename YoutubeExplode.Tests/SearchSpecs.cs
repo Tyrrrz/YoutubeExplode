@@ -43,7 +43,7 @@ namespace YoutubeExplode.Tests
             var playlists = await youtube.Search.GetPlaylistsAsync("undead corporation");
 
             // Assert
-            playlists.Should().HaveCountGreaterOrEqualTo(10);
+            playlists.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace YoutubeExplode.Tests
             var channels = await youtube.Search.GetChannelsAsync("undead corporation");
 
             // Assert
-            channels.Should().HaveCountGreaterOrEqualTo(5);
+            channels.Should().NotBeEmpty();
         }
     }
 }
