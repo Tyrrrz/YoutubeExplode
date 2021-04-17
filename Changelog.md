@@ -1,3 +1,55 @@
+### v6.0 (17-Apr-2021)
+
+- Fixed an issue where an attempt to get playlist metadata or playlist videos resulted in an exception, due to YouTube's recent changes.
+- Fixed an issue where an attempt to get videos returned by a search query resulted in an exception, due to YouTube's recent changes.
+- Fixed an issue where an attempt to get video metadata resulted in an exception, due to YouTube's recent changes.
+- Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
+- Fixed an issue where `av01`-encoded video-only streams were occasionally missing from the resolved stream manifest.
+- Fixed many other issues brought on by recent YouTube changes.
+- Changes to videos:
+  - Changed `Video.Duration` to a nullable property. It may be `null` on videos that haven't finished yet (i.e. ongoing livestreams).
+  - Changed `Video.Author` type from `string` to `Author` object, which encapsulates both channel ID and channel title. Removed `Video.ChannelId`.
+  - Changed `Video.Thumbnails` type from `ThumbnailSet` to `IReadOnlyList<Thumbnail>`.
+  - Removed public constructor from `VideoId`. To create an instance of `VideoId`, use `VideoId.Parse(...)`, `VideoId.TryParse(...)`, or the implicit conversion from `string` to `VideoId`.
+  - Changes to streams:
+    - Removed `IStreamInfo.Tag` property.
+    - Reworked `VideoQuality` into a struct (from an enum) which encapsulates video quality label, maximum height, and framerate. Removed `IVideoStreamInfo.VideoQualityLabel` and `IVideoStreamInfo.Framerate` in favor of this new consolidated type.
+    - Renamed extension method `WithHighestBitrate(...)` to `TryGetWithHighestBitrate(...)`. Also added `GetWithHighestBitrate(...)` which does not return `null`, but instead throws if the source sequence is empty.
+    - Renamed extension method `WithHighestVideoQuality(...)` to `TryGetWithHighestVideoQuality(...)`. Also added `GetWithHighestVideoQuality(...)` which does not return `null`, but instead throws if the source sequence is empty.
+    - Changed the behavior of `TryGetWithHighestVideoQuality(...)` and `GetWithHighestVideoQuality(...)` extension methods so that they now also take into account the framerate of the stream.
+    - Removed `GetAllVideoQualityLabels(...)` extension method.
+  - Changes to closed captions:
+    - Added `ClosedCaptionManifest.GetByLanguage(...)`. It works like `ClosedCaptionManifest.TryGetByLanguage(...)` but throws an exception in case of failure instead of returning `null`.
+    - Added `ClosedCaptionTrack.GetByTime(...)`. It works like `ClosedCaptionTrack.TryGetByTime(...)` but throws an exception in case of failure instead of returning `null`.
+    - Added `ClosedCaption.GetPartByTime(...)`. It works like `ClosedCaption.TryGetPartByTime(...)` but throws an exception in case of failure instead of returning `null`.
+- Changes to playlists:
+  - Changed `Playlist.Author` type to `Author`. Note that this property is nullable because auto-generated playlists (mixed, topics, etc.) don't have an author.
+  - Changed `Playlist.Thumbnails` type from `ThumbnailSet` to `IReadOnlyList<Thumbnail>`.
+  - Videos contained within playlists are now of type `PlaylistVideo` instead of `Video`.
+  - `PlaylistVideo` implements `IVideo` interface, which outlines properties shared with `Video`.
+  - `PlaylistVideo` no longer contains some of the properties available on `Video`, specifically: `UploadDate`, `Description`, `Keywords`, and `Engagement`.
+  - Changed `PlaylistVideo.Author` type to `Author`.
+  - Added `PlaylistClient.GetVideoBatchesAsync(...)` which returns videos in batches, each encompassing one response from YouTube.
+  - Removed the previously available parameters for specifying starting page and page count on `PlaylistClient.GetVideosAsync(...)`. It is no longer possible to specify the starting page altogether because the new endpoint used by YoutubeExplode does not have the concept of pages. If you need manual control over how many requests you make, use `PlaylistClient.GetVideoBatchesAsync(...)` instead.
+  - Removed public constructor from `PlaylistId`. To create an instance of `PlaylistId`, use `PlaylistId.Parse(...)`, `PlaylistId.TryParse(...)`, or the implicit conversion from `string` to `PlaylistId`.
+- Changes to search:
+  - Search functionality is now using a different endpoint, which also returns channels and playlists in addition to just videos.
+  - Added `VideoSearchResult`, `PlaylistSearchResult`, and `ChannelSearchResult` to represent the different possible result types. They implement `IVideo`, `IPlaylist`, and `IChannel` respectively.
+  - Added `SearchClient.GetResultsAsync(...)` which returns instances of `ISearchResult`. You will need to match the instance with one of its possible implementations (`VideoSearchResult`, `PlaylistSearchResult`, or `ChannelSearchResult`) to extract detailed information.
+  - Added `SearchClient.GetResultBatchesAsync(...)` that provides more granular control over how many requests are sent to YouTube, similar to `PlaylistClient.GetVideoBatchesAsync(...)`.
+  - Added additional methods to filter results by type: `SearchClient.GetVideosAsync(...)`, `SearchClient.GetChannelsAsync(...)`, and `SearchClient.GetPlaylistsAsync(...)`. Under the hood, these methods call `SearchClient.GetResultsAsync(...)`.
+- Changes to channels:
+  - Removed `Channel.LogoUrl` in favor of `Channel.Thumbnails` of type `IReadOnlyList<Thumbnail>`.
+  - Removed public constructor from `ChannelId`. To create an instance of `ChannelId`, use `ChannelId.Parse(...)`, `ChannelId.TryParse(...)`, or the implicit conversion from `string` to `ChannelId`.
+  - Removed public constructor from `UserName`. To create an instance of `UserName`, use `UserName.Parse(...)`, `UserName.TryParse(...)`, or the implicit conversion from `string` to `UserName`.
+- Renamed `VideoResolution` to `Resolution` and moved it from `YoutubeExplode.Video.Streams` namespace to `YoutubeExplode.Common`. This type is now also used in `Thumbnail` to specify the size of the thumbnail image.
+- Added `TryGetWithHighestResolution(...)` and `GetWithHighestResolution(...)` extension methods on `IEnumerable<Thumbnail>`. These methods return the thumbnail with the highest resolution by area (width multiplied by height).
+- Moved extension methods that enable `await` expressions on certain `IAsyncEnumerable<T>` instances from `YoutubeExplode` namespace to `YoutubeExplode.Common`. Remember to add corresponding using directive for this namespace when working with playlists or search.
+- Added `CancellationToken` parameter to all asynchronous client methods where it was previously missing.
+- Consolidated exceptions into fewer types.
+
+Thanks to [@d4n3436](https://github.com/d4n3436), [@Benjamin K.](https://github.com/Speyd3r), and [@Baimbekka](https://github.com/Baimbekka) who helped find workarounds for recent YouTube breakages by submitting pull requests. Your contribution is very appreciated!
+
 ### v5.1.9 (28-Nov-2020)
 
 - Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
