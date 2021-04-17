@@ -39,6 +39,12 @@ namespace YoutubeExplode.Bridge.Extractors
 
         private JsonElement? TryGetAuthorDetails() => _memo.Wrap(() =>
             _content
+                .GetPropertyOrNull("longBylineText")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0) ??
+
+            _content
                 .GetPropertyOrNull("shortBylineText")?
                 .GetPropertyOrNull("runs")?
                 .EnumerateArrayOrNull()?

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,51 +67,38 @@ namespace YoutubeExplode.Videos
                 playerResponse.TryGetVideoUploadDate() ??
                 throw new YoutubeExplodeException("Could not extract video upload date.");
 
-            var description =
-                playerResponse.TryGetVideoDescription() ??
-                throw new YoutubeExplodeException("Could not extract video description.");
-
-            // Live streams don't have duration
+            var description = playerResponse.TryGetVideoDescription() ?? "";
             var duration = playerResponse.TryGetVideoDuration();
 
-            var thumbnails = new List<Thumbnail>();
+            var thumbnails = playerResponse
+                .GetVideoThumbnails()
+                .Select(t =>
+                {
+                    var thumbnailUrl =
+                        t.TryGetUrl() ??
+                        throw new YoutubeExplodeException("Could not extract thumbnail URL.");
 
-            thumbnails.AddRange(Thumbnail.GetDefaultSet(videoId));
+                    var thumbnailWidth =
+                        t.TryGetWidth() ??
+                        throw new YoutubeExplodeException("Could not extract thumbnail width.");
 
-            foreach (var thumbnailExtractor in playerResponse.GetVideoThumbnails())
-            {
-                var thumbnailUrl =
-                    thumbnailExtractor.TryGetUrl() ??
-                    throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+                    var thumbnailHeight =
+                        t.TryGetHeight() ??
+                        throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
-                var thumbnailWidth =
-                    thumbnailExtractor.TryGetWidth() ??
-                    throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                var thumbnailHeight =
-                    thumbnailExtractor.TryGetHeight() ??
-                    throw new YoutubeExplodeException("Could not extract thumbnail height.");
-
-                var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-
-                var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-
-                thumbnails.Add(thumbnail);
-            }
+                    return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                })
+                .Concat(Thumbnail.GetDefaultSet(videoId))
+                .ToArray();
 
             var keywords = playerResponse.GetVideoKeywords();
 
-            var viewCount =
-                playerResponse.TryGetVideoViewCount() ??
-                throw new YoutubeExplodeException("Could not extract video view count.");
-
-            var likeCount =
-                watchPage.TryGetVideoLikeCount() ??
-                0; // like count is inaccessible if likes are disabled
-
-            var dislikeCount =
-                watchPage.TryGetVideoDislikeCount() ??
-                0; // dislike count is inaccessible if likes are disabled
+            // Engagement statistics may be hidden
+            var viewCount = playerResponse.TryGetVideoViewCount() ?? 0;
+            var likeCount = watchPage.TryGetVideoLikeCount() ?? 0;
+            var dislikeCount = watchPage.TryGetVideoDislikeCount() ?? 0;
 
             return new Video(
                 videoId,

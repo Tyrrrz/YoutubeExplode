@@ -30,10 +30,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetStringOrNull()
         );
 
-        public bool IsVideoAvailable() => _memo.Wrap(() =>
-            !string.Equals(TryGetVideoPlayabilityStatus(), "error", StringComparison.OrdinalIgnoreCase)
-        );
-
         public bool IsVideoPlayable() => _memo.Wrap(() =>
             string.Equals(TryGetVideoPlayabilityStatus(), "ok", StringComparison.OrdinalIgnoreCase)
         );
@@ -45,6 +41,12 @@ namespace YoutubeExplode.Bridge.Extractors
         public string? TryGetVideoTitle() => _memo.Wrap(() =>
             TryGetVideoDetails()?
                 .GetPropertyOrNull("title")?
+                .GetStringOrNull()
+        );
+
+        public string? TryGetVideoChannelId() => _memo.Wrap(() =>
+            TryGetVideoDetails()?
+                .GetPropertyOrNull("channelId")?
                 .GetStringOrNull()
         );
 
@@ -60,12 +62,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("playerMicroformatRenderer")?
                 .GetPropertyOrNull("uploadDate")?
                 .GetDateTimeOffset()
-        );
-
-        public string? TryGetVideoChannelId() => _memo.Wrap(() =>
-            TryGetVideoDetails()?
-                .GetPropertyOrNull("channelId")?
-                .GetStringOrNull()
         );
 
         public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>

@@ -247,6 +247,9 @@ namespace YoutubeExplode.Videos.Streams
             }
 
             // Try to get streams from video info
+            // Note: it seems YouTube has stopped using get_video_info and replaced it with an
+            // internal API endpoint that resolves player response directly.
+            // This may be an area for future improvement.
             var signatureTimestamp = playerSource?.TryGetSignatureTimestamp() ?? "";
             var videoInfo = await _controller.GetVideoInfoAsync(videoId, signatureTimestamp, cancellationToken);
 

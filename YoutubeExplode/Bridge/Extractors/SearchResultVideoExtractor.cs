@@ -42,6 +42,12 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("longBylineText")?
                 .GetPropertyOrNull("runs")?
                 .EnumerateArrayOrNull()?
+                .ElementAtOrNull(0) ??
+
+            _content
+                .GetPropertyOrNull("shortBylineText")?
+                .GetPropertyOrNull("runs")?
+                .EnumerateArrayOrNull()?
                 .ElementAtOrNull(0)
         );
 
@@ -85,40 +91,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .ToArray() ??
 
             Array.Empty<ThumbnailExtractor>()
-        );
-
-        public string? TryGetVideoDescription() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("descriptionSnippet")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull() ??
-
-            _content
-                .GetPropertyOrNull("descriptionSnippet")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrNull()?
-                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
-                .WhereNotNull()
-                .ConcatToString()
-        );
-
-        public long? TryGetVideoViewCount() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("viewCountText")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull()?
-                .StripNonDigit()
-                .ParseLongOrNull() ??
-
-            _content
-                .GetPropertyOrNull("viewCountText")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrNull()?
-                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
-                .WhereNotNull()
-                .ConcatToString()
-                .StripNonDigit()
-                .ParseLongOrNull()
         );
     }
 }
