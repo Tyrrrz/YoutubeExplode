@@ -45,6 +45,7 @@
 - Renamed `VideoResolution` to `Resolution` and moved it from `YoutubeExplode.Video.Streams` namespace to `YoutubeExplode.Common`. This type is now also used in `Thumbnail` to specify the size of the thumbnail image.
 - Added `TryGetWithHighestResolution(...)` and `GetWithHighestResolution(...)` extension methods on `IEnumerable<Thumbnail>`. These methods return the thumbnail with the highest resolution by area (width multiplied by height).
 - Moved extension methods that enable `await` expressions on certain `IAsyncEnumerable<T>` instances from `YoutubeExplode` namespace to `YoutubeExplode.Common`. Remember to add corresponding using directive for this namespace when working with playlists or search.
+- Renamed `BufferAsync(...)` extension method to `CollectAsync(...)`.
 - Added `CancellationToken` parameter to all asynchronous client methods where it was previously missing.
 - Consolidated exceptions into fewer types.
 
