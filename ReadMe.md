@@ -63,8 +63,7 @@ var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs"
 Once you get the manifest, you can filter through the streams and select the ones you're interested in:
 
 ```csharp
-using YoutubeExplode;
-using YoutubeExplode.Videos.Streams;
+// ...
 
 // Get highest quality muxed stream
 var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
@@ -82,7 +81,7 @@ var streamInfo = streamManifest
 Finally, you can resolve the actual stream represented by the specified metadata using `Videos.Streams.GetAsync(...)` or download it directly to a file with `Videos.Streams.DownloadAsync(...)`:
 
 ```csharp
-using YoutubeExplode;
+// ...
 
 // Get the actual stream
 var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
@@ -111,7 +110,7 @@ var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("u_yIGG
 Then retrieve metadata for a particular track:
 
 ```csharp
-using YoutubeExplode;
+// ...
 
 // Find closed caption track in English
 var trackInfo = trackManifest.GetByLanguage("en-US");
@@ -120,6 +119,8 @@ var trackInfo = trackManifest.GetByLanguage("en-US");
 Finally, get the content of the track by using `Videos.ClosedCaptions.GetAsync(...)`:
 
 ```csharp
+// ...
+
 var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
 // Get the caption displayed at 0:35
@@ -130,6 +131,8 @@ var text = caption.Text;
 You can also download the closed caption track to a file in SRT format with `Videos.ClosedCaptions.DownloadAsync(...)`:
 
 ```csharp
+// ...
+
 await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
 ```
 
@@ -174,6 +177,8 @@ You can also enumerate videos lazily without waiting for the whole list to load:
 ```csharp
 using YoutubeExplode;
 
+var youtube = new YoutubeClient();
+
 await foreach (var video in youtube.Playlists.GetVideosAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"))
 {
     var title = video.Title;
@@ -185,6 +190,8 @@ If you need precise control over how many requests you send to YouTube, use `Pla
 
 ```csharp
 using YoutubeExplode;
+
+var youtube = new YoutubeClient();
 
 // Each batch corresponds to one request
 await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"))
@@ -246,6 +253,8 @@ Each result may represent either a video, a playlist, or a channel, so you need 
 ```csharp
 using YoutubeExplode;
 
+var youtube = new YoutubeClient();
+
 await foreach (var result in youtube.Search.GetResultsAsync("blender tutorials"))
 {
     // Use pattern matching to handle different results (videos, playlists, channels)
@@ -280,6 +289,8 @@ To limit the results to a specific type, use `Search.GetVideosAsync(...)`, `Sear
 using YoutubeExplode;
 using YoutubeExplode.Common;
 
+var youtube = new YoutubeClient();
+
 var videos = await youtube.Search.GetVideosAsync("blender tutorials");
 var playlists = await youtube.Search.GetPlaylistsAsync("blender tutorials");
 var channels = await youtube.Search.GetChannelsAsync("blender tutorials");
@@ -289,6 +300,8 @@ Similarly to playlists, you can also enumerate results in batches by calling `Se
 
 ```csharp
 using YoutubeExplode;
+
+var youtube = new YoutubeClient();
 
 await foreach (var batch in youtube.Search.GetResultBatchesAsync("blender tutorials"))
 {
