@@ -67,14 +67,14 @@ using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
 
 // Get highest quality muxed stream
-var streamInfo = streamManifest.GetMuxed().GetWithHighestVideoQuality();
+var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
 
 // ...or highest bitrate audio-only stream
-var streamInfo = streamManifest.GetAudioOnly().GetWithHighestBitrate();
+var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
 
 // ...or highest quality MP4 video-only stream
 var streamInfo = streamManifest
-    .GetVideoOnly()
+    .GetVideoOnlyStreams()
     .Where(s => s.Container == Container.Mp4)
     .GetWithHighestVideoQuality()
 ```
