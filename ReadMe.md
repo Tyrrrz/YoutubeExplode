@@ -16,7 +16,7 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 
 ## Download
 
-- [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
+📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
 
 ## Screenshots
 
@@ -26,7 +26,7 @@ This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDow
 
 #### Retrieving video metadata
 
-The following example shows how you can extract various metadata from a YouTube video:
+To retrieve metadata associated with a YouTube video, call `Videos.GetAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -43,16 +43,14 @@ var duration = video.Duration; // 00:07:20
 
 #### Downloading video streams
 
-Every YouTube video has a number of streams available.
-These streams may have different containers, video quality, bitrate, etc.
-
-On top of that, depending on the content of the stream, the streams are further divided into 3 categories:
+Every YouTube video has a number of streams available, differing in containers, video quality, bitrate, framerate, and other properties.
+Additionally, depending on the content of the stream, the streams are further divided into 3 categories:
 
 - Muxed streams -- contain both video and audio
 - Audio-only streams -- contain only audio
 - Video-only streams -- contain only video
 
-You can request the manifest containing available streams for a particular video by calling `Streams.GetManifestAsync(...)`:
+You can request the manifest listing available streams for a particular video by calling `Videos.Streams.GetManifestAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -62,7 +60,7 @@ var youtube = new YoutubeClient();
 var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs");
 ```
 
-Once you get the manifest, you can filter through the streams and select the one you're interested in downloading:
+Once you get the manifest, you can filter through the streams and select the ones you're interested in:
 
 ```csharp
 using YoutubeExplode;
@@ -81,7 +79,7 @@ var streamInfo = streamManifest
     .GetWithHighestVideoQuality()
 ```
 
-Finally, you can resolve the actual stream represented by the specified metadata using `Streams.GetAsync(...)` or download it directly to a file with `Streams.DownloadAsync(...)`:
+Finally, you can resolve the actual stream represented by the specified metadata using `Videos.Streams.GetAsync(...)` or download it directly to a file with `Videos.Streams.DownloadAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -100,7 +98,7 @@ You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExp
 #### Downloading closed captions
 
 Closed captions can be downloaded similarly to media streams.
-To get the list of available closed caption tracks, call `ClosedCaptions.GetManifestAsync(...)`:
+To get the list of available closed caption tracks, call `Videos.ClosedCaptions.GetManifestAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -119,7 +117,7 @@ using YoutubeExplode;
 var trackInfo = trackManifest.GetByLanguage("en-US");
 ```
 
-Finally, get the content of the track by using `ClosedCaptions.GetAsync(...)`:
+Finally, get the content of the track by using `Videos.ClosedCaptions.GetAsync(...)`:
 
 ```csharp
 var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -129,7 +127,7 @@ var caption = track.GetByTime(TimeSpan.FromSeconds(35));
 var text = caption.Text;
 ```
 
-You can also download the closed caption track to a file in SRT format:
+You can also download the closed caption track to a file in SRT format with `Videos.ClosedCaptions.DownloadAsync(...)`:
 
 ```csharp
 await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
@@ -171,7 +169,7 @@ var videosSubset = await youtube.Playlists
     .CollectAsync(20);
 ```
 
-You can also enumerate videos without waiting for the whole list to load:
+You can also enumerate videos lazily without waiting for the whole list to load:
 
 ```csharp
 using YoutubeExplode;
@@ -215,7 +213,7 @@ var channel = await youtube.Channels.GetAsync("UCSMOQeBJ2RAnuFungnQOxLg");
 var title = channel.Title; // "Blender"
 ```
 
-You can also get channel metadata by username using `Channels.GetByUserAsync(...)`:
+You can also get channel metadata by username with `Channels.GetByUserAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -242,7 +240,8 @@ var videos = await youtube.Channels.GetUploadsAsync("UCSMOQeBJ2RAnuFungnQOxLg");
 
 ### Searching
 
-You can execute a search query and get the results by calling `Search.GetResultsAsync(...)`:
+You can execute a search query and get the results by calling `Search.GetResultsAsync(...)`.
+Each result may represent either a video, a playlist, or a channel, so you need to use pattern matching to handle each case:
 
 ```csharp
 using YoutubeExplode;
@@ -257,16 +256,19 @@ await foreach (var result in youtube.Search.GetResultsAsync("blender tutorials")
             var id = videoResult.Id;
             var title = videoResult.Title;
             var duration = videoResult.Duration;
+            break;
         }
         case PlaylistSearchResult playlistResult:
         {
             var id = playlistResult.Id;
             var title = playlistResult.Title;
+            break;
         }
-        case ChannelSearchResult channelResult
+        case ChannelSearchResult channelResult:
         {
             var id = channelResult.Id;
             var title = channelResult.Title;
+            break;
         }
     }
 }
@@ -279,6 +281,8 @@ using YoutubeExplode;
 using YoutubeExplode.Common;
 
 var videos = await youtube.Search.GetVideosAsync("blender tutorials");
+var playlists = await youtube.Search.GetPlaylistsAsync("blender tutorials");
+var channels = await youtube.Search.GetChannelsAsync("blender tutorials");
 ```
 
 Similarly to playlists, you can also enumerate results in batches by calling `Search.GetResultBatchesAsync(...)`:
