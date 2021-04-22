@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "\U0001F5E8 Ask a question"
+    url: https://github.com/Tyrrrz/YoutubeExplode/discussions/new
+    about: Please ask and answer questions here.
+  - name: "\U0001F517 YoutubeExplode.Converter issues"
+    url: https://github.com/Tyrrrz/YoutubeExplode.Converter/issues
+    about: File issues related to YoutubeExplode.Converter in its dedicated repository.
