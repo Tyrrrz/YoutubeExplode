@@ -12,11 +12,13 @@ YoutubeExplode is a library that provides an interface to query metadata of YouT
 Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered requests to retrieve information.
 As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
 
-This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDownloader), a desktop application for downloading and converting YouTube videos.
+> This library is used in [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDownloader), a desktop application for downloading and converting YouTube videos.
 
 ## Download
 
 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
+
+> See also [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) for an extension package that combines YoutubeExplode with FFmpeg.
 
 ## Screenshots
 
@@ -113,7 +115,7 @@ Then retrieve metadata for a particular track:
 // ...
 
 // Find closed caption track in English
-var trackInfo = trackManifest.GetByLanguage("en-US");
+var trackInfo = trackManifest.GetByLanguage("en");
 ```
 
 Finally, get the content of the track by using `Videos.ClosedCaptions.GetAsync(...)`:
@@ -125,10 +127,10 @@ var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
 // Get the caption displayed at 0:35
 var caption = track.GetByTime(TimeSpan.FromSeconds(35));
-var text = caption.Text;
+var text = caption.Text; // "collection acts as the parent collection"
 ```
 
-You can also download the closed caption track to a file in SRT format with `Videos.ClosedCaptions.DownloadAsync(...)`:
+You can also download the closed caption track in SRT file format with `Videos.ClosedCaptions.DownloadAsync(...)`:
 
 ```csharp
 // ...
@@ -248,7 +250,7 @@ var videos = await youtube.Channels.GetUploadsAsync("UCSMOQeBJ2RAnuFungnQOxLg");
 ### Searching
 
 You can execute a search query and get the results by calling `Search.GetResultsAsync(...)`.
-Each result may represent either a video, a playlist, or a channel, so you need to use pattern matching to handle each case:
+Each result may represent either a video, a playlist, or a channel, so you need to use pattern matching to handle corresponding cases:
 
 ```csharp
 using YoutubeExplode;
@@ -303,6 +305,7 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
+// Each batch corresponds to one request
 await foreach (var batch in youtube.Search.GetResultBatchesAsync("blender tutorials"))
 {
     foreach (var result in batch.Items)
