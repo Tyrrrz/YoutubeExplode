@@ -24,6 +24,11 @@ As it doesn't use the official API, there's also no need for an API key and ther
 
 ![demo](.screenshots/demo.png)
 
+## Usage
+
+YoutubeExplode exposes its functionality through a single entry point -- the `YoutubeClient` class.
+Create an instance of this class and use the provided operations on `Videos`, `Playlists`, `Channels`, and `Search` properties to send requests.
+
 ### Videos
 
 #### Retrieving video metadata
@@ -52,7 +57,7 @@ Additionally, depending on the content of the stream, the streams are further di
 - Audio-only streams -- contain only audio
 - Video-only streams -- contain only video
 
-You can request the manifest listing available streams for a particular video by calling `Videos.Streams.GetManifestAsync(...)`:
+You can request the manifest that lists all available streams for a particular video by calling `Videos.Streams.GetManifestAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -92,13 +97,13 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
-> While it may be tempting to just always use muxed streams, given that they contain both audio and video, it's important to note that they are limited in quality and don't go beyond 720p30.
+> Note that while it may be tempting to just always use muxed streams, given that they contain both audio and video, it's important to note that they are limited in quality and don't go beyond 720p30.
 If you want to download the video in maximum quality, you need to download the audio-only and video-only streams separately and then mux them together on your own using tools like [FFmpeg](http://ffmpeg.org).
 You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) which wraps FFmpeg and provides an extension point for YoutubeExplode to download videos directly.
 
 #### Downloading closed captions
 
-Closed captions can be downloaded similarly to media streams.
+Closed captions can be downloaded in a similar way to media streams.
 To get the list of available closed caption tracks, call `Videos.ClosedCaptions.GetManifestAsync(...)`:
 
 ```csharp
@@ -118,7 +123,7 @@ Then retrieve metadata for a particular track:
 var trackInfo = trackManifest.GetByLanguage("en");
 ```
 
-Finally, get the content of the track by using `Videos.ClosedCaptions.GetAsync(...)`:
+Finally, use `Videos.ClosedCaptions.GetAsync(...)` to get the actual content of the track:
 
 ```csharp
 // ...
@@ -285,7 +290,7 @@ await foreach (var result in youtube.Search.GetResultsAsync("blender tutorials")
 }
 ```
 
-To limit the results to a specific type, use `Search.GetVideosAsync(...)`, `Search.GetPlaylistsAsync(...)`, or `Search.GetChannelsAsync(...)`:
+To limit results to a specific type, use `Search.GetVideosAsync(...)`, `Search.GetPlaylistsAsync(...)`, or `Search.GetChannelsAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
