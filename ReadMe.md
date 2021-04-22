@@ -325,7 +325,7 @@ await foreach (var batch in youtube.Search.GetResultBatchesAsync("blender tutori
             {
                 // ...
             }
-            case ChannelSearchResult channelResult
+            case ChannelSearchResult channelResult:
             {
                 // ...
             }
