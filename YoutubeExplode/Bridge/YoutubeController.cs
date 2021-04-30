@@ -34,8 +34,8 @@ namespace YoutubeExplode.Bridge
                 );
             }
 
-            // Consent cookie
-            request.Headers.Add("Cookie", "CONSENT=YES+cb");
+            // Set required cookies
+            request.Headers.Add("Cookie", "CONSENT=YES+cb; YSC=DwKYllHNwuw");
 
             using var response = await _httpClient.SendAsync(
                 request,
@@ -101,7 +101,7 @@ namespace YoutubeExplode.Bridge
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var url = $"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
+            var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
 
             for (var retry = 0; retry <= 5; retry++)
             {

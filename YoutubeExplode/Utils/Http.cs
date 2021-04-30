@@ -8,7 +8,11 @@ namespace YoutubeExplode.Utils
     {
         private static readonly Lazy<HttpClient> HttpClientLazy = new(() =>
         {
-            var handler = new HttpClientHandler();
+            var handler = new HttpClientHandler
+            {
+                // https://github.com/Tyrrrz/YoutubeExplode/issues/530
+                UseCookies = false
+            };
 
             if (handler.SupportsAutomaticDecompression)
                 handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
