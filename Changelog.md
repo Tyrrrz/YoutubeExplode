@@ -1,3 +1,9 @@
+### v6.0.1 (21-May-2021)
+
+- Fixed an issue where trying to get stream manifest failed on some videos with 404 HTTP error due to recent YouTube changes.
+- Fixed an issue where trying to get stream manifest occasionally resulted in a `FormatException`.
+- Fixed an issue where some required cookies were not passed along with requests, which caused them to fail.
+
 ### v6.0 (17-Apr-2021)
 
 - Fixed an issue where an attempt to get playlist metadata or playlist videos resulted in an exception, due to YouTube's recent changes.
