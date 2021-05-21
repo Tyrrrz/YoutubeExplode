@@ -51,7 +51,7 @@ namespace YoutubeExplode.Tests
             var videos = await youtube.Channels.GetUploadsAsync(ChannelIds.Normal);
 
             // Assert
-            videos.Should().HaveCountGreaterOrEqualTo(80);
+            videos.Should().HaveCountGreaterOrEqualTo(79);
             videos.Select(v => v.Author.ChannelId).Should().OnlyContain(i => i == ChannelIds.Normal);
         }
     }
