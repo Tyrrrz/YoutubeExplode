@@ -135,6 +135,7 @@ namespace YoutubeExplode.Bridge
             var url =
                 "https://www.youtube.com/get_video_info" +
                 $"?video_id={videoId}" +
+                "&html5=1" +
                 "&el=embedded" +
                 $"&sts={signatureTimestamp}" +
                 $"&eurl={eurl}" +
