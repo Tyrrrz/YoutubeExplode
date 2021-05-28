@@ -66,6 +66,7 @@ namespace YoutubeExplode.Tests
         [InlineData(VideoIds.LiveStreamRecording)]
         [InlineData(VideoIds.ContainsDashManifest)]
         [InlineData(VideoIds.Omnidirectional)]
+        [InlineData(VideoIds.HighDynamicRange)]
         [InlineData(VideoIds.EmbedRestrictedByAuthor)]
         [InlineData(VideoIds.EmbedRestrictedByYouTube)]
         [InlineData(VideoIds.AgeRestricted)]
