@@ -1,3 +1,7 @@
+### v6.0.2 (28-May-2021)
+
+- Fixed an issue where trying to get stream manifest of videos with HDR streams failed with exception.
+
 ### v6.0.1 (21-May-2021)
 
 - Fixed an issue where trying to get stream manifest failed on some videos with 404 HTTP error due to recent YouTube changes.
