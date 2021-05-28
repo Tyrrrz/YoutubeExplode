@@ -17,7 +17,7 @@ namespace YoutubeExplode.Tests
             var results = await youtube.Search.GetResultsAsync("undead corporation");
 
             // Assert
-            results.Should().HaveCountGreaterOrEqualTo(100);
+            results.Should().HaveCountGreaterOrEqualTo(50);
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace YoutubeExplode.Tests
             var videos = await youtube.Search.GetVideosAsync("undead corporation");
 
             // Assert
-            videos.Should().HaveCountGreaterOrEqualTo(100);
+            videos.Should().HaveCountGreaterOrEqualTo(50);
         }
 
         [Fact]
