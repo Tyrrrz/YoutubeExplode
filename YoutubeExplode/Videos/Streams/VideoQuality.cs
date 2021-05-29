@@ -91,7 +91,7 @@ namespace YoutubeExplode.Videos.Streams
             // - 1080s60 (360° stream, high fps)
             // - 2160p60 HDR (high dynamic range, high fps)
 
-            var match = Regex.Match(label, @"^(\d+)\w+(\d+)?");
+            var match = Regex.Match(label, @"^(\d+)\D(\d+)?");
 
             var maxHeight = match.Groups[1].Value.ParseInt();
             var framerate = match.Groups[2].Value.NullIfWhiteSpace()?.ParseIntOrNull();
