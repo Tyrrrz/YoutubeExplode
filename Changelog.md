@@ -1,3 +1,10 @@
+### v6.0.3 (22-Jun-2021)
+
+- Fixed an issue where trying to get stream or closed caption manifest failed on some videos with 404 HTTP error due to recent YouTube changes.
+- Fixed an issue where some videos contained incorrect video quality labels.
+
+Known issues: `StreamClient.GetHttpLiveStreamUrlAsync(...)` does not work and throws exceptions on every video, including valid livestreams ([#566](https://github.com/Tyrrrz/YoutubeExplode/issues/566)).
+
 ### v6.0.2 (28-May-2021)
 
 - Fixed an issue where trying to get stream manifest of videos with HDR streams failed with exception.
