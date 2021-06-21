@@ -139,7 +139,9 @@ namespace YoutubeExplode.Bridge
                 "&el=embedded" +
                 $"&sts={signatureTimestamp}" +
                 $"&eurl={eurl}" +
-                "&hl=en";
+                "&hl=en" +
+                "&c=TVHTML5" +
+                "&cver=6.20180913";
 
             var raw = await SendHttpRequestAsync(url, cancellationToken);
 
