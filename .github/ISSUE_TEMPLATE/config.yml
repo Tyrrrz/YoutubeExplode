@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: "\U000026A0 Feature request"
+  - name: ⚠ Feature request
     url: https://github.com/Tyrrrz/YoutubeExplode/wiki/Maintenance-mode
     about: Sorry, but this project is in maintenance mode and no longer accepts new feature requests.
-  - name: "\U0001F5E8 Ask a question"
+  - name: 🗨 Discussions
     url: https://github.com/Tyrrrz/YoutubeExplode/discussions/new
-    about: Please ask and answer questions here.
-  - name: "\U0001F517 YoutubeExplode.Converter issues"
+    about: Ask and answer questions.
+  - name: 🔗 YoutubeExplode.Converter Issues
     url: https://github.com/Tyrrrz/YoutubeExplode.Converter/issues
     about: File issues related to YoutubeExplode.Converter in its dedicated repository.
