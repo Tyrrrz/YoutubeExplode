@@ -1,3 +1,8 @@
+### v6.0.4 (02-Jul-2021)
+
+- Fixed an issue where `StreamClient.GetHttpLiveStreamUrlAsync(...)` threw exceptions when called on valid live streams.
+- Fixed an issue where the version of YoutubeExplode targeting .NET 5 unnecessarily had `System.Text.Json` listed as a dependency.
+
 ### v6.0.3 (22-Jun-2021)
 
 - Fixed an issue where trying to get stream or closed caption manifest failed on some videos with 404 HTTP error due to recent YouTube changes.
