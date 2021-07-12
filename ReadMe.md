@@ -70,6 +70,9 @@ var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs"
 Once you get the manifest, you can filter through the streams and select the ones you're interested in:
 
 ```csharp
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
+
 // ...
 
 // Get highest quality muxed stream
