@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Tests.Ids
+﻿namespace YoutubeExplode.Tests.TestData
 {
     internal static class UserNames
     {

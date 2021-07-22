@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Common;
-using YoutubeExplode.Tests.Ids;
+using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests
 {

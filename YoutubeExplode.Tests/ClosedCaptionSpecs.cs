@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Tests.Fixtures;
-using YoutubeExplode.Tests.Ids;
+using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests
 {

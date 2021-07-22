@@ -6,7 +6,7 @@ using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.Fixtures;
-using YoutubeExplode.Tests.Ids;
+using YoutubeExplode.Tests.TestData;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests
