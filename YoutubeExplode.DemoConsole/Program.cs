@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using YoutubeExplode.DemoConsole.Utils;
+using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.DemoConsole
@@ -19,10 +20,10 @@ namespace YoutubeExplode.DemoConsole
 
             // Read the video ID
             Console.Write("Enter YouTube video ID or URL: ");
-            var videoIdOrUrl = Console.ReadLine() ?? "";
+            var videoId = VideoId.Parse(Console.ReadLine() ?? "");
 
             // Get available streams and choose the best muxed (audio + video) stream
-            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoIdOrUrl);
+            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
             var streamInfo = streamManifest.GetMuxedStreams().TryGetWithHighestVideoQuality();
             if (streamInfo is null)
             {
@@ -37,7 +38,7 @@ namespace YoutubeExplode.DemoConsole
                 $"Downloading stream: {streamInfo.VideoQuality.Label} / {streamInfo.Container.Name}... "
             );
 
-            var fileName = $"{videoIdOrUrl}.{streamInfo.Container.Name}";
+            var fileName = $"{videoId}.{streamInfo.Container.Name}";
 
             using (var progress = new InlineProgress()) // display progress in console
                 await youtube.Videos.Streams.DownloadAsync(streamInfo, fileName, progress);
