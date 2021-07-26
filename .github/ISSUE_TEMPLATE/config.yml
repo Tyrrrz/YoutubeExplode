@@ -3,6 +3,9 @@ contact_links:
   - name: ⚠ Feature request
     url: https://github.com/Tyrrrz/YoutubeExplode/wiki/Maintenance-mode
     about: Sorry, but this project is in maintenance mode and no longer accepts new feature requests.
+  - name: 💬 Discord server
+    url: https://discord.gg/2SUWKFnHSm
+    about: Chat with the project community.
   - name: 🗨 Discussions
     url: https://github.com/Tyrrrz/YoutubeExplode/discussions/new
     about: Ask and answer questions.
