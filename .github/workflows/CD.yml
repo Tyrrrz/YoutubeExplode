@@ -30,6 +30,6 @@ jobs:
            -Uri "${{ secrets.DISCORD_WEBHOOK }}" `
            -Method "POST" `
            -ContentType "application/json; charset=UTF-8" `
-           -Body "{`"content`":`"[**YoutubeExplode** ver. ${{ github.ref }} released](https://github.com/Tyrrrz/YoutubeExplode/releases/latest)`"}" `
+           -Body '{"content":"**YoutubeExplode** new version released!\nRef: `${{ github.ref }}`\nChangelog: <https://github.com/Tyrrrz/YoutubeExplode/blob/${{ github.sha }}/Changelog.md>"}' `
            -UseBasicParsing
         shell: pwsh
