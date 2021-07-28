@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -124,41 +123,6 @@ namespace YoutubeExplode.Bridge
                 "Please try again in a few minutes."
             );
         }
-
-        public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
-            VideoId videoId,
-            string? signatureTimestamp,
-            CancellationToken cancellationToken = default)
-        {
-            var eurl = WebUtility.HtmlEncode($"https://youtube.googleapis.com/v/{videoId}");
-
-            var url =
-                "https://www.youtube.com/get_video_info" +
-                $"?video_id={videoId}" +
-                "&html5=1" +
-                "&el=embedded" +
-                $"&sts={signatureTimestamp}" +
-                $"&eurl={eurl}" +
-                "&hl=en" +
-                "&c=TVHTML5" +
-                "&cver=6.20180913";
-
-            var raw = await SendHttpRequestAsync(url, cancellationToken);
-
-            var videoInfo = VideoInfoExtractor.Create(raw);
-
-            if (!videoInfo.IsVideoAvailable())
-            {
-                throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-            }
-
-            return videoInfo;
-        }
-
-        public async ValueTask<VideoInfoExtractor> GetVideoInfoAsync(
-            VideoId videoId,
-            CancellationToken cancellationToken = default) =>
-            await GetVideoInfoAsync(videoId, null, cancellationToken);
 
         public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackAsync(
             string url,

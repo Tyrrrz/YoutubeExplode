@@ -33,10 +33,10 @@ namespace YoutubeExplode.Videos.ClosedCaptions
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
-            var videoInfo = await _controller.GetVideoInfoAsync(videoId, cancellationToken);
+            var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             var playerResponse =
-                videoInfo.TryGetPlayerResponse() ??
+                watchPage.TryGetPlayerResponse() ??
                 throw new YoutubeExplodeException("Could not extract player response.");
 
             var trackInfos = playerResponse

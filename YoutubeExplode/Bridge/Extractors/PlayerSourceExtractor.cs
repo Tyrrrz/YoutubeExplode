@@ -13,16 +13,6 @@ namespace YoutubeExplode.Bridge.Extractors
 
         public PlayerSourceExtractor(string content) => _content = content;
 
-        public string? TryGetSignatureTimestamp() => _memo.Wrap(() =>
-            _content
-                .Pipe(s => Regex.Match(s, @"(?<=invalid namespace.*?;[\w\s]+=)\d+").Value)
-                .NullIfWhiteSpace() ??
-
-            _content
-                .Pipe(s => Regex.Match(s, @"(?<=signatureTimestamp[=\:])\d+").Value)
-                .NullIfWhiteSpace()
-        );
-
         private string? TryGetScramblerBody() => _memo.Wrap(() =>
             Regex.Match(_content,
                     @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}")

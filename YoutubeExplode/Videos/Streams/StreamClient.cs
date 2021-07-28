@@ -246,62 +246,6 @@ namespace YoutubeExplode.Videos.Streams
                 }
             }
 
-            // Try to get streams from video info
-            // Note: it seems YouTube has stopped using get_video_info and replaced it with an
-            // internal API endpoint that resolves player response directly.
-            // This may be an area for future improvement.
-            var signatureTimestamp = playerSource?.TryGetSignatureTimestamp() ?? "";
-            var videoInfo = await _controller.GetVideoInfoAsync(videoId, signatureTimestamp, cancellationToken);
-
-            var playerResponseFromVideoInfo = videoInfo.TryGetPlayerResponse();
-            if (playerResponseFromVideoInfo is not null)
-            {
-                if (playerResponseFromVideoInfo.IsVideoPlayable())
-                {
-                    // Extract streams from video info
-                    await PopulateStreamInfosAsync(
-                        streamInfos,
-                        videoInfo.GetStreams(),
-                        signatureScrambler,
-                        cancellationToken
-                    );
-
-                    // Extract streams from player response
-                    await PopulateStreamInfosAsync(
-                        streamInfos,
-                        playerResponseFromVideoInfo.GetStreams(),
-                        signatureScrambler,
-                        cancellationToken
-                    );
-
-                    // Extract streams from DASH manifest
-                    var dashManifestUrlRaw = playerResponseFromVideoInfo.TryGetDashManifestUrl();
-                    if (!string.IsNullOrWhiteSpace(dashManifestUrlRaw))
-                    {
-                        var dashManifestUrl = UnscrambleDashManifestUrl(signatureScrambler, dashManifestUrlRaw);
-                        var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-
-                        await PopulateStreamInfosAsync(
-                            streamInfos,
-                            dashManifest.GetStreams(),
-                            signatureScrambler,
-                            cancellationToken
-                        );
-                    }
-
-                    // If successfully retrieved streams, return
-                    if (streamInfos.Any())
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    var errorMessage = playerResponseFromVideoInfo.TryGetVideoPlayabilityError();
-                    throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
-                }
-            }
-
             // Couldn't extract any streams
             throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
         }
@@ -327,7 +271,7 @@ namespace YoutubeExplode.Videos.Streams
             CancellationToken cancellationToken = default)
         {
             var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
-            
+
             var playerResponse =
                 watchPage.TryGetPlayerResponse() ??
                 throw new YoutubeExplodeException("Could not extract player response.");
