@@ -1,3 +1,7 @@
+### v6.0.5 (29-Jul-2021)
+
+- Fixed an issue where calling `ClosedCaptionsClient.GetManifestAsync(...)` failed with 404 HTTP error due to recent YouTube changes.
+
 ### v6.0.4 (02-Jul-2021)
 
 - Fixed an issue where `StreamClient.GetHttpLiveStreamUrlAsync(...)` threw exceptions when called on valid live streams.
