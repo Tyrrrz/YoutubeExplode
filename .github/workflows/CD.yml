@@ -13,6 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.3
 
+      - name: Get release version
+        id: get-version
+        uses: dawidd6/action-get-tag@v1
+
       - name: Install .NET
         uses: actions/setup-dotnet@v1.7.2
         with:
@@ -25,11 +29,15 @@ jobs:
         run: dotnet nuget push YoutubeExplode\bin\Release\*.nupkg -s nuget.org -k ${{ secrets.NUGET_TOKEN }}
 
       - name: Notify Discord
-        run: |
-          Invoke-WebRequest `
-           -Uri "${{ secrets.DISCORD_WEBHOOK }}" `
-           -Method "POST" `
-           -ContentType "application/json; charset=UTF-8" `
-           -Body '{"content":"**YoutubeExplode** new version released!\nRef: `${{ github.ref }}`\nChangelog: <https://github.com/Tyrrrz/YoutubeExplode/blob/${{ github.sha }}/Changelog.md>"}' `
-           -UseBasicParsing
-        shell: pwsh
+        uses: satak/webrequest-action@v1.2.4
+        with:
+          url: ${{ secrets.DISCORD_WEBHOOK }}
+          method: POST
+          headers: |
+            {
+              "ContentType": "application/json; charset=UTF-8"
+            }
+          payload: |
+            {
+              "content": "**YoutubeExplode** new version released!\nVersion: `${{ steps.get-version.outputs.tag }}`\nChangelog: <https://github.com/Tyrrrz/YoutubeExplode/blob/${{ steps.get-version.outputs.tag }}/Changelog.md>"
+            }
