@@ -19,9 +19,8 @@ As it doesn't use the official API, there's also no need for an API key and ther
 
 ## Download
 
-📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
-
-> See also [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) for an extension package that combines YoutubeExplode with FFmpeg.
+- 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode` (**main package**)
+- 📦 [NuGet](https://nuget.org/packages/YoutubeExplode.Converter): `dotnet add package YoutubeExplode.Converter` (**FFmpeg integration**)
 
 ## Screenshots
 
@@ -103,9 +102,72 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
-> Note that while it may be tempting to just always use muxed streams, given that they contain both audio and video, it's important to note that they are limited in quality and don't go beyond 720p30.
-If you want to download the video in maximum quality, you need to download the audio-only and video-only streams separately and then mux them together on your own using tools like [FFmpeg](http://ffmpeg.org).
-You can also use [YoutubeExplode.Converter](https://github.com/Tyrrrz/YoutubeExplode.Converter) which wraps FFmpeg and provides an extension point for YoutubeExplode to download videos directly.
+> ⚠ Note that while it may be tempting to always rely on muxed streams, given that they contain both audio and video, it's important to note that they are very limited in quality (up to 720p30).
+If you want to download a video in highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together, which can be accomplished by using the YoutubeExplode.Converter package (see below).
+
+#### Downloading video with conversion
+
+> ⚠ Downloading with conversion requires [YoutubeExplode.Converter](https://nuget.org/packages/YoutubeExplode.Converter).
+
+> ⚠ This package also relies on the [FFmpeg](https://ffmpeg.org) CLI, which can be downloaded [here](https://github.com/vot/ffbinaries-prebuilt).
+Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or provide a custom location directly.
+
+YoutubeExplode.Converter can be used through one of the extension methods provided on `VideoClient`.
+For example, to download a video in the highest available quality, simply call `DownloadAsync(...)` with the video ID and the destination file path:
+
+```c#
+using YoutubeExplode;
+using YoutubeExplode.Converter;
+
+var youtube = new YoutubeClient();
+await youtube.Videos.DownloadAsync("https://youtube.com/watch?v=u_yIGGhubZs", "video.mp4");
+```
+
+Under the hood, this resolves available media streams and selects the best candidates based on bitrate, quality, and framerate.
+If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
+
+> Video conversion is a CPU-heavy process.
+You can reduce resource usage and execution time by using streams that don't require transcoding to the output format (e.g. `mp4` audio/video streams for `mp4` output format).
+Currently, YouTube only provides adaptive streams in `mp4` or `webm` containers, with highest quality video streams (e.g. 4K) only available in `webm`.
+
+You can configure various aspects related to the conversion process by using one of the overloads of `DownloadAsync(...)`:
+
+```c#
+using YoutubeExplode;
+using YoutubeExplode.Converter;
+
+var youtube = new YoutubeClient();
+
+await youtube.Videos.DownloadAsync(
+    "https://youtube.com/watch?v=u_yIGGhubZs",
+    "video.mp4",
+    o => o
+        .SetFormat("webm") // override format
+        .SetPreset(ConversionPreset.UltraFast) // change preset
+        .SetFFmpegPath("path/to/ffmpeg") // custom FFmpeg location
+);
+```
+
+If you need precise control over which streams are used for conversion, you can specify them directly as well:
+
+```c#
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
+using YoutubeExplode.Converter;
+
+var youtube = new YoutubeClient();
+
+// Get stream manifest
+var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs");
+
+// Select streams (1080p60 / highest bitrate audio)
+var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+var videoStreamInfo = streamManifest.GetVideoStreams().First(s => s.VideoQuality.Label == "1080p60");
+var streamInfos = new IStreamInfo[] { audioStreamInfo, videoStreamInfo };
+
+// Download and process them into one file
+await youtube.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder("video.mp4").Build());
+```
 
 #### Downloading closed captions
 
