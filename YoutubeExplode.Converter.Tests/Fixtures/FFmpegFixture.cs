@@ -11,7 +11,7 @@ namespace YoutubeExplode.Converter.Tests.Fixtures
 {
     public partial class FFmpegFixture : IAsyncLifetime
     {
-        public string FilePath => Path.Combine(
+        public string FilePath { get; } = Path.Combine(
             Path.GetDirectoryName(typeof(FFmpegFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
             GetFFmpegFileName()
         );
@@ -47,7 +47,6 @@ namespace YoutubeExplode.Converter.Tests.Fixtures
 
         public async Task InitializeAsync()
         {
-            // Don't re-download FFmpeg from last time
             if (File.Exists(FilePath))
                 return;
 

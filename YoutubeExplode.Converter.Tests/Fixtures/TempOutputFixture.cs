@@ -5,7 +5,7 @@ namespace YoutubeExplode.Converter.Tests.Fixtures
 {
     public class TempOutputFixture : IDisposable
     {
-        public string DirPath => Path.Combine(
+        public string DirPath { get; } = Path.Combine(
             Path.GetDirectoryName(typeof(TempOutputFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
             "Temp"
         );
@@ -18,8 +18,13 @@ namespace YoutubeExplode.Converter.Tests.Fixtures
 
         public void Dispose()
         {
-            if (Directory.Exists(DirPath))
+            try
+            {
                 Directory.Delete(DirPath, true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
         }
     }
 }
