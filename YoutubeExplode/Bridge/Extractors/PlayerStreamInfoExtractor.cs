@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils;
@@ -43,6 +44,9 @@ namespace YoutubeExplode.Bridge.Extractors
         public string? TryGetSignature() => _memo.Wrap(() =>
             TryGetCipherData()?.GetValueOrDefault("s")
         );
+
+        public string? TryGetNSignature() => _memo.Wrap(() => TryGetUrl()?
+            .Pipe(s => Regex.Match(s, @"[\?&]n=(.*?)&").Groups[1].Value));
 
         public string? TryGetSignatureParameter() => _memo.Wrap(() =>
             TryGetCipherData()?.GetValueOrDefault("sp")

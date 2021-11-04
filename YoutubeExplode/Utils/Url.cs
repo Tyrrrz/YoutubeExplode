@@ -8,9 +8,10 @@ namespace YoutubeExplode.Utils
 {
     internal static class Url
     {
-        public static string SetQueryParameter(string url, string key, string value)
+        public static string SetQueryParameter(string url, string key, string value, bool forceEqual = false)
         {
-            var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
+            // bug if key is "n", returns "ns" not "n"
+            var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}={(forceEqual ? "?" : string.Empty)}.*?)(?:&|/|$)");
 
             // Parameter has already been set to something
             if (existingMatch.Success)

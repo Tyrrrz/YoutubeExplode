@@ -23,6 +23,8 @@ namespace YoutubeExplode.Bridge.Extractors
 
         // DASH streams don't have signatures
         public string? TryGetSignature() => null;
+        public string? TryGetNSignature() => _memo.Wrap(() => TryGetUrl()?
+            .Pipe(s => Regex.Match(s, @"[\?&]n=(.*?)&").Groups[1].Value));
 
         // DASH streams don't have signatures
         public string? TryGetSignatureParameter() => null;

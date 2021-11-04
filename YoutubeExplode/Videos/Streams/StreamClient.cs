@@ -46,7 +46,23 @@ namespace YoutubeExplode.Videos.Streams
             return Url.SetQueryParameter(
                 streamUrl,
                 signatureParameter ?? "signature",
-                signatureScrambler.Unscramble(signature)
+                signatureScrambler.Unscramble(signature),
+                true
+            );
+        }
+
+        private string UnscrambleNSignatureStreamUrl(
+            string streamUrl,
+            string? signature,
+            string? jsFunction)
+        {
+            if (string.IsNullOrWhiteSpace(signature) || string.IsNullOrWhiteSpace(jsFunction))
+                return streamUrl;
+
+            return Url.SetQueryParameter(
+                streamUrl,
+                "n",
+                new NSignatureScrambler().Unscramble(jsFunction, signature) ?? signature
             );
         }
 
@@ -69,6 +85,7 @@ namespace YoutubeExplode.Videos.Streams
             ICollection<IStreamInfo> streamInfos,
             IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
             SignatureScrambler signatureScrambler,
+            string? nSignatureScramblerFunction,
             CancellationToken cancellationToken = default)
         {
             foreach (var streamInfoExtractor in streamInfoExtractors)
@@ -85,6 +102,8 @@ namespace YoutubeExplode.Videos.Streams
                 var signature = streamInfoExtractor.TryGetSignature();
                 var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
                 var url = UnscrambleStreamUrl(signatureScrambler, urlRaw, signature, signatureParameter);
+                // Unscramble N Signature URL
+                url = UnscrambleNSignatureStreamUrl(url, streamInfoExtractor.TryGetNSignature(), nSignatureScramblerFunction);
 
                 // Get content length
                 var contentLength =
@@ -192,6 +211,7 @@ namespace YoutubeExplode.Videos.Streams
                 : null;
 
             var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
+            var nSignatureScrambler = playerSource?.TryNScramblerFunction();
 
             var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
             if (playerResponseFromWatchPage is not null)
@@ -212,6 +232,7 @@ namespace YoutubeExplode.Videos.Streams
                         streamInfos,
                         watchPage.GetStreams(),
                         signatureScrambler,
+                        nSignatureScrambler,
                         cancellationToken
                     );
 
@@ -220,6 +241,7 @@ namespace YoutubeExplode.Videos.Streams
                         streamInfos,
                         playerResponseFromWatchPage.GetStreams(),
                         signatureScrambler,
+                        nSignatureScrambler,
                         cancellationToken
                     );
 
@@ -234,6 +256,7 @@ namespace YoutubeExplode.Videos.Streams
                             streamInfos,
                             dashManifest.GetStreams(),
                             signatureScrambler,
+                            nSignatureScrambler,
                             cancellationToken
                         );
                     }
@@ -311,7 +334,7 @@ namespace YoutubeExplode.Videos.Streams
 
             var segmentSize = isThrottled
                 ? 9_898_989 // breakpoint after which the throttling kicks in
-                : (long?) null; // no segmentation for non-throttled streams
+                : (long?)null; // no segmentation for non-throttled streams
 
             var stream = new SegmentedHttpStream(
                 _httpClient,

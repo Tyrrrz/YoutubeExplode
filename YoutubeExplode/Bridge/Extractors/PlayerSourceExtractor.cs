@@ -88,6 +88,25 @@ namespace YoutubeExplode.Bridge.Extractors
 
             return new SignatureScrambler(operations);
         });
+
+        public string? TryNScramblerFunction() => _memo.Wrap(() =>
+        {
+            var functionNameRegex = new Regex(@"\.get\(\""n\""\)\)&&\(\w=([a-zA-Z0-9$]{3})\([a-zA-Z0-9]\)");
+            var functionNameRegexMatch = functionNameRegex.Match(_content);
+            if (functionNameRegexMatch.Success)
+            {
+                var unscrambleFunctionName = functionNameRegexMatch.Groups[1].Value;
+                var functionRegexMatchStart = Regex.Match(_content, unscrambleFunctionName + @"=function\((\w)\){var\s+\w=\1.split\(\x22{2}\),\w=");
+                var functionRegexMatchEnd = Regex.Match(_content, @"\+a}return\s\w.join\(\x22{2}\)};");
+
+                if (functionRegexMatchStart.Success && functionRegexMatchEnd.Success)
+                {
+                    return "var " + _content.Substring(functionRegexMatchStart.Index, (functionRegexMatchEnd.Index + functionRegexMatchEnd.Length) - functionRegexMatchStart.Index);
+                }
+            }
+
+            return null;
+        });
     }
 
     internal partial class PlayerSourceExtractor

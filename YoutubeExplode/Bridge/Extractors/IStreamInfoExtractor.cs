@@ -8,6 +8,8 @@ namespace YoutubeExplode.Bridge.Extractors
 
         string? TryGetSignature();
 
+        string? TryGetNSignature();
+
         string? TryGetSignatureParameter();
 
         long? TryGetContentLength();
@@ -27,5 +29,6 @@ namespace YoutubeExplode.Bridge.Extractors
         int? TryGetVideoHeight();
 
         int? TryGetFramerate();
+
     }
 }
