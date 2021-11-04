@@ -11,7 +11,7 @@ namespace YoutubeExplode.Utils
         public static string SetQueryParameter(string url, string key, string value, bool forceEqual = false)
         {
             // bug if key is "n", returns "ns" not "n"
-            var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}={(forceEqual ? "?" : string.Empty)}.*?)(?:&|/|$)");
+            var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}={(forceEqual ? string.Empty : "?")}.*?)(?:&|/|$)");
 
             // Parameter has already been set to something
             if (existingMatch.Success)

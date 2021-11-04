@@ -46,8 +46,7 @@ namespace YoutubeExplode.Videos.Streams
             return Url.SetQueryParameter(
                 streamUrl,
                 signatureParameter ?? "signature",
-                signatureScrambler.Unscramble(signature),
-                true
+                signatureScrambler.Unscramble(signature)
             );
         }
 
@@ -62,7 +61,8 @@ namespace YoutubeExplode.Videos.Streams
             return Url.SetQueryParameter(
                 streamUrl,
                 "n",
-                new NSignatureScrambler().Unscramble(jsFunction, signature) ?? signature
+                new NSignatureScrambler().Unscramble(jsFunction, signature) ?? signature,
+                true
             );
         }
 
