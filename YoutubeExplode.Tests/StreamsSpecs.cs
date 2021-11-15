@@ -222,6 +222,25 @@ namespace YoutubeExplode.Tests
         }
 
         [Fact]
+        public async Task User_can_seek_to_a_specific_position_on_a_stream_from_a_video()
+        {
+            // Arrange
+            await using var buffer = new MemoryStream();
+            var youtube = new YoutubeClient();
+
+            // Act
+            var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
+            var streamInfo = manifest.GetAudioStreams().OrderBy(s => s.Size).First();
+
+            await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+            stream.Seek(1000, SeekOrigin.Begin);
+            await stream.CopyToAsync(buffer);
+
+            // Assert
+            buffer.Length.Should().Be(streamInfo.Size.Bytes - 1000);
+        }
+
+        [Fact]
         public async Task User_can_get_HTTP_live_stream_URL_from_a_video()
         {
             // Arrange

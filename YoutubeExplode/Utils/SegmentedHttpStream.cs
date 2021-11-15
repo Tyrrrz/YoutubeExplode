@@ -66,33 +66,28 @@ namespace YoutubeExplode.Utils
         public async ValueTask PreloadAsync(CancellationToken cancellationToken = default) =>
             await ResolveSegmentStreamAsync(cancellationToken);
 
-        public override async Task<int> ReadAsync(
-            byte[] buffer,
-            int offset,
-            int count,
-            CancellationToken cancellationToken)
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            // Check if consumer changed position between reads
-            if (_actualPosition != Position)
-                ResetSegmentStream();
-
-            // Check if finished reading
-            if (Position >= Length)
-                return 0;
-
-            var stream = await ResolveSegmentStreamAsync(cancellationToken);
-
-            var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
-            Position = _actualPosition += bytesRead;
-
-            // Stream reached the end of the current segment - reset and read again
-            if (bytesRead == 0)
+            while (true)
             {
-                ResetSegmentStream();
-                return await ReadAsync(buffer, offset, count, cancellationToken);
-            }
+                // Check if consumer changed position between reads
+                if (_actualPosition != Position)
+                    ResetSegmentStream();
 
-            return bytesRead;
+                // Check if finished reading (exit condition)
+                if (Position >= Length)
+                    return 0;
+
+                var stream = await ResolveSegmentStreamAsync(cancellationToken);
+                var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+                _actualPosition = Position += bytesRead;
+
+                if (bytesRead != 0)
+                    return bytesRead;
+
+                // Reached the end of the segment, try to load the next one
+                ResetSegmentStream();
+            }
         }
 
         [ExcludeFromCodeCoverage]
