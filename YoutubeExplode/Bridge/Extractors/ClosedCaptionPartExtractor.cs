@@ -18,7 +18,8 @@ namespace YoutubeExplode.Bridge.Extractors
 
         public TimeSpan? TryGetOffset() => _memo.Wrap(() =>
             ((double?) _content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds) ??
-            ((double?) _content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds)
+            ((double?) _content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds) ??
+            TimeSpan.Zero
         );
     }
 }
