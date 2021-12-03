@@ -69,7 +69,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetStringOrNull()
                 .Pipe(s => "https://youtube.com" + s)
         );
-
+        //TODO Change request method
         public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
             _content
                 .GetElementsByTagName("script")
@@ -89,6 +89,8 @@ namespace YoutubeExplode.Bridge.Extractors
                 .Pipe(j => new PlayerResponseExtractor(j))
         );
 
+        public static PlayerResponseExtractor? TryGetPlayerResponse(string json) => String.IsNullOrWhiteSpace(json) ? null : new PlayerResponseExtractor(Json.Parse(json));
+        
         public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
         {
             var result = new List<IStreamInfoExtractor>();

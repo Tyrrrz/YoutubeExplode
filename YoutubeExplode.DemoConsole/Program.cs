@@ -16,7 +16,17 @@ namespace YoutubeExplode.DemoConsole
         {
             Console.Title = "YoutubeExplode Demo";
 
+            // Arrange
             var youtube = new YoutubeClient();
+
+            // Act
+            var manifest = await youtube.Videos.Streams.GetManifestAsync("SkRSXFQerZs");
+
+            // Assert
+
+
+
+
 
             // Read the video ID
             Console.Write("Enter YouTube video ID or URL: ");

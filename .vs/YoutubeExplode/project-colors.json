@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "6983b0a4-44b0-4faf-81c7-94cc784570f0": {
+      "ProjectGuid": "6983b0a4-44b0-4faf-81c7-94cc784570f0",
+      "DisplayName": "YoutubeExplode.DemoConsole",
+      "ColorIndex": 0
+    },
+    "2019e360-0e05-4824-9ede-7723af45e10c": {
+      "ProjectGuid": "2019e360-0e05-4824-9ede-7723af45e10c",
+      "DisplayName": "YoutubeExplode",
+      "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Archivos varios",
+      "ColorIndex": -1
+    },
+    "cf1ca267-32a2-4e91-8207-8fa9c697bc8b": {
+      "ProjectGuid": "cf1ca267-32a2-4e91-8207-8fa9c697bc8b",
+      "DisplayName": "YoutubeExplode.Converter",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}

@@ -12,6 +12,8 @@ namespace YoutubeExplode.Bridge.Extractors
         private readonly JsonElement _content;
         private readonly Memo _memo = new();
 
+        public JsonElement Content { get { return _content; } }
+
         public PlayerResponseExtractor(JsonElement content) => _content = content;
 
         private JsonElement? TryGetVideoPlayability() => _memo.Wrap(() =>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -183,6 +184,26 @@ namespace YoutubeExplode.Videos.Streams
             VideoId videoId,
             CancellationToken cancellationToken = default)
         {
+            //HARDCODED :D
+            //TODO
+            //REMOVE ALL THE HTML DOWNLOAD AND EXTRACT ALL FROM THE JSON RESPONSE, IT WILL OPTIMIZE THE SPEED
+            //RETRY CHANGING CLIENT SCREEN IF VIDEO PLAYING IS DISABLED IN OTHER PAGES
+            HttpClient httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(15);
+            httpClient.BaseAddress = new Uri("https://www.youtube.com");
+
+            httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8");
+
+            string requestJson = @"{""context"": {""client"": {""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""},""thirdParty"": {""embedUrl"": ""https://www.youtube.com""}},""videoId"": """ + videoId.Value + "\"}";
+
+            HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync("/youtubei/v1/player", httpContent);
+            string responseContent = "";
+            if(response.IsSuccessStatusCode)
+                responseContent = await response.Content.ReadAsStringAsync();
+
+            var playerResponseFromWatchPage = VideoWatchPageExtractor.TryGetPlayerResponse(responseContent);
+
             var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             // Try to get player source (failing is ok because there's a decent chance we won't need it)
@@ -193,7 +214,7 @@ namespace YoutubeExplode.Videos.Streams
 
             var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
 
-            var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
+            //var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
             if (playerResponseFromWatchPage is not null)
             {
                 var purchasePreviewVideoId = playerResponseFromWatchPage.TryGetPreviewVideoId();
@@ -204,7 +225,6 @@ namespace YoutubeExplode.Videos.Streams
                         purchasePreviewVideoId
                     );
                 }
-
                 if (playerResponseFromWatchPage.IsVideoPlayable())
                 {
                     // Extract streams from watch page
