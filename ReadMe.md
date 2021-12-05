@@ -103,7 +103,7 @@ await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Conta
 ```
 
 > ⚠ While it may be tempting to always rely on muxed streams, given that they contain both audio and video, it's important to note that they are very limited in quality (up to 720p30).
-If you want to download a video in highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together, which can be accomplished by using the **YoutubeExplode**.Converter package (see below).
+If you want to download a video in highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together, which can be accomplished by using the **YoutubeExplode.Converter** package (see below).
 
 #### Downloading video with muxing or conversion
 
