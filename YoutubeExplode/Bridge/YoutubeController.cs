@@ -126,24 +126,17 @@ namespace YoutubeExplode.Bridge
 
         public async Task<PlayerResponseExtractor?> GetPlayerResponseFromEndpoint(VideoId videoId)
         {
-            //This endpoint seem's to work for age restricted videos
-            
-
             string url = "https://www.youtube.com/youtubei/v1/player";
 
-            //Use these params as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
-            string requestJson = @"{""context"": {""client"": {""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""},""thirdParty"": {""embedUrl"": ""https://www.youtube.com""}},""videoId"": """ + videoId + "\"}";
+            //Use this as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
+            string requestJson = $@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""}},""thirdParty"": {{""embedUrl"": ""https://www.youtube.com""}}}},""videoId"": ""{videoId}"" }}";
 
 
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post,url);
             httpRequestMessage.Headers.Add("X-Goog-Api-Key", InternalApiKey);
-            //httpRequestMessage.Content = Json.SerializeToHttpContent(requestJson);
             httpRequestMessage.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
  
             string responseContent = await SendHttpRequestAsync(httpRequestMessage);
-
-            if(string.IsNullOrEmpty(responseContent))
-                throw new YoutubeExplodeException($"Player response for video {videoId} is empty");
 
             return VideoWatchPageExtractor.TryGetPlayerResponse(responseContent);
         }
