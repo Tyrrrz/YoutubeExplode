@@ -20,7 +20,7 @@ namespace YoutubeExplode.DemoConsole
             var youtube = new YoutubeClient();
 
             // Act
-            var manifest = await youtube.Videos.Streams.GetManifestAsync("SkRSXFQerZs");
+            var manifest = await youtube.Videos.Streams.GetManifestAsync("rXMX4YJ7Lks");
 
             // Assert
 

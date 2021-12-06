@@ -183,27 +183,7 @@ namespace YoutubeExplode.Videos.Streams
             ICollection<IStreamInfo> streamInfos,
             VideoId videoId,
             CancellationToken cancellationToken = default)
-        {
-            //HARDCODED :D
-            //TODO
-            //REMOVE ALL THE HTML DOWNLOAD AND EXTRACT ALL FROM THE JSON RESPONSE, IT WILL OPTIMIZE THE SPEED
-            //RETRY CHANGING CLIENT SCREEN IF VIDEO PLAYING IS DISABLED IN OTHER PAGES
-            HttpClient httpClient = new HttpClient();
-            httpClient.Timeout = TimeSpan.FromSeconds(15);
-            httpClient.BaseAddress = new Uri("https://www.youtube.com");
-
-            httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8");
-
-            string requestJson = @"{""context"": {""client"": {""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""},""thirdParty"": {""embedUrl"": ""https://www.youtube.com""}},""videoId"": """ + videoId.Value + "\"}";
-
-            HttpContent httpContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync("/youtubei/v1/player", httpContent);
-            string responseContent = "";
-            if(response.IsSuccessStatusCode)
-                responseContent = await response.Content.ReadAsStringAsync();
-
-            var playerResponseFromWatchPage = VideoWatchPageExtractor.TryGetPlayerResponse(responseContent);
-
+        {   
             var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             // Try to get player source (failing is ok because there's a decent chance we won't need it)
@@ -214,15 +194,21 @@ namespace YoutubeExplode.Videos.Streams
 
             var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
 
-            //var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
+            var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
+
             if (playerResponseFromWatchPage is not null)
             {
+                if (playerResponseFromWatchPage.TryGetAgeRestricted())
+                    //if it's null, it will continue with the previous playerResponse
+                    playerResponseFromWatchPage = await _controller.GetPlayerResponseFromEndpoint(videoId) ?? playerResponseFromWatchPage;
+
                 var purchasePreviewVideoId = playerResponseFromWatchPage.TryGetPreviewVideoId();
-                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
+                bool isPurchaseRequired = playerResponseFromWatchPage.TryGetPurchaseRequired();
+                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId) || isPurchaseRequired)
                 {
                     throw new VideoRequiresPurchaseException(
                         $"Video '{videoId}' requires purchase and cannot be played.",
-                        purchasePreviewVideoId
+                        purchasePreviewVideoId ?? ""
                     );
                 }
                 if (playerResponseFromWatchPage.IsVideoPlayable())
@@ -266,7 +252,6 @@ namespace YoutubeExplode.Videos.Streams
                 }
             }
 
-            // Couldn't extract any streams
             throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
         }
 
@@ -331,7 +316,7 @@ namespace YoutubeExplode.Videos.Streams
 
             var segmentSize = isThrottled
                 ? 9_898_989 // breakpoint after which the throttling kicks in
-                : (long?) null; // no segmentation for non-throttled streams
+                : (long?)null; // no segmentation for non-throttled streams
 
             var stream = new SegmentedHttpStream(
                 _httpClient,
