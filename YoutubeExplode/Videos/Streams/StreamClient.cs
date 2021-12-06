@@ -251,7 +251,7 @@ namespace YoutubeExplode.Videos.Streams
                     return;
                 }
             }
-
+            // Couldn't extract any streams
             throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
         }
 

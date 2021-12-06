@@ -69,7 +69,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetStringOrNull()
                 .Pipe(s => "https://youtube.com" + s)
         );
-        //TODO Change request method
         public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
             _content
                 .GetElementsByTagName("script")
