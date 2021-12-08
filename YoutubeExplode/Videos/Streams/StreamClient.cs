@@ -182,7 +182,7 @@ namespace YoutubeExplode.Videos.Streams
             ICollection<IStreamInfo> streamInfos,
             VideoId videoId,
             CancellationToken cancellationToken = default)
-        {
+        {   
             var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
             // Try to get player source (failing is ok because there's a decent chance we won't need it)
@@ -194,17 +194,22 @@ namespace YoutubeExplode.Videos.Streams
             var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
 
             var playerResponseFromWatchPage = watchPage.TryGetPlayerResponse();
+
             if (playerResponseFromWatchPage is not null)
             {
+                if (playerResponseFromWatchPage.TryGetAgeRestricted())
+                    //if it's null, it will continue with the previous playerResponse
+                    playerResponseFromWatchPage = await _controller.GetPlayerResponseFromEndpoint(videoId) ?? playerResponseFromWatchPage;
+
                 var purchasePreviewVideoId = playerResponseFromWatchPage.TryGetPreviewVideoId();
-                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
+
+                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId) )
                 {
                     throw new VideoRequiresPurchaseException(
                         $"Video '{videoId}' requires purchase and cannot be played.",
                         purchasePreviewVideoId
                     );
                 }
-
                 if (playerResponseFromWatchPage.IsVideoPlayable())
                 {
                     // Extract streams from watch page
@@ -245,7 +250,6 @@ namespace YoutubeExplode.Videos.Streams
                     return;
                 }
             }
-
             // Couldn't extract any streams
             throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
         }
@@ -311,7 +315,7 @@ namespace YoutubeExplode.Videos.Streams
 
             var segmentSize = isThrottled
                 ? 9_898_989 // breakpoint after which the throttling kicks in
-                : (long?) null; // no segmentation for non-throttled streams
+                : (long?)null; // no segmentation for non-throttled streams
 
             var stream = new SegmentedHttpStream(
                 _httpClient,

@@ -5,6 +5,7 @@
 *.sln.docstates
 .idea/
 
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -19,3 +20,6 @@ bld/
 
 # Coverage
 *.opencover.xml
+
+#Visual studio cache/options directory
+.vs/
