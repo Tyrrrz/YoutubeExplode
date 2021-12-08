@@ -35,7 +35,7 @@ namespace YoutubeExplode.Tests
             video.Author.Title.Should().Be("Tyrrrz");
             video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
             video.Description.Should().Contain("246pp");
-            video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(108), 1000);
+            video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(108), TimeSpan.FromSeconds(1));
             video.Thumbnails.Should().NotBeEmpty();
             video.Keywords.Should().BeEquivalentTo("osu", "mouse", "rhythm game");
             video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(134);
