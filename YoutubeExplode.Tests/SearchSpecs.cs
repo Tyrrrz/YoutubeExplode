@@ -3,60 +3,59 @@ using FluentAssertions;
 using Xunit;
 using YoutubeExplode.Common;
 
-namespace YoutubeExplode.Tests
+namespace YoutubeExplode.Tests;
+
+public class SearchSpecs
 {
-    public class SearchSpecs
+    [Fact]
+    public async Task User_can_get_results_from_a_search_query()
     {
-        [Fact]
-        public async Task User_can_get_results_from_a_search_query()
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
+        // Arrange
+        var youtube = new YoutubeClient();
 
-            // Act
-            var results = await youtube.Search.GetResultsAsync("undead corporation");
+        // Act
+        var results = await youtube.Search.GetResultsAsync("undead corporation");
 
-            // Assert
-            results.Should().HaveCountGreaterOrEqualTo(50);
-        }
+        // Assert
+        results.Should().HaveCountGreaterOrEqualTo(50);
+    }
 
-        [Fact]
-        public async Task User_can_get_video_results_from_a_search_query()
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
+    [Fact]
+    public async Task User_can_get_video_results_from_a_search_query()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
 
-            // Act
-            var videos = await youtube.Search.GetVideosAsync("undead corporation");
+        // Act
+        var videos = await youtube.Search.GetVideosAsync("undead corporation");
 
-            // Assert
-            videos.Should().HaveCountGreaterOrEqualTo(50);
-        }
+        // Assert
+        videos.Should().HaveCountGreaterOrEqualTo(50);
+    }
 
-        [Fact]
-        public async Task User_can_get_playlist_results_from_a_search_query()
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
+    [Fact]
+    public async Task User_can_get_playlist_results_from_a_search_query()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
 
-            // Act
-            var playlists = await youtube.Search.GetPlaylistsAsync("undead corporation");
+        // Act
+        var playlists = await youtube.Search.GetPlaylistsAsync("undead corporation");
 
-            // Assert
-            playlists.Should().NotBeEmpty();
-        }
+        // Assert
+        playlists.Should().NotBeEmpty();
+    }
 
-        [Fact]
-        public async Task User_can_get_channel_results_from_a_search_query()
-        {
-            // Arrange
-            var youtube = new YoutubeClient();
+    [Fact]
+    public async Task User_can_get_channel_results_from_a_search_query()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
 
-            // Act
-            var channels = await youtube.Search.GetChannelsAsync("undead corporation");
+        // Act
+        var channels = await youtube.Search.GetChannelsAsync("undead corporation");
 
-            // Assert
-            channels.Should().NotBeEmpty();
-        }
+        // Assert
+        channels.Should().NotBeEmpty();
     }
 }

@@ -1,56 +1,55 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace YoutubeExplode.Videos.ClosedCaptions
+namespace YoutubeExplode.Videos.ClosedCaptions;
+
+/// <summary>
+/// Language information.
+/// </summary>
+public readonly partial struct Language
 {
     /// <summary>
-    /// Language information.
+    /// ISO 639-1 code of the language.
     /// </summary>
-    public readonly partial struct Language
+    public string Code { get; }
+
+    /// <summary>
+    /// Full international name of the language.
+    /// </summary>
+    public string Name { get; }
+
+    /// <summary>
+    /// Initializes an instance of <see cref="Language"/>.
+    /// </summary>
+    public Language(string code, string name)
     {
-        /// <summary>
-        /// ISO 639-1 code of the language.
-        /// </summary>
-        public string Code { get; }
-
-        /// <summary>
-        /// Full international name of the language.
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Initializes an instance of <see cref="Language"/>.
-        /// </summary>
-        public Language(string code, string name)
-        {
-            Code = code;
-            Name = name;
-        }
-
-        /// <inheritdoc />
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => $"{Code} ({Name})";
+        Code = code;
+        Name = name;
     }
 
-    public partial struct Language : IEquatable<Language>
-    {
-        /// <inheritdoc />
-        public bool Equals(Language other) => StringComparer.OrdinalIgnoreCase.Equals(Code, other.Code);
+    /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
+    public override string ToString() => $"{Code} ({Name})";
+}
 
-        /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is Language other && Equals(other);
+public partial struct Language : IEquatable<Language>
+{
+    /// <inheritdoc />
+    public bool Equals(Language other) => StringComparer.OrdinalIgnoreCase.Equals(Code, other.Code);
 
-        /// <inheritdoc />
-        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Code);
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is Language other && Equals(other);
 
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator ==(Language left, Language right) => left.Equals(right);
+    /// <inheritdoc />
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Code);
 
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator !=(Language left, Language right) => !(left == right);
-    }
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator ==(Language left, Language right) => left.Equals(right);
+
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator !=(Language left, Language right) => !(left == right);
 }

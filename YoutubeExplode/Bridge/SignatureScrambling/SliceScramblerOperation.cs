@@ -1,16 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace YoutubeExplode.Bridge.SignatureScrambling
+namespace YoutubeExplode.Bridge.SignatureScrambling;
+
+internal class SliceScramblerOperation : IScramblerOperation
 {
-    internal class SliceScramblerOperation : IScramblerOperation
-    {
-        private readonly int _index;
+    private readonly int _index;
 
-        public SliceScramblerOperation(int index) => _index = index;
+    public SliceScramblerOperation(int index) => _index = index;
 
-        public string Unscramble(string input) => input.Substring(_index);
+    public string Unscramble(string input) => input.Substring(_index);
 
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => $"Slice ({_index})";
-    }
+    [ExcludeFromCodeCoverage]
+    public override string ToString() => $"Slice ({_index})";
 }

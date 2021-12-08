@@ -1,7 +1,6 @@
-﻿namespace YoutubeExplode.Tests.TestData
+﻿namespace YoutubeExplode.Tests.TestData;
+
+internal static class ChannelIds
 {
-    internal static class ChannelIds
-    {
-        public const string Normal = "UCEnBXANsKmyj2r9xVyKoDiQ";
-    }
+    public const string Normal = "UCEnBXANsKmyj2r9xVyKoDiQ";
 }

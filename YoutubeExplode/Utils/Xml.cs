@@ -1,11 +1,10 @@
 using System.Xml.Linq;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Utils
+namespace YoutubeExplode.Utils;
+
+internal static class Xml
 {
-    internal static class Xml
-    {
-        public static XElement Parse(string source) =>
-            XElement.Parse(source, LoadOptions.PreserveWhitespace).StripNamespaces();
-    }
+    public static XElement Parse(string source) =>
+        XElement.Parse(source, LoadOptions.PreserveWhitespace).StripNamespaces();
 }

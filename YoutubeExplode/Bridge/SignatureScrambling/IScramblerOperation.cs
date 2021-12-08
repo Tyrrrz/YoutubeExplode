@@ -1,7 +1,6 @@
-namespace YoutubeExplode.Bridge.SignatureScrambling
+namespace YoutubeExplode.Bridge.SignatureScrambling;
+
+internal interface IScramblerOperation
 {
-    internal interface IScramblerOperation
-    {
-        string Unscramble(string input);
-    }
+    string Unscramble(string input);
 }

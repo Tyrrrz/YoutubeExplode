@@ -1,6 +1,5 @@
-﻿namespace YoutubeExplode.DemoWpf
+﻿namespace YoutubeExplode.DemoWpf;
+
+public partial class App
 {
-    public partial class App
-    {
-    }
 }

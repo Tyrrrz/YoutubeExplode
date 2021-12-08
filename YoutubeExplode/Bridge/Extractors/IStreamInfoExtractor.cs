@@ -1,31 +1,30 @@
-namespace YoutubeExplode.Bridge.Extractors
+namespace YoutubeExplode.Bridge.Extractors;
+
+internal interface IStreamInfoExtractor
 {
-    internal interface IStreamInfoExtractor
-    {
-        int? TryGetItag();
+    int? TryGetItag();
 
-        string? TryGetUrl();
+    string? TryGetUrl();
 
-        string? TryGetSignature();
+    string? TryGetSignature();
 
-        string? TryGetSignatureParameter();
+    string? TryGetSignatureParameter();
 
-        long? TryGetContentLength();
+    long? TryGetContentLength();
 
-        long? TryGetBitrate();
+    long? TryGetBitrate();
 
-        string? TryGetContainer();
+    string? TryGetContainer();
 
-        string? TryGetAudioCodec();
+    string? TryGetAudioCodec();
 
-        string? TryGetVideoCodec();
+    string? TryGetVideoCodec();
 
-        string? TryGetVideoQualityLabel();
+    string? TryGetVideoQualityLabel();
 
-        int? TryGetVideoWidth();
+    int? TryGetVideoWidth();
 
-        int? TryGetVideoHeight();
+    int? TryGetVideoHeight();
 
-        int? TryGetFramerate();
-    }
+    int? TryGetFramerate();
 }

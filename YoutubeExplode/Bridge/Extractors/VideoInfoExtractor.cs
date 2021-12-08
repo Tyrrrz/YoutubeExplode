@@ -4,58 +4,57 @@ using System.Linq;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Bridge.Extractors
+namespace YoutubeExplode.Bridge.Extractors;
+
+internal partial class VideoInfoExtractor
 {
-    internal partial class VideoInfoExtractor
+    private readonly IReadOnlyDictionary<string, string> _content;
+    private readonly Memo _memo = new();
+
+    public VideoInfoExtractor(IReadOnlyDictionary<string, string> content) => _content = content;
+
+    public string? TryGetStatus() => _memo.Wrap(() =>
+        _content.GetValueOrDefault("status")
+    );
+
+    public bool IsVideoAvailable() => _memo.Wrap(() =>
+        !string.Equals(TryGetStatus(), "fail", StringComparison.OrdinalIgnoreCase)
+    );
+
+    public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
+        _content
+            .GetValueOrDefault("player_response")?
+            .Pipe(Json.TryParse)?
+            .Pipe(j => new PlayerResponseExtractor(j))
+    );
+
+    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
     {
-        private readonly IReadOnlyDictionary<string, string> _content;
-        private readonly Memo _memo = new();
+        var result = new List<IStreamInfoExtractor>();
 
-        public VideoInfoExtractor(IReadOnlyDictionary<string, string> content) => _content = content;
+        var muxedStreams = _content
+            .GetValueOrDefault("url_encoded_fmt_stream_map")?
+            .Split(",")
+            .Select(Url.SplitQuery)
+            .Select(d => new UrlEncodedStreamInfoExtractor(d));
 
-        public string? TryGetStatus() => _memo.Wrap(() =>
-            _content.GetValueOrDefault("status")
-        );
+        if (muxedStreams is not null)
+            result.AddRange(muxedStreams);
 
-        public bool IsVideoAvailable() => _memo.Wrap(() =>
-            !string.Equals(TryGetStatus(), "fail", StringComparison.OrdinalIgnoreCase)
-        );
+        var adaptiveStreams = _content
+            .GetValueOrDefault("adaptive_fmts")?
+            .Split(",")
+            .Select(Url.SplitQuery)
+            .Select(d => new UrlEncodedStreamInfoExtractor(d));
 
-        public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
-            _content
-                .GetValueOrDefault("player_response")?
-                .Pipe(Json.TryParse)?
-                .Pipe(j => new PlayerResponseExtractor(j))
-        );
+        if (adaptiveStreams is not null)
+            result.AddRange(adaptiveStreams);
 
-        public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
-        {
-            var result = new List<IStreamInfoExtractor>();
+        return result;
+    });
+}
 
-            var muxedStreams = _content
-                .GetValueOrDefault("url_encoded_fmt_stream_map")?
-                .Split(",")
-                .Select(Url.SplitQuery)
-                .Select(d => new UrlEncodedStreamInfoExtractor(d));
-
-            if (muxedStreams is not null)
-                result.AddRange(muxedStreams);
-
-            var adaptiveStreams = _content
-                .GetValueOrDefault("adaptive_fmts")?
-                .Split(",")
-                .Select(Url.SplitQuery)
-                .Select(d => new UrlEncodedStreamInfoExtractor(d));
-
-            if (adaptiveStreams is not null)
-                result.AddRange(adaptiveStreams);
-
-            return result;
-        });
-    }
-
-    internal partial class VideoInfoExtractor
-    {
-        public static VideoInfoExtractor Create(string raw) => new(Url.SplitQuery(raw));
-    }
+internal partial class VideoInfoExtractor
+{
+    public static VideoInfoExtractor Create(string raw) => new(Url.SplitQuery(raw));
 }

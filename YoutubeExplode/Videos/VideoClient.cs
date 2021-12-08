@@ -8,109 +8,108 @@ using YoutubeExplode.Exceptions;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
-namespace YoutubeExplode.Videos
+namespace YoutubeExplode.Videos;
+
+/// <summary>
+/// Operations related to YouTube videos.
+/// </summary>
+public class VideoClient
 {
+    private readonly YoutubeController _controller;
+
     /// <summary>
-    /// Operations related to YouTube videos.
+    /// Operations related to media streams of YouTube videos.
     /// </summary>
-    public class VideoClient
+    public StreamClient Streams { get; }
+
+    /// <summary>
+    /// Operations related to closed captions of YouTube videos.
+    /// </summary>
+    public ClosedCaptionClient ClosedCaptions { get; }
+
+    /// <summary>
+    /// Initializes an instance of <see cref="VideoClient"/>.
+    /// </summary>
+    public VideoClient(HttpClient httpClient)
     {
-        private readonly YoutubeController _controller;
+        _controller = new YoutubeController(httpClient);
 
-        /// <summary>
-        /// Operations related to media streams of YouTube videos.
-        /// </summary>
-        public StreamClient Streams { get; }
+        Streams = new StreamClient(httpClient);
+        ClosedCaptions = new ClosedCaptionClient(httpClient);
+    }
 
-        /// <summary>
-        /// Operations related to closed captions of YouTube videos.
-        /// </summary>
-        public ClosedCaptionClient ClosedCaptions { get; }
+    /// <summary>
+    /// Gets the metadata associated with the specified video.
+    /// </summary>
+    public async ValueTask<Video> GetAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default)
+    {
+        var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
-        /// <summary>
-        /// Initializes an instance of <see cref="VideoClient"/>.
-        /// </summary>
-        public VideoClient(HttpClient httpClient)
-        {
-            _controller = new YoutubeController(httpClient);
+        var playerResponse =
+            watchPage.TryGetPlayerResponse() ??
+            throw new YoutubeExplodeException("Could not extract player response.");
 
-            Streams = new StreamClient(httpClient);
-            ClosedCaptions = new ClosedCaptionClient(httpClient);
-        }
+        var title =
+            playerResponse.TryGetVideoTitle() ??
+            throw new YoutubeExplodeException("Could not extract video title.");
 
-        /// <summary>
-        /// Gets the metadata associated with the specified video.
-        /// </summary>
-        public async ValueTask<Video> GetAsync(
-            VideoId videoId,
-            CancellationToken cancellationToken = default)
-        {
-            var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
+        var channelTitle =
+            playerResponse.TryGetVideoAuthor() ??
+            throw new YoutubeExplodeException("Could not extract video author.");
 
-            var playerResponse =
-                watchPage.TryGetPlayerResponse() ??
-                throw new YoutubeExplodeException("Could not extract player response.");
+        var channelId =
+            playerResponse.TryGetVideoChannelId() ??
+            throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-            var title =
-                playerResponse.TryGetVideoTitle() ??
-                throw new YoutubeExplodeException("Could not extract video title.");
+        var uploadDate =
+            playerResponse.TryGetVideoUploadDate() ??
+            throw new YoutubeExplodeException("Could not extract video upload date.");
 
-            var channelTitle =
-                playerResponse.TryGetVideoAuthor() ??
-                throw new YoutubeExplodeException("Could not extract video author.");
+        var description = playerResponse.TryGetVideoDescription() ?? "";
+        var duration = playerResponse.TryGetVideoDuration();
 
-            var channelId =
-                playerResponse.TryGetVideoChannelId() ??
-                throw new YoutubeExplodeException("Could not extract video channel ID.");
+        var thumbnails = playerResponse
+            .GetVideoThumbnails()
+            .Select(t =>
+            {
+                var thumbnailUrl =
+                    t.TryGetUrl() ??
+                    throw new YoutubeExplodeException("Could not extract thumbnail URL.");
 
-            var uploadDate =
-                playerResponse.TryGetVideoUploadDate() ??
-                throw new YoutubeExplodeException("Could not extract video upload date.");
+                var thumbnailWidth =
+                    t.TryGetWidth() ??
+                    throw new YoutubeExplodeException("Could not extract thumbnail width.");
 
-            var description = playerResponse.TryGetVideoDescription() ?? "";
-            var duration = playerResponse.TryGetVideoDuration();
+                var thumbnailHeight =
+                    t.TryGetHeight() ??
+                    throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
-            var thumbnails = playerResponse
-                .GetVideoThumbnails()
-                .Select(t =>
-                {
-                    var thumbnailUrl =
-                        t.TryGetUrl() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+                var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                    var thumbnailWidth =
-                        t.TryGetWidth() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                return new Thumbnail(thumbnailUrl, thumbnailResolution);
+            })
+            .Concat(Thumbnail.GetDefaultSet(videoId))
+            .ToArray();
 
-                    var thumbnailHeight =
-                        t.TryGetHeight() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail height.");
+        var keywords = playerResponse.GetVideoKeywords();
 
-                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+        // Engagement statistics may be hidden
+        var viewCount = playerResponse.TryGetVideoViewCount() ?? 0;
+        var likeCount = watchPage.TryGetVideoLikeCount() ?? 0;
+        var dislikeCount = watchPage.TryGetVideoDislikeCount() ?? 0;
 
-                    return new Thumbnail(thumbnailUrl, thumbnailResolution);
-                })
-                .Concat(Thumbnail.GetDefaultSet(videoId))
-                .ToArray();
-
-            var keywords = playerResponse.GetVideoKeywords();
-
-            // Engagement statistics may be hidden
-            var viewCount = playerResponse.TryGetVideoViewCount() ?? 0;
-            var likeCount = watchPage.TryGetVideoLikeCount() ?? 0;
-            var dislikeCount = watchPage.TryGetVideoDislikeCount() ?? 0;
-
-            return new Video(
-                videoId,
-                title,
-                new Author(channelId, channelTitle),
-                uploadDate,
-                description,
-                duration,
-                thumbnails,
-                keywords,
-                new Engagement(viewCount, likeCount, dislikeCount)
-            );
-        }
+        return new Video(
+            videoId,
+            title,
+            new Author(channelId, channelTitle),
+            uploadDate,
+            description,
+            duration,
+            thumbnails,
+            keywords,
+            new Engagement(viewCount, likeCount, dislikeCount)
+        );
     }
 }

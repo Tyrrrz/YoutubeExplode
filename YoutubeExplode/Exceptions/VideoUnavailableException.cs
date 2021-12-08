@@ -1,15 +1,14 @@
-namespace YoutubeExplode.Exceptions
+namespace YoutubeExplode.Exceptions;
+
+/// <summary>
+/// Exception thrown when the requested video is unavailable.
+/// </summary>
+public class VideoUnavailableException : VideoUnplayableException
 {
     /// <summary>
-    /// Exception thrown when the requested video is unavailable.
+    /// Initializes an instance of <see cref="VideoUnavailableException"/>.
     /// </summary>
-    public class VideoUnavailableException : VideoUnplayableException
+    public VideoUnavailableException(string message) : base(message)
     {
-        /// <summary>
-        /// Initializes an instance of <see cref="VideoUnavailableException"/>.
-        /// </summary>
-        public VideoUnavailableException(string message) : base(message)
-        {
-        }
     }
 }

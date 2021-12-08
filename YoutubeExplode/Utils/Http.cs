@@ -2,24 +2,23 @@
 using System.Net;
 using System.Net.Http;
 
-namespace YoutubeExplode.Utils
+namespace YoutubeExplode.Utils;
+
+internal static class Http
 {
-    internal static class Http
+    private static readonly Lazy<HttpClient> HttpClientLazy = new(() =>
     {
-        private static readonly Lazy<HttpClient> HttpClientLazy = new(() =>
+        var handler = new HttpClientHandler
         {
-            var handler = new HttpClientHandler
-            {
-                // https://github.com/Tyrrrz/YoutubeExplode/issues/530
-                UseCookies = false
-            };
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/530
+            UseCookies = false
+        };
 
-            if (handler.SupportsAutomaticDecompression)
-                handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+        if (handler.SupportsAutomaticDecompression)
+            handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
-            return new HttpClient(handler, true);
-        });
+        return new HttpClient(handler, true);
+    });
 
-        public static HttpClient Client => HttpClientLazy.Value;
-    }
+    public static HttpClient Client => HttpClientLazy.Value;
 }

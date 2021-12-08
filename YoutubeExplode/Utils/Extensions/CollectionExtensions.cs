@@ -1,44 +1,43 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace YoutubeExplode.Utils.Extensions
+namespace YoutubeExplode.Utils.Extensions;
+
+internal static class CollectionExtensions
 {
-    internal static class CollectionExtensions
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
     {
-        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
+        foreach (var i in source)
         {
-            foreach (var i in source)
-            {
-                if (i is not null)
-                    yield return i;
-            }
+            if (i is not null)
+                yield return i;
+        }
+    }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : struct
+    {
+        foreach (var i in source)
+        {
+            if (i is not null)
+                yield return i.Value;
+        }
+    }
+
+    public static T? ElementAtOrNull<T>(this IEnumerable<T> source, int index) where T : struct
+    {
+        var sourceAsList = source as IReadOnlyList<T> ?? source.ToArray();
+        return index < sourceAsList.Count
+            ? sourceAsList[index]
+            : null;
+    }
+
+    public static T? FirstOrNull<T>(this IEnumerable<T> source) where T : struct
+    {
+        foreach (var i in source)
+        {
+            return i;
         }
 
-        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : struct
-        {
-            foreach (var i in source)
-            {
-                if (i is not null)
-                    yield return i.Value;
-            }
-        }
-
-        public static T? ElementAtOrNull<T>(this IEnumerable<T> source, int index) where T : struct
-        {
-            var sourceAsList = source as IReadOnlyList<T> ?? source.ToArray();
-            return index < sourceAsList.Count
-                ? sourceAsList[index]
-                : null;
-        }
-
-        public static T? FirstOrNull<T>(this IEnumerable<T> source) where T : struct
-        {
-            foreach (var i in source)
-            {
-                return i;
-            }
-
-            return null;
-        }
+        return null;
     }
 }

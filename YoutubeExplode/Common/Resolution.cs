@@ -1,61 +1,60 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace YoutubeExplode.Common
+namespace YoutubeExplode.Common;
+
+/// <summary>
+/// Resolution of an image or a video.
+/// </summary>
+public readonly partial struct Resolution
 {
     /// <summary>
-    /// Resolution of an image or a video.
+    /// Canvas width (in pixels).
     /// </summary>
-    public readonly partial struct Resolution
+    public int Width { get; }
+
+    /// <summary>
+    /// Canvas height (in pixels).
+    /// </summary>
+    public int Height { get; }
+
+    /// <summary>
+    /// Canvas area (width multiplied by height).
+    /// </summary>
+    public int Area => Width * Height;
+
+    /// <summary>
+    /// Initializes an instance of <see cref="Resolution"/>.
+    /// </summary>
+    public Resolution(int width, int height)
     {
-        /// <summary>
-        /// Canvas width (in pixels).
-        /// </summary>
-        public int Width { get; }
-
-        /// <summary>
-        /// Canvas height (in pixels).
-        /// </summary>
-        public int Height { get; }
-
-        /// <summary>
-        /// Canvas area (width multiplied by height).
-        /// </summary>
-        public int Area => Width * Height;
-
-        /// <summary>
-        /// Initializes an instance of <see cref="Resolution"/>.
-        /// </summary>
-        public Resolution(int width, int height)
-        {
-            Width = width;
-            Height = height;
-        }
-
-        /// <inheritdoc />
-        [ExcludeFromCodeCoverage]
-        public override string ToString() => $"{Width}x{Height}";
+        Width = width;
+        Height = height;
     }
 
-    public partial struct Resolution : IEquatable<Resolution>
-    {
-        /// <inheritdoc />
-        public bool Equals(Resolution other) => Width == other.Width && Height == other.Height;
+    /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
+    public override string ToString() => $"{Width}x{Height}";
+}
 
-        /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is Resolution other && Equals(other);
+public partial struct Resolution : IEquatable<Resolution>
+{
+    /// <inheritdoc />
+    public bool Equals(Resolution other) => Width == other.Width && Height == other.Height;
 
-        /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Width, Height);
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is Resolution other && Equals(other);
 
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator ==(Resolution left, Resolution right) => left.Equals(right);
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(Width, Height);
 
-        /// <summary>
-        /// Equality check.
-        /// </summary>
-        public static bool operator !=(Resolution left, Resolution right) => !(left == right);
-    }
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator ==(Resolution left, Resolution right) => left.Equals(right);
+
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator !=(Resolution left, Resolution right) => !(left == right);
 }

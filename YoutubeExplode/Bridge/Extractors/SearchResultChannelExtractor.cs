@@ -5,46 +5,45 @@ using System.Text.Json;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Bridge.Extractors
+namespace YoutubeExplode.Bridge.Extractors;
+
+internal class SearchResultChannelExtractor
 {
-    internal class SearchResultChannelExtractor
-    {
-        private readonly JsonElement _content;
-        private readonly Memo _memo = new();
+    private readonly JsonElement _content;
+    private readonly Memo _memo = new();
 
-        public SearchResultChannelExtractor(JsonElement content) =>
-            _content = content;
+    public SearchResultChannelExtractor(JsonElement content) =>
+        _content = content;
 
-        public string? TryGetChannelId() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("channelId")?
-                .GetStringOrNull()
-        );
+    public string? TryGetChannelId() => _memo.Wrap(() =>
+        _content
+            .GetPropertyOrNull("channelId")?
+            .GetStringOrNull()
+    );
 
-        public string? TryGetChannelTitle() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("title")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull() ??
+    public string? TryGetChannelTitle() => _memo.Wrap(() =>
+        _content
+            .GetPropertyOrNull("title")?
+            .GetPropertyOrNull("simpleText")?
+            .GetStringOrNull() ??
 
-            _content
-                .GetPropertyOrNull("title")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrNull()?
-                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
-                .WhereNotNull()
-                .ConcatToString()
-        );
+        _content
+            .GetPropertyOrNull("title")?
+            .GetPropertyOrNull("runs")?
+            .EnumerateArrayOrNull()?
+            .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+            .WhereNotNull()
+            .ConcatToString()
+    );
 
-        public IReadOnlyList<ThumbnailExtractor> GetChannelThumbnails() => _memo.Wrap(() =>
-            _content
-                .GetPropertyOrNull("thumbnail")?
-                .GetPropertyOrNull("thumbnails")?
-                .EnumerateArrayOrNull()?
-                .Select(j => new ThumbnailExtractor(j))
-                .ToArray() ??
+    public IReadOnlyList<ThumbnailExtractor> GetChannelThumbnails() => _memo.Wrap(() =>
+        _content
+            .GetPropertyOrNull("thumbnail")?
+            .GetPropertyOrNull("thumbnails")?
+            .EnumerateArrayOrNull()?
+            .Select(j => new ThumbnailExtractor(j))
+            .ToArray() ??
 
-            Array.Empty<ThumbnailExtractor>()
-        );
-    }
+        Array.Empty<ThumbnailExtractor>()
+    );
 }

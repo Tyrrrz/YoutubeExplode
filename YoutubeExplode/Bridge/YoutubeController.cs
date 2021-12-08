@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,271 +10,277 @@ using YoutubeExplode.Playlists;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Videos;
 
-namespace YoutubeExplode.Bridge
+namespace YoutubeExplode.Bridge;
+
+internal class YoutubeController
 {
-    internal class YoutubeController
+    // This key doesn't appear to change
+    private const string InternalApiKey = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
+
+    private readonly HttpClient _httpClient;
+
+    public YoutubeController(HttpClient httpClient) => _httpClient = httpClient;
+
+    private async ValueTask<string> SendHttpRequestAsync(
+        HttpRequestMessage request,
+        CancellationToken cancellationToken = default)
     {
-        // This key doesn't appear to change
-        private const string InternalApiKey = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
-
-        private readonly HttpClient _httpClient;
-
-        public YoutubeController(HttpClient httpClient) => _httpClient = httpClient;
-
-        private async ValueTask<string> SendHttpRequestAsync(
-            HttpRequestMessage request,
-            CancellationToken cancellationToken = default)
+        // User-agent
+        if (!request.Headers.Contains("User-Agent"))
         {
-            // User-agent
-            if (!request.Headers.Contains("User-Agent"))
-            {
-                request.Headers.Add(
-                    "User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
-                );
-            }
-
-            // Set required cookies
-            request.Headers.Add("Cookie", "CONSENT=YES+cb; YSC=DwKYllHNwuw");
-
-            using var response = await _httpClient.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken
-            );
-
-            // Special case check for rate limiting errors
-            if ((int) response.StatusCode == 429)
-            {
-                throw new RequestLimitExceededException(
-                    "Exceeded request rate limit. " +
-                    "Please try again in a few hours. " +
-                    "Alternatively, inject an instance of HttpClient that includes cookies for authenticated user."
-                );
-            }
-
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync(cancellationToken);
-        }
-
-        private async ValueTask<string> SendHttpRequestAsync(
-            string url,
-            CancellationToken cancellationToken = default)
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, url);
-            return await SendHttpRequestAsync(request, cancellationToken);
-        }
-
-        private async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
-            string channelRoute,
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://www.youtube.com/{channelRoute}?hl=en";
-
-            for (var retry = 0; retry <= 5; retry++)
-            {
-                var raw = await SendHttpRequestAsync(url, cancellationToken);
-
-                var channelPage = ChannelPageExtractor.TryCreate(raw);
-                if (channelPage is not null)
-                    return channelPage;
-            }
-
-            throw new YoutubeExplodeException(
-                "Channel page is broken. " +
-                "Please try again in a few minutes."
+            request.Headers.Add(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36"
             );
         }
 
-        public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
-            ChannelId channelId,
-            CancellationToken cancellationToken = default) =>
-            await GetChannelPageAsync("channel/" + channelId, cancellationToken);
+        // Set required cookies
+        request.Headers.Add("Cookie", "CONSENT=YES+cb; YSC=DwKYllHNwuw");
 
-        public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
-            UserName userName,
-            CancellationToken cancellationToken = default) =>
-            await GetChannelPageAsync("user/" + userName, cancellationToken);
+        using var response = await _httpClient.SendAsync(
+            request,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken
+        );
 
-        public async ValueTask<VideoWatchPageExtractor> GetVideoWatchPageAsync(
-            VideoId videoId,
-            CancellationToken cancellationToken = default)
+        // Special case check for rate limiting errors
+        if ((int) response.StatusCode == 429)
         {
-            var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
+            throw new RequestLimitExceededException(
+                "Exceeded request rate limit. " +
+                "Please try again in a few hours. " +
+                "Alternatively, inject an instance of HttpClient that includes cookies for authenticated user."
+            );
+        }
 
-            for (var retry = 0; retry <= 5; retry++)
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException(
+                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode})." +
+                Environment.NewLine +
+                "Request:" +
+                Environment.NewLine +
+                request
+            );
+        }
+
+        return await response.Content.ReadAsStringAsync(cancellationToken);
+    }
+
+    private async ValueTask<string> SendHttpRequestAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        return await SendHttpRequestAsync(request, cancellationToken);
+    }
+
+    private async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
+        string channelRoute,
+        CancellationToken cancellationToken = default)
+    {
+        var url = $"https://www.youtube.com/{channelRoute}?hl=en";
+
+        for (var retry = 0; retry <= 5; retry++)
+        {
+            var raw = await SendHttpRequestAsync(url, cancellationToken);
+
+            var channelPage = ChannelPageExtractor.TryCreate(raw);
+            if (channelPage is not null)
+                return channelPage;
+        }
+
+        throw new YoutubeExplodeException(
+            "Channel page is broken. " +
+            "Please try again in a few minutes."
+        );
+    }
+
+    public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
+        ChannelId channelId,
+        CancellationToken cancellationToken = default) =>
+        await GetChannelPageAsync("channel/" + channelId, cancellationToken);
+
+    public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
+        UserName userName,
+        CancellationToken cancellationToken = default) =>
+        await GetChannelPageAsync("user/" + userName, cancellationToken);
+
+    public async ValueTask<VideoWatchPageExtractor> GetVideoWatchPageAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default)
+    {
+        var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
+
+        for (var retry = 0; retry <= 5; retry++)
+        {
+            var raw = await SendHttpRequestAsync(url, cancellationToken);
+
+            var watchPage = VideoWatchPageExtractor.TryCreate(raw);
+            if (watchPage is not null)
             {
-                var raw = await SendHttpRequestAsync(url, cancellationToken);
-
-                var watchPage = VideoWatchPageExtractor.TryCreate(raw);
-                if (watchPage is not null)
+                if (!watchPage.IsVideoAvailable())
                 {
-                    if (!watchPage.IsVideoAvailable())
-                    {
-                        throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-                    }
-
-                    return watchPage;
+                    throw new VideoUnavailableException($"Video '{videoId}' is not available.");
                 }
-            }
 
-            throw new YoutubeExplodeException(
-                "Video watch page is broken. " +
-                "Please try again in a few minutes."
-            );
+                return watchPage;
+            }
         }
 
-        public async Task<PlayerResponseExtractor?> GetPlayerResponseFromEndpoint(VideoId videoId)
-        {
-            string url = "https://www.youtube.com/youtubei/v1/player";
+        throw new YoutubeExplodeException(
+            "Video watch page is broken. " +
+            "Please try again in a few minutes."
+        );
+    }
 
-            //Use this as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
-            var payload = new Dictionary<string, object?>
+    public async Task<PlayerResponseExtractor> GetPlayerResponseAsync(VideoId videoId, CancellationToken cancellationToken = default)
+    {
+        var url = $"https://www.youtube.com/youtubei/v1/player?key={InternalApiKey}";
+
+        // Use this as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
+        var payload = new Dictionary<string, object?>
+        {
+            ["context"] = new Dictionary<string, object?>
             {
-                ["context"] = new Dictionary<string, object?>
+                ["client"] = new Dictionary<string, object?>
                 {
-                    ["client"] = new Dictionary<string, object?>
-                    {
-                        ["clientName"] = "ANDROID",
-                        ["clientScreen"] = "EMBED",
-                        ["clientVersion"] = "16.05"
-                    },
-                    ["thirdParty"] = new Dictionary<string, object?>
-                    {
-                        ["embedUrl"] = "https://www.youtube.com"
-                    }
+                    ["clientName"] = "ANDROID",
+                    ["clientScreen"] = "EMBED",
+                    ["clientVersion"] = "16.05"
                 },
-                ["videoId"] = videoId.Value
-
-            };
-
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url)
-            {
-                Content = Json.SerializeToHttpContent(payload),
-            };
-
-            httpRequestMessage.Headers.Add("X-Goog-Api-Key", InternalApiKey);
-
-            string responseContent = await SendHttpRequestAsync(httpRequestMessage);
-
-            return VideoWatchPageExtractor.TryGetPlayerResponse(responseContent);
-        }
-
-        public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackAsync(
-            string url,
-            CancellationToken cancellationToken = default)
-        {
-            // Enforce known format
-            var urlWithFormat = Url.SetQueryParameter(url, "format", "3");
-
-            var raw = await SendHttpRequestAsync(urlWithFormat, cancellationToken);
-
-            return ClosedCaptionTrackExtractor.Create(raw);
-        }
-
-        public async ValueTask<PlayerSourceExtractor> GetPlayerSourceAsync(
-            string url,
-            CancellationToken cancellationToken = default)
-        {
-            var raw = await SendHttpRequestAsync(url, cancellationToken);
-            return PlayerSourceExtractor.Create(raw);
-        }
-
-        public async ValueTask<DashManifestExtractor> GetDashManifestAsync(
-            string url,
-            CancellationToken cancellationToken = default)
-        {
-            var raw = await SendHttpRequestAsync(url, cancellationToken);
-            return DashManifestExtractor.Create(raw);
-        }
-
-        public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
-            PlaylistId playlistId,
-            string? continuationToken,
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://www.youtube.com/youtubei/v1/browse?key={InternalApiKey}";
-
-            var payload = new Dictionary<string, object?>
-            {
-                ["browseId"] = "VL" + playlistId,
-                ["continuation"] = continuationToken,
-                ["context"] = new Dictionary<string, object?>
+                ["thirdParty"] = new Dictionary<string, object?>
                 {
-                    ["client"] = new Dictionary<string, object?>
-                    {
-                        ["clientName"] = "WEB",
-                        ["clientVersion"] = "2.20210408.08.00",
-                        ["newVisitorCookie"] = true,
-                        ["hl"] = "en",
-                        ["gl"] = "US",
-                        ["utcOffsetMinutes"] = 0
-                    },
-                    ["user"] = new Dictionary<string, object?>
-                    {
-                        ["lockedSafetyMode"] = false
-                    }
+                    ["embedUrl"] = "https://www.youtube.com"
                 }
-            };
+            },
+            ["videoId"] = videoId.Value
 
-            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        };
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = Json.SerializeToHttpContent(payload)
+        };
+
+        var raw = await SendHttpRequestAsync(request, cancellationToken);
+
+        return PlayerResponseExtractor.Create(raw);
+    }
+
+    public async ValueTask<ClosedCaptionTrackExtractor> GetClosedCaptionTrackAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        // Enforce known format
+        var urlWithFormat = Url.SetQueryParameter(url, "format", "3");
+
+        var raw = await SendHttpRequestAsync(urlWithFormat, cancellationToken);
+
+        return ClosedCaptionTrackExtractor.Create(raw);
+    }
+
+    public async ValueTask<PlayerSourceExtractor> GetPlayerSourceAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        var raw = await SendHttpRequestAsync(url, cancellationToken);
+        return PlayerSourceExtractor.Create(raw);
+    }
+
+    public async ValueTask<DashManifestExtractor> GetDashManifestAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        var raw = await SendHttpRequestAsync(url, cancellationToken);
+        return DashManifestExtractor.Create(raw);
+    }
+
+    public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
+        PlaylistId playlistId,
+        string? continuationToken,
+        CancellationToken cancellationToken = default)
+    {
+        var url = $"https://www.youtube.com/youtubei/v1/browse?key={InternalApiKey}";
+
+        var payload = new Dictionary<string, object?>
+        {
+            ["browseId"] = "VL" + playlistId,
+            ["continuation"] = continuationToken,
+            ["context"] = new Dictionary<string, object?>
             {
-                Content = Json.SerializeToHttpContent(payload)
-            };
-
-            var raw = await SendHttpRequestAsync(request, cancellationToken);
-            var playlist = PlaylistExtractor.Create(raw);
-
-            if (!playlist.IsPlaylistAvailable())
-            {
-                throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
+                ["client"] = new Dictionary<string, object?>
+                {
+                    ["clientName"] = "WEB",
+                    ["clientVersion"] = "2.20210408.08.00",
+                    ["newVisitorCookie"] = true,
+                    ["hl"] = "en",
+                    ["gl"] = "US",
+                    ["utcOffsetMinutes"] = 0
+                },
+                ["user"] = new Dictionary<string, object?>
+                {
+                    ["lockedSafetyMode"] = false
+                }
             }
+        };
 
-            return playlist;
-        }
-
-        public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
-            PlaylistId playlistId,
-            CancellationToken cancellationToken = default) =>
-            await GetPlaylistAsync(playlistId, null, cancellationToken);
-
-        public async ValueTask<SearchResultsExtractor> GetSearchResultsAsync(
-            string searchQuery,
-            string? continuationToken,
-            CancellationToken cancellationToken = default)
+        using var request = new HttpRequestMessage(HttpMethod.Post, url)
         {
-            var url = $"https://www.youtube.com/youtubei/v1/search?key={InternalApiKey}";
+            Content = Json.SerializeToHttpContent(payload)
+        };
 
-            var payload = new Dictionary<string, object?>
-            {
-                ["query"] = searchQuery,
-                ["continuation"] = continuationToken,
-                ["context"] = new Dictionary<string, object?>
-                {
-                    ["client"] = new Dictionary<string, object?>
-                    {
-                        ["clientName"] = "WEB",
-                        ["clientVersion"] = "2.20210408.08.00",
-                        ["newVisitorCookie"] = true,
-                        ["hl"] = "en",
-                        ["gl"] = "US",
-                        ["utcOffsetMinutes"] = 0
-                    },
-                    ["user"] = new Dictionary<string, object?>
-                    {
-                        ["lockedSafetyMode"] = false
-                    }
-                }
-            };
+        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var playlist = PlaylistExtractor.Create(raw);
 
-            using var request = new HttpRequestMessage(HttpMethod.Post, url)
-            {
-                Content = Json.SerializeToHttpContent(payload)
-            };
-
-            var raw = await SendHttpRequestAsync(request, cancellationToken);
-            return SearchResultsExtractor.Create(raw);
+        if (!playlist.IsPlaylistAvailable())
+        {
+            throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
         }
+
+        return playlist;
+    }
+
+    public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
+        PlaylistId playlistId,
+        CancellationToken cancellationToken = default) =>
+        await GetPlaylistAsync(playlistId, null, cancellationToken);
+
+    public async ValueTask<SearchResultsExtractor> GetSearchResultsAsync(
+        string searchQuery,
+        string? continuationToken,
+        CancellationToken cancellationToken = default)
+    {
+        var url = $"https://www.youtube.com/youtubei/v1/search?key={InternalApiKey}";
+
+        var payload = new Dictionary<string, object?>
+        {
+            ["query"] = searchQuery,
+            ["continuation"] = continuationToken,
+            ["context"] = new Dictionary<string, object?>
+            {
+                ["client"] = new Dictionary<string, object?>
+                {
+                    ["clientName"] = "WEB",
+                    ["clientVersion"] = "2.20210408.08.00",
+                    ["newVisitorCookie"] = true,
+                    ["hl"] = "en",
+                    ["gl"] = "US",
+                    ["utcOffsetMinutes"] = 0
+                },
+                ["user"] = new Dictionary<string, object?>
+                {
+                    ["lockedSafetyMode"] = false
+                }
+            }
+        };
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = Json.SerializeToHttpContent(payload)
+        };
+
+        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        return SearchResultsExtractor.Create(raw);
     }
 }

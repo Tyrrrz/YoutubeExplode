@@ -1,13 +1,12 @@
-namespace YoutubeExplode.Videos.Streams
+namespace YoutubeExplode.Videos.Streams;
+
+/// <summary>
+/// Metadata associated with a media stream that contains audio.
+/// </summary>
+public interface IAudioStreamInfo : IStreamInfo
 {
     /// <summary>
-    /// Metadata associated with a media stream that contains audio.
+    /// Audio codec.
     /// </summary>
-    public interface IAudioStreamInfo : IStreamInfo
-    {
-        /// <summary>
-        /// Audio codec.
-        /// </summary>
-        string AudioCodec { get; }
-    }
+    string AudioCodec { get; }
 }

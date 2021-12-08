@@ -1,18 +1,17 @@
 using System;
 
-namespace YoutubeExplode.Exceptions
+namespace YoutubeExplode.Exceptions;
+
+/// <summary>
+/// Exception thrown within <see cref="YoutubeExplode"/>.
+/// </summary>
+public class YoutubeExplodeException : Exception
 {
     /// <summary>
-    /// Exception thrown within <see cref="YoutubeExplode"/>.
+    /// Initializes an instance of <see cref="YoutubeExplodeException"/>.
     /// </summary>
-    public class YoutubeExplodeException : Exception
+    /// <param name="message"></param>
+    public YoutubeExplodeException(string message) : base(message)
     {
-        /// <summary>
-        /// Initializes an instance of <see cref="YoutubeExplodeException"/>.
-        /// </summary>
-        /// <param name="message"></param>
-        public YoutubeExplodeException(string message) : base(message)
-        {
-        }
     }
 }

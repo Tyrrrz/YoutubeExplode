@@ -7,132 +7,131 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
+using Url = YoutubeExplode.Utils.Url;
 
-namespace YoutubeExplode.Bridge.Extractors
+namespace YoutubeExplode.Bridge.Extractors;
+
+internal partial class VideoWatchPageExtractor
 {
-    internal partial class VideoWatchPageExtractor
+    private readonly IHtmlDocument _content;
+    private readonly Memo _memo = new();
+
+    public VideoWatchPageExtractor(IHtmlDocument content) => _content = content;
+
+    public bool IsVideoAvailable() => _memo.Wrap(() =>
+        _content.QuerySelector("meta[property=\"og:url\"]") is not null
+    );
+
+    public long? TryGetVideoLikeCount() => _memo.Wrap(() =>
+        _content
+            .Source
+            .Text
+            .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) likes""").Groups[1].Value)
+            .NullIfWhiteSpace()?
+            .StripNonDigit()
+            .ParseLongOrNull()
+    );
+
+    public long? TryGetVideoDislikeCount() => _memo.Wrap(() =>
+        _content
+            .Source
+            .Text
+            .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) dislikes""").Groups[1].Value)
+            .NullIfWhiteSpace()?
+            .StripNonDigit()
+            .ParseLongOrNull()
+    );
+
+    private JsonElement? TryGetPlayerConfig() => _memo.Wrap(() =>
+        _content
+            .GetElementsByTagName("script")
+            .Select(e => e.Text())
+            .Select(s => Regex.Match(s, @"ytplayer\.config\s*=\s*(\{.*\})").Groups[1].Value)
+            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
+            .NullIfWhiteSpace()?
+            .Pipe(Json.Extract)
+            .Pipe(Json.TryParse)
+    );
+
+    public string? TryGetPlayerSourceUrl() => _memo.Wrap(() =>
+        _content
+            .GetElementsByTagName("script")
+            .Select(e => e.GetAttribute("src"))
+            .FirstOrDefault(s =>
+                !string.IsNullOrWhiteSpace(s) &&
+                s.Contains("player_ias", StringComparison.OrdinalIgnoreCase) &&
+                s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            )?
+            .Pipe(s => "https://youtube.com" + s) ??
+
+        TryGetPlayerConfig()?
+            .GetPropertyOrNull("assets")?
+            .GetPropertyOrNull("js")?
+            .GetStringOrNull()
+            .Pipe(s => "https://youtube.com" + s)
+    );
+
+    public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
+        _content
+            .GetElementsByTagName("script")
+            .Select(e => e.Text())
+            .Select(s => Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value)
+            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
+            .NullIfWhiteSpace()?
+            .Pipe(Json.Extract)
+            .Pipe(Json.TryParse)?
+            .Pipe(j => new PlayerResponseExtractor(j)) ??
+
+        TryGetPlayerConfig()?
+            .GetPropertyOrNull("args")?
+            .GetPropertyOrNull("player_response")?
+            .GetStringOrNull()?
+            .Pipe(Json.TryParse)?
+            .Pipe(j => new PlayerResponseExtractor(j))
+    );
+
+    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
     {
-        private readonly IHtmlDocument _content;
-        private readonly Memo _memo = new();
+        var result = new List<IStreamInfoExtractor>();
 
-        public VideoWatchPageExtractor(IHtmlDocument content) => _content = content;
+        var playerConfig = TryGetPlayerConfig();
 
-        public bool IsVideoAvailable() => _memo.Wrap(() =>
-            _content.QuerySelector("meta[property=\"og:url\"]") is not null
-        );
+        var muxedStreams = playerConfig?
+            .GetProperty("args")
+            .GetPropertyOrNull("url_encoded_fmt_stream_map")?
+            .GetStringOrNull()?
+            .Split(",")
+            .Select(Url.SplitQuery)
+            .Select(d => new UrlEncodedStreamInfoExtractor(d));
 
-        public long? TryGetVideoLikeCount() => _memo.Wrap(() =>
-            _content
-                .Source
-                .Text
-                .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) likes""").Groups[1].Value)
-                .NullIfWhiteSpace()?
-                .StripNonDigit()
-                .ParseLongOrNull()
-        );
+        if (muxedStreams is not null)
+            result.AddRange(muxedStreams);
 
-        public long? TryGetVideoDislikeCount() => _memo.Wrap(() =>
-            _content
-                .Source
-                .Text
-                .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) dislikes""").Groups[1].Value)
-                .NullIfWhiteSpace()?
-                .StripNonDigit()
-                .ParseLongOrNull()
-        );
+        var adaptiveStreams = playerConfig?
+            .GetProperty("args")
+            .GetPropertyOrNull("adaptive_fmts")?
+            .GetStringOrNull()?
+            .Split(",")
+            .Select(Url.SplitQuery)
+            .Select(d => new UrlEncodedStreamInfoExtractor(d));
 
-        private JsonElement? TryGetPlayerConfig() => _memo.Wrap(() =>
-            _content
-                .GetElementsByTagName("script")
-                .Select(e => e.Text())
-                .Select(s => Regex.Match(s, @"ytplayer\.config\s*=\s*(\{.*\})").Groups[1].Value)
-                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
-                .NullIfWhiteSpace()?
-                .Pipe(Json.Extract)
-                .Pipe(Json.TryParse)
-        );
+        if (adaptiveStreams is not null)
+            result.AddRange(adaptiveStreams);
 
-        public string? TryGetPlayerSourceUrl() => _memo.Wrap(() =>
-            _content
-                .GetElementsByTagName("script")
-                .Select(e => e.GetAttribute("src"))
-                .FirstOrDefault(s =>
-                    !string.IsNullOrWhiteSpace(s) &&
-                    s.Contains("player_ias", StringComparison.OrdinalIgnoreCase) &&
-                    s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
-                )?
-                .Pipe(s => "https://youtube.com" + s) ??
+        return result;
+    });
+}
 
-            TryGetPlayerConfig()?
-                .GetPropertyOrNull("assets")?
-                .GetPropertyOrNull("js")?
-                .GetStringOrNull()
-                .Pipe(s => "https://youtube.com" + s)
-        );
-        public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
-            _content
-                .GetElementsByTagName("script")
-                .Select(e => e.Text())
-                .Select(s => Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value)
-                .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
-                .NullIfWhiteSpace()?
-                .Pipe(Json.Extract)
-                .Pipe(Json.TryParse)?
-                .Pipe(j => new PlayerResponseExtractor(j)) ??
-
-            TryGetPlayerConfig()?
-                .GetPropertyOrNull("args")?
-                .GetPropertyOrNull("player_response")?
-                .GetStringOrNull()?
-                .Pipe(Json.TryParse)?
-                .Pipe(j => new PlayerResponseExtractor(j))
-        );
-
-        public static PlayerResponseExtractor? TryGetPlayerResponse(string json) => new PlayerResponseExtractor(Json.Parse(json));
-        
-        public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
-        {
-            var result = new List<IStreamInfoExtractor>();
-
-            var playerConfig = TryGetPlayerConfig();
-
-            var muxedStreams = playerConfig?
-                .GetProperty("args")
-                .GetPropertyOrNull("url_encoded_fmt_stream_map")?
-                .GetStringOrNull()?
-                .Split(",")
-                .Select(YoutubeExplode.Utils.Url.SplitQuery)
-                .Select(d => new UrlEncodedStreamInfoExtractor(d));
-
-            if (muxedStreams is not null)
-                result.AddRange(muxedStreams);
-
-            var adaptiveStreams = playerConfig?
-                .GetProperty("args")
-                .GetPropertyOrNull("adaptive_fmts")?
-                .GetStringOrNull()?
-                .Split(",")
-                .Select(YoutubeExplode.Utils.Url.SplitQuery)
-                .Select(d => new UrlEncodedStreamInfoExtractor(d));
-
-            if (adaptiveStreams is not null)
-                result.AddRange(adaptiveStreams);
-
-            return result;
-        });
-    }
-
-    internal partial class VideoWatchPageExtractor
+internal partial class VideoWatchPageExtractor
+{
+    public static VideoWatchPageExtractor? TryCreate(string raw)
     {
-        public static VideoWatchPageExtractor? TryCreate(string raw)
-        {
-            var content = Html.Parse(raw);
+        var content = Html.Parse(raw);
 
-            var isValid = content.Body?.QuerySelector("#player") is not null;
-            if (!isValid)
-                return null;
+        var isValid = content.Body?.QuerySelector("#player") is not null;
+        if (!isValid)
+            return null;
 
-            return new VideoWatchPageExtractor(content);
-        }
+        return new VideoWatchPageExtractor(content);
     }
 }

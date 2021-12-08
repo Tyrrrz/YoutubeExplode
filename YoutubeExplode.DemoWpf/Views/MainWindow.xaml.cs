@@ -1,10 +1,9 @@
-﻿namespace YoutubeExplode.DemoWpf.Views
+﻿namespace YoutubeExplode.DemoWpf.Views;
+
+public partial class MainWindow
 {
-    public partial class MainWindow
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

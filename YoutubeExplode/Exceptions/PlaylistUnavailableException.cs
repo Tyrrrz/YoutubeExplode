@@ -1,15 +1,14 @@
-namespace YoutubeExplode.Exceptions
+namespace YoutubeExplode.Exceptions;
+
+/// <summary>
+/// Exception thrown when the requested playlist is unavailable.
+/// </summary>
+public class PlaylistUnavailableException : YoutubeExplodeException
 {
     /// <summary>
-    /// Exception thrown when the requested playlist is unavailable.
+    /// Initializes an instance of <see cref="PlaylistUnavailableException"/>.
     /// </summary>
-    public class PlaylistUnavailableException : YoutubeExplodeException
+    public PlaylistUnavailableException(string message) : base(message)
     {
-        /// <summary>
-        /// Initializes an instance of <see cref="PlaylistUnavailableException"/>.
-        /// </summary>
-        public PlaylistUnavailableException(string message) : base(message)
-        {
-        }
     }
 }

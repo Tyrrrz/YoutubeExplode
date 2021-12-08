@@ -1,7 +1,6 @@
-﻿namespace YoutubeExplode.Tests.TestData
+﻿namespace YoutubeExplode.Tests.TestData;
+
+internal static class UserNames
 {
-    internal static class UserNames
-    {
-        public const string Normal = "TheTyrrr";
-    }
+    public const string Normal = "TheTyrrr";
 }
