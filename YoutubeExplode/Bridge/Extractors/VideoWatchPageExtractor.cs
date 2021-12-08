@@ -128,10 +128,7 @@ namespace YoutubeExplode.Bridge.Extractors
         {
             var content = Html.Parse(raw);
 
-            if (content is null)
-                return null;
-
-            var isValid = content.Body.QuerySelector("#player") is not null;
+            var isValid = content?.Body?.QuerySelector("#player") is not null;
             if (!isValid)
                 return null;
 
