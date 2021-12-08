@@ -129,8 +129,6 @@ namespace YoutubeExplode.Bridge
             string url = "https://www.youtube.com/youtubei/v1/player";
 
             //Use this as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
-            //string requestJson = $@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""}},""thirdParty"": {{""embedUrl"": ""https://www.youtube.com""}}}},""videoId"": ""{videoId}"" }}";
-
             var payload = new Dictionary<string, object?>
             {
                 ["context"] = new Dictionary<string, object?>
