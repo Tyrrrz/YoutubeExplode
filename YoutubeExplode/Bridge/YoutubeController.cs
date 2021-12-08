@@ -129,13 +129,34 @@ namespace YoutubeExplode.Bridge
             string url = "https://www.youtube.com/youtubei/v1/player";
 
             //Use this as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
-            string requestJson = $@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""}},""thirdParty"": {{""embedUrl"": ""https://www.youtube.com""}}}},""videoId"": ""{videoId}"" }}";
+            //string requestJson = $@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"",""clientScreen"": ""EMBED"",""clientVersion"": ""16.05""}},""thirdParty"": {{""embedUrl"": ""https://www.youtube.com""}}}},""videoId"": ""{videoId}"" }}";
 
+            var payload = new Dictionary<string, object?>
+            {
+                ["context"] = new Dictionary<string, object?>
+                {
+                    ["client"] = new Dictionary<string, object?>
+                    {
+                        ["clientName"] = "ANDROID",
+                        ["clientScreen"] = "EMBED",
+                        ["clientVersion"] = "16.05"
+                    },
+                    ["thirdParty"] = new Dictionary<string, object?>
+                    {
+                        ["embedUrl"] = "https://www.youtube.com"
+                    }
+                },
+                ["videoId"] = videoId.Value
 
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post,url);
+            };
+
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = Json.SerializeToHttpContent(payload),
+            };
+
             httpRequestMessage.Headers.Add("X-Goog-Api-Key", InternalApiKey);
-            httpRequestMessage.Content = new StringContent(requestJson, System.Text.Encoding.UTF8, "application/json");
- 
+
             string responseContent = await SendHttpRequestAsync(httpRequestMessage);
 
             return VideoWatchPageExtractor.TryGetPlayerResponse(responseContent);

@@ -30,12 +30,6 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetStringOrNull()
         );
 
-        public bool TryGetPurchaseRequired() => _memo.Wrap(() =>
-            TryGetVideoPlayability()?
-                .GetPropertyOrNull("reason")?
-                .GetStringOrNull() == "This video requires payment to watch."
-        );
-
         public bool TryGetAgeRestricted() => _memo.Wrap(() =>
             TryGetVideoPlayability()?
                 .GetPropertyOrNull("reason")?

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -203,12 +202,12 @@ namespace YoutubeExplode.Videos.Streams
                     playerResponseFromWatchPage = await _controller.GetPlayerResponseFromEndpoint(videoId) ?? playerResponseFromWatchPage;
 
                 var purchasePreviewVideoId = playerResponseFromWatchPage.TryGetPreviewVideoId();
-                bool isPurchaseRequired = playerResponseFromWatchPage.TryGetPurchaseRequired();
-                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId) || isPurchaseRequired)
+
+                if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId) )
                 {
                     throw new VideoRequiresPurchaseException(
                         $"Video '{videoId}' requires purchase and cannot be played.",
-                        purchasePreviewVideoId ?? ""
+                        purchasePreviewVideoId
                     );
                 }
                 if (playerResponseFromWatchPage.IsVideoPlayable())

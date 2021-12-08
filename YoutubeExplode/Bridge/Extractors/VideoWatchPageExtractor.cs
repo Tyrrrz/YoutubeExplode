@@ -56,8 +56,8 @@ namespace YoutubeExplode.Bridge.Extractors
             _content
                 .GetElementsByTagName("script")
                 .Select(e => e.GetAttribute("src"))
-                .Where(s => !string.IsNullOrWhiteSpace(s))
                 .FirstOrDefault(s =>
+                    !string.IsNullOrWhiteSpace(s) &&
                     s.Contains("player_ias", StringComparison.OrdinalIgnoreCase) &&
                     s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
                 )?
@@ -88,7 +88,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .Pipe(j => new PlayerResponseExtractor(j))
         );
 
-        public static PlayerResponseExtractor? TryGetPlayerResponse(string json) => String.IsNullOrWhiteSpace(json) ? null : new PlayerResponseExtractor(Json.Parse(json));
+        public static PlayerResponseExtractor? TryGetPlayerResponse(string json) => new PlayerResponseExtractor(Json.Parse(json));
         
         public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
         {
@@ -101,7 +101,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("url_encoded_fmt_stream_map")?
                 .GetStringOrNull()?
                 .Split(",")
-                .Select(Url.SplitQuery)
+                .Select(YoutubeExplode.Utils.Url.SplitQuery)
                 .Select(d => new UrlEncodedStreamInfoExtractor(d));
 
             if (muxedStreams is not null)
@@ -112,7 +112,7 @@ namespace YoutubeExplode.Bridge.Extractors
                 .GetPropertyOrNull("adaptive_fmts")?
                 .GetStringOrNull()?
                 .Split(",")
-                .Select(Url.SplitQuery)
+                .Select(YoutubeExplode.Utils.Url.SplitQuery)
                 .Select(d => new UrlEncodedStreamInfoExtractor(d));
 
             if (adaptiveStreams is not null)
@@ -127,6 +127,9 @@ namespace YoutubeExplode.Bridge.Extractors
         public static VideoWatchPageExtractor? TryCreate(string raw)
         {
             var content = Html.Parse(raw);
+
+            if (content is null)
+                return null;
 
             var isValid = content.Body.QuerySelector("#player") is not null;
             if (!isValid)
