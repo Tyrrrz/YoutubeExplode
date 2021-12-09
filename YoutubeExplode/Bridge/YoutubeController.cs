@@ -8,6 +8,7 @@ using YoutubeExplode.Channels;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Playlists;
 using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Bridge;
@@ -110,7 +111,7 @@ internal class YoutubeController
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var url = $"https://youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
+        var url = $"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
 
         for (var retry = 0; retry <= 5; retry++)
         {
@@ -134,11 +135,46 @@ internal class YoutubeController
         );
     }
 
-    public async Task<PlayerResponseExtractor> GetPlayerResponseAsync(VideoId videoId, CancellationToken cancellationToken = default)
+    public async Task<PlayerResponseExtractor> GetPlayerResponseAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default)
     {
         var url = $"https://www.youtube.com/youtubei/v1/player?key={InternalApiKey}";
 
-        // Use this as mentioned on https://github.com/Tyrrrz/YoutubeExplode/issues/581#issuecomment-889241520
+        var payload = new Dictionary<string, object?>
+        {
+            ["context"] = new Dictionary<string, object?>
+            {
+                ["client"] = new Dictionary<string, object?>
+                {
+                    ["clientName"] = "ANDROID",
+                    ["clientVersion"] = "16.46.37",
+                    ["hl"] = "en",
+                    ["gl"] = "US",
+                    ["utcOffsetMinutes"] = 0
+                }
+            },
+            ["contentCheckOk"] = true,
+            ["racyCheckOk"] = true,
+            ["videoId"] = videoId.Value
+        };
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = Json.SerializeToHttpContent(payload)
+        };
+
+        var raw = await SendHttpRequestAsync(request, cancellationToken);
+
+        return PlayerResponseExtractor.Create(raw);
+    }
+
+    public async Task<PlayerResponseExtractor> GetEmbeddedPlayerResponseAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default)
+    {
+        var url = $"https://www.youtube.com/youtubei/v1/player?key={InternalApiKey}";
+
         var payload = new Dictionary<string, object?>
         {
             ["context"] = new Dictionary<string, object?>
@@ -147,15 +183,19 @@ internal class YoutubeController
                 {
                     ["clientName"] = "ANDROID",
                     ["clientScreen"] = "EMBED",
-                    ["clientVersion"] = "16.05"
+                    ["clientVersion"] = "16.46.37",
+                    ["hl"] = "en",
+                    ["gl"] = "US",
+                    ["utcOffsetMinutes"] = 0
                 },
                 ["thirdParty"] = new Dictionary<string, object?>
                 {
                     ["embedUrl"] = "https://www.youtube.com"
                 }
             },
+            ["contentCheckOk"] = true,
+            ["racyCheckOk"] = true,
             ["videoId"] = videoId.Value
-
         };
 
         using var request = new HttpRequestMessage(HttpMethod.Post, url)
@@ -173,19 +213,13 @@ internal class YoutubeController
         CancellationToken cancellationToken = default)
     {
         // Enforce known format
-        var urlWithFormat = Url.SetQueryParameter(url, "format", "3");
+        var urlWithFormat = url
+            .Pipe(s => Url.SetQueryParameter(s, "format", "3"))
+            .Pipe(s => Url.SetQueryParameter(s, "fmt", "3"));
 
         var raw = await SendHttpRequestAsync(urlWithFormat, cancellationToken);
 
         return ClosedCaptionTrackExtractor.Create(raw);
-    }
-
-    public async ValueTask<PlayerSourceExtractor> GetPlayerSourceAsync(
-        string url,
-        CancellationToken cancellationToken = default)
-    {
-        var raw = await SendHttpRequestAsync(url, cancellationToken);
-        return PlayerSourceExtractor.Create(raw);
     }
 
     public async ValueTask<DashManifestExtractor> GetDashManifestAsync(
@@ -213,14 +247,9 @@ internal class YoutubeController
                 {
                     ["clientName"] = "WEB",
                     ["clientVersion"] = "2.20210408.08.00",
-                    ["newVisitorCookie"] = true,
                     ["hl"] = "en",
                     ["gl"] = "US",
                     ["utcOffsetMinutes"] = 0
-                },
-                ["user"] = new Dictionary<string, object?>
-                {
-                    ["lockedSafetyMode"] = false
                 }
             }
         };
@@ -263,14 +292,9 @@ internal class YoutubeController
                 {
                     ["clientName"] = "WEB",
                     ["clientVersion"] = "2.20210408.08.00",
-                    ["newVisitorCookie"] = true,
                     ["hl"] = "en",
                     ["gl"] = "US",
                     ["utcOffsetMinutes"] = 0
-                },
-                ["user"] = new Dictionary<string, object?>
-                {
-                    ["lockedSafetyMode"] = false
                 }
             }
         };

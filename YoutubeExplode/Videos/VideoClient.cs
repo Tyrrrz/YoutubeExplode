@@ -49,7 +49,7 @@ public class VideoClient
 
         var playerResponse =
             watchPage.TryGetPlayerResponse() ??
-            throw new YoutubeExplodeException("Could not extract player response.");
+            await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
         var title =
             playerResponse.TryGetVideoTitle() ??

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -28,10 +30,6 @@ internal partial class PlayerResponseExtractor
         TryGetVideoPlayability()?
             .GetPropertyOrNull("reason")?
             .GetStringOrNull()
-    );
-
-    public bool IsAgeRestricted() => _memo.Wrap(() =>
-        string.Equals(TryGetVideoPlayabilityError(), "Sign in to confirm your age", StringComparison.OrdinalIgnoreCase)
     );
 
     public bool IsVideoPlayable() => _memo.Wrap(() =>
@@ -124,7 +122,23 @@ internal partial class PlayerResponseExtractor
             .GetPropertyOrNull("playerVars")?
             .GetStringOrNull()?
             .Pipe(Url.SplitQuery)
-            .GetValueOrDefault("video_id")
+            .GetValueOrDefault("video_id") ??
+
+        TryGetVideoPlayability()?
+            .GetPropertyOrNull("errorScreen")?
+            .GetPropertyOrNull("ypcTrailerRenderer")?
+            .GetPropertyOrNull("playerResponse")?
+            .GetStringOrNull()?
+            // YouTube uses weird base64-like encoding here that I don't know how to deal with.
+            // It's supposed to have JSON inside, but if extracted as is, it contains garbage.
+            // Luckily, some of the text gets decoded correctly, which is enough for us to
+            // extract the preview video ID using regex.
+            .Replace('-', '+')
+            .Replace('_', '/')
+            .Pipe(Convert.FromBase64String)
+            .Pipe(Encoding.UTF8.GetString)
+            .Pipe(s => Regex.Match(s, @"video_id=(.{11})").Groups[1].Value)
+            .NullIfWhiteSpace()
     );
 
     private JsonElement? TryGetStreamingData() => _memo.Wrap(() =>

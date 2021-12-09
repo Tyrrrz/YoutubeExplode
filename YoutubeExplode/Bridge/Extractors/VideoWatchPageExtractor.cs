@@ -53,24 +53,6 @@ internal partial class VideoWatchPageExtractor
             .Pipe(Json.TryParse)
     );
 
-    public string? TryGetPlayerSourceUrl() => _memo.Wrap(() =>
-        _content
-            .GetElementsByTagName("script")
-            .Select(e => e.GetAttribute("src"))
-            .FirstOrDefault(s =>
-                !string.IsNullOrWhiteSpace(s) &&
-                s.Contains("player_ias", StringComparison.OrdinalIgnoreCase) &&
-                s.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
-            )?
-            .Pipe(s => "https://youtube.com" + s) ??
-
-        TryGetPlayerConfig()?
-            .GetPropertyOrNull("assets")?
-            .GetPropertyOrNull("js")?
-            .GetStringOrNull()
-            .Pipe(s => "https://youtube.com" + s)
-    );
-
     public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
         _content
             .GetElementsByTagName("script")

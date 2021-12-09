@@ -33,11 +33,7 @@ public class ClosedCaptionClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
-
-        var playerResponse =
-            watchPage.TryGetPlayerResponse() ??
-            throw new YoutubeExplodeException("Could not extract player response.");
+        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
         var trackInfos = playerResponse
             .GetClosedCaptionTracks()

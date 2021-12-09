@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Bridge.Extractors;
-using YoutubeExplode.Bridge.SignatureScrambling;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -34,41 +33,9 @@ public class StreamClient
         _controller = new YoutubeController(httpClient);
     }
 
-    private string UnscrambleStreamUrl(
-        SignatureScrambler signatureScrambler,
-        string streamUrl,
-        string? signature,
-        string? signatureParameter)
-    {
-        if (string.IsNullOrWhiteSpace(signature))
-            return streamUrl;
-
-        return Url.SetQueryParameter(
-            streamUrl,
-            signatureParameter ?? "signature",
-            signatureScrambler.Unscramble(signature)
-        );
-    }
-
-    private string UnscrambleDashManifestUrl(
-        SignatureScrambler signatureScrambler,
-        string dashManifestUrl)
-    {
-        var signature = Regex.Match(dashManifestUrl, "/s/(.*?)(?:/|$)").Groups[1].Value;
-        if (string.IsNullOrWhiteSpace(signature))
-            return dashManifestUrl;
-
-        return Url.SetRouteParameter(
-            dashManifestUrl,
-            "signature",
-            signatureScrambler.Unscramble(signature)
-        );
-    }
-
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
         IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
-        SignatureScrambler signatureScrambler,
         CancellationToken cancellationToken = default)
     {
         foreach (var streamInfoExtractor in streamInfoExtractors)
@@ -77,14 +44,9 @@ public class StreamClient
                 streamInfoExtractor.TryGetItag() ??
                 throw new YoutubeExplodeException("Could not extract stream itag.");
 
-            var urlRaw =
+            var url =
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL.");
-
-            // Unscramble URL
-            var signature = streamInfoExtractor.TryGetSignature();
-            var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
-            var url = UnscrambleStreamUrl(signatureScrambler, urlRaw, signature, signatureParameter);
 
             // Get content length
             var contentLength =
@@ -185,15 +147,12 @@ public class StreamClient
     {
         var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
-        // Try to get player source (failing is ok because there's a decent chance we won't need it)
-        var playerSourceUrl = watchPage.TryGetPlayerSourceUrl();
-        var playerSource = !string.IsNullOrWhiteSpace(playerSourceUrl)
-            ? await _controller.GetPlayerSourceAsync(playerSourceUrl, cancellationToken)
-            : null;
-
-        var signatureScrambler = playerSource?.TryGetSignatureScrambler() ?? SignatureScrambler.Null;
-
         var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+        if (!playerResponse.IsVideoPlayable())
+        {
+            // Try the embedded variant if this player response comes back unplayable
+            playerResponse = await _controller.GetEmbeddedPlayerResponseAsync(videoId, cancellationToken);
+        }
 
         var purchasePreviewVideoId = playerResponse.TryGetPreviewVideoId();
         if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
@@ -210,7 +169,6 @@ public class StreamClient
             await PopulateStreamInfosAsync(
                 streamInfos,
                 watchPage.GetStreams(),
-                signatureScrambler,
                 cancellationToken
             );
 
@@ -218,21 +176,18 @@ public class StreamClient
             await PopulateStreamInfosAsync(
                 streamInfos,
                 playerResponse.GetStreams(),
-                signatureScrambler,
                 cancellationToken
             );
 
             // Extract streams from DASH manifest
-            var dashManifestUrlRaw = playerResponse.TryGetDashManifestUrl();
-            if (!string.IsNullOrWhiteSpace(dashManifestUrlRaw))
+            var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
+            if (!string.IsNullOrWhiteSpace(dashManifestUrl))
             {
-                var dashManifestUrl = UnscrambleDashManifestUrl(signatureScrambler, dashManifestUrlRaw);
                 var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
 
                 await PopulateStreamInfosAsync(
                     streamInfos,
                     dashManifest.GetStreams(),
-                    signatureScrambler,
                     cancellationToken
                 );
             }
@@ -240,7 +195,12 @@ public class StreamClient
 
         // Couldn't extract any streams
         if (!streamInfos.Any())
-            throw new VideoUnplayableException($"Video '{videoId}' does not contain any playable streams.");
+        {
+            var reason = playerResponse.TryGetVideoPlayabilityError();
+            throw new VideoUnplayableException(
+                $"Video '{videoId}' does not contain any playable streams. Reason: '{reason}'."
+            );
+        }
     }
 
     /// <summary>
@@ -263,16 +223,11 @@ public class StreamClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
-
-        var playerResponse =
-            watchPage.TryGetPlayerResponse() ??
-            throw new YoutubeExplodeException("Could not extract player response.");
-
+        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
         if (!playerResponse.IsVideoPlayable())
         {
-            var errorMessage = playerResponse.TryGetVideoPlayabilityError();
-            throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: {errorMessage}.");
+            var reason = playerResponse.TryGetVideoPlayabilityError();
+            throw new VideoUnplayableException($"Video '{videoId}' is unplayable. Reason: '{reason}'.");
         }
 
         var hlsUrl = playerResponse.TryGetHlsManifestUrl();
