@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using YoutubeExplode.Tests.Utils;
 
 namespace YoutubeExplode.Tests.Fixtures;
 
@@ -12,11 +11,20 @@ public class TempOutputFixture : IDisposable
         Guid.NewGuid().ToString()
     );
 
-    public TempOutputFixture() => DirectoryEx.Reset(DirPath);
+    public TempOutputFixture() => Directory.CreateDirectory(DirPath);
 
     public string GetTempFilePath(string fileName) => Path.Combine(DirPath, fileName);
 
     public string GetTempFilePath() => GetTempFilePath(Guid.NewGuid().ToString());
 
-    public void Dispose() => DirectoryEx.DeleteIfExists(DirPath);
+    public void Dispose()
+    {
+        try
+        {
+            Directory.Delete(DirPath, true);
+        }
+        catch (DirectoryNotFoundException)
+        {
+        }
+    }
 }

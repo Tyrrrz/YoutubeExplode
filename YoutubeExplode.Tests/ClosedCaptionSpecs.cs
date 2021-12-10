@@ -113,9 +113,8 @@ public class ClosedCaptionSpecs : IClassFixture<TempOutputFixture>
 
         await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath);
 
-        var fileInfo = new FileInfo(filePath);
-
         // Assert
+        var fileInfo = new FileInfo(filePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }

@@ -174,9 +174,8 @@ public class StreamsSpecs : IClassFixture<TempOutputFixture>
 
         await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 
-        var fileInfo = new FileInfo(filePath);
-
         // Assert
+        var fileInfo = new FileInfo(filePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
     }
@@ -194,9 +193,8 @@ public class StreamsSpecs : IClassFixture<TempOutputFixture>
 
         await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 
-        var fileInfo = new FileInfo(filePath);
-
         // Assert
+        var fileInfo = new FileInfo(filePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
     }
@@ -214,9 +212,8 @@ public class StreamsSpecs : IClassFixture<TempOutputFixture>
 
         await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 
-        var fileInfo = new FileInfo(filePath);
-
         // Assert
+        var fileInfo = new FileInfo(filePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
     }

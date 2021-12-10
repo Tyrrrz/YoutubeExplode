@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -35,9 +35,8 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         // Act
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
 
-        var fileInfo = new FileInfo(outputFilePath);
-
         // Assert
+        var fileInfo = new FileInfo(outputFilePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }
@@ -52,9 +51,8 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         // Act
         await youtube.Videos.DownloadAsync("FkklG9MA0vM", outputFilePath);
 
-        var fileInfo = new FileInfo(outputFilePath);
-
         // Assert
+        var fileInfo = new FileInfo(outputFilePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }
@@ -69,9 +67,8 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         // Act
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
 
-        var fileInfo = new FileInfo(outputFilePath);
-
         // Assert
+        var fileInfo = new FileInfo(outputFilePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }
@@ -86,9 +83,8 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         // Act
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
 
-        var fileInfo = new FileInfo(outputFilePath);
-
         // Assert
+        var fileInfo = new FileInfo(outputFilePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }
@@ -101,17 +97,14 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = _tempOutputFixture.GetTempFilePath();
 
         // Act
-        await youtube.Videos.DownloadAsync(
-            "AI7ULzgf8RU", outputFilePath,
-            o => o
-                .SetFFmpegPath(_ffmpegFixture.FilePath)
-                .SetFormat("mp4")
-                .SetPreset(ConversionPreset.UltraFast)
+        await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath, o => o
+            .SetFFmpegPath(_ffmpegFixture.FilePath)
+            .SetFormat("mp4")
+            .SetPreset(ConversionPreset.UltraFast)
         );
 
-        var fileInfo = new FileInfo(outputFilePath);
-
         // Assert
+        var fileInfo = new FileInfo(outputFilePath);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }
@@ -120,7 +113,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
     public async Task User_can_download_a_video_and_track_the_progress_of_the_operation()
     {
         // Arrange
-        var progressReports = new List<double>();
+        var progressReports = new ConcurrentBag<double>();
         var progress = new Progress<double>(p =>
         {
             _testOutput.WriteLine($"Progress: {p:P2}");

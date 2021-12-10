@@ -7,7 +7,8 @@ public class TempOutputFixture : IDisposable
 {
     public string DirPath { get; } = Path.Combine(
         Path.GetDirectoryName(typeof(TempOutputFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
-        "Temp"
+        "Temp",
+        Guid.NewGuid().ToString()
     );
 
     public TempOutputFixture() => Directory.CreateDirectory(DirPath);

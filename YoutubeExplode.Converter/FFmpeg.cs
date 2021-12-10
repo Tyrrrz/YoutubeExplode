@@ -44,6 +44,14 @@ internal partial class FFmpeg
             arguments.Add("-c").Add("copy");
         }
 
+        if (string.Equals(format, "mp3", StringComparison.OrdinalIgnoreCase))
+        {
+            // Set constant bitrate to the maximum bitrate that YouTube allows for audio.
+            // Fixes an issue where the output file reports doubled audio length:
+            // https://superuser.com/questions/892996/ffmpeg-is-doubling-audio-length-when-extracting-from-video
+            arguments.Add("-b:a").Add("192k");
+        }
+
         arguments
             .Add("-threads").Add(Environment.ProcessorCount)
             .Add("-nostdin")
@@ -89,8 +97,16 @@ internal partial class FFmpeg
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException(
-                $"FFmpeg exited with a non-zero exit code ({result.ExitCode})." + Environment.NewLine +
-                "Standard error:" + Environment.NewLine +
+                $"FFmpeg exited with a non-zero exit code ({result.ExitCode})." +
+                Environment.NewLine +
+
+                "Arguments:" +
+                Environment.NewLine +
+                arguments +
+                Environment.NewLine +
+
+                "Standard error:" +
+                Environment.NewLine +
                 stdErrBuffer
             );
         }

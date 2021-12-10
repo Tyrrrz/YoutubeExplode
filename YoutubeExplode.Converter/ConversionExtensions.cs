@@ -66,8 +66,6 @@ public static class ConversionExtensions
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        Platform.EnsureDesktop();
-
         // Ensure that the provided stream collection is not empty
         if (!streamInfos.Any())
             throw new InvalidOperationException("No streams provided.");
@@ -194,9 +192,7 @@ public static class ConversionExtensions
         VideoId videoId,
         string outputFilePath,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
-    {
+        CancellationToken cancellationToken = default) =>
         await videoClient.DownloadAsync(videoId, outputFilePath, _ => { }, progress, cancellationToken)
             .ConfigureAwait(false);
-    }
 }
