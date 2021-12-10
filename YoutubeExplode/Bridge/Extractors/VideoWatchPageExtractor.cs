@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -6,7 +5,6 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
-using Url = YoutubeExplode.Utils.Url;
 
 namespace YoutubeExplode.Bridge.Extractors;
 
@@ -70,37 +68,6 @@ internal partial class VideoWatchPageExtractor
             .Pipe(Json.TryParse)?
             .Pipe(j => new PlayerResponseExtractor(j))
     );
-
-    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
-    {
-        var result = new List<IStreamInfoExtractor>();
-
-        var playerConfig = TryGetPlayerConfig();
-
-        var muxedStreams = playerConfig?
-            .GetProperty("args")
-            .GetPropertyOrNull("url_encoded_fmt_stream_map")?
-            .GetStringOrNull()?
-            .Split(",")
-            .Select(Url.SplitQuery)
-            .Select(d => new UrlEncodedStreamInfoExtractor(d));
-
-        if (muxedStreams is not null)
-            result.AddRange(muxedStreams);
-
-        var adaptiveStreams = playerConfig?
-            .GetProperty("args")
-            .GetPropertyOrNull("adaptive_fmts")?
-            .GetStringOrNull()?
-            .Split(",")
-            .Select(Url.SplitQuery)
-            .Select(d => new UrlEncodedStreamInfoExtractor(d));
-
-        if (adaptiveStreams is not null)
-            result.AddRange(adaptiveStreams);
-
-        return result;
-    });
 }
 
 internal partial class VideoWatchPageExtractor

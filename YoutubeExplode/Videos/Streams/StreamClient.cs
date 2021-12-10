@@ -148,8 +148,6 @@ public class StreamClient
     {
         var streamInfos = new List<IStreamInfo>();
 
-        var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
-
         var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
         if (!playerResponse.IsVideoPlayable())
         {
@@ -168,9 +166,6 @@ public class StreamClient
 
         if (playerResponse.IsVideoPlayable())
         {
-            // Extract streams from watch page
-            await PopulateStreamInfosAsync(streamInfos, watchPage.GetStreams(), cancellationToken);
-
             // Extract streams from player response
             await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), cancellationToken);
 
