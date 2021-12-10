@@ -32,6 +32,11 @@ internal partial class PlayerResponseExtractor
             .GetStringOrNull()
     );
 
+    public bool IsVideoAvailable() => _memo.Wrap(() =>
+        !string.Equals(TryGetVideoPlayabilityStatus(), "error", StringComparison.OrdinalIgnoreCase) &&
+        TryGetVideoDetails() is not null
+    );
+
     public bool IsVideoPlayable() => _memo.Wrap(() =>
         string.Equals(TryGetVideoPlayabilityStatus(), "ok", StringComparison.OrdinalIgnoreCase)
     );

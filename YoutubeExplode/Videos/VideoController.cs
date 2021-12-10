@@ -80,8 +80,14 @@ internal class VideoController : YoutubeControllerBase
         };
 
         var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var playerResponse = PlayerResponseExtractor.Create(raw);
 
-        return PlayerResponseExtractor.Create(raw);
+        if (!playerResponse.IsVideoAvailable())
+        {
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+        }
+
+        return playerResponse;
     }
 
     public async Task<PlayerResponseExtractor> GetPlayerResponseAsync(
