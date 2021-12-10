@@ -35,12 +35,12 @@ public class YoutubeClient
     /// <summary>
     /// Initializes an instance of <see cref="YoutubeClient"/>.
     /// </summary>
-    public YoutubeClient(HttpClient httpClient)
+    public YoutubeClient(HttpClient http)
     {
-        Videos = new VideoClient(httpClient);
-        Playlists = new PlaylistClient(httpClient);
-        Channels = new ChannelClient(httpClient);
-        Search = new SearchClient(httpClient);
+        Videos = new VideoClient(http);
+        Playlists = new PlaylistClient(http);
+        Channels = new ChannelClient(http);
+        Search = new SearchClient(http);
     }
 
     /// <summary>

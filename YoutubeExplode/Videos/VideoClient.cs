@@ -2,7 +2,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -15,7 +14,7 @@ namespace YoutubeExplode.Videos;
 /// </summary>
 public class VideoClient
 {
-    private readonly YoutubeController _controller;
+    private readonly VideoController _controller;
 
     /// <summary>
     /// Operations related to media streams of YouTube videos.
@@ -30,12 +29,12 @@ public class VideoClient
     /// <summary>
     /// Initializes an instance of <see cref="VideoClient"/>.
     /// </summary>
-    public VideoClient(HttpClient httpClient)
+    public VideoClient(HttpClient http)
     {
-        _controller = new YoutubeController(httpClient);
+        _controller = new VideoController(http);
 
-        Streams = new StreamClient(httpClient);
-        ClosedCaptions = new ClosedCaptionClient(httpClient);
+        Streams = new StreamClient(http);
+        ClosedCaptions = new ClosedCaptionClient(http);
     }
 
     /// <summary>

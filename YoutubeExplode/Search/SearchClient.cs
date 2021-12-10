@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils.Extensions;
@@ -15,21 +15,20 @@ namespace YoutubeExplode.Search;
 /// </summary>
 public class SearchClient
 {
-    private readonly YoutubeController _controller;
+    private readonly SearchController _controller;
 
     /// <summary>
     /// Initializes an instance of <see cref="SearchClient"/>.
     /// </summary>
-    public SearchClient(HttpClient httpClient)
-    {
-        _controller = new YoutubeController(httpClient);
-    }
+    public SearchClient(HttpClient http) =>
+        _controller = new SearchController(http);
 
     /// <summary>
     /// Enumerates batches of search results returned by the specified query.
     /// </summary>
     public async IAsyncEnumerable<Batch<ISearchResult>> GetResultBatchesAsync(
         string searchQuery,
+        SearchFilter searchFilter,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var encounteredIds = new HashSet<string>(StringComparer.Ordinal);
@@ -39,11 +38,21 @@ public class SearchClient
         {
             var results = new List<ISearchResult>();
 
-            var searchResults =
-                await _controller.GetSearchResultsAsync(searchQuery, continuationToken, cancellationToken);
+            var searchResults = await _controller.GetSearchResultsAsync(
+                searchQuery,
+                searchFilter,
+                continuationToken,
+                cancellationToken
+            );
 
             foreach (var videoExtractor in searchResults.GetVideos())
             {
+                if (searchFilter is not SearchFilter.None and not SearchFilter.Video)
+                {
+                    Debug.Fail("Did not expect videos in search results.");
+                    break;
+                }
+
                 var id =
                     videoExtractor.TryGetVideoId() ??
                     throw new YoutubeExplodeException("Could not extract video ID.");
@@ -85,9 +94,7 @@ public class SearchClient
                         throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
                     var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-
                     var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-
                     thumbnails.Add(thumbnail);
                 }
 
@@ -104,6 +111,12 @@ public class SearchClient
 
             foreach (var playlistExtractor in searchResults.GetPlaylists())
             {
+                if (searchFilter is not SearchFilter.None and not SearchFilter.Playlist)
+                {
+                    Debug.Fail("Did not expect playlists in search results.");
+                    break;
+                }
+
                 var id =
                     playlistExtractor.TryGetPlaylistId() ??
                     throw new YoutubeExplodeException("Could not extract playlist ID.");
@@ -141,24 +154,22 @@ public class SearchClient
                         throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
                     var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-
                     var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-
                     thumbnails.Add(thumbnail);
                 }
 
-                var playlist = new PlaylistSearchResult(
-                    id,
-                    title,
-                    author,
-                    thumbnails
-                );
-
+                var playlist = new PlaylistSearchResult(id, title, author, thumbnails);
                 results.Add(playlist);
             }
 
             foreach (var channelExtractor in searchResults.GetChannels())
             {
+                if (searchFilter is not SearchFilter.None and not SearchFilter.Channel)
+                {
+                    Debug.Fail("Did not expect channels in search results.");
+                    break;
+                }
+
                 var channelId =
                     channelExtractor.TryGetChannelId() ??
                     throw new YoutubeExplodeException("Could not extract channel ID.");
@@ -184,18 +195,11 @@ public class SearchClient
                         throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
                     var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-
                     var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-
                     thumbnails.Add(thumbnail);
                 }
 
-                var channel = new ChannelSearchResult(
-                    channelId,
-                    title,
-                    thumbnails
-                );
-
+                var channel = new ChannelSearchResult(channelId, title, thumbnails);
                 results.Add(channel);
             }
 
@@ -204,6 +208,14 @@ public class SearchClient
             continuationToken = searchResults.TryGetContinuationToken();
         } while (!string.IsNullOrWhiteSpace(continuationToken));
     }
+
+    /// <summary>
+    /// Enumerates batches of search results returned by the specified query.
+    /// </summary>
+    public IAsyncEnumerable<Batch<ISearchResult>> GetResultBatchesAsync(
+        string searchQuery,
+        CancellationToken cancellationToken = default) =>
+        GetResultBatchesAsync(searchQuery, SearchFilter.None, cancellationToken);
 
     /// <summary>
     /// Enumerates search results returned by the specified query.
@@ -219,7 +231,7 @@ public class SearchClient
     public IAsyncEnumerable<VideoSearchResult> GetVideosAsync(
         string searchQuery,
         CancellationToken cancellationToken = default) =>
-        GetResultBatchesAsync(searchQuery, cancellationToken)
+        GetResultBatchesAsync(searchQuery, SearchFilter.Video, cancellationToken)
             .FlattenAsync()
             .OfType<ISearchResult, VideoSearchResult>();
 
@@ -229,7 +241,7 @@ public class SearchClient
     public IAsyncEnumerable<PlaylistSearchResult> GetPlaylistsAsync(
         string searchQuery,
         CancellationToken cancellationToken = default) =>
-        GetResultBatchesAsync(searchQuery, cancellationToken)
+        GetResultBatchesAsync(searchQuery, SearchFilter.Playlist, cancellationToken)
             .FlattenAsync()
             .OfType<ISearchResult, PlaylistSearchResult>();
 
@@ -239,7 +251,7 @@ public class SearchClient
     public IAsyncEnumerable<ChannelSearchResult> GetChannelsAsync(
         string searchQuery,
         CancellationToken cancellationToken = default) =>
-        GetResultBatchesAsync(searchQuery, cancellationToken)
+        GetResultBatchesAsync(searchQuery, SearchFilter.Channel, cancellationToken)
             .FlattenAsync()
             .OfType<ISearchResult, ChannelSearchResult>();
 }

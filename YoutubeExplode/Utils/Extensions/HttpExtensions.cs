@@ -9,12 +9,12 @@ namespace YoutubeExplode.Utils.Extensions;
 internal static class HttpExtensions
 {
     public static async ValueTask<HttpResponseMessage> HeadAsync(
-        this HttpClient httpClient,
+        this HttpClient http,
         string requestUri,
         CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
-        return await httpClient.SendAsync(
+        return await http.SendAsync(
             request,
             HttpCompletionOption.ResponseHeadersRead,
             cancellationToken
@@ -22,7 +22,7 @@ internal static class HttpExtensions
     }
 
     public static async ValueTask<Stream> GetStreamAsync(
-        this HttpClient httpClient,
+        this HttpClient http,
         string requestUri,
         long? from = null,
         long? to = null,
@@ -32,7 +32,7 @@ internal static class HttpExtensions
         using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
         request.Headers.Range = new RangeHeaderValue(from, to);
 
-        var response = await httpClient.SendAsync(
+        var response = await http.SendAsync(
             request,
             HttpCompletionOption.ResponseHeadersRead,
             cancellationToken
@@ -45,12 +45,12 @@ internal static class HttpExtensions
     }
 
     public static async ValueTask<long?> TryGetContentLengthAsync(
-        this HttpClient httpClient,
+        this HttpClient http,
         string requestUri,
         bool ensureSuccess = true,
         CancellationToken cancellationToken = default)
     {
-        using var response = await httpClient.HeadAsync(requestUri, cancellationToken);
+        using var response = await http.HeadAsync(requestUri, cancellationToken);
 
         if (ensureSuccess)
             response.EnsureSuccessStatusCode();

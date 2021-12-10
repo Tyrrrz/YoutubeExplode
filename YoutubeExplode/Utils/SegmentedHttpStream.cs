@@ -12,7 +12,7 @@ namespace YoutubeExplode.Utils;
 // and provides seeking support.
 internal class SegmentedHttpStream : Stream
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _http;
     private readonly string _url;
     private readonly long? _segmentSize;
 
@@ -32,10 +32,10 @@ internal class SegmentedHttpStream : Stream
 
     public override long Position { get; set; }
 
-    public SegmentedHttpStream(HttpClient httpClient, string url, long length, long? segmentSize)
+    public SegmentedHttpStream(HttpClient http, string url, long length, long? segmentSize)
     {
         _url = url;
-        _httpClient = httpClient;
+        _http = http;
         Length = length;
         _segmentSize = segmentSize;
     }
@@ -58,7 +58,7 @@ internal class SegmentedHttpStream : Stream
             ? Position + _segmentSize - 1
             : null;
 
-        var stream = await _httpClient.GetStreamAsync(_url, from, to, true, cancellationToken);
+        var stream = await _http.GetStreamAsync(_url, from, to, true, cancellationToken);
 
         return _segmentStream = stream;
     }

@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Bridge;
 using YoutubeExplode.Bridge.Extractors;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
@@ -21,16 +20,16 @@ namespace YoutubeExplode.Videos.Streams;
 /// </summary>
 public class StreamClient
 {
-    private readonly HttpClient _httpClient;
-    private readonly YoutubeController _controller;
+    private readonly HttpClient _http;
+    private readonly StreamController _controller;
 
     /// <summary>
     /// Initializes an instance of <see cref="StreamClient"/>.
     /// </summary>
-    public StreamClient(HttpClient httpClient)
+    public StreamClient(HttpClient http)
     {
-        _httpClient = httpClient;
-        _controller = new YoutubeController(httpClient);
+        _http = http;
+        _controller = new StreamController(http);
     }
 
     private async ValueTask PopulateStreamInfosAsync(
@@ -51,7 +50,7 @@ public class StreamClient
             // Get content length
             var contentLength =
                 streamInfoExtractor.TryGetContentLength() ??
-                await _httpClient.TryGetContentLengthAsync(url, false, cancellationToken) ??
+                await _http.TryGetContentLengthAsync(url, false, cancellationToken) ??
                 0;
 
             if (contentLength <= 0)
@@ -140,18 +139,22 @@ public class StreamClient
         }
     }
 
-    private async ValueTask PopulateStreamInfosAsync(
-        ICollection<IStreamInfo> streamInfos,
+    /// <summary>
+    /// Gets the manifest containing information about available streams on the specified video.
+    /// </summary>
+    public async ValueTask<StreamManifest> GetManifestAsync(
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
+        var streamInfos = new List<IStreamInfo>();
+
         var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
         var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
         if (!playerResponse.IsVideoPlayable())
         {
             // Try the embedded variant if this player response comes back unplayable
-            playerResponse = await _controller.GetEmbeddedPlayerResponseAsync(videoId, cancellationToken);
+            playerResponse = await _controller.GetPlayerResponseAsync(videoId, true, cancellationToken);
         }
 
         var purchasePreviewVideoId = playerResponse.TryGetPreviewVideoId();
@@ -166,30 +169,17 @@ public class StreamClient
         if (playerResponse.IsVideoPlayable())
         {
             // Extract streams from watch page
-            await PopulateStreamInfosAsync(
-                streamInfos,
-                watchPage.GetStreams(),
-                cancellationToken
-            );
+            await PopulateStreamInfosAsync(streamInfos, watchPage.GetStreams(), cancellationToken);
 
             // Extract streams from player response
-            await PopulateStreamInfosAsync(
-                streamInfos,
-                playerResponse.GetStreams(),
-                cancellationToken
-            );
+            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), cancellationToken);
 
             // Extract streams from DASH manifest
             var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
             if (!string.IsNullOrWhiteSpace(dashManifestUrl))
             {
                 var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-
-                await PopulateStreamInfosAsync(
-                    streamInfos,
-                    dashManifest.GetStreams(),
-                    cancellationToken
-                );
+                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), cancellationToken);
             }
         }
 
@@ -201,17 +191,6 @@ public class StreamClient
                 $"Video '{videoId}' does not contain any playable streams. Reason: '{reason}'."
             );
         }
-    }
-
-    /// <summary>
-    /// Gets the manifest containing information about available streams on the specified video.
-    /// </summary>
-    public async ValueTask<StreamManifest> GetManifestAsync(
-        VideoId videoId,
-        CancellationToken cancellationToken = default)
-    {
-        var streamInfos = new List<IStreamInfo>();
-        await PopulateStreamInfosAsync(streamInfos, videoId, cancellationToken);
 
         return new StreamManifest(streamInfos);
     }
@@ -261,12 +240,7 @@ public class StreamClient
             ? 9_898_989 // breakpoint after which the throttling kicks in
             : (long?)null; // no segmentation for non-throttled streams
 
-        var stream = new SegmentedHttpStream(
-            _httpClient,
-            streamInfo.Url,
-            streamInfo.Size.Bytes,
-            segmentSize
-        );
+        var stream = new SegmentedHttpStream(_http, streamInfo.Url, streamInfo.Size.Bytes, segmentSize);
 
         // Pre-resolve inner stream eagerly
         await stream.PreloadAsync(cancellationToken);

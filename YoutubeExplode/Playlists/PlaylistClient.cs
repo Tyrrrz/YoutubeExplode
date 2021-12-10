@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 
@@ -16,20 +15,13 @@ namespace YoutubeExplode.Playlists;
 /// </summary>
 public class PlaylistClient
 {
-    private readonly YoutubeController _controller;
-
-    internal PlaylistClient(YoutubeController controller)
-    {
-        _controller = controller;
-    }
+    private readonly PlaylistController _controller;
 
     /// <summary>
     /// Initializes an instance of <see cref="PlaylistClient"/>.
     /// </summary>
-    public PlaylistClient(HttpClient httpClient)
-        : this(new YoutubeController(httpClient))
-    {
-    }
+    public PlaylistClient(HttpClient http) =>
+        _controller = new PlaylistController(http);
 
     /// <summary>
     /// Gets the metadata associated with the specified playlist.
@@ -47,7 +39,6 @@ public class PlaylistClient
         // System playlists have no author
         var channelId = playlistExtractor.TryGetPlaylistChannelId();
         var channelTitle = playlistExtractor.TryGetPlaylistAuthor();
-
         var author = channelId is not null && channelTitle is not null
             ? new Author(channelId, channelTitle)
             : null;
@@ -76,13 +67,7 @@ public class PlaylistClient
             })
             .ToArray();
 
-        return new Playlist(
-            playlistId,
-            title,
-            author,
-            description,
-            thumbnails
-        );
+        return new Playlist(playlistId, title, author, description, thumbnails);
     }
 
     /// <summary>

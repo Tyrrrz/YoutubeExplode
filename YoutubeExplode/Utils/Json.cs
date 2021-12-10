@@ -22,7 +22,7 @@ internal static class Json
 
             buffer.Append(ch);
 
-            // Detect if inside string
+            // Detect if inside a string
             if (ch == '"' && chPrv != '\\')
                 isInsideString = !isInsideString;
             // Opening brace

@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils.Extensions;
 
@@ -16,15 +15,13 @@ namespace YoutubeExplode.Videos.ClosedCaptions;
 /// </summary>
 public class ClosedCaptionClient
 {
-    private readonly YoutubeController _controller;
+    private readonly ClosedCaptionController _controller;
 
     /// <summary>
     /// Initializes an instance of <see cref="ClosedCaptionClient"/>.
     /// </summary>
-    public ClosedCaptionClient(HttpClient httpClient)
-    {
-        _controller = new YoutubeController(httpClient);
-    }
+    public ClosedCaptionClient(HttpClient http) =>
+        _controller = new ClosedCaptionController(http);
 
     /// <summary>
     /// Gets the manifest containing information about available closed caption tracks on the specified video.
