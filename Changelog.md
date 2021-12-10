@@ -1,3 +1,9 @@
+### v6.0.7 (10-Dec-2021)
+
+- Added an overload for `SearchClient.GetResultBatchesAsync(...)` that accepts a `SearchFilter` parameter. This parameter can be used to limit the query to only certain type of results (videos, playlists, channels) and avoid redundant requests.
+- Updated implementations of `SearchClient.GetVideosAsync(...)`, `SearchClient.GetPlaylistsAsync(...)`, and `SearchClient.GetChannelsAsync(...)` to use the new overload. These methods should now execute faster on search queries that normally contain mixed results.
+- [Converter] Fixed an issue where downloading a video to an `mp3` file incorrectly recorded the duration of the file as double of what it's supposed to be.
+
 ### v6.0.6 (09-Dec-2021)
 
 - Fixed an issue which caused `Seek(...)` method on streams returned from `StreamClient.GetStreamAsync(...)` to move the stream into incorrect position.
