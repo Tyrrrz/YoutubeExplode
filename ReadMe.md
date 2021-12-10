@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/869237470565392384?label=discord)](https://discord.gg/2SUWKFnHSm)
 [![Donate](https://img.shields.io/badge/donate-$$$-purple.svg)](https://tyrrrz.me/donate)
 
-⚠️ **Project status: maintenance mode**. [What does it mean?](https://github.com/Tyrrrz/shared/blob/master/docs/project-status.md)
+⚠️ **Project status: maintenance mode**. [What does it mean?](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)
 
 **YoutubeExplode** is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks.
 Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered requests to retrieve information.
@@ -103,14 +103,14 @@ await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Conta
 ```
 
 > ⚠ While it may be tempting to always rely on muxed streams, given that they contain both audio and video, it's important to note that they are very limited in quality (up to 720p30).
-If you want to download a video in highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together, which can be accomplished by using the **YoutubeExplode.Converter** package (see below).
+> If you want to download a video in highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together, which can be accomplished by using the **YoutubeExplode.Converter** package (see below).
 
 #### Downloading video with muxing or conversion
 
 > ⚠ Downloading with muxing or conversion requires [YoutubeExplode.Converter](https://nuget.org/packages/YoutubeExplode.Converter).
 
 > ⚠ This package also relies on [FFmpeg](https://ffmpeg.org) CLI, which can be downloaded [here](https://ffbinaries.com/downloads).
-Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or use one of the overloads to provide a custom location directly.
+> Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or use one of the overloads to provide a custom location directly.
 
 You can download a video with muxing or conversion through one of the extension methods provided on `VideoClient`.
 For example, to download a video in the specified format using highest quality streams, simply call `DownloadAsync(...)` with the video ID and the destination file path:
@@ -127,8 +127,8 @@ Under the hood, this resolves the video's media streams and selects the best can
 If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
 
 > ⚠ Stream muxing is a CPU-heavy process.
-You can reduce resource usage and execution time by using streams that don't require transcoding to the output format (e.g. `mp4` audio/video streams for `mp4` output format).
-Currently, YouTube only provides adaptive streams in `mp4` or `webm` containers, with highest quality video streams (e.g. 4K) only available in `webm`.
+> You can reduce resource usage and execution time by using streams that don't require transcoding to the output format (e.g. `mp4` audio/video streams for `mp4` output format).
+> Currently, YouTube only provides adaptive streams in `mp4` or `webm` containers, with highest quality video streams (e.g. 4K) only available in `webm`.
 
 To configure various aspects related to the conversion process, use one of the overloads of `DownloadAsync(...)`:
 

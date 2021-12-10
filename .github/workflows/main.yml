@@ -12,7 +12,7 @@ on:
 
 jobs:
   main:
-    uses: tyrrrz/shared/.github/workflows/NuGet-WindowsOnly.yml@master
+    uses: Tyrrrz/.github/.github/workflows/NuGet-WindowsOnly.yml@master
     with:
       publish-on-failed-tests: true
     secrets:
