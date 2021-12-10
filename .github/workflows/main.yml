@@ -1,0 +1,21 @@
+name: main
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  main:
+    uses: tyrrrz/shared/.github/workflows/NuGet-WindowsOnly.yml@master
+    with:
+      publish-on-failed-tests: true
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
