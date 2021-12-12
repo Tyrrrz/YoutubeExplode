@@ -16,12 +16,16 @@ namespace YoutubeExplode.Converter;
 /// </summary>
 public static class ConversionExtensions
 {
-    private static bool IsTranscodingRequired(Container container, ConversionFormat format) =>
-        !string.Equals(container.Name, format.Name, StringComparison.OrdinalIgnoreCase);
+    internal static bool IsAudioOnly(this Container container) =>
+        string.Equals(container.Name, "mp3", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(container.Name, "m4a", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(container.Name, "wav", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(container.Name, "wma", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(container.Name, "ogg", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(container.Name, "aac", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(container.Name, "opus", StringComparison.OrdinalIgnoreCase);
 
-    private static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(
-        StreamManifest streamManifest,
-        ConversionFormat format)
+    private static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(StreamManifest streamManifest, Container container)
     {
         // Use single muxed stream if adaptive streams are not available
         if (!streamManifest.GetAudioOnlyStreams().Any() || !streamManifest.GetVideoOnlyStreams().Any())
@@ -30,7 +34,7 @@ public static class ConversionExtensions
             yield return streamManifest
                 .GetMuxedStreams()
                 .OrderByDescending(s => s.VideoQuality)
-                .ThenByDescending(s => !IsTranscodingRequired(s.Container, format))
+                .ThenByDescending(s => s.Container == container)
                 .First();
 
             yield break;
@@ -40,18 +44,18 @@ public static class ConversionExtensions
         // Priority: transcoding -> bitrate
         yield return streamManifest
             .GetAudioOnlyStreams()
-            .OrderByDescending(s => !IsTranscodingRequired(s.Container, format))
+            .OrderByDescending(s => s.Container == container)
             .ThenByDescending(s => s.Bitrate)
             .First();
 
         // Include video stream
-        if (!format.IsAudioOnly)
+        if (!container.IsAudioOnly())
         {
             // Priority: video quality -> transcoding
             yield return streamManifest
                 .GetVideoOnlyStreams()
                 .OrderByDescending(s => s.VideoQuality)
-                .ThenByDescending(s => !IsTranscodingRequired(s.Container, format))
+                .ThenByDescending(s => s.Container == container)
                 .First();
         }
     }
@@ -70,8 +74,8 @@ public static class ConversionExtensions
         if (!streamInfos.Any())
             throw new InvalidOperationException("No streams provided.");
 
-        // If all streams have the same container as the output format, then transcoding is not required
-        var isTranscodingRequired = streamInfos.Any(s => IsTranscodingRequired(s.Container, request.Format));
+        // If all streams have the same container as the output container, then transcoding is not required
+        var isTranscodingRequired = streamInfos.Any(s => s.Container != request.Container);
 
         // Progress setup
         var progressMixer = progress?.Pipe(p => new ProgressMixer(p));
@@ -109,7 +113,7 @@ public static class ConversionExtensions
             await new FFmpeg(request.FFmpegCliFilePath).ExecuteAsync(
                 streamFilePaths,
                 request.OutputFilePath,
-                request.Format.Name,
+                request.Container.Name.ToLowerInvariant(),
                 request.Preset.ToString().ToLowerInvariant(),
                 isTranscodingRequired,
                 conversionProgress,
@@ -148,7 +152,7 @@ public static class ConversionExtensions
         var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken)
             .ConfigureAwait(false);
 
-        var streamInfos = GetBestMediaStreamInfos(streamManifest, request.Format).ToArray();
+        var streamInfos = GetBestMediaStreamInfos(streamManifest, request.Container).ToArray();
 
         await videoClient.DownloadAsync(
             streamInfos,
@@ -162,7 +166,7 @@ public static class ConversionExtensions
     /// Resolves the best media streams for the specified video, downloads them and processes into a single file.
     /// </summary>
     /// <remarks>
-    /// Conversion format is derived from file extension, unless explicitly specified.
+    /// Output container is derived from file extension, unless explicitly specified.
     /// </remarks>
     public static async ValueTask DownloadAsync(
         this VideoClient videoClient,
@@ -184,7 +188,7 @@ public static class ConversionExtensions
     /// Resolves the best media streams for the specified video, downloads them and processes into a single file.
     /// </summary>
     /// <remarks>
-    /// Conversion format is derived from file extension.
+    /// Output container is derived from file extension.
     /// If none specified, mp4 is chosen by default.
     /// </remarks>
     public static async ValueTask DownloadAsync(

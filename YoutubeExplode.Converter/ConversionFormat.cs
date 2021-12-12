@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;
 
 /// <summary>
 /// Encapsulates conversion media format.
 /// </summary>
-public readonly partial struct ConversionFormat
+[Obsolete("Use YoutubeExplode.Videos.Streams.Container instead")]
+public readonly struct ConversionFormat
 {
     /// <summary>
     /// Format name.
@@ -16,7 +17,7 @@ public readonly partial struct ConversionFormat
     /// <summary>
     /// Whether this format is a known audio-only format.
     /// </summary>
-    public bool IsAudioOnly => AudioOnlyFormats.Contains(Name);
+    public bool IsAudioOnly => new Container(Name).IsAudioOnly();
 
     /// <summary>
     /// Initializes an instance of <see cref="ConversionFormat"/>.
@@ -25,10 +26,4 @@ public readonly partial struct ConversionFormat
 
     /// <inheritdoc />
     public override string ToString() => Name;
-}
-
-public partial struct ConversionFormat
-{
-    private static readonly HashSet<string> AudioOnlyFormats = new(StringComparer.OrdinalIgnoreCase)
-        {"mp3", "m4a", "wav", "wma", "ogg", "aac", "opus"};
 }

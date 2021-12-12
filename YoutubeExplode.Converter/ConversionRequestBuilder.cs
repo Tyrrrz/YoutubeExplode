@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using YoutubeExplode.Converter.Utils.Extensions;
+using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;
 
@@ -13,7 +14,7 @@ public partial class ConversionRequestBuilder
     private readonly string _outputFilePath;
 
     private string? _ffmpegCliFilePath;
-    private ConversionFormat? _format;
+    private Container? _container;
     private ConversionPreset _preset;
 
     /// <summary>
@@ -22,7 +23,7 @@ public partial class ConversionRequestBuilder
     public ConversionRequestBuilder(string outputFilePath) =>
         _outputFilePath = outputFilePath;
 
-    private ConversionFormat GetDefaultFormat() => new(
+    private Container GetDefaultContainer() => new(
         Path.GetExtension(_outputFilePath).TrimStart('.').NullIfWhiteSpace() ??
         "mp4"
     );
@@ -37,19 +38,33 @@ public partial class ConversionRequestBuilder
     }
 
     /// <summary>
-    /// Sets conversion format.
+    /// Sets output container.
     /// </summary>
-    public ConversionRequestBuilder SetFormat(ConversionFormat format)
+    public ConversionRequestBuilder SetContainer(Container container)
     {
-        _format = format;
+        _container = container;
         return this;
     }
 
     /// <summary>
+    /// Sets output container.
+    /// </summary>
+    public ConversionRequestBuilder SetContainer(string container) =>
+        SetContainer(new Container(container));
+
+    /// <summary>
     /// Sets conversion format.
     /// </summary>
+    [Obsolete("Use SetContainer instead.")]
+    public ConversionRequestBuilder SetFormat(ConversionFormat format) =>
+        SetContainer(new Container(format.Name));
+
+    /// <summary>
+    /// Sets conversion format.
+    /// </summary>
+    [Obsolete("Use SetContainer instead.")]
     public ConversionRequestBuilder SetFormat(string format) =>
-        SetFormat(new ConversionFormat(format));
+        SetContainer(format);
 
     /// <summary>
     /// Sets conversion preset.
@@ -66,7 +81,7 @@ public partial class ConversionRequestBuilder
     public ConversionRequest Build() => new(
         _ffmpegCliFilePath ?? DefaultFFmpegCliPathLazy.Value,
         _outputFilePath,
-        _format ?? GetDefaultFormat(),
+        _container ?? GetDefaultContainer(),
         _preset
     );
 }
@@ -75,13 +90,17 @@ public partial class ConversionRequestBuilder
 {
     private static readonly Lazy<string> DefaultFFmpegCliPathLazy = new(() =>
         // Try to find FFmpeg in the probe directory
-        new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-            .EnumerateFiles()
-            .Select(f => f.FullName)
-            .FirstOrDefault(f => string.Equals(Path.GetFileNameWithoutExtension(f), "ffmpeg",
-                StringComparison.OrdinalIgnoreCase))
+        Directory
+            .EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory())
+            .FirstOrDefault(f =>
+                string.Equals(
+                    Path.GetFileNameWithoutExtension(f),
+                    "ffmpeg",
+                    StringComparison.OrdinalIgnoreCase
+                )
+            ) ??
 
         // Otherwise fallback to just "ffmpeg" and hope it's on the PATH
-        ?? "ffmpeg"
+        "ffmpeg"
     );
 }

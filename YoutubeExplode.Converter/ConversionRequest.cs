@@ -1,4 +1,7 @@
-﻿namespace YoutubeExplode.Converter;
+﻿using System;
+using YoutubeExplode.Videos.Streams;
+
+namespace YoutubeExplode.Converter;
 
 /// <summary>
 /// Conversion options.
@@ -16,9 +19,15 @@ public class ConversionRequest
     public string OutputFilePath { get; }
 
     /// <summary>
+    /// Output container.
+    /// </summary>
+    public Container Container { get; }
+
+    /// <summary>
     /// Output format.
     /// </summary>
-    public ConversionFormat Format { get; }
+    [Obsolete("Use Container instead.")]
+    public ConversionFormat Format => new(Container.Name);
 
     /// <summary>
     /// Encoder preset.
@@ -31,12 +40,25 @@ public class ConversionRequest
     public ConversionRequest(
         string ffmpegCliFilePath,
         string outputFilePath,
-        ConversionFormat format,
+        Container container,
         ConversionPreset preset)
     {
         FFmpegCliFilePath = ffmpegCliFilePath;
         OutputFilePath = outputFilePath;
-        Format = format;
+        Container = container;
         Preset = preset;
+    }
+
+    /// <summary>
+    /// Initializes an instance of <see cref="ConversionRequest"/>.
+    /// </summary>
+    [Obsolete("Use the other constructor overload")]
+    public ConversionRequest(
+        string ffmpegCliFilePath,
+        string outputFilePath,
+        ConversionFormat format,
+        ConversionPreset preset)
+        : this(ffmpegCliFilePath, outputFilePath, new Container(format.Name), preset)
+    {
     }
 }
