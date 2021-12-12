@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Bridge.Extractors;
+namespace YoutubeExplode.Bridge;
 
 internal class DashStreamInfoExtractor : IStreamInfoExtractor
 {

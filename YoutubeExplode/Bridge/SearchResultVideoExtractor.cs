@@ -5,16 +5,16 @@ using System.Text.Json;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
-namespace YoutubeExplode.Bridge.Extractors;
+namespace YoutubeExplode.Bridge;
 
-internal class PlaylistVideoExtractor
+internal class SearchResultVideoExtractor
 {
     private static readonly string[] DurationFormats = {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"};
 
     private readonly JsonElement _content;
     private readonly Memo _memo = new();
 
-    public PlaylistVideoExtractor(JsonElement content) => _content = content;
+    public SearchResultVideoExtractor(JsonElement content) => _content = content;
 
     public string? TryGetVideoId() => _memo.Wrap(() =>
         _content
@@ -37,7 +37,7 @@ internal class PlaylistVideoExtractor
             .ConcatToString()
     );
 
-    private JsonElement? TryGetAuthorDetails() => _memo.Wrap(() =>
+    private JsonElement? TryGetVideoAuthorDetails() => _memo.Wrap(() =>
         _content
             .GetPropertyOrNull("longBylineText")?
             .GetPropertyOrNull("runs")?
@@ -52,13 +52,13 @@ internal class PlaylistVideoExtractor
     );
 
     public string? TryGetVideoAuthor() => _memo.Wrap(() =>
-        TryGetAuthorDetails()?
+        TryGetVideoAuthorDetails()?
             .GetPropertyOrNull("text")?
             .GetStringOrNull()
     );
 
     public string? TryGetVideoChannelId() => _memo.Wrap(() =>
-        TryGetAuthorDetails()?
+        TryGetVideoAuthorDetails()?
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("browseEndpoint")?
             .GetPropertyOrNull("browseId")?
@@ -66,12 +66,6 @@ internal class PlaylistVideoExtractor
     );
 
     public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>
-        _content
-            .GetPropertyOrNull("lengthSeconds")?
-            .GetStringOrNull()?
-            .ParseDoubleOrNull()?
-            .Pipe(TimeSpan.FromSeconds) ??
-
         _content
             .GetPropertyOrNull("lengthText")?
             .GetPropertyOrNull("simpleText")?

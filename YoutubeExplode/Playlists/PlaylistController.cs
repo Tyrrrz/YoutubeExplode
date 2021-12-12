@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
-using YoutubeExplode.Bridge.Extractors;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
 
