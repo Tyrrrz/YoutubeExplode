@@ -16,7 +16,10 @@ namespace YoutubeExplode.Converter;
 /// </summary>
 public static class ConversionExtensions
 {
-    internal static bool IsAudioOnly(this Container container) =>
+    /// <summary>
+    /// Checks whether the container is a known audio-only container.
+    /// </summary>
+    public static bool IsAudioOnly(this Container container) =>
         string.Equals(container.Name, "mp3", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(container.Name, "m4a", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(container.Name, "wav", StringComparison.OrdinalIgnoreCase) ||
@@ -25,10 +28,33 @@ public static class ConversionExtensions
         string.Equals(container.Name, "aac", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(container.Name, "opus", StringComparison.OrdinalIgnoreCase);
 
-    private static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(StreamManifest streamManifest, Container container)
+    private static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(
+        this StreamManifest streamManifest,
+        Container container)
     {
+        if (streamManifest.GetAudioOnlyStreams().Any() && streamManifest.GetVideoOnlyStreams().Any())
+        {
+            // Include audio stream
+            // Priority: transcoding -> bitrate
+            yield return streamManifest
+                .GetAudioOnlyStreams()
+                .OrderByDescending(s => s.Container == container)
+                .ThenByDescending(s => s.Bitrate)
+                .First();
+
+            // Include video stream
+            if (!container.IsAudioOnly())
+            {
+                // Priority: video quality -> transcoding
+                yield return streamManifest
+                    .GetVideoOnlyStreams()
+                    .OrderByDescending(s => s.VideoQuality)
+                    .ThenByDescending(s => s.Container == container)
+                    .First();
+            }
+        }
         // Use single muxed stream if adaptive streams are not available
-        if (!streamManifest.GetAudioOnlyStreams().Any() || !streamManifest.GetVideoOnlyStreams().Any())
+        else
         {
             // Priority: video quality -> transcoding
             yield return streamManifest
@@ -36,30 +62,10 @@ public static class ConversionExtensions
                 .OrderByDescending(s => s.VideoQuality)
                 .ThenByDescending(s => s.Container == container)
                 .First();
-
-            yield break;
-        }
-
-        // Include audio stream
-        // Priority: transcoding -> bitrate
-        yield return streamManifest
-            .GetAudioOnlyStreams()
-            .OrderByDescending(s => s.Container == container)
-            .ThenByDescending(s => s.Bitrate)
-            .First();
-
-        // Include video stream
-        if (!container.IsAudioOnly())
-        {
-            // Priority: video quality -> transcoding
-            yield return streamManifest
-                .GetVideoOnlyStreams()
-                .OrderByDescending(s => s.VideoQuality)
-                .ThenByDescending(s => s.Container == container)
-                .First();
         }
     }
 
+    // TODO: this should be on StreamClient
     /// <summary>
     /// Downloads specified media streams and processes them into a single file.
     /// </summary>
@@ -152,14 +158,10 @@ public static class ConversionExtensions
         var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken)
             .ConfigureAwait(false);
 
-        var streamInfos = GetBestMediaStreamInfos(streamManifest, request.Container).ToArray();
+        var streamInfos = streamManifest.GetBestMediaStreamInfos(request.Container).ToArray();
 
-        await videoClient.DownloadAsync(
-            streamInfos,
-            request,
-            progress,
-            cancellationToken
-        ).ConfigureAwait(false);
+        await videoClient.DownloadAsync(streamInfos, request, progress, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <summary>

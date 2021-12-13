@@ -10,18 +10,17 @@ namespace YoutubeExplode.Bridge;
 internal partial class SearchResultsExtractor
 {
     private readonly JsonElement _content;
-    private readonly Memo _memo = new();
 
     public SearchResultsExtractor(JsonElement content) => _content = content;
 
     // Search results response is incredibly inconsistent (5+ variations),
     // so we employ descendant searching, which is inefficient but resilient.
-    private JsonElement? TryGetContentRoot() => _memo.Wrap(() =>
+    private JsonElement? TryGetContentRoot() => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("contents") ??
         _content.GetPropertyOrNull("onResponseReceivedCommands")
     );
 
-    public IReadOnlyList<SearchResultVideoExtractor> GetVideos() => _memo.Wrap(() =>
+    public IReadOnlyList<SearchResultVideoExtractor> GetVideos() => Memo.Cache(this, () =>
         TryGetContentRoot()?
             .EnumerateDescendantProperties("videoRenderer")
             .Select(j => new SearchResultVideoExtractor(j))
@@ -30,7 +29,7 @@ internal partial class SearchResultsExtractor
         Array.Empty<SearchResultVideoExtractor>()
     );
 
-    public IReadOnlyList<SearchResultPlaylistExtractor> GetPlaylists() => _memo.Wrap(() =>
+    public IReadOnlyList<SearchResultPlaylistExtractor> GetPlaylists() => Memo.Cache(this, () =>
         TryGetContentRoot()?
             .EnumerateDescendantProperties("playlistRenderer")
             .Select(j => new SearchResultPlaylistExtractor(j))
@@ -39,7 +38,7 @@ internal partial class SearchResultsExtractor
         Array.Empty<SearchResultPlaylistExtractor>()
     );
 
-    public IReadOnlyList<SearchResultChannelExtractor> GetChannels() => _memo.Wrap(() =>
+    public IReadOnlyList<SearchResultChannelExtractor> GetChannels() => Memo.Cache(this, () =>
         TryGetContentRoot()?
             .EnumerateDescendantProperties("channelRenderer")
             .Select(j => new SearchResultChannelExtractor(j))
@@ -48,7 +47,7 @@ internal partial class SearchResultsExtractor
         Array.Empty<SearchResultChannelExtractor>()
     );
 
-    public string? TryGetContinuationToken() => _memo.Wrap(() =>
+    public string? TryGetContinuationToken() => Memo.Cache(this, () =>
         TryGetContentRoot()?
             .EnumerateDescendantProperties("continuationCommand")
             .FirstOrNull()?

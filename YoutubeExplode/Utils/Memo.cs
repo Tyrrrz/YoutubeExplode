@@ -1,27 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace YoutubeExplode.Utils;
 
 // Helper utility used to cache the result of a function
-internal class Memo
+internal static class Memo
 {
-    private readonly Dictionary<string, object?> _cachedValues = new(StringComparer.Ordinal);
-
-    private T Wrap<T>(string key, Func<T> getValue)
+    private static class ForValue<T>
     {
-        if (_cachedValues.TryGetValue(key, out var cachedValue) &&
-            cachedValue is T convertedCachedValue)
-        {
-            return convertedCachedValue;
-        }
+        private static readonly ConditionalWeakTable<object, Dictionary<int, T>> CacheManifest = new();
+
+        public static Dictionary<int, T> GetCacheForOwner(object owner) =>
+            CacheManifest.GetOrCreateValue(owner);
+    }
+
+    public static T Cache<T>(object owner, Func<T> getValue)
+    {
+        var cache = ForValue<T>.GetCacheForOwner(owner);
+        var key = getValue.Method.GetHashCode();
+
+        if (cache.TryGetValue(key, out var cachedValue))
+            return cachedValue;
 
         var value = getValue();
-
-        _cachedValues[key] = value;
+        cache[key] = value;
 
         return value;
     }
-
-    public T Wrap<T>(Func<T> getValue) => Wrap("Auto_" + getValue.Method.GetHashCode(), getValue);
 }

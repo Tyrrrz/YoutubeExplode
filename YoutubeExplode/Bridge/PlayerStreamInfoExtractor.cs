@@ -10,17 +10,16 @@ namespace YoutubeExplode.Bridge;
 internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
 {
     private readonly JsonElement _content;
-    private readonly Memo _memo = new();
 
     public PlayerStreamInfoExtractor(JsonElement content) => _content = content;
 
-    public int? TryGetItag() => _memo.Wrap(() =>
+    public int? TryGetItag() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("itag")?
             .GetInt32OrNull()
     );
 
-    private IReadOnlyDictionary<string, string>? TryGetCipherData() => _memo.Wrap(() =>
+    private IReadOnlyDictionary<string, string>? TryGetCipherData() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("cipher")?
             .GetStringOrNull()?
@@ -32,7 +31,7 @@ internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
             .Pipe(Url.SplitQuery)
     );
 
-    public string? TryGetUrl() => _memo.Wrap(() =>
+    public string? TryGetUrl() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("url")?
             .GetStringOrNull() ??
@@ -40,15 +39,15 @@ internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
         TryGetCipherData()?.GetValueOrDefault("url")
     );
 
-    public string? TryGetSignature() => _memo.Wrap(() =>
+    public string? TryGetSignature() => Memo.Cache(this, () =>
         TryGetCipherData()?.GetValueOrDefault("s")
     );
 
-    public string? TryGetSignatureParameter() => _memo.Wrap(() =>
+    public string? TryGetSignatureParameter() => Memo.Cache(this, () =>
         TryGetCipherData()?.GetValueOrDefault("sp")
     );
 
-    public long? TryGetContentLength() => _memo.Wrap(() =>
+    public long? TryGetContentLength() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("contentLength")?
             .GetStringOrNull()?
@@ -60,41 +59,41 @@ internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
             .ParseLongOrNull()
     );
 
-    public long? TryGetBitrate() => _memo.Wrap(() =>
+    public long? TryGetBitrate() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("bitrate")?
             .GetInt64OrNull()
     );
 
-    private string? TryGetMimeType() => _memo.Wrap(() =>
+    private string? TryGetMimeType() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("mimeType")?
             .GetStringOrNull()
     );
 
-    public string? TryGetContainer() => _memo.Wrap(() =>
+    public string? TryGetContainer() => Memo.Cache(this, () =>
         TryGetMimeType()?
             .SubstringUntil(";")
             .SubstringAfter("/")
     );
 
-    private bool IsAudioOnly() => _memo.Wrap(() =>
+    private bool IsAudioOnly() => Memo.Cache(this, () =>
         TryGetMimeType()?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false
     );
 
-    public string? TryGetCodecs() => _memo.Wrap(() =>
+    public string? TryGetCodecs() => Memo.Cache(this, () =>
         TryGetMimeType()?
             .SubstringAfter("codecs=\"")
             .SubstringUntil("\"")
     );
 
-    public string? TryGetAudioCodec() => _memo.Wrap(() =>
+    public string? TryGetAudioCodec() => Memo.Cache(this, () =>
         IsAudioOnly()
             ? TryGetCodecs()
             : TryGetCodecs()?.SubstringAfter(", ").NullIfWhiteSpace()
     );
 
-    public string? TryGetVideoCodec() => _memo.Wrap(() =>
+    public string? TryGetVideoCodec() => Memo.Cache(this, () =>
     {
         var codec = IsAudioOnly()
             ? null
@@ -107,25 +106,25 @@ internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
         return codec;
     });
 
-    public string? TryGetVideoQualityLabel() => _memo.Wrap(() =>
+    public string? TryGetVideoQualityLabel() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("qualityLabel")?
             .GetStringOrNull()
     );
 
-    public int? TryGetVideoWidth() => _memo.Wrap(() =>
+    public int? TryGetVideoWidth() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("width")?
             .GetInt32OrNull()
     );
 
-    public int? TryGetVideoHeight() => _memo.Wrap(() =>
+    public int? TryGetVideoHeight() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("height")?
             .GetInt32OrNull()
     );
 
-    public int? TryGetFramerate() => _memo.Wrap(() =>
+    public int? TryGetFramerate() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("fps")?
             .GetInt32OrNull()

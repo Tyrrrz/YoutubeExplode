@@ -8,27 +8,26 @@ namespace YoutubeExplode.Bridge;
 internal partial class ChannelPageExtractor
 {
     private readonly IHtmlDocument _content;
-    private readonly Memo _memo = new();
 
     public ChannelPageExtractor(IHtmlDocument content) => _content = content;
 
-    public string? TryGetChannelUrl() => _memo.Wrap(() =>
+    public string? TryGetChannelUrl() => Memo.Cache(this, () =>
         _content
             .QuerySelector("meta[property=\"og:url\"]")?
             .GetAttribute("content")
     );
 
-    public string? TryGetChannelId() => _memo.Wrap(() =>
+    public string? TryGetChannelId() => Memo.Cache(this, () =>
         TryGetChannelUrl()?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase)
     );
 
-    public string? TryGetChannelTitle() => _memo.Wrap(() =>
+    public string? TryGetChannelTitle() => Memo.Cache(this, () =>
         _content
             .QuerySelector("meta[property=\"og:title\"]")?
             .GetAttribute("content")
     );
 
-    public string? TryGetChannelLogoUrl() => _memo.Wrap(() =>
+    public string? TryGetChannelLogoUrl() => Memo.Cache(this, () =>
         _content
             .QuerySelector("meta[property=\"og:image\"]")?
             .GetAttribute("content")

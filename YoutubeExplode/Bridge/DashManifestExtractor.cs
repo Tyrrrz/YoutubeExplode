@@ -8,11 +8,10 @@ namespace YoutubeExplode.Bridge;
 internal partial class DashManifestExtractor
 {
     private readonly XElement _content;
-    private readonly Memo _memo = new();
 
     public DashManifestExtractor(XElement content) => _content = content;
 
-    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
+    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => Memo.Cache(this, () =>
         _content
             .Descendants("Representation")
             // Skip non-media representations (like "rawcc")

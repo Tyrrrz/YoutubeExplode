@@ -10,18 +10,17 @@ namespace YoutubeExplode.Bridge;
 internal class SearchResultChannelExtractor
 {
     private readonly JsonElement _content;
-    private readonly Memo _memo = new();
 
     public SearchResultChannelExtractor(JsonElement content) =>
         _content = content;
 
-    public string? TryGetChannelId() => _memo.Wrap(() =>
+    public string? TryGetChannelId() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("channelId")?
             .GetStringOrNull()
     );
 
-    public string? TryGetChannelTitle() => _memo.Wrap(() =>
+    public string? TryGetChannelTitle() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -36,7 +35,7 @@ internal class SearchResultChannelExtractor
             .ConcatToString()
     );
 
-    public IReadOnlyList<ThumbnailExtractor> GetChannelThumbnails() => _memo.Wrap(() =>
+    public IReadOnlyList<ThumbnailExtractor> GetChannelThumbnails() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("thumbnail")?
             .GetPropertyOrNull("thumbnails")?

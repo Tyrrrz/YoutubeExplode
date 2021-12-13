@@ -11,15 +11,14 @@ namespace YoutubeExplode.Bridge;
 internal partial class VideoWatchPageExtractor
 {
     private readonly IHtmlDocument _content;
-    private readonly Memo _memo = new();
 
     public VideoWatchPageExtractor(IHtmlDocument content) => _content = content;
 
-    public bool IsVideoAvailable() => _memo.Wrap(() =>
+    public bool IsVideoAvailable() => Memo.Cache(this, () =>
         _content.QuerySelector("meta[property=\"og:url\"]") is not null
     );
 
-    public long? TryGetVideoLikeCount() => _memo.Wrap(() =>
+    public long? TryGetVideoLikeCount() => Memo.Cache(this, () =>
         _content
             .Source
             .Text
@@ -29,7 +28,7 @@ internal partial class VideoWatchPageExtractor
             .ParseLongOrNull()
     );
 
-    public long? TryGetVideoDislikeCount() => _memo.Wrap(() =>
+    public long? TryGetVideoDislikeCount() => Memo.Cache(this, () =>
         _content
             .Source
             .Text
@@ -39,7 +38,7 @@ internal partial class VideoWatchPageExtractor
             .ParseLongOrNull()
     );
 
-    private JsonElement? TryGetPlayerConfig() => _memo.Wrap(() =>
+    private JsonElement? TryGetPlayerConfig() => Memo.Cache(this, () =>
         _content
             .GetElementsByTagName("script")
             .Select(e => e.Text())
@@ -50,7 +49,7 @@ internal partial class VideoWatchPageExtractor
             .Pipe(Json.TryParse)
     );
 
-    public PlayerResponseExtractor? TryGetPlayerResponse() => _memo.Wrap(() =>
+    public PlayerResponseExtractor? TryGetPlayerResponse() => Memo.Cache(this, () =>
         _content
             .GetElementsByTagName("script")
             .Select(e => e.Text())

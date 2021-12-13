@@ -10,18 +10,17 @@ namespace YoutubeExplode.Bridge;
 internal class SearchResultPlaylistExtractor
 {
     private readonly JsonElement _content;
-    private readonly Memo _memo = new();
 
     public SearchResultPlaylistExtractor(JsonElement content) =>
         _content = content;
 
-    public string? TryGetPlaylistId() => _memo.Wrap(() =>
+    public string? TryGetPlaylistId() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("playlistId")?
             .GetStringOrNull()
     );
 
-    public string? TryGetPlaylistTitle() => _memo.Wrap(() =>
+    public string? TryGetPlaylistTitle() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -36,7 +35,7 @@ internal class SearchResultPlaylistExtractor
             .ConcatToString()
     );
 
-    private JsonElement? TryGetPlaylistAuthorDetails() => _memo.Wrap(() =>
+    private JsonElement? TryGetPlaylistAuthorDetails() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("longBylineText")?
             .GetPropertyOrNull("runs")?
@@ -44,13 +43,13 @@ internal class SearchResultPlaylistExtractor
             .ElementAtOrNull(0)
     );
 
-    public string? TryGetPlaylistAuthor() => _memo.Wrap(() =>
+    public string? TryGetPlaylistAuthor() => Memo.Cache(this, () =>
         TryGetPlaylistAuthorDetails()?
             .GetPropertyOrNull("text")?
             .GetStringOrNull()
     );
 
-    public string? TryGetPlaylistChannelId() => _memo.Wrap(() =>
+    public string? TryGetPlaylistChannelId() => Memo.Cache(this, () =>
         TryGetPlaylistAuthorDetails()?
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("browseEndpoint")?
@@ -58,7 +57,7 @@ internal class SearchResultPlaylistExtractor
             .GetStringOrNull()
     );
 
-    public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => _memo.Wrap(() =>
+    public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("thumbnails")?
             .EnumerateDescendantProperties("thumbnails")

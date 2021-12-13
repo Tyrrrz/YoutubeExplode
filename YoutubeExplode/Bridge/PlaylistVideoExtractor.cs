@@ -12,17 +12,16 @@ internal class PlaylistVideoExtractor
     private static readonly string[] DurationFormats = {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"};
 
     private readonly JsonElement _content;
-    private readonly Memo _memo = new();
 
     public PlaylistVideoExtractor(JsonElement content) => _content = content;
 
-    public string? TryGetVideoId() => _memo.Wrap(() =>
+    public string? TryGetVideoId() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("videoId")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoTitle() => _memo.Wrap(() =>
+    public string? TryGetVideoTitle() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -37,7 +36,7 @@ internal class PlaylistVideoExtractor
             .ConcatToString()
     );
 
-    private JsonElement? TryGetAuthorDetails() => _memo.Wrap(() =>
+    private JsonElement? TryGetAuthorDetails() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("longBylineText")?
             .GetPropertyOrNull("runs")?
@@ -51,13 +50,13 @@ internal class PlaylistVideoExtractor
             .ElementAtOrNull(0)
     );
 
-    public string? TryGetVideoAuthor() => _memo.Wrap(() =>
+    public string? TryGetVideoAuthor() => Memo.Cache(this, () =>
         TryGetAuthorDetails()?
             .GetPropertyOrNull("text")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoChannelId() => _memo.Wrap(() =>
+    public string? TryGetVideoChannelId() => Memo.Cache(this, () =>
         TryGetAuthorDetails()?
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("browseEndpoint")?
@@ -65,7 +64,7 @@ internal class PlaylistVideoExtractor
             .GetStringOrNull()
     );
 
-    public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>
+    public TimeSpan? TryGetVideoDuration() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("lengthSeconds")?
             .GetStringOrNull()?
@@ -88,7 +87,7 @@ internal class PlaylistVideoExtractor
             .ParseTimeSpanOrNull(DurationFormats)
     );
 
-    public IReadOnlyList<ThumbnailExtractor> GetVideoThumbnails() => _memo.Wrap(() =>
+    public IReadOnlyList<ThumbnailExtractor> GetVideoThumbnails() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("thumbnail")?
             .GetPropertyOrNull("thumbnails")?

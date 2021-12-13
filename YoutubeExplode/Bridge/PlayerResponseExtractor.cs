@@ -12,58 +12,57 @@ namespace YoutubeExplode.Bridge;
 internal partial class PlayerResponseExtractor
 {
     private readonly JsonElement _content;
-    private readonly Memo _memo = new();
 
     public PlayerResponseExtractor(JsonElement content) => _content = content;
 
-    private JsonElement? TryGetVideoPlayability() => _memo.Wrap(() =>
+    private JsonElement? TryGetVideoPlayability() => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("playabilityStatus")
     );
 
-    private string? TryGetVideoPlayabilityStatus() => _memo.Wrap(() =>
+    private string? TryGetVideoPlayabilityStatus() => Memo.Cache(this, () =>
         TryGetVideoPlayability()?
             .GetPropertyOrNull("status")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoPlayabilityError() => _memo.Wrap(() =>
+    public string? TryGetVideoPlayabilityError() => Memo.Cache(this, () =>
         TryGetVideoPlayability()?
             .GetPropertyOrNull("reason")?
             .GetStringOrNull()
     );
 
-    public bool IsVideoAvailable() => _memo.Wrap(() =>
+    public bool IsVideoAvailable() => Memo.Cache(this, () =>
         !string.Equals(TryGetVideoPlayabilityStatus(), "error", StringComparison.OrdinalIgnoreCase) &&
         TryGetVideoDetails() is not null
     );
 
-    public bool IsVideoPlayable() => _memo.Wrap(() =>
+    public bool IsVideoPlayable() => Memo.Cache(this, () =>
         string.Equals(TryGetVideoPlayabilityStatus(), "ok", StringComparison.OrdinalIgnoreCase)
     );
 
-    private JsonElement? TryGetVideoDetails() => _memo.Wrap(() =>
+    private JsonElement? TryGetVideoDetails() => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("videoDetails")
     );
 
-    public string? TryGetVideoTitle() => _memo.Wrap(() =>
+    public string? TryGetVideoTitle() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("title")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoChannelId() => _memo.Wrap(() =>
+    public string? TryGetVideoChannelId() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("channelId")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoAuthor() => _memo.Wrap(() =>
+    public string? TryGetVideoAuthor() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("author")?
             .GetStringOrNull()
     );
 
-    public DateTimeOffset? TryGetVideoUploadDate() => _memo.Wrap(() =>
+    public DateTimeOffset? TryGetVideoUploadDate() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("microformat")?
             .GetPropertyOrNull("playerMicroformatRenderer")?
@@ -71,7 +70,7 @@ internal partial class PlayerResponseExtractor
             .GetDateTimeOffset()
     );
 
-    public TimeSpan? TryGetVideoDuration() => _memo.Wrap(() =>
+    public TimeSpan? TryGetVideoDuration() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("lengthSeconds")?
             .GetStringOrNull()?
@@ -79,7 +78,7 @@ internal partial class PlayerResponseExtractor
             .Pipe(TimeSpan.FromSeconds)
     );
 
-    public IReadOnlyList<ThumbnailExtractor> GetVideoThumbnails() => _memo.Wrap(() =>
+    public IReadOnlyList<ThumbnailExtractor> GetVideoThumbnails() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("thumbnail")?
             .GetPropertyOrNull("thumbnails")?
@@ -90,7 +89,7 @@ internal partial class PlayerResponseExtractor
         Array.Empty<ThumbnailExtractor>()
     );
 
-    public IReadOnlyList<string> GetVideoKeywords() => _memo.Wrap(() =>
+    public IReadOnlyList<string> GetVideoKeywords() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("keywords")?
             .EnumerateArrayOrNull()?
@@ -101,20 +100,20 @@ internal partial class PlayerResponseExtractor
         Array.Empty<string>()
     );
 
-    public string? TryGetVideoDescription() => _memo.Wrap(() =>
+    public string? TryGetVideoDescription() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("shortDescription")?
             .GetStringOrNull()
     );
 
-    public long? TryGetVideoViewCount() => _memo.Wrap(() =>
+    public long? TryGetVideoViewCount() => Memo.Cache(this, () =>
         TryGetVideoDetails()?
             .GetPropertyOrNull("viewCount")?
             .GetStringOrNull()?
             .ParseLongOrNull()
     );
 
-    public string? TryGetPreviewVideoId() => _memo.Wrap(() =>
+    public string? TryGetPreviewVideoId() => Memo.Cache(this, () =>
         TryGetVideoPlayability()?
             .GetPropertyOrNull("errorScreen")?
             .GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")?
@@ -146,23 +145,23 @@ internal partial class PlayerResponseExtractor
             .NullIfWhiteSpace()
     );
 
-    private JsonElement? TryGetStreamingData() => _memo.Wrap(() =>
+    private JsonElement? TryGetStreamingData() => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("streamingData")
     );
 
-    public string? TryGetDashManifestUrl() => _memo.Wrap(() =>
+    public string? TryGetDashManifestUrl() => Memo.Cache(this, () =>
         TryGetStreamingData()?
             .GetPropertyOrNull("dashManifestUrl")?
             .GetStringOrNull()
     );
 
-    public string? TryGetHlsManifestUrl() => _memo.Wrap(() =>
+    public string? TryGetHlsManifestUrl() => Memo.Cache(this, () =>
         TryGetStreamingData()?
             .GetPropertyOrNull("hlsManifestUrl")?
             .GetStringOrNull()
     );
 
-    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => _memo.Wrap(() =>
+    public IReadOnlyList<IStreamInfoExtractor> GetStreams() => Memo.Cache(this, () =>
     {
         var result = new List<IStreamInfoExtractor>();
 
@@ -185,7 +184,7 @@ internal partial class PlayerResponseExtractor
         return result;
     });
 
-    public IReadOnlyList<PlayerClosedCaptionTrackInfoExtractor> GetClosedCaptionTracks() => _memo.Wrap(() =>
+    public IReadOnlyList<PlayerClosedCaptionTrackInfoExtractor> GetClosedCaptionTracks() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("captions")?
             .GetPropertyOrNull("playerCaptionsTracklistRenderer")?

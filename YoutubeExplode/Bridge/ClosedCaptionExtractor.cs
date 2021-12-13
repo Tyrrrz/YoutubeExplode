@@ -10,23 +10,22 @@ namespace YoutubeExplode.Bridge;
 internal class ClosedCaptionExtractor
 {
     private readonly XElement _content;
-    private readonly Memo _memo = new();
 
     public ClosedCaptionExtractor(XElement content) => _content = content;
 
-    public string? TryGetText() => _memo.Wrap(() =>
+    public string? TryGetText() => Memo.Cache(this, () =>
         (string?) _content
     );
 
-    public TimeSpan? TryGetOffset() => _memo.Wrap(() =>
+    public TimeSpan? TryGetOffset() => Memo.Cache(this, () =>
         ((double?) _content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds)
     );
 
-    public TimeSpan? TryGetDuration() => _memo.Wrap(() =>
+    public TimeSpan? TryGetDuration() => Memo.Cache(this, () =>
         ((double?) _content.Attribute("d"))?.Pipe(TimeSpan.FromMilliseconds)
     );
 
-    public IReadOnlyList<ClosedCaptionPartExtractor> GetParts() => _memo.Wrap(() =>
+    public IReadOnlyList<ClosedCaptionPartExtractor> GetParts() => Memo.Cache(this, () =>
         _content
             .Elements("s")
             .Select(x => new ClosedCaptionPartExtractor(x))
