@@ -14,6 +14,11 @@ public class Author
     public ChannelId ChannelId { get; }
 
     /// <summary>
+    /// Channel URL.
+    /// </summary>
+    public string ChannelUrl => $"https://www.youtube.com/channel/{ChannelId}";
+
+    /// <summary>
     /// Channel title.
     /// </summary>
     public string Title { get; }
