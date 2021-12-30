@@ -24,6 +24,7 @@ public class VideoIdSpecs
     [InlineData("youtube.com/watch?v=yIVRs6YSbOM", "yIVRs6YSbOM")]
     [InlineData("youtu.be/yIVRs6YSbOM", "yIVRs6YSbOM")]
     [InlineData("youtube.com/embed/yIVRs6YSbOM", "yIVRs6YSbOM")]
+    [InlineData("youtube.com/shorts/sKL1vjP0tIo", "sKL1vjP0tIo")]
     public void Video_ID_can_be_parsed_from_a_URL_string(string videoUrl, string expectedVideoId)
     {
         // Act
