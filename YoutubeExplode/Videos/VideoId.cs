@@ -59,6 +59,12 @@ public partial struct VideoId
         if (!string.IsNullOrWhiteSpace(embedMatch) && IsValid(embedMatch))
             return embedMatch;
 
+        // Shorts URL
+        // https://www.youtube.com/shorts/sKL1vjP0tIo
+        var shortsMatch = Regex.Match(videoIdOrUrl, @"youtube\..+?/shorts/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+        if (!string.IsNullOrWhiteSpace(shortsMatch) && IsValid(shortsMatch))
+            return shortsMatch;
+
         // Invalid input
         return null;
     }
