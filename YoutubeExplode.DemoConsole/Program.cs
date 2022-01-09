@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using YoutubeExplode.DemoConsole.Utils;
 using YoutubeExplode.Videos;
@@ -16,10 +17,16 @@ public static class Program
         Console.Title = "YoutubeExplode Demo";
 
         var youtube = new YoutubeClient();
-
+        var playlist = youtube.Playlists.GetVideosAsync("RDTsYhxMnGYCw");
+        var video = new List<Playlists.PlaylistVideo>();
+        await foreach (var item in playlist)
+        {
+            video.Add(item);
+        }
         // Read the video ID
         Console.Write("Enter YouTube video ID or URL: ");
         var videoId = VideoId.Parse(Console.ReadLine() ?? "");
+
 
         // Get available streams and choose the best muxed (audio + video) stream
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);

@@ -18,6 +18,13 @@ public readonly partial struct PlaylistId
 
     /// <inheritdoc />
     public override string ToString() => Value;
+
+    /// <summary>
+    /// Checks whether the playlist is a mix playlist or not
+    /// </summary>
+    /// <returns>True if it's a mix playlist</returns>
+    /// Seems like mix playlist has 13 or 15 of id length, and normal playlists has 18 and 34 of length
+    public bool IsMix() => Value.Length == 13 || Value.Length == 15;
 }
 
 public partial struct PlaylistId

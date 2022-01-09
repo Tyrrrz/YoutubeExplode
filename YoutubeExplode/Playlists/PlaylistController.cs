@@ -55,6 +55,49 @@ internal class PlaylistController : YoutubeControllerBase
         return playlist;
     }
 
+    public async ValueTask<PlaylistExtractor> GetMixPlaylistAsync(
+        PlaylistId playlistId,
+        string? videoId = null,
+        string? param = null,
+        int index = 0,
+        CancellationToken cancellationToken = default)
+    {
+        const string url = $"https://www.youtube.com/youtubei/v1/next?key={ApiKey}";
+
+        var payload = new Dictionary<string, object?>
+        {
+            ["playlistId"] = playlistId.Value,
+            ["videoId"] = videoId ?? "",
+            ["index"] = index,
+            ["params"] = param ?? "",
+            ["context"] = new Dictionary<string, object?>
+            {
+                ["client"] = new Dictionary<string, object?>
+                {
+                    ["clientName"] = "WEB",
+                    ["clientVersion"] = "2.20210408.08.00",
+                    ["hl"] = "en",
+                    ["gl"] = "US",
+                    ["utcOffsetMinutes"] = 0
+                }
+            }
+        };
+        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = Json.SerializeToHttpContent(payload)
+        };
+
+        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var playlist = PlaylistExtractor.Create(raw);
+
+        if (!playlist.IsPlaylistAvailable())
+        {
+            throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
+        }
+
+        return playlist;
+    }
+
     public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
         PlaylistId playlistId,
         CancellationToken cancellationToken = default) =>
