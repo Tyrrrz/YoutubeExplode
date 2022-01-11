@@ -67,13 +67,12 @@ internal partial class PlaylistExtractor
     );
 
     public bool IsMixPlaylist() => Memo.Cache(this, () =>
-        TryGetPlaylistInfiniteProperty() is not false
+        TryGetPlaylistInfiniteProperty() is true
     );
 
     public string? TryGetPlaylistTitle() => Memo.Cache(this, () =>
          // next endpoint part
         TryGetPlaylistProperty()?
-            .GetPropertyOrNull("playlist")?
             .GetPropertyOrNull("title")?
             .GetStringOrNull() ??
         // browse endpoint part
@@ -140,6 +139,15 @@ internal partial class PlaylistExtractor
 
     public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => Memo.Cache(this, () =>
         TryGetSidebarPrimary()?
+            .GetPropertyOrNull("thumbnailRenderer")?
+            .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
+            .GetPropertyOrNull("thumbnail")?
+            .GetPropertyOrNull("thumbnails")?
+            .EnumerateArrayOrNull()?
+            .Select(j => new ThumbnailExtractor(j))
+            .ToArray() ??
+
+        TryGetPlaylistProperty()?
             .GetPropertyOrNull("thumbnailRenderer")?
             .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
             .GetPropertyOrNull("thumbnail")?

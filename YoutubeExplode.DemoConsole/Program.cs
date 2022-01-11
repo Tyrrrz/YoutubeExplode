@@ -17,7 +17,8 @@ public static class Program
         Console.Title = "YoutubeExplode Demo";
 
         var youtube = new YoutubeClient();
-        var playlist = youtube.Playlists.GetVideosAsync("RDTsYhxMnGYCw");
+        var playlists = await youtube.Playlists.GetAsync("RDTsYhxMnGYCw");
+        var playlist = youtube.Playlists.GetVideosAsync("PLJWrtDObX2T9uhlvllkRH9oLAJPhtO8Z2");
         var videos = new List<Playlists.PlaylistVideo>();
         await foreach (var item in playlist)
         {
