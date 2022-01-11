@@ -18,10 +18,10 @@ public static class Program
 
         var youtube = new YoutubeClient();
         var playlist = youtube.Playlists.GetVideosAsync("RDTsYhxMnGYCw");
-        var video = new List<Playlists.PlaylistVideo>();
+        var videos = new List<Playlists.PlaylistVideo>();
         await foreach (var item in playlist)
         {
-            video.Add(item);
+            videos.Add(item);
         }
         // Read the video ID
         Console.Write("Enter YouTube video ID or URL: ");
