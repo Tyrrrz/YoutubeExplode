@@ -43,10 +43,10 @@ public class PlaylistClient
         var author = channelId is not null && channelTitle is not null
             ? new Author(channelId, channelTitle)
             : null;
-        //Can't get description from system playlists
+        //Can't get description from mix playlists
         var description = playlistExtractor.TryGetPlaylistDescription() ?? "";
 
-        //Can't get Thumbnails from system playlists, maybe use firt video thumbnail?
+        //Can't get Thumbnails from mix playlists, maybe use firt video thumbnail?
         var thumbnails = playlistExtractor
             .GetPlaylistThumbnails()
             .Select(t =>
@@ -77,27 +77,20 @@ public class PlaylistClient
     /// </summary>
     public async IAsyncEnumerable<Batch<PlaylistVideo>> GetVideoBatchesAsync(
         PlaylistId playlistId,
-        uint? numVideos,
         [EnumeratorCancellation] CancellationToken cancellationToken = default       
         )
     {
         var encounteredIds = new HashSet<string>(StringComparer.Ordinal);
 
-        //Continuation token can't be used in mix playlist so we use an index and the last videoid
-        var continuationToken = default(string?);
+        var visitorData = default(string?);
         var index = 0;
         string? lastVideoId = "";
         bool keepExtracting = false;
-
         do
         {
             var playlistExtractor =
-                await _controller.GetPlaylistVideosAsync(playlistId,index: index,videoId: lastVideoId, continuationtoken: continuationToken, cancellationToken: cancellationToken);
+                await _controller.GetPlaylistVideosAsync(playlistId,lastVideoId,index,visitorData,cancellationToken);
             var videos = new List<PlaylistVideo>();
-
-            //If numVideo is null replace with default values
-            if(numVideos is null)
-                numVideos = (playlistExtractor.IsMixPlaylist() ? 25 : uint.MaxValue);
 
             foreach (var videoExtractor in playlistExtractor.GetVideos())
             {
@@ -158,31 +151,24 @@ public class PlaylistClient
 
                 
             }
-            index += videos.Count;
-            lastVideoId = videos.LastOrDefault()?.Id;
-            //remove the excess videos
-            if (index > numVideos) 
-                videos.RemoveRange((int)(videos.Count - (index - numVideos) - 1), (int)(index - numVideos));
+
+            lastVideoId = playlistExtractor.TryGetLastVideoId();
+            index = playlistExtractor.TryGetLastIndex() ?? 0;
+            visitorData  = visitorData ?? playlistExtractor.TryGetVisitorData();
 
             yield return Batch.Create(videos);
 
-            continuationToken = playlistExtractor.TryGetContinuationToken();
-            //Its won't keep extracting if there is no continuationtoken for normal playlists or no videos for mix playlist
-            keepExtracting = ((!string.IsNullOrWhiteSpace(continuationToken) || playlistExtractor.IsMixPlaylist())
-                && index < numVideos && videos.Count != 0);
+
+            //Dont keep extracting if there are no new videos.
+            keepExtracting = videos.Count != 0;
         } while (keepExtracting);
     }
 
     /// <summary>
     /// Enumerates videos included in the specified playlist.
     /// </summary>
-    /// <param name="numVideos">
-    /// Limits the number of videos that will try to enumerate.
-    /// By default enumerates all videos or 50 videos if it's a mix playlist.
-    /// </param>
     public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
         PlaylistId playlistId,
-        uint? numVideos = default,
         CancellationToken cancellationToken = default) =>
-        GetVideoBatchesAsync(playlistId ,numVideos,cancellationToken).FlattenAsync();
+        GetVideoBatchesAsync(playlistId ,cancellationToken).FlattenAsync();
 }

@@ -59,9 +59,8 @@ internal class PlaylistController : YoutubeControllerBase
     public async ValueTask<PlaylistExtractor> GetPlaylistVideosAsync(
         PlaylistId playlistId,
         string? videoId = null,
-        string? param = null,
         int index = 0,
-        string? continuationtoken = null,
+        string? visitorData = null,
         CancellationToken cancellationToken = default)
     {
         const string url = $"https://www.youtube.com/youtubei/v1/next?key={ApiKey}";
@@ -70,9 +69,7 @@ internal class PlaylistController : YoutubeControllerBase
         {
             ["playlistId"] = playlistId.Value,
             ["videoId"] = videoId ?? "",
-            ["index"] = index,
-            ["params"] = param ?? "",
-            ["continuation"] = continuationtoken ?? "",
+            ["playlistIndex"] = index,
             ["context"] = new Dictionary<string, object?>
             {
                 ["client"] = new Dictionary<string, object?>
@@ -81,7 +78,8 @@ internal class PlaylistController : YoutubeControllerBase
                     ["clientVersion"] = "2.20210408.08.00",
                     ["hl"] = "en",
                     ["gl"] = "US",
-                    ["utcOffsetMinutes"] = 0
+                    ["utcOffsetMinutes"] = 0,
+                    ["visitorData"] = visitorData ?? ""
                 }
             }
         };

@@ -17,13 +17,7 @@ public static class Program
         Console.Title = "YoutubeExplode Demo";
 
         var youtube = new YoutubeClient();
-        var playlists = await youtube.Playlists.GetAsync("RDTsYhxMnGYCw");
-        var playlist = youtube.Playlists.GetVideosAsync("PLJWrtDObX2T9uhlvllkRH9oLAJPhtO8Z2");
-        var videos = new List<Playlists.PlaylistVideo>();
-        await foreach (var item in playlist)
-        {
-            videos.Add(item);
-        }
+
         // Read the video ID
         Console.Write("Enter YouTube video ID or URL: ");
         var videoId = VideoId.Parse(Console.ReadLine() ?? "");
