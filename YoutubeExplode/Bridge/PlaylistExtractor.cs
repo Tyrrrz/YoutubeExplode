@@ -33,11 +33,6 @@ internal partial class PlaylistExtractor
 
 
     );
-    private bool? TryGetPlaylistInfiniteProperty() => Memo.Cache(this, () =>
-        TryGetPlaylistProperty()?
-            .GetPropertyOrNull("isInfinite")?
-            .GetBoolean()
-    );
 
     private JsonElement? TryGetSidebarPrimary() => Memo.Cache(this, () =>
         TryGetSidebar()?
@@ -57,10 +52,6 @@ internal partial class PlaylistExtractor
     );
     public bool IsPlaylistDetailsAvailable() => Memo.Cache(this, () =>
         TryGetSidebar() is not null
-    );
-
-    public bool IsSystemPlaylist() => Memo.Cache(this, () =>
-        TryGetPlaylistInfiniteProperty() is true
     );
 
     public string? TryGetPlaylistTitle() => Memo.Cache(this, () =>

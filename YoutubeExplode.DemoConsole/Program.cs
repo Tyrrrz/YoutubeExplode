@@ -18,8 +18,6 @@ public static class Program
 
         var youtube = new YoutubeClient();
 
-        var playlist = await youtube.Playlists.GetAsync("RDTsYhxMnGYCw");
-
         // Read the video ID
         Console.Write("Enter YouTube video ID or URL: ");
         var videoId = VideoId.Parse(Console.ReadLine() ?? "");
