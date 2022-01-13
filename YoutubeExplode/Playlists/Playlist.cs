@@ -13,7 +13,7 @@ public class Playlist : IPlaylist
     public PlaylistId Id { get; }
 
     /// <inheritdoc />
-    public string Url => $"https://www.youtube.com/playlist?list={Id}";
+    public string Url => _url ?? $"https://www.youtube.com/playlist?list={Id}";
 
     /// <inheritdoc />
     public string Title { get; }
@@ -24,10 +24,12 @@ public class Playlist : IPlaylist
     /// <summary>
     /// Playlist description.
     /// </summary>
-    public string Description { get; }
+    public string? Description { get; }
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
+
+    private string? _url;
 
     /// <summary>
     /// Initializes an instance of <see cref="Playlist"/>.
@@ -36,14 +38,16 @@ public class Playlist : IPlaylist
         PlaylistId id,
         string title,
         Author? author,
-        string description,
-        IReadOnlyList<Thumbnail> thumbnails)
+        string? description,
+        IReadOnlyList<Thumbnail> thumbnails,
+        string? url = null)
     {
         Id = id;
         Title = title;
         Author = author;
         Description = description;
         Thumbnails = thumbnails;
+        _url = url;
     }
 
     /// <inheritdoc />

@@ -15,7 +15,7 @@ internal class PlaylistController : YoutubeControllerBase
     {
     }
 
-    public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
+    public async ValueTask<PlaylistExtractor> GetPlaylistDetailsAsync(
         PlaylistId playlistId,
         string? continuationToken,
         CancellationToken cancellationToken = default)
@@ -47,7 +47,51 @@ internal class PlaylistController : YoutubeControllerBase
         var raw = await SendHttpRequestAsync(request, cancellationToken);
         var playlist = PlaylistExtractor.Create(raw);
 
-        if (!playlist.IsPlaylistAvailable())
+        if (!playlist.IsPlaylistDetailsAvailable())
+        {
+            //try getting info from the next endpoint if this one can't get the playlist
+            playlist = await GetPlaylistVideosAsync(playlistId,cancellationToken);
+        }
+
+        return playlist;
+    }
+
+    public async ValueTask<PlaylistExtractor> GetPlaylistVideosAsync(
+        PlaylistId playlistId,
+        string? videoId = null,
+        int index = 0,
+        string? visitorData = null,
+        CancellationToken cancellationToken = default)
+    {
+        const string url = $"https://www.youtube.com/youtubei/v1/next?key={ApiKey}";
+
+        var payload = new Dictionary<string, object?>
+        {
+            ["playlistId"] = playlistId.Value,
+            ["videoId"] = videoId ?? "",
+            ["playlistIndex"] = index,
+            ["context"] = new Dictionary<string, object?>
+            {
+                ["client"] = new Dictionary<string, object?>
+                {
+                    ["clientName"] = "WEB",
+                    ["clientVersion"] = "2.20210408.08.00",
+                    ["hl"] = "en",
+                    ["gl"] = "US",
+                    ["utcOffsetMinutes"] = 0,
+                    ["visitorData"] = visitorData ?? ""
+                }
+            }
+        };
+        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = Json.SerializeToHttpContent(payload)
+        };
+
+        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var playlist = PlaylistExtractor.Create(raw);
+
+        if (!playlist.IsPlaylistVideosAvailable())
         {
             throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
         }
@@ -55,8 +99,13 @@ internal class PlaylistController : YoutubeControllerBase
         return playlist;
     }
 
-    public async ValueTask<PlaylistExtractor> GetPlaylistAsync(
+    public async ValueTask<PlaylistExtractor> GetPlaylistDetailsAsync(
         PlaylistId playlistId,
         CancellationToken cancellationToken = default) =>
-        await GetPlaylistAsync(playlistId, null, cancellationToken);
+        await GetPlaylistDetailsAsync(playlistId, null, cancellationToken: cancellationToken);
+
+    public async ValueTask<PlaylistExtractor> GetPlaylistVideosAsync(
+      PlaylistId playlistId,
+      CancellationToken cancellationToken = default) =>
+      await GetPlaylistVideosAsync(playlistId, null, cancellationToken: cancellationToken);
 }

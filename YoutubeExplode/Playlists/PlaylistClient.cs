@@ -30,7 +30,8 @@ public class PlaylistClient
         PlaylistId playlistId,
         CancellationToken cancellationToken = default)
     {
-        var playlistExtractor = await _controller.GetPlaylistAsync(playlistId, cancellationToken);
+        var playlistExtractor = await _controller.GetPlaylistDetailsAsync(playlistId, cancellationToken);
+
 
         var title =
             playlistExtractor.TryGetPlaylistTitle() ??
@@ -42,9 +43,10 @@ public class PlaylistClient
         var author = channelId is not null && channelTitle is not null
             ? new Author(channelId, channelTitle)
             : null;
+        //Can't get description from mix playlists
+        var description = playlistExtractor.TryGetPlaylistDescription();
 
-        var description = playlistExtractor.TryGetPlaylistDescription() ?? "";
-
+        //Can't get Thumbnails from mix playlists, maybe use firt video thumbnail?
         var thumbnails = playlistExtractor
             .GetPlaylistThumbnails()
             .Select(t =>
@@ -67,7 +69,9 @@ public class PlaylistClient
             })
             .ToArray();
 
-        return new Playlist(playlistId, title, author, description, thumbnails);
+        var url = playlistExtractor.TryGetPlayListUrl();
+
+        return new Playlist(playlistId, title, author, description, thumbnails, url);
     }
 
     /// <summary>
@@ -75,16 +79,19 @@ public class PlaylistClient
     /// </summary>
     public async IAsyncEnumerable<Batch<PlaylistVideo>> GetVideoBatchesAsync(
         PlaylistId playlistId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default       
+        )
     {
         var encounteredIds = new HashSet<string>(StringComparer.Ordinal);
-        var continuationToken = default(string?);
 
+        var visitorData = default(string?);
+        var index = 0;
+        string? lastVideoId = "";
+        bool keepExtracting = false;
         do
         {
             var playlistExtractor =
-                await _controller.GetPlaylistAsync(playlistId, continuationToken, cancellationToken);
-
+                await _controller.GetPlaylistVideosAsync(playlistId,lastVideoId,index,visitorData,cancellationToken);
             var videos = new List<PlaylistVideo>();
 
             foreach (var videoExtractor in playlistExtractor.GetVideos())
@@ -143,12 +150,20 @@ public class PlaylistClient
                 );
 
                 videos.Add(video);
+
+                
             }
+
+            lastVideoId = playlistExtractor.TryGetLastVideoId();
+            index = playlistExtractor.TryGetLastIndex() ?? 0;
+            visitorData  = visitorData ?? playlistExtractor.TryGetVisitorData();
 
             yield return Batch.Create(videos);
 
-            continuationToken = playlistExtractor.TryGetContinuationToken();
-        } while (!string.IsNullOrWhiteSpace(continuationToken));
+
+            //Dont keep extracting if there are no new videos.
+            keepExtracting = videos.Count != 0;
+        } while (keepExtracting);
     }
 
     /// <summary>
@@ -157,5 +172,5 @@ public class PlaylistClient
     public IAsyncEnumerable<PlaylistVideo> GetVideosAsync(
         PlaylistId playlistId,
         CancellationToken cancellationToken = default) =>
-        GetVideoBatchesAsync(playlistId, cancellationToken).FlattenAsync();
+        GetVideoBatchesAsync(playlistId ,cancellationToken).FlattenAsync();
 }

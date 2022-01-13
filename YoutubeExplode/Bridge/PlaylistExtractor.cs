@@ -20,6 +20,20 @@ internal partial class PlaylistExtractor
             .GetPropertyOrNull("items")
     );
 
+    private JsonElement? TryGetPlaylistProperty() => Memo.Cache(this, () =>
+        _content
+            .GetPropertyOrNull("contents")?
+            .GetPropertyOrNull("twoColumnWatchNextResults")?
+            .GetPropertyOrNull("playlist")?
+            .GetPropertyOrNull("playlist") ??
+
+        _content
+            .GetPropertyOrNull("continuationContents")?
+            .GetPropertyOrNull("playlistPanelContinuation")
+
+
+    );
+
     private JsonElement? TryGetSidebarPrimary() => Memo.Cache(this, () =>
         TryGetSidebar()?
             .EnumerateArrayOrNull()?
@@ -33,17 +47,19 @@ internal partial class PlaylistExtractor
             .ElementAtOrNull(1)?
             .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer")
     );
-
-    public bool IsPlaylistAvailable() => Memo.Cache(this, () =>
+    public bool IsPlaylistVideosAvailable() => Memo.Cache(this, () =>
+        TryGetPlaylistProperty() is not null
+    );
+    public bool IsPlaylistDetailsAvailable() => Memo.Cache(this, () =>
         TryGetSidebar() is not null
     );
 
     public string? TryGetPlaylistTitle() => Memo.Cache(this, () =>
-        TryGetSidebarPrimary()?
+        // next endpoint part
+        TryGetPlaylistProperty()?
             .GetPropertyOrNull("title")?
-            .GetPropertyOrNull("simpleText")?
             .GetStringOrNull() ??
-
+        // browse endpoint part
         TryGetSidebarPrimary()?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("runs")?
@@ -57,9 +73,17 @@ internal partial class PlaylistExtractor
         TryGetSidebarSecondary()?
             .GetPropertyOrNull("videoOwner")?
             .GetPropertyOrNull("videoOwnerRenderer")
+
+
     );
 
     public string? TryGetPlaylistAuthor() => Memo.Cache(this, () =>
+        //next enpoint part
+        TryGetPlaylistProperty()?
+            .GetPropertyOrNull("ownerName")?
+            .GetPropertyOrNull("simpleText")?
+            .GetStringOrNull() ??
+        //browse endpoint part
         TryGetPlaylistAuthorDetails()?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -98,6 +122,7 @@ internal partial class PlaylistExtractor
     );
 
     public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => Memo.Cache(this, () =>
+        //browse endpoint part
         TryGetSidebarPrimary()?
             .GetPropertyOrNull("thumbnailRenderer")?
             .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
@@ -106,44 +131,36 @@ internal partial class PlaylistExtractor
             .EnumerateArrayOrNull()?
             .Select(j => new ThumbnailExtractor(j))
             .ToArray() ??
+        
+        TryGetSidebarPrimary()?
+                .GetPropertyOrNull("thumbnailRenderer")?
+                .GetPropertyOrNull("playlistCustomThumbnailRenderer")?
+                .GetPropertyOrNull("thumbnail")?
+                .GetPropertyOrNull("thumbnails")?
+                .EnumerateArrayOrNull()?
+                .Select(j => new ThumbnailExtractor(j))
+                .ToArray() ??
+
+        //next endpoint part
+        GetVideos()
+            .FirstOrDefault()?
+            .GetVideoThumbnails()
+            .ToArray() ??
 
         Array.Empty<ThumbnailExtractor>()
     );
 
-    private JsonElement? TryGetContentRoot() => Memo.Cache(this, () =>
-        // Initial response
-        _content
-            .GetPropertyOrNull("contents")?
-            .GetPropertyOrNull("twoColumnBrowseResultsRenderer")?
-            .GetPropertyOrNull("tabs")?
-            .EnumerateArrayOrNull()?
-            .ElementAtOrNull(0)?
-            .GetPropertyOrNull("tabRenderer")?
-            .GetPropertyOrNull("content")?
-            .GetPropertyOrNull("sectionListRenderer")?
-            .GetPropertyOrNull("contents")?
-            .EnumerateArrayOrNull()?
-            .ElementAtOrNull(0)?
-            .GetPropertyOrNull("itemSectionRenderer")?
-            .GetPropertyOrNull("contents")?
-            .EnumerateArrayOrNull()?
-            .ElementAtOrNull(0)?
-            .GetPropertyOrNull("playlistVideoListRenderer")?
-            .GetPropertyOrNull("contents") ??
-
-        // Continuation response
-        _content
-            .GetPropertyOrNull("onResponseReceivedActions")?
-            .EnumerateArrayOrNull()?
-            .ElementAtOrNull(0)?
-            .GetPropertyOrNull("appendContinuationItemsAction")?
-            .GetPropertyOrNull("continuationItems")
+    public string? TryGetPlayListUrl() => Memo.Cache(this, () =>
+     TryGetPlaylistProperty()?
+         .GetPropertyOrNull("playlistShareUrl")?
+         .GetStringOrNull()
     );
 
     public IReadOnlyList<PlaylistVideoExtractor> GetVideos() => Memo.Cache(this, () =>
-        TryGetContentRoot()?
+        TryGetPlaylistProperty()?
+            .GetPropertyOrNull("contents")?
             .EnumerateArrayOrNull()?
-            .Select(j => j.GetPropertyOrNull("playlistVideoRenderer"))
+            .Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
             .WhereNotNull()
             .Select(j => new PlaylistVideoExtractor(j))
             .ToArray() ??
@@ -151,15 +168,43 @@ internal partial class PlaylistExtractor
         Array.Empty<PlaylistVideoExtractor>()
     );
 
-    public string? TryGetContinuationToken() => Memo.Cache(this, () =>
-        TryGetContentRoot()?
+    public string? TryGetLastVideoId() => Memo.Cache(this, () =>
+        TryGetPlaylistProperty()?
+            .GetPropertyOrNull("contents")?
             .EnumerateArrayOrNull()?
-            .Select(j => j.GetPropertyOrNull("continuationItemRenderer"))
+            .Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
+            .LastOrDefault()?
+            .GetPropertyOrNull("videoId")?
+            .GetStringOrNull()
+    );
+
+    public int? TryGetLastIndex() => Memo.Cache(this, () =>
+        TryGetPlaylistProperty()?
+            .GetPropertyOrNull("contents")?
+            .EnumerateArrayOrNull()?
+            .Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
+            .LastOrDefault()?
+            .GetPropertyOrNull("navigationEndpoint")?
+            .GetPropertyOrNull("watchEndpoint")?
+            .GetPropertyOrNull("index")?
+            .GetInt32OrNull()
+    );
+
+    public string? TryGetContinuationToken() => Memo.Cache(this, () =>
+        TryGetPlaylistProperty()?
+            .GetPropertyOrNull("continuations")?
+            .EnumerateArrayOrNull()?
+            .Select(j => j.GetPropertyOrNull("nextContinuationData"))
             .WhereNotNull()
-            .FirstOrNull()?
-            .GetPropertyOrNull("continuationEndpoint")?
-            .GetPropertyOrNull("continuationCommand")?
-            .GetPropertyOrNull("token")?
+            .FirstOrDefault()
+            .GetPropertyOrNull("continuation")?
+            .GetStringOrNull()
+    );
+
+    public string? TryGetVisitorData() => Memo.Cache(this, () =>
+        _content
+            .GetPropertyOrNull("responseContext")?
+            .GetPropertyOrNull("visitorData")?
             .GetStringOrNull()
     );
 }
