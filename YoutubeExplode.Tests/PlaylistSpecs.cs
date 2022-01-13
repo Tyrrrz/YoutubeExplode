@@ -34,7 +34,8 @@ public class PlaylistSpecs
         playlist.Author.Should().NotBeNull();
         playlist.Author?.ChannelId.Value.Should().Be("UCJ5UyIAa5nEGksjcdp43Ixw");
         playlist.Author?.Title.Should().Be("Google Analytics");
-        playlist.Description.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
+        playlist.Description.Should().NotBeNull();
+        playlist.Description?.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
         playlist.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -69,6 +70,7 @@ public class PlaylistSpecs
     [Theory]
     [InlineData(PlaylistIds.Normal)]
     [InlineData(PlaylistIds.MusicMix)]
+    [InlineData(PlaylistIds.MixPlaylist)]
     [InlineData(PlaylistIds.MusicAlbum)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
     [InlineData(PlaylistIds.Weird)]
@@ -82,6 +84,8 @@ public class PlaylistSpecs
 
         // Assert
         playlist.Id.Value.Should().Be(playlistId);
+        playlist.Thumbnails.Should().NotBeEmpty();
+        playlist.Title.Should().NotBeNullOrWhiteSpace();
     }
 
     [Fact]
@@ -149,6 +153,7 @@ public class PlaylistSpecs
     [Theory]
     [InlineData(PlaylistIds.Normal)]
     [InlineData(PlaylistIds.MusicMix)]
+    [InlineData(PlaylistIds.MixPlaylist)]
     [InlineData(PlaylistIds.MusicAlbum)]
     [InlineData(PlaylistIds.UserUploads)]
     [InlineData(PlaylistIds.ContainsLongVideos)]

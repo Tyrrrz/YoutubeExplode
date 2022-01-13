@@ -39,13 +39,6 @@ internal partial class PlaylistExtractor
             .GetBoolean()
     );
 
-    private JsonElement? TryGetPlaylistContinuationProperty() => Memo.Cache(this, () =>
-        _content
-            .GetPropertyOrNull("continuationContents")?
-            .GetPropertyOrNull("playlistPanelContinuation")?
-            .GetPropertyOrNull("contents")
-    );
-
     private JsonElement? TryGetSidebarPrimary() => Memo.Cache(this, () =>
         TryGetSidebar()?
             .EnumerateArrayOrNull()?
@@ -138,6 +131,7 @@ internal partial class PlaylistExtractor
     );
 
     public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => Memo.Cache(this, () =>
+        //browse endpoint part
         TryGetSidebarPrimary()?
             .GetPropertyOrNull("thumbnailRenderer")?
             .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
@@ -146,17 +140,29 @@ internal partial class PlaylistExtractor
             .EnumerateArrayOrNull()?
             .Select(j => new ThumbnailExtractor(j))
             .ToArray() ??
+        
+        TryGetSidebarPrimary()?
+                .GetPropertyOrNull("thumbnailRenderer")?
+                .GetPropertyOrNull("playlistCustomThumbnailRenderer")?
+                .GetPropertyOrNull("thumbnail")?
+                .GetPropertyOrNull("thumbnails")?
+                .EnumerateArrayOrNull()?
+                .Select(j => new ThumbnailExtractor(j))
+                .ToArray() ??
 
-        TryGetPlaylistProperty()?
-            .GetPropertyOrNull("thumbnailRenderer")?
-            .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
-            .GetPropertyOrNull("thumbnail")?
-            .GetPropertyOrNull("thumbnails")?
-            .EnumerateArrayOrNull()?
-            .Select(j => new ThumbnailExtractor(j))
+        //next endpoint part
+        GetVideos()
+            .FirstOrDefault()?
+            .GetVideoThumbnails()
             .ToArray() ??
 
         Array.Empty<ThumbnailExtractor>()
+    );
+
+    public string? TryGetPlayListUrl() => Memo.Cache(this, () =>
+     TryGetPlaylistProperty()?
+         .GetPropertyOrNull("playlistShareUrl")?
+         .GetStringOrNull()
     );
 
     public IReadOnlyList<PlaylistVideoExtractor> GetVideos() => Memo.Cache(this, () =>
@@ -178,7 +184,7 @@ internal partial class PlaylistExtractor
             .Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
             .LastOrDefault()?
             .GetPropertyOrNull("videoId")?
-            .GetStringOrNull() 
+            .GetStringOrNull()
     );
 
     public int? TryGetLastIndex() => Memo.Cache(this, () =>
@@ -190,7 +196,7 @@ internal partial class PlaylistExtractor
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("watchEndpoint")?
             .GetPropertyOrNull("index")?
-            .GetInt32OrNull() 
+            .GetInt32OrNull()
     );
 
     public string? TryGetContinuationToken() => Memo.Cache(this, () =>
