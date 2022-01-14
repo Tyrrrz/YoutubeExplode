@@ -83,6 +83,6 @@ public class ChannelClient
     {
         // Replace 'UC' in channel ID with 'UU'
         var playlistId = "UU" + channelId.Value.Substring(2);
-        return new PlaylistClient(_http).GetVideosAsync(playlistId, cancellationToken : cancellationToken);
+        return new PlaylistClient(_http).GetVideosAsync(playlistId, cancellationToken);
     }
 }
