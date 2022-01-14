@@ -31,7 +31,6 @@ internal partial class PlaylistExtractor
             .GetPropertyOrNull("continuationContents")?
             .GetPropertyOrNull("playlistPanelContinuation")
 
-
     );
 
     private JsonElement? TryGetSidebarPrimary() => Memo.Cache(this, () =>
@@ -47,9 +46,11 @@ internal partial class PlaylistExtractor
             .ElementAtOrNull(1)?
             .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer")
     );
+
     public bool IsPlaylistVideosAvailable() => Memo.Cache(this, () =>
         TryGetPlaylistProperty() is not null
     );
+
     public bool IsPlaylistDetailsAvailable() => Memo.Cache(this, () =>
         TryGetSidebar() is not null
     );

@@ -24,7 +24,7 @@ public class Playlist : IPlaylist
     /// <summary>
     /// Playlist description.
     /// </summary>
-    public string? Description { get; }
+    public string Description { get; }
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
@@ -38,7 +38,7 @@ public class Playlist : IPlaylist
         PlaylistId id,
         string title,
         Author? author,
-        string? description,
+        string description,
         IReadOnlyList<Thumbnail> thumbnails,
         string? url = null)
     {
