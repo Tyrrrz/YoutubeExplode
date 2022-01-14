@@ -44,7 +44,7 @@ public class PlaylistClient
             ? new Author(channelId, channelTitle)
             : null;
         //Can't get description from mix playlists
-        var description = playlistExtractor.TryGetPlaylistDescription();
+        var description = playlistExtractor.TryGetPlaylistDescription() ?? "";
 
         //Can't get Thumbnails from mix playlists, maybe use firt video thumbnail?
         var thumbnails = playlistExtractor
@@ -79,8 +79,7 @@ public class PlaylistClient
     /// </summary>
     public async IAsyncEnumerable<Batch<PlaylistVideo>> GetVideoBatchesAsync(
         PlaylistId playlistId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default       
-        )
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var encounteredIds = new HashSet<string>(StringComparer.Ordinal);
 

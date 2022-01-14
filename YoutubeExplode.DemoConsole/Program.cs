@@ -21,7 +21,6 @@ public static class Program
         Console.Write("Enter YouTube video ID or URL: ");
         var videoId = VideoId.Parse(Console.ReadLine() ?? "");
 
-
         // Get available streams and choose the best muxed (audio + video) stream
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
         var streamInfo = streamManifest.GetMuxedStreams().TryGetWithHighestVideoQuality();
