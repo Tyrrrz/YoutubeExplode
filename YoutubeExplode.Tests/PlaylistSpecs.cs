@@ -34,8 +34,7 @@ public class PlaylistSpecs
         playlist.Author.Should().NotBeNull();
         playlist.Author?.ChannelId.Value.Should().Be("UCJ5UyIAa5nEGksjcdp43Ixw");
         playlist.Author?.Title.Should().Be("Google Analytics");
-        playlist.Description.Should().NotBeNull();
-        playlist.Description?.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
+        playlist.Description.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
         playlist.Thumbnails.Should().NotBeEmpty();
     }
 

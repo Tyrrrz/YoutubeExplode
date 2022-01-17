@@ -69,9 +69,14 @@ public class PlaylistClient
             })
             .ToArray();
 
-        var url = playlistExtractor.TryGetPlayListUrl();
+        //Getting the firstVideoId means it's a mix playlist and we can't use the default playlist url 
+        string? firstVideoId = playlistExtractor.GetVideos().FirstOrDefault()?.TryGetVideoId();
 
-        return new Playlist(playlistId, title, author, description, thumbnails, url);
+        if(firstVideoId is not null)
+            return new Playlist(playlistId, title, author, description, thumbnails, 
+                $"http://www.youtube.com/watch?v={firstVideoId}&list={playlistId}");
+        else
+            return new Playlist(playlistId, title, author, description, thumbnails);
     }
 
     /// <summary>

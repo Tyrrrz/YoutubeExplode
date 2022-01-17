@@ -39,8 +39,25 @@ public class Playlist : IPlaylist
         string title,
         Author? author,
         string description,
+        IReadOnlyList<Thumbnail> thumbnails)
+    {
+        Id = id;
+        Title = title;
+        Author = author;
+        Description = description;
+        Thumbnails = thumbnails;
+    }
+
+    /// <summary>
+    /// Initializes an instance of <see cref="Playlist"/>.
+    /// </summary>
+    public Playlist(
+        PlaylistId id,
+        string title,
+        Author? author,
+        string description,
         IReadOnlyList<Thumbnail> thumbnails,
-        string? url = null)
+        string url)
     {
         Id = id;
         Title = title;

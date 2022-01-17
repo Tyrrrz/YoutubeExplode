@@ -179,26 +179,9 @@ internal partial class PlaylistExtractor
     );
 
     public int? TryGetLastIndex() => Memo.Cache(this, () =>
-        TryGetPlaylistProperty()?
-            .GetPropertyOrNull("contents")?
-            .EnumerateArrayOrNull()?
-            .Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
+        GetVideos()
             .LastOrDefault()?
-            .GetPropertyOrNull("navigationEndpoint")?
-            .GetPropertyOrNull("watchEndpoint")?
-            .GetPropertyOrNull("index")?
-            .GetInt32OrNull()
-    );
-
-    public string? TryGetContinuationToken() => Memo.Cache(this, () =>
-        TryGetPlaylistProperty()?
-            .GetPropertyOrNull("continuations")?
-            .EnumerateArrayOrNull()?
-            .Select(j => j.GetPropertyOrNull("nextContinuationData"))
-            .WhereNotNull()
-            .FirstOrDefault()
-            .GetPropertyOrNull("continuation")?
-            .GetStringOrNull()
+            .TryGetIndex()
     );
 
     public string? TryGetVisitorData() => Memo.Cache(this, () =>

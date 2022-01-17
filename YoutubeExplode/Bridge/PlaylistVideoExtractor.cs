@@ -97,4 +97,12 @@ internal class PlaylistVideoExtractor
 
         Array.Empty<ThumbnailExtractor>()
     );
+
+    public int? TryGetIndex() => Memo.Cache(this, () =>
+        _content
+            .GetPropertyOrNull("navigationEndpoint")?
+            .GetPropertyOrNull("watchEndpoint")?
+            .GetPropertyOrNull("index")?
+            .GetInt32OrNull()
+    );
 }
