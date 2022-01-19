@@ -6,6 +6,7 @@ internal static class PlaylistIds
     public const string Private = "PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBr";
     public const string NonExisting = "PLYjTMWc3sa4ZKheRwyA1q56xxQrfQEUBx";
     public const string Large = "PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk";
+    public const string VideoMix = "RDTsYhxMnGYCw";
     public const string MusicMix = "RDCLAK5uy_lf8okgl2ygD075nhnJVjlfhwp8NsUgEbs";
     public const string MusicAlbum = "OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM";
     public const string UserUploads = "UUTMt7iMWa7jy0fNXIktwyLA";

@@ -69,6 +69,7 @@ public class PlaylistSpecs
     [Theory]
     [InlineData(PlaylistIds.Normal)]
     [InlineData(PlaylistIds.MusicMix)]
+    [InlineData(PlaylistIds.VideoMix)]
     [InlineData(PlaylistIds.MusicAlbum)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
     [InlineData(PlaylistIds.Weird)]
@@ -82,6 +83,8 @@ public class PlaylistSpecs
 
         // Assert
         playlist.Id.Value.Should().Be(playlistId);
+        playlist.Thumbnails.Should().NotBeEmpty();
+        playlist.Title.Should().NotBeNullOrWhiteSpace();
     }
 
     [Fact]
@@ -149,6 +152,7 @@ public class PlaylistSpecs
     [Theory]
     [InlineData(PlaylistIds.Normal)]
     [InlineData(PlaylistIds.MusicMix)]
+    [InlineData(PlaylistIds.VideoMix)]
     [InlineData(PlaylistIds.MusicAlbum)]
     [InlineData(PlaylistIds.UserUploads)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
