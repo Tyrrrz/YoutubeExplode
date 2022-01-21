@@ -84,9 +84,8 @@ public static class ConversionExtensions
         var isTranscodingRequired = streamInfos.Any(s => s.Container != request.Container);
 
         // Progress setup
-        var progressMixer = progress?.Pipe(p => new ProgressMixer(p));
+        var progressMuxer = progress?.Pipe(p => new ProgressMuxer(p));
         var downloadProgressPortion = isTranscodingRequired ? 0.15 : 0.99;
-        var totalStreamSize = streamInfos.Sum(s => s.Size.Bytes);
 
         // Temp files for streams
         var streamFilePaths = new List<string>(streamInfos.Count);
@@ -94,6 +93,8 @@ public static class ConversionExtensions
         try
         {
             // Download streams
+            var totalStreamSize = streamInfos.Sum(s => s.Size.Bytes);
+
             foreach (var streamInfo in streamInfos)
             {
                 var streamIndex = streamFilePaths.Count + 1;
@@ -101,7 +102,7 @@ public static class ConversionExtensions
 
                 streamFilePaths.Add(streamFilePath);
 
-                var streamDownloadProgress = progressMixer?.Split(
+                var streamDownloadProgress = progressMuxer?.Fork(
                     downloadProgressPortion * streamInfo.Size.Bytes / totalStreamSize
                 );
 
@@ -114,7 +115,7 @@ public static class ConversionExtensions
             }
 
             // Mux/convert streams
-            var conversionProgress = progressMixer?.Split(1 - downloadProgressPortion);
+            var conversionProgress = progressMuxer?.Fork(1 - downloadProgressPortion);
 
             await new FFmpeg(request.FFmpegCliFilePath).ExecuteAsync(
                 streamFilePaths,

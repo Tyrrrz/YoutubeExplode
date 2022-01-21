@@ -13,10 +13,8 @@ public class PlaylistSpecs
 {
     private readonly ITestOutputHelper _testOutput;
 
-    public PlaylistSpecs(ITestOutputHelper testOutput)
-    {
+    public PlaylistSpecs(ITestOutputHelper testOutput) =>
         _testOutput = testOutput;
-    }
 
     [Fact]
     public async Task User_can_get_metadata_of_a_playlist()
@@ -33,6 +31,7 @@ public class PlaylistSpecs
         playlist.Title.Should().Be("Analytics Academy - Digital Analytics Fundamentals");
         playlist.Author.Should().NotBeNull();
         playlist.Author?.ChannelId.Value.Should().Be("UCJ5UyIAa5nEGksjcdp43Ixw");
+        playlist.Author?.ChannelUrl.Should().Be("https://www.youtube.com/channel/UCJ5UyIAa5nEGksjcdp43Ixw");
         playlist.Author?.Title.Should().Be("Google Analytics");
         playlist.Description.Should().Contain("Digital Analytics Fundamentals course on Analytics Academy");
         playlist.Thumbnails.Should().NotBeEmpty();
@@ -83,8 +82,10 @@ public class PlaylistSpecs
 
         // Assert
         playlist.Id.Value.Should().Be(playlistId);
-        playlist.Thumbnails.Should().NotBeEmpty();
+        playlist.Url.Should().NotBeNullOrWhiteSpace();
         playlist.Title.Should().NotBeNullOrWhiteSpace();
+        playlist.Description.Should().NotBeNull();
+        playlist.Thumbnails.Should().NotBeEmpty();
     }
 
     [Fact]

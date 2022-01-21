@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace YoutubeExplode.Converter.Utils;
 
-internal class ProgressMixer
+internal class ProgressMuxer
 {
     private readonly object _lock = new();
 
@@ -13,13 +13,13 @@ internal class ProgressMixer
 
     private int _splitCount;
 
-    public ProgressMixer(IProgress<double> output)
+    public ProgressMuxer(IProgress<double> output)
     {
         _output = output;
         _splitTotals = new Dictionary<int, double>();
     }
 
-    public IProgress<double> Split(double multiplier)
+    public IProgress<double> Fork(double multiplier)
     {
         var index = _splitCount++;
         return new Progress<double>(p =>
