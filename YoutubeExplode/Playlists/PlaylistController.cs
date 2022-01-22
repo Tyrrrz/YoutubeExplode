@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
+using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists;
 
@@ -55,7 +56,7 @@ internal class PlaylistController : YoutubeControllerBase
 
     public async ValueTask<PlaylistNextResponseExtractor> GetPlaylistNextResponseAsync(
         PlaylistId playlistId,
-        string? videoId = null,
+        VideoId? videoId = null,
         int index = 0,
         string? visitorData = null,
         CancellationToken cancellationToken = default)
@@ -65,7 +66,7 @@ internal class PlaylistController : YoutubeControllerBase
         var payload = new Dictionary<string, object?>
         {
             ["playlistId"] = playlistId.Value,
-            ["videoId"] = videoId,
+            ["videoId"] = videoId?.Value,
             ["playlistIndex"] = index,
             ["context"] = new Dictionary<string, object?>
             {

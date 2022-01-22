@@ -132,7 +132,6 @@ public class SearchClient
                 // System playlists have no author
                 var channelId = playlistExtractor.TryGetPlaylistChannelId();
                 var channelTitle = playlistExtractor.TryGetPlaylistAuthor();
-
                 var author = channelId is not null && channelTitle is not null
                     ? new Author(channelId, channelTitle)
                     : null;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists;
 
@@ -94,10 +94,10 @@ public class PlaylistClient
         PlaylistId playlistId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var encounteredIds = new HashSet<string>(StringComparer.Ordinal);
-        var visitorData = default(string?);
-        var lastVideoId = default(string?);
+        var encounteredIds = new HashSet<VideoId>();
+        var lastVideoId = default(VideoId?);
         var lastVideoIndex = 0;
+        var visitorData = default(string?);
 
         do
         {
