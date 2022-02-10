@@ -61,7 +61,7 @@ public class ClosedCaptionSpecs : IClassFixture<TempOutputFixture>
         // Assert
         track.Captions.Should().HaveCountGreaterOrEqualTo(2000);
     }
-    
+
     [Fact]
     public async Task User_can_get_a_specific_closed_caption_track_from_a_video()
     {

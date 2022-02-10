@@ -78,13 +78,14 @@ public class ClosedCaptionClient
                 if (string.IsNullOrWhiteSpace(text))
                     return null;
 
-                if (c.TryGetDuration() is not { } duration)
+                // Auto-generated captions may have invalid manifests:
+                // https://github.com/Tyrrrz/YoutubeExplode/discussions/619
+
+                if (c.TryGetOffset() is not { } offset)
                     return null;
 
-                var offset =
-                    c.TryGetOffset() ??
-                    throw new YoutubeExplodeException("Could not extract caption offset.");
-
+                if (c.TryGetDuration() is not { } duration)
+                    return null;
 
                 var parts = c
                     .GetParts()

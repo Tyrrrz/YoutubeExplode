@@ -13,11 +13,11 @@ internal static class VideoIds
     public const string Omnidirectional = "-xNN-bJQ4vI";
     public const string HighDynamicRange = "vX2vsvdq8nw";
     public const string ContainsClosedCaptions = "YltHGKX80Y8";
+    public const string ContainsBrokenClosedCaptions = "1VKIIw05JnE";
     public const string EmbedRestrictedByYouTube = "_kmeFXjjGfk";
     public const string EmbedRestrictedByAuthor = "MeJVWBSsPAY";
     public const string AgeRestricted = "SkRSXFQerZs";
     public const string AgeRestrictedEmbedRestricted = "hySoCSoH-g8";
     public const string RatingDisabled = "5VGm0dczmHc";
     public const string RequiresPurchase = "p3dDcKOFXQg";
-    public const string ContainsBrokenClosedCaptions = "1VKIIw05JnE";
 }
