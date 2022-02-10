@@ -78,13 +78,13 @@ public class ClosedCaptionClient
                 if (string.IsNullOrWhiteSpace(text))
                     return null;
 
+                if (c.TryGetDuration() is not { } duration) // elegant null check and gets rid of nullable quick
+                    return null;
+
                 var offset =
                     c.TryGetOffset() ??
                     throw new YoutubeExplodeException("Could not extract caption offset.");
 
-                var duration =
-                    c.TryGetDuration() ??
-                    throw new YoutubeExplodeException("Could not extract caption duration.");
 
                 var parts = c
                     .GetParts()
