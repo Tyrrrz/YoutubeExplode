@@ -19,4 +19,5 @@ internal static class VideoIds
     public const string AgeRestrictedEmbedRestricted = "hySoCSoH-g8";
     public const string RatingDisabled = "5VGm0dczmHc";
     public const string RequiresPurchase = "p3dDcKOFXQg";
+    public const string ContainsBrokenClosedCaptions = "1VKIIw05JnE";
 }
