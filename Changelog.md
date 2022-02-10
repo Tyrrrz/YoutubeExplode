@@ -1,3 +1,11 @@
+### v6.0.8 (10-Feb-2022)
+
+- Added handling for video URLs in YouTube Shorts format. (Thanks [@wellWINeo](https://github.com/wellWINeo))
+- Added support for retrieving metadata of mix playlists using `PlaylistClient.GetAsync(...)`. (Thanks [@Roberto Blázquez](https://github.com/xBaank))
+- Added `ChannelUrl` property to `Author`.
+- Fixed an issue where attempting to retrieve certain auto-generated closed caption tracks threw an exception because of malformed data structure in the manifest. (Thanks [@AlmightyLks](https://github.com/AlmightyLks))
+- [Converter] Obsoleted `YoutubeExplode.Converter.ConversionFormat` type. Going forward, use `YoutubeExplode.Videos.Streams.Container` instead.
+
 ### v6.0.7 (10-Dec-2021)
 
 - Added an overload for `SearchClient.GetResultBatchesAsync(...)` that accepts a `SearchFilter` parameter. This parameter can be used to limit the query to only certain type of results (videos, playlists, channels) and avoid redundant requests.
