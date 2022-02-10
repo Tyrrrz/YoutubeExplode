@@ -78,7 +78,7 @@ public class ClosedCaptionClient
                 if (string.IsNullOrWhiteSpace(text))
                     return null;
 
-                if (c.TryGetDuration() is not { } duration) // elegant null check and gets rid of nullable quick
+                if (c.TryGetDuration() is not { } duration)
                     return null;
 
                 var offset =
