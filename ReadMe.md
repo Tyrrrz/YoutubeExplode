@@ -11,7 +11,7 @@
 
 **YoutubeExplode** is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks.
 Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered requests to retrieve information.
-As it doesn't use the official API, there's also no need for an API key and there are no usage quotas.
+As it doesn't rely on the official API, there's also no need for an API key and there are no usage quotas.
 
 ✨ This library is used in [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) -- a desktop application for downloading YouTube videos.
 
@@ -102,15 +102,16 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
-> ⚠ While it may be tempting to always rely on muxed streams, given that they contain both audio and video, it's important to note that they are very limited in quality (up to 720p30).
-> If you want to download a video in highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together, which can be accomplished by using the **YoutubeExplode.Converter** package (see below).
+> ⚠ Muxed streams contain both audio and video, but these streams are very limited in quality (up to 720p30).
+To download video in the highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together.
+This can be accomplished by using the **YoutubeExplode.Converter** package (see below).
 
 #### Downloading video with muxing or conversion
 
 > ⚠ Downloading with muxing or conversion requires [YoutubeExplode.Converter](https://nuget.org/packages/YoutubeExplode.Converter).
 
 > ⚠ This package also relies on [FFmpeg](https://ffmpeg.org) CLI, which can be downloaded [here](https://ffbinaries.com/downloads).
-> Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or use one of the overloads to provide a custom location directly.
+Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or use one of the overloads to provide a custom location directly.
 
 You can download a video with muxing or conversion through one of the extension methods provided on `VideoClient`.
 For example, to download a video in the specified format using highest quality streams, simply call `DownloadAsync(...)` with the video ID and the destination file path:
@@ -238,7 +239,7 @@ var youtube = new YoutubeClient();
 // Get all playlist videos
 var videos = await youtube.Playlists.GetVideosAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6");
 
-// Get the first 20 playlist videos
+// Get only the first 20 playlist videos
 var videosSubset = await youtube.Playlists
     .GetVideosAsync(playlist.Id)
     .CollectAsync(20);
@@ -319,8 +320,8 @@ var videos = await youtube.Channels.GetUploadsAsync("UCSMOQeBJ2RAnuFungnQOxLg");
 
 ### Searching
 
-You can execute a search query and get the results by calling `Search.GetResultsAsync(...)`.
-Each result may represent either a video, a playlist, or a channel, so you need to use pattern matching to handle corresponding cases:
+You can execute a search query and get its results by calling `Search.GetResultsAsync(...)`.
+Each result may represent either a video, a playlist, or a channel, so you need to apply pattern matching to handle the corresponding cases:
 
 ```csharp
 using YoutubeExplode;
@@ -332,23 +333,23 @@ await foreach (var result in youtube.Search.GetResultsAsync("blender tutorials")
     // Use pattern matching to handle different results (videos, playlists, channels)
     switch (result)
     {
-        case VideoSearchResult videoResult:
+        case VideoSearchResult video:
         {
-            var id = videoResult.Id;
-            var title = videoResult.Title;
-            var duration = videoResult.Duration;
+            var id = video.Id;
+            var title = video.Title;
+            var duration = video.Duration;
             break;
         }
-        case PlaylistSearchResult playlistResult:
+        case PlaylistSearchResult playlist:
         {
-            var id = playlistResult.Id;
-            var title = playlistResult.Title;
+            var id = playlist.Id;
+            var title = playlist.Title;
             break;
         }
-        case ChannelSearchResult channelResult:
+        case ChannelSearchResult channel:
         {
-            var id = channelResult.Id;
-            var title = channelResult.Title;
+            var id = channel.Id;
+            var title = channel.Title;
             break;
         }
     }
