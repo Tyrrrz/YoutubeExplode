@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Converter.Utils;
-using YoutubeExplode.Converter.Utils.Extensions;
 using YoutubeExplode.Videos;
+using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;
@@ -19,53 +18,33 @@ public static class ConversionExtensions
     /// <summary>
     /// Checks whether the container is a known audio-only container.
     /// </summary>
-    public static bool IsAudioOnly(this Container container) =>
-        string.Equals(container.Name, "mp3", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(container.Name, "m4a", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(container.Name, "wav", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(container.Name, "wma", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(container.Name, "ogg", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(container.Name, "aac", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(container.Name, "opus", StringComparison.OrdinalIgnoreCase);
+    [Obsolete("Use Container.IsAudioOnly instead."), ExcludeFromCodeCoverage]
+    public static bool IsAudioOnly(this Container container) => container.IsAudioOnly;
 
-    private static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(
-        this StreamManifest streamManifest,
-        Container container)
+    /// <summary>
+    /// Downloads specified media streams and closed captions and processes them into a single file.
+    /// </summary>
+    public static async ValueTask DownloadAsync(
+        this VideoClient videoClient,
+        IReadOnlyList<IStreamInfo> streamInfos,
+        IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos,
+        ConversionRequest request,
+        IProgress<double>? progress = null,
+        CancellationToken cancellationToken = default)
     {
-        if (streamManifest.GetAudioOnlyStreams().Any() && streamManifest.GetVideoOnlyStreams().Any())
-        {
-            // Include audio stream
-            // Priority: transcoding -> bitrate
-            yield return streamManifest
-                .GetAudioOnlyStreams()
-                .OrderByDescending(s => s.Container == container)
-                .ThenByDescending(s => s.Bitrate)
-                .First();
+        var ffmpeg = new FFmpeg(request.FFmpegCliFilePath);
+        var converter = new Converter(videoClient, ffmpeg, request.Preset);
 
-            // Include video stream
-            if (!container.IsAudioOnly())
-            {
-                // Priority: video quality -> transcoding
-                yield return streamManifest
-                    .GetVideoOnlyStreams()
-                    .OrderByDescending(s => s.VideoQuality)
-                    .ThenByDescending(s => s.Container == container)
-                    .First();
-            }
-        }
-        // Use single muxed stream if adaptive streams are not available
-        else
-        {
-            // Priority: video quality -> transcoding
-            yield return streamManifest
-                .GetMuxedStreams()
-                .OrderByDescending(s => s.VideoQuality)
-                .ThenByDescending(s => s.Container == container)
-                .First();
-        }
+        await converter.ProcessAsync(
+            request.OutputFilePath,
+            request.Container,
+            streamInfos,
+            closedCaptionTrackInfos,
+            progress,
+            cancellationToken
+        ).ConfigureAwait(false);
     }
 
-    // TODO: this should be on StreamClient
     /// <summary>
     /// Downloads specified media streams and processes them into a single file.
     /// </summary>
@@ -74,77 +53,14 @@ public static class ConversionExtensions
         IReadOnlyList<IStreamInfo> streamInfos,
         ConversionRequest request,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
-    {
-        // Ensure that the provided stream collection is not empty
-        if (!streamInfos.Any())
-            throw new InvalidOperationException("No streams provided.");
-
-        // If all streams have the same container as the output container, then transcoding is not required
-        var isTranscodingRequired = streamInfos.Any(s => s.Container != request.Container);
-
-        // Progress setup
-        var progressMuxer = progress?.Pipe(p => new ProgressMuxer(p));
-        var downloadProgressPortion = isTranscodingRequired ? 0.15 : 0.99;
-
-        // Temp files for streams
-        var streamFilePaths = new List<string>(streamInfos.Count);
-
-        try
-        {
-            // Download streams
-            var totalStreamSize = streamInfos.Sum(s => s.Size.Bytes);
-
-            foreach (var streamInfo in streamInfos)
-            {
-                var streamIndex = streamFilePaths.Count + 1;
-                var streamFilePath = $"{request.OutputFilePath}.stream-{streamIndex}.tmp";
-
-                streamFilePaths.Add(streamFilePath);
-
-                var streamDownloadProgress = progressMuxer?.Fork(
-                    downloadProgressPortion * streamInfo.Size.Bytes / totalStreamSize
-                );
-
-                await videoClient.Streams.DownloadAsync(
-                    streamInfo,
-                    streamFilePath,
-                    streamDownloadProgress,
-                    cancellationToken
-                ).ConfigureAwait(false);
-            }
-
-            // Mux/convert streams
-            var conversionProgress = progressMuxer?.Fork(1 - downloadProgressPortion);
-
-            await new FFmpeg(request.FFmpegCliFilePath).ExecuteAsync(
-                streamFilePaths,
-                request.OutputFilePath,
-                request.Container.Name.ToLowerInvariant(),
-                request.Preset.ToString().ToLowerInvariant(),
-                isTranscodingRequired,
-                conversionProgress,
-                cancellationToken
-            ).ConfigureAwait(false);
-
-            progress?.Report(1);
-        }
-        finally
-        {
-            // Delete temp files
-            foreach (var streamFilePath in streamFilePaths)
-            {
-                try
-                {
-                    File.Delete(streamFilePath);
-                }
-                catch
-                {
-                    // Try our best but don't crash
-                }
-            }
-        }
-    }
+        CancellationToken cancellationToken = default) =>
+        await videoClient.DownloadAsync(
+            streamInfos,
+            Array.Empty<ClosedCaptionTrackInfo>(),
+            request,
+            progress,
+            cancellationToken
+        );
 
     /// <summary>
     /// Resolves the best media streams for the specified video, downloads them and processes into a single file.
@@ -156,10 +72,45 @@ public static class ConversionExtensions
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(StreamManifest streamManifest, Container container)
+        {
+            if (streamManifest.GetAudioOnlyStreams().Any() && streamManifest.GetVideoOnlyStreams().Any())
+            {
+                // Include audio stream
+                // Priority: transcoding -> bitrate
+                yield return streamManifest
+                    .GetAudioOnlyStreams()
+                    .OrderByDescending(s => s.Container == container)
+                    .ThenByDescending(s => s.Bitrate)
+                    .First();
+
+                // Include video stream
+                if (!container.IsAudioOnly)
+                {
+                    // Priority: video quality -> transcoding
+                    yield return streamManifest
+                        .GetVideoOnlyStreams()
+                        .OrderByDescending(s => s.VideoQuality)
+                        .ThenByDescending(s => s.Container == container)
+                        .First();
+                }
+            }
+            // Use single muxed stream if adaptive streams are not available
+            else
+            {
+                // Priority: video quality -> transcoding
+                yield return streamManifest
+                    .GetMuxedStreams()
+                    .OrderByDescending(s => s.VideoQuality)
+                    .ThenByDescending(s => s.Container == container)
+                    .First();
+            }
+        }
+
         var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken)
             .ConfigureAwait(false);
 
-        var streamInfos = streamManifest.GetBestMediaStreamInfos(request.Container).ToArray();
+        var streamInfos = GetBestMediaStreamInfos(streamManifest, request.Container).ToArray();
 
         await videoClient.DownloadAsync(streamInfos, request, progress, cancellationToken)
             .ConfigureAwait(false);

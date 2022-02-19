@@ -1,34 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace YoutubeExplode.Converter.Utils;
 
 internal class ProgressMuxer
 {
+    private readonly IProgress<double> _target;
+
     private readonly object _lock = new();
+    private readonly Dictionary<int, double> _splitWeights = new();
+    private readonly Dictionary<int, double> _splitValues = new();
 
-    private readonly IProgress<double> _output;
-    private readonly Dictionary<int, double> _splitTotals;
+    public ProgressMuxer(IProgress<double> target) =>
+        _target = target;
 
-    private int _splitCount;
-
-    public ProgressMuxer(IProgress<double> output)
+    public IProgress<double> CreateInput(double weight = 1)
     {
-        _output = output;
-        _splitTotals = new Dictionary<int, double>();
-    }
-
-    public IProgress<double> Fork(double multiplier)
-    {
-        var index = _splitCount++;
-        return new Progress<double>(p =>
+        lock (_lock)
         {
-            lock (_lock)
+            var index = _splitWeights.Count;
+
+            _splitWeights[index] = weight;
+            _splitValues[index] = 0;
+
+            return new Progress<double>(p =>
             {
-                _splitTotals[index] = multiplier * p;
-                _output.Report(_splitTotals.Values.Sum());
-            }
-        });
+                lock (_lock)
+                {
+                    _splitValues[index] = p;
+
+                    var weightedSum = 0.0;
+                    var weightedMax = 0.0;
+
+                    for (var i = 0; i < _splitWeights.Count; i++)
+                    {
+                        weightedSum += _splitWeights[i] * _splitValues[i];
+                        weightedMax += _splitWeights[i];
+                    }
+
+                    _target.Report(weightedSum / weightedMax);
+                }
+            });
+        }
     }
 }

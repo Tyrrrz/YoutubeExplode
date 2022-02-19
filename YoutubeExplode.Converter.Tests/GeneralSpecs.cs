@@ -6,6 +6,7 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Converter.Tests.Fixtures;
+using YoutubeExplode.Converter.Tests.Utils;
 
 namespace YoutubeExplode.Converter.Tests;
 
@@ -36,9 +37,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
 
         // Assert
-        var fileInfo = new FileInfo(outputFilePath);
-        fileInfo.Exists.Should().BeTrue();
-        fileInfo.Length.Should().BeGreaterThan(0);
+        MediaFormat.IsMp4File(outputFilePath).Should().BeTrue();
     }
 
     [Fact]
@@ -49,12 +48,10 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = Path.ChangeExtension(_tempOutputFixture.GetTempFilePath(), "webm");
 
         // Act
-        await youtube.Videos.DownloadAsync("FkklG9MA0vM", outputFilePath);
+        await youtube.Videos.DownloadAsync("5NmxuoNyDss", outputFilePath);
 
         // Assert
-        var fileInfo = new FileInfo(outputFilePath);
-        fileInfo.Exists.Should().BeTrue();
-        fileInfo.Length.Should().BeGreaterThan(0);
+        MediaFormat.IsWebMFile(outputFilePath).Should().BeTrue();
     }
 
     [Fact]
@@ -68,9 +65,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
 
         // Assert
-        var fileInfo = new FileInfo(outputFilePath);
-        fileInfo.Exists.Should().BeTrue();
-        fileInfo.Length.Should().BeGreaterThan(0);
+        MediaFormat.IsMp3File(outputFilePath).Should().BeTrue();
     }
 
     [Fact]
@@ -84,9 +79,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
 
         // Assert
-        var fileInfo = new FileInfo(outputFilePath);
-        fileInfo.Exists.Should().BeTrue();
-        fileInfo.Length.Should().BeGreaterThan(0);
+        MediaFormat.IsOggFile(outputFilePath).Should().BeTrue();
     }
 
     [Fact]
@@ -99,14 +92,12 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         // Act
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath, o => o
             .SetFFmpegPath(_ffmpegFixture.FilePath)
-            .SetFormat("mp4")
+            .SetContainer("mp4")
             .SetPreset(ConversionPreset.UltraFast)
         );
 
         // Assert
-        var fileInfo = new FileInfo(outputFilePath);
-        fileInfo.Exists.Should().BeTrue();
-        fileInfo.Length.Should().BeGreaterThan(0);
+        MediaFormat.IsMp4File(outputFilePath).Should().BeTrue();
     }
 
     [Fact]
@@ -128,6 +119,5 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
 
         // Assert
         progressReports.Should().NotBeEmpty();
-        progressReports.Should().Contain(1.0);
     }
 }

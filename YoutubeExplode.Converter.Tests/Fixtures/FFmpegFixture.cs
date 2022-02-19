@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using Xunit;
@@ -11,6 +12,9 @@ namespace YoutubeExplode.Converter.Tests.Fixtures;
 
 public partial class FFmpegFixture : IAsyncLifetime
 {
+    // Allow this fixture to be reused across multiple tests
+    private static readonly SemaphoreSlim Lock = new(1, 1);
+
     public string FilePath { get; } = Path.Combine(
         Path.GetDirectoryName(typeof(FFmpegFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
         GetFFmpegFileName()
@@ -47,10 +51,19 @@ public partial class FFmpegFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        if (File.Exists(FilePath))
-            return;
+        await Lock.WaitAsync();
 
-        await DownloadFFmpegAsync();
+        try
+        {
+            if (File.Exists(FilePath))
+                return;
+
+            await DownloadFFmpegAsync();
+        }
+        finally
+        {
+            Lock.Release();
+        }
     }
 
     public Task DisposeAsync() => Task.CompletedTask;

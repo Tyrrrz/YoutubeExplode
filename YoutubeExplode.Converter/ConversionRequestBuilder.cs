@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using YoutubeExplode.Converter.Utils.Extensions;
@@ -55,14 +56,14 @@ public partial class ConversionRequestBuilder
     /// <summary>
     /// Sets conversion format.
     /// </summary>
-    [Obsolete("Use SetContainer instead.")]
+    [Obsolete("Use SetContainer instead."), ExcludeFromCodeCoverage]
     public ConversionRequestBuilder SetFormat(ConversionFormat format) =>
         SetContainer(new Container(format.Name));
 
     /// <summary>
     /// Sets conversion format.
     /// </summary>
-    [Obsolete("Use SetContainer instead.")]
+    [Obsolete("Use SetContainer instead."), ExcludeFromCodeCoverage]
     public ConversionRequestBuilder SetFormat(string format) =>
         SetContainer(format);
 

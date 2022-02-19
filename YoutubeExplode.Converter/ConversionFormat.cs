@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;
@@ -6,7 +7,7 @@ namespace YoutubeExplode.Converter;
 /// <summary>
 /// Encapsulates conversion media format.
 /// </summary>
-[Obsolete("Use YoutubeExplode.Videos.Streams.Container instead")]
+[Obsolete("Use YoutubeExplode.Videos.Streams.Container instead"), ExcludeFromCodeCoverage]
 public readonly struct ConversionFormat
 {
     /// <summary>
