@@ -1,3 +1,9 @@
+### v6.1 (20-Feb-2022)
+
+- Added `IsAudioOnly` property to `Container`. If this property evaluates to `true`, the container is guaranteed to not contain any video streams. If it evaluates to `false`, the container may or may not contain video streams.
+- [Converter] Added an overload of `VideoClient.DownloadAsync(...)` that allows muxing specified streams and closed caption tracks into a single container. Closed captions are embedded inside the container as soft subtitles.
+- [Converter] Obsoleted `Container.IsAudioOnly()` extension method. Use the newly added property instead.
+
 ### v6.0.8 (10-Feb-2022)
 
 - Added handling for video URLs in YouTube Shorts format. (Thanks [@wellWINeo](https://github.com/wellWINeo))
