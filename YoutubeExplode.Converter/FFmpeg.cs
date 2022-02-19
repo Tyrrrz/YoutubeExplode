@@ -36,8 +36,7 @@ internal partial class FFmpeg
             .WithArguments(arguments)
             .WithStandardErrorPipe(stdErrPipe)
             .WithValidation(CommandResultValidation.None)
-            .ExecuteAsync(cancellationToken)
-            .ConfigureAwait(false);
+            .ExecuteAsync(cancellationToken);
 
         if (result.ExitCode != 0)
         {

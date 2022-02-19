@@ -96,8 +96,7 @@ internal partial class Converter
         arguments.Add(filePath);
 
         // Run FFmpeg
-        await _ffmpeg.ExecuteAsync(arguments.Build(), progress, cancellationToken)
-            .ConfigureAwait(false);
+        await _ffmpeg.ExecuteAsync(arguments.Build(), progress, cancellationToken);
     }
 
     private async ValueTask PopulateStreamInputsAsync(
@@ -126,7 +125,7 @@ internal partial class Converter
                 streamInput.FilePath,
                 streamProgress,
                 cancellationToken
-            ).ConfigureAwait(false);
+            );
         }
 
         progress?.Report(1);
@@ -158,7 +157,7 @@ internal partial class Converter
                 subtitleInput.FilePath,
                 trackProgress,
                 cancellationToken
-            ).ConfigureAwait(false);
+            );
         }
 
         progress?.Report(1);
@@ -198,7 +197,7 @@ internal partial class Converter
                 streamInputs,
                 streamDownloadProgress,
                 cancellationToken
-            ).ConfigureAwait(false);
+            );
 
             await PopulateSubtitleInputsAsync(
                 filePath,
@@ -206,7 +205,7 @@ internal partial class Converter
                 subtitleInputs,
                 subtitleDownloadProgress,
                 cancellationToken
-            ).ConfigureAwait(false);
+            );
 
             await ProcessAsync(
                 filePath,
@@ -215,7 +214,7 @@ internal partial class Converter
                 subtitleInputs,
                 conversionProgress,
                 cancellationToken
-            ).ConfigureAwait(false);
+            );
         }
         finally
         {

@@ -42,7 +42,7 @@ public static class ConversionExtensions
             closedCaptionTrackInfos,
             progress,
             cancellationToken
-        ).ConfigureAwait(false);
+        );
     }
 
     /// <summary>
@@ -107,13 +107,10 @@ public static class ConversionExtensions
             }
         }
 
-        var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken)
-            .ConfigureAwait(false);
-
+        var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken);
         var streamInfos = GetBestMediaStreamInfos(streamManifest, request.Container).ToArray();
 
-        await videoClient.DownloadAsync(streamInfos, request, progress, cancellationToken)
-            .ConfigureAwait(false);
+        await videoClient.DownloadAsync(streamInfos, request, progress, cancellationToken);
     }
 
     /// <summary>
@@ -134,8 +131,7 @@ public static class ConversionExtensions
         configure(requestBuilder);
         var request = requestBuilder.Build();
 
-        await videoClient.DownloadAsync(videoId, request, progress, cancellationToken)
-            .ConfigureAwait(false);
+        await videoClient.DownloadAsync(videoId, request, progress, cancellationToken);
     }
 
     /// <summary>
@@ -151,6 +147,5 @@ public static class ConversionExtensions
         string outputFilePath,
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default) =>
-        await videoClient.DownloadAsync(videoId, outputFilePath, _ => { }, progress, cancellationToken)
-            .ConfigureAwait(false);
+        await videoClient.DownloadAsync(videoId, outputFilePath, _ => { }, progress, cancellationToken);
 }
