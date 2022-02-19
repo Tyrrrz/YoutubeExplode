@@ -50,13 +50,9 @@ internal partial class Converter
         // Preset
         arguments.Add("-preset").Add(_preset);
 
-        // Stream mapping
-        for (var i = 0; i < streamInputs.Count; i++)
+        // Mapping
+        for (var i = 0; i < streamInputs.Count + subtitleInputs.Count; i++)
             arguments.Add("-map").Add(i);
-
-        // Subtitle mapping
-        for (var i = 0; i < subtitleInputs.Count; i++)
-            arguments.Add("-map").Add(streamInputs.Count + i);
 
         // Avoid transcoding if possible
         if (streamInputs.All(s => s.Info.Container == container))
