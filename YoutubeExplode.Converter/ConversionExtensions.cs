@@ -72,7 +72,7 @@ public static class ConversionExtensions
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        static IEnumerable<IStreamInfo> GetBestMediaStreamInfos(StreamManifest streamManifest, Container container)
+        static IEnumerable<IStreamInfo> GetOptimalStreams(StreamManifest streamManifest, Container container)
         {
             if (streamManifest.GetAudioOnlyStreams().Any() && streamManifest.GetVideoOnlyStreams().Any())
             {
@@ -108,7 +108,7 @@ public static class ConversionExtensions
         }
 
         var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken);
-        var streamInfos = GetBestMediaStreamInfos(streamManifest, request.Container).ToArray();
+        var streamInfos = GetOptimalStreams(streamManifest, request.Container).ToArray();
 
         await videoClient.DownloadAsync(streamInfos, request, progress, cancellationToken);
     }
