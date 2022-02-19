@@ -16,6 +16,11 @@ public readonly partial struct Container
     /// <summary>
     /// Whether this container is a known audio-only container.
     /// </summary>
+    /// <remarks>
+    /// This property only refers to the container's capabilities and not its actual contents.
+    /// If the container IS audio-only, it DOES NOT contain any video streams.
+    /// If the container IS NOT audio-only, it MAY contain video streams, but is not required to.
+    /// </remarks>
     public bool IsAudioOnly =>
         string.Equals(Name, "mp3", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(Name, "m4a", StringComparison.OrdinalIgnoreCase) ||
