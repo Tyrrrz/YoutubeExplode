@@ -1,12 +1,13 @@
 # YoutubeExplode
 
-[![Build](https://github.com/Tyrrrz/YoutubeExplode/workflows/main/badge.svg?branch=master)](https://github.com/Tyrrrz/YoutubeExplode/actions)
-[![Coverage](https://codecov.io/gh/Tyrrrz/YoutubeExplode/branch/master/graph/badge.svg)](https://codecov.io/gh/Tyrrrz/YoutubeExplode)
+[![Made in Ukraine](https://img.shields.io/badge/made_in-ukraine-ffd700.svg?labelColor=0057b7)](https://vshymanskyy.github.io/StandWithUkraine)
+[![Build](https://img.shields.io/github/workflow/status/Tyrrrz/YoutubeExplode/CI/master)](https://github.com/Tyrrrz/YoutubeExplode/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/Tyrrrz/YoutubeExplode/master)](https://codecov.io/gh/Tyrrrz/YoutubeExplode)
 [![Version](https://img.shields.io/nuget/v/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![Downloads](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode)
 [![Discord](https://img.shields.io/discord/869237470565392384?label=discord)](https://discord.gg/2SUWKFnHSm)
-[![Donate](https://img.shields.io/badge/donate-$$$-purple.svg)](https://tyrrrz.me/donate)
-[![Fuck Russia](https://img.shields.io/badge/fuck-russia-black.svg)](https://twitter.com/Tyrrrz/status/1495972128977571848)
+[![Donate](https://img.shields.io/badge/donate-$$$-8a2be2.svg)](https://tyrrrz.me/donate)
+[![Fuck Russia](https://img.shields.io/badge/fuck-russia-e4181c.svg?labelColor=000000)](https://twitter.com/tyrrrz/status/1495972128977571848)
 
 ⚠️ **Project status: maintenance mode**<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)</sup>
 
@@ -14,7 +15,7 @@
 Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered requests to retrieve information.
 As it doesn't rely on the official API, there's also no need for an API key and there are no usage quotas.
 
-This library is used in [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) -- a desktop application for downloading YouTube videos.
+This library is used in [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — a desktop application for downloading YouTube videos.
 
 ## Terms of use
 
@@ -27,7 +28,7 @@ By using this project or its source code, for any purpose and in any shape or fo
 
 To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
 
-## Download
+## Install
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode` (**main package**)
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode.Converter): `dotnet add package YoutubeExplode.Converter` (**FFmpeg integration**)
@@ -38,7 +39,7 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Usage
 
-**YoutubeExplode** exposes its functionality through a single entry point -- the `YoutubeClient` class.
+**YoutubeExplode** exposes its functionality through a single entry point — the `YoutubeClient` class.
 Create an instance of this class and use the provided operations on `Videos`, `Playlists`, `Channels`, and `Search` properties to send requests.
 
 ### Videos
@@ -65,9 +66,9 @@ var duration = video.Duration; // 00:07:20
 Every YouTube video has a number of streams available, differing in containers, video quality, bitrate, framerate, and other properties.
 Additionally, depending on the content of the stream, the streams are further divided into 3 categories:
 
-- Muxed streams -- contain both video and audio
-- Audio-only streams -- contain only audio
-- Video-only streams -- contain only video
+- Muxed streams — contain both video and audio
+- Audio-only streams — contain only audio
+- Video-only streams — contain only video
 
 You can request the manifest that lists all available streams for a particular video by calling `Videos.Streams.GetManifestAsync(...)`:
 
