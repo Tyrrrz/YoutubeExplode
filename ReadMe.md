@@ -9,7 +9,7 @@
 [![Donate](https://img.shields.io/badge/donate-$$$-8a2be2.svg)](https://tyrrrz.me/donate)
 [![Fuck Russia](https://img.shields.io/badge/fuck-russia-e4181c.svg?labelColor=000000)](https://twitter.com/tyrrrz/status/1495972128977571848)
 
-⚠️ **Project status: maintenance mode**<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)</sup>
+> 🟡 **Project status**: maintenance mode<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)</sup>
 
 **YoutubeExplode** is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks.
 Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered requests to retrieve information.
