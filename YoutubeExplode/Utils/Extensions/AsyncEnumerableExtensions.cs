@@ -31,7 +31,7 @@ internal static class AsyncEnumerableExtensions
         }
     }
 
-    public static async IAsyncEnumerable<T> OfType<TSource, T>(this IAsyncEnumerable<TSource> source)
+    public static async IAsyncEnumerable<T> OfTypeAsync<T>(this IAsyncEnumerable<object> source)
     {
         await foreach (var i in source)
         {
