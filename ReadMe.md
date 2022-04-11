@@ -151,7 +151,7 @@ using YoutubeExplode.Converter;
 var youtube = new YoutubeClient();
 
 await youtube.Videos.DownloadAsync("https://youtube.com/watch?v=u_yIGGhubZs", "video.mp4", o => o
-    .SetFormat("webm") // override format
+    .SetContainer("webm") // override format
     .SetPreset(ConversionPreset.UltraFast) // change preset
     .SetFFmpegPath("path/to/ffmpeg") // custom FFmpeg location
 );
