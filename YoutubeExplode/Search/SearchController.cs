@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
@@ -22,26 +21,26 @@ internal class SearchController : YoutubeControllerBase
     {
         const string url = $"https://www.youtube.com/youtubei/v1/search?key={ApiKey}";
 
-        var payload = new Dictionary<string, object?>
+        var payload = new
         {
-            ["query"] = searchQuery,
-            ["params"] = searchFilter switch
+            query = searchQuery,
+            @params = searchFilter switch
             {
                 SearchFilter.Video => "EgIQAQ%3D%3D",
                 SearchFilter.Playlist => "EgIQAw%3D%3D",
                 SearchFilter.Channel => "EgIQAg%3D%3D",
                 _ => null
             },
-            ["continuation"] = continuationToken,
-            ["context"] = new Dictionary<string, object?>
+            continuation = continuationToken,
+            context = new
             {
-                ["client"] = new Dictionary<string, object?>
+                client = new
                 {
-                    ["clientName"] = "WEB",
-                    ["clientVersion"] = "2.20210408.08.00",
-                    ["hl"] = "en",
-                    ["gl"] = "US",
-                    ["utcOffsetMinutes"] = 0
+                    clientName = "WEB",
+                    clientVersion = "2.20210408.08.00",
+                    hl = "en",
+                    gl = "US",
+                    utcOffsetMinutes = 0
                 }
             }
         };

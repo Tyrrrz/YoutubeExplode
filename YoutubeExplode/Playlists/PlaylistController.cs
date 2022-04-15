@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
@@ -22,18 +21,18 @@ internal class PlaylistController : YoutubeControllerBase
     {
         const string url = $"https://www.youtube.com/youtubei/v1/browse?key={ApiKey}";
 
-        var payload = new Dictionary<string, object?>
+        var payload = new
         {
-            ["browseId"] = "VL" + playlistId,
-            ["context"] = new Dictionary<string, object?>
+            browseId = "VL" + playlistId,
+            context = new
             {
-                ["client"] = new Dictionary<string, object?>
+                client = new
                 {
-                    ["clientName"] = "WEB",
-                    ["clientVersion"] = "2.20210408.08.00",
-                    ["hl"] = "en",
-                    ["gl"] = "US",
-                    ["utcOffsetMinutes"] = 0
+                    clientName = "WEB",
+                    clientVersion = "2.20210408.08.00",
+                    hl = "en",
+                    gl = "US",
+                    utcOffsetMinutes = 0
                 }
             }
         };
@@ -63,24 +62,25 @@ internal class PlaylistController : YoutubeControllerBase
     {
         const string url = $"https://www.youtube.com/youtubei/v1/next?key={ApiKey}";
 
-        var payload = new Dictionary<string, object?>
+        var payload = new
         {
-            ["playlistId"] = playlistId.Value,
-            ["videoId"] = videoId?.Value,
-            ["playlistIndex"] = index,
-            ["context"] = new Dictionary<string, object?>
+            playlistId = playlistId.Value,
+            videoId = videoId?.Value,
+            playlistIndex = index,
+            context = new
             {
-                ["client"] = new Dictionary<string, object?>
+                client = new
                 {
-                    ["clientName"] = "WEB",
-                    ["clientVersion"] = "2.20210408.08.00",
-                    ["hl"] = "en",
-                    ["gl"] = "US",
-                    ["utcOffsetMinutes"] = 0,
-                    ["visitorData"] = visitorData
+                    clientName = "WEB",
+                    clientVersion = "2.20210408.08.00",
+                    hl = "en",
+                    gl = "US",
+                    utcOffsetMinutes = 0,
+                    visitorData
                 }
             }
         };
+
         using var request = new HttpRequestMessage(HttpMethod.Post, url)
         {
             Content = Json.SerializeToHttpContent(payload)
