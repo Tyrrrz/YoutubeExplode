@@ -1,3 +1,7 @@
+### v6.1.1 (15-Apr-2022)
+
+- Fixed an issue which caused `MissingMethodException` to be thrown when using YoutubeExplode from a project with assembly trimming enabled.
+
 ### v6.1 (20-Feb-2022)
 
 - Added `IsAudioOnly` property to `Container`. If this property evaluates to `true`, the container is guaranteed to not contain any video streams. If it evaluates to `false`, the container may or may not contain video streams.
@@ -107,7 +111,7 @@ Thanks to [@d4n3436](https://github.com/d4n3436), [@Benjamin K.](https://github.
 ### v5.1.9 (28-Nov-2020)
 
 - Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
-- Fixed an issue where trying to get stream manifest resulted in an exception sometimes. 
+- Fixed an issue where trying to get stream manifest resulted in an exception sometimes.
 
 ### v5.1.8 (25-Oct-2020)
 
