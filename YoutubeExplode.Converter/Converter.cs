@@ -85,7 +85,6 @@ internal partial class Converter
         arguments
             .Add("-threads").Add(Environment.ProcessorCount)
             .Add("-nostdin")
-            .Add("-shortest")
             .Add("-y");
 
         // Output
