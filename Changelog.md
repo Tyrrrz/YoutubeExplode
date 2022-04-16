@@ -1,3 +1,9 @@
+### v6.1.2 (16-Apr-2022)
+
+- Updated documentation on `Engagement.DislikeCount` and `Engagement.AverageRating` to indicate that dislikes are not supported.
+- Obsoleted `Author.Title` in favor of `Author.ChannelTitle` for consistency with other properties.
+- [Converter] Fixed an issue where downloading a video with subtitles resulted in a truncated video file.
+
 ### v6.1.1 (15-Apr-2022)
 
 - Fixed an issue which caused `MissingMethodException` to be thrown when using YoutubeExplode from a project with assembly trimming enabled.
