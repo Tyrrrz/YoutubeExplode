@@ -57,7 +57,7 @@ var youtube = new YoutubeClient();
 var video = await youtube.Videos.GetAsync("https://youtube.com/watch?v=u_yIGGhubZs");
 
 var title = video.Title; // "Collections - Blender 2.80 Fundamentals"
-var author = video.Author.Title; // "Blender"
+var author = video.Author.ChannelTitle; // "Blender"
 var duration = video.Duration; // 00:07:20
 ```
 
@@ -234,7 +234,7 @@ var youtube = new YoutubeClient();
 var playlist = await youtube.Playlists.GetAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6");
 
 var title = playlist.Title; // "First Steps - Blender 2.80 Fundamentals"
-var author = playlist.Author.Title; // "Blender"
+var author = playlist.Author.ChannelTitle; // "Blender"
 ```
 
 #### Getting videos included in a playlist

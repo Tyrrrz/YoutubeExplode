@@ -31,7 +31,7 @@ public class VideoSpecs
         video.Title.Should().Be("Aka no Ha [Another] +HDHR");
         video.Author.ChannelId.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
         video.Author.ChannelUrl.Should().NotBeNullOrWhiteSpace();
-        video.Author.Title.Should().Be("Tyrrrz");
+        video.Author.ChannelTitle.Should().Be("Tyrrrz");
         video.UploadDate.Date.Should().Be(new DateTime(2017, 09, 30));
         video.Description.Should().Contain("246pp");
         video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(108), TimeSpan.FromSeconds(1));
@@ -93,7 +93,7 @@ public class VideoSpecs
         video.Title.Should().NotBeNullOrWhiteSpace();
         video.Author.ChannelId.Value.Should().NotBeNullOrWhiteSpace();
         video.Author.ChannelUrl.Should().NotBeNullOrWhiteSpace();
-        video.Author.Title.Should().NotBeNullOrWhiteSpace();
+        video.Author.ChannelTitle.Should().NotBeNullOrWhiteSpace();
         video.UploadDate.Date.Should().NotBe(default);
         video.Description.Should().NotBeNull();
         video.Duration.Should().NotBe(default);
