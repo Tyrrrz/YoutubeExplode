@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Gress;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Converter.Tests.Fixtures;
@@ -104,12 +103,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
     public async Task User_can_download_a_video_and_track_the_progress_of_the_operation()
     {
         // Arrange
-        var progressReports = new ConcurrentBag<double>();
-        var progress = new Progress<double>(p =>
-        {
-            _testOutput.WriteLine($"Progress: {p:P2}");
-            progressReports.Add(p);
-        });
+        var progress = new ProgressCollector<double>();
 
         var youtube = new YoutubeClient();
         var outputFilePath = _tempOutputFixture.GetTempFilePath();
@@ -118,6 +112,11 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath, progress);
 
         // Assert
-        progressReports.Should().NotBeEmpty();
+        var progressValues = progress.GetValues();
+
+        progressValues.Should().NotBeEmpty();
+
+        foreach (var value in progress.GetValues())
+            _testOutput.WriteLine($"Progress: {value:P2}");
     }
 }
