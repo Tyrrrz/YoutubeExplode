@@ -8,8 +8,10 @@ on:
 
 jobs:
   main:
-    uses: Tyrrrz/.github/.github/workflows/NuGet-WindowsOnly.yml@master
+    uses: Tyrrrz/.github/.github/workflows/nuget.yml@master
     with:
+      windows-only: true
+      dotnet-version: 6.0.x
       publish-on-failed-tests: true
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
