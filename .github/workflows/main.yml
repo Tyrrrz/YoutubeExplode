@@ -12,7 +12,7 @@ jobs:
     with:
       windows-only: true
       dotnet-version: 6.0.x
-      publish-on-failed-tests: true
+      deploy-on-failed-tests: true
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
