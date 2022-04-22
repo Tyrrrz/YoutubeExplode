@@ -35,7 +35,7 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Screenshots
 
-![demo](.screenshots/demo.png)
+![demo](.assets/demo.png)
 
 ## Usage
 
