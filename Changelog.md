@@ -1,3 +1,27 @@
+### v6.1.2 (16-Apr-2022)
+
+- Updated documentation on `Engagement.DislikeCount` and `Engagement.AverageRating` to indicate that dislikes are not supported.
+- Obsoleted `Author.Title` in favor of `Author.ChannelTitle` for consistency with other properties.
+- [Converter] Fixed an issue where downloading a video with subtitles resulted in a truncated video file.
+
+### v6.1.1 (15-Apr-2022)
+
+- Fixed an issue which caused `MissingMethodException` to be thrown when using YoutubeExplode from a project with assembly trimming enabled.
+
+### v6.1 (20-Feb-2022)
+
+- Added `IsAudioOnly` property to `Container`. If this property evaluates to `true`, the container is guaranteed to not contain any video streams. If it evaluates to `false`, the container may or may not contain video streams.
+- [Converter] Added an overload of `VideoClient.DownloadAsync(...)` that allows muxing specified streams and closed caption tracks into a single container. Closed captions are embedded inside the container as soft subtitles.
+- [Converter] Obsoleted `Container.IsAudioOnly()` extension method. Use the newly added property instead.
+
+### v6.0.8 (10-Feb-2022)
+
+- Added handling for video URLs in YouTube Shorts format. (Thanks [@wellWINeo](https://github.com/wellWINeo))
+- Added support for retrieving metadata of mix playlists using `PlaylistClient.GetAsync(...)`. (Thanks [@Roberto Blázquez](https://github.com/xBaank))
+- Added `ChannelUrl` property to `Author`.
+- Fixed an issue where attempting to retrieve certain auto-generated closed caption tracks threw an exception because of malformed data structure in the manifest. (Thanks [@AlmightyLks](https://github.com/AlmightyLks))
+- [Converter] Obsoleted `YoutubeExplode.Converter.ConversionFormat` type. Going forward, use `YoutubeExplode.Videos.Streams.Container` instead.
+
 ### v6.0.7 (10-Dec-2021)
 
 - Added an overload for `SearchClient.GetResultBatchesAsync(...)` that accepts a `SearchFilter` parameter. This parameter can be used to limit the query to only certain type of results (videos, playlists, channels) and avoid redundant requests.
@@ -93,7 +117,7 @@ Thanks to [@d4n3436](https://github.com/d4n3436), [@Benjamin K.](https://github.
 ### v5.1.9 (28-Nov-2020)
 
 - Fixed an issue where some age-restricted videos were reported as unplayable, due to YouTube's recent changes.
-- Fixed an issue where trying to get stream manifest resulted in an exception sometimes. 
+- Fixed an issue where trying to get stream manifest resulted in an exception sometimes.
 
 ### v5.1.8 (25-Oct-2020)
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
-using CliWrap.Builders;
 using YoutubeExplode.Converter.Utils.Extensions;
 
 namespace YoutubeExplode.Converter;
@@ -18,58 +16,13 @@ namespace YoutubeExplode.Converter;
 // stdout streaming only works with some specific formats.
 internal partial class FFmpeg
 {
-    private readonly string _cliFilePath;
+    private readonly string _filePath;
 
-    public FFmpeg(string cliFilePath) => _cliFilePath = cliFilePath;
-
-    private string GetArguments(
-        IReadOnlyList<string> inputFilePaths,
-        string outputFilePath,
-        string format,
-        string preset,
-        bool transcode)
-    {
-        var arguments = new ArgumentsBuilder();
-
-        foreach (var inputFilePath in inputFilePaths)
-        {
-            arguments.Add("-i").Add(inputFilePath);
-        }
-
-        arguments.Add("-f").Add(format);
-        arguments.Add("-preset").Add(preset);
-
-        if (!transcode)
-        {
-            arguments.Add("-c").Add("copy");
-        }
-
-        if (string.Equals(format, "mp3", StringComparison.OrdinalIgnoreCase))
-        {
-            // Set constant bitrate to the maximum bitrate that YouTube allows for audio.
-            // Fixes an issue where the output file reports doubled audio length:
-            // https://superuser.com/questions/892996/ffmpeg-is-doubling-audio-length-when-extracting-from-video
-            arguments.Add("-b:a").Add("192k");
-        }
-
-        arguments
-            .Add("-threads").Add(Environment.ProcessorCount)
-            .Add("-nostdin")
-            .Add("-shortest")
-            .Add("-y");
-
-        arguments.Add(outputFilePath);
-
-        return arguments.Build();
-    }
+    public FFmpeg(string filePath) => _filePath = filePath;
 
     public async ValueTask ExecuteAsync(
-        IReadOnlyList<string> inputFilePaths,
-        string outputFilePath,
-        string format,
-        string preset,
-        bool transcode,
-        IProgress<double>? progress = null,
+        string arguments,
+        IProgress<double>? progress,
         CancellationToken cancellationToken = default)
     {
         var stdErrBuffer = new StringBuilder();
@@ -79,20 +32,11 @@ internal partial class FFmpeg
             progress?.Pipe(p => new FFmpegProgressRouter(p)) ?? PipeTarget.Null // progress
         );
 
-        var arguments = GetArguments(
-            inputFilePaths,
-            outputFilePath,
-            format,
-            preset,
-            transcode
-        );
-
-        var result = await Cli.Wrap(_cliFilePath)
+        var result = await Cli.Wrap(_filePath)
             .WithArguments(arguments)
             .WithStandardErrorPipe(stdErrPipe)
             .WithValidation(CommandResultValidation.None)
-            .ExecuteAsync(cancellationToken)
-            .ConfigureAwait(false);
+            .ExecuteAsync(cancellationToken);
 
         if (result.ExitCode != 0)
         {

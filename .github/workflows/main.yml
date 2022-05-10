@@ -2,19 +2,17 @@ name: main
 
 on:
   push:
-    branches:
-      - "*"
   pull_request:
-    branches:
-      - "*"
   schedule:
     - cron: "0 0 * * *"
 
 jobs:
   main:
-    uses: Tyrrrz/.github/.github/workflows/NuGet-WindowsOnly.yml@master
+    uses: Tyrrrz/.github/.github/workflows/nuget.yml@master
     with:
-      publish-on-failed-tests: true
+      windows-only: true
+      dotnet-version: 6.0.x
+      deploy-on-failed-tests: true
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
@@ -50,25 +49,25 @@ internal class VideoController : YoutubeControllerBase
     {
         const string url = $"https://www.youtube.com/youtubei/v1/player?key={ApiKey}";
 
-        var payload = new Dictionary<string, object?>
+        var payload = new
         {
-            ["contentCheckOk"] = true,
-            ["racyCheckOk"] = true,
-            ["videoId"] = videoId.Value,
-            ["context"] = new Dictionary<string, object?>
+            videoId = videoId.Value,
+            contentCheckOk = true,
+            racyCheckOk = true,
+            context = new
             {
-                ["client"] = new Dictionary<string, object?>
+                client = new
                 {
-                    ["clientName"] = "ANDROID",
-                    ["clientScreen"] = isEmbedded ? "EMBED" : null,
-                    ["clientVersion"] = "16.46.37",
-                    ["hl"] = "en",
-                    ["gl"] = "US",
-                    ["utcOffsetMinutes"] = 0
+                    clientName = "ANDROID",
+                    clientScreen = isEmbedded ? "EMBED" : null,
+                    clientVersion = "16.46.37",
+                    hl = "en",
+                    gl = "US",
+                    utcOffsetMinutes = 0
                 },
-                ["thirdParty"] = new Dictionary<string, object?>
+                thirdParty = new
                 {
-                    ["embedUrl"] = "https://www.youtube.com"
+                    embedUrl = "https://www.youtube.com"
                 }
             }
         };

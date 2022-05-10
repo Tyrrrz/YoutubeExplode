@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using Xunit;
@@ -11,6 +12,9 @@ namespace YoutubeExplode.Converter.Tests.Fixtures;
 
 public partial class FFmpegFixture : IAsyncLifetime
 {
+    // Allow this fixture to be reused across multiple tests
+    private static readonly SemaphoreSlim Lock = new(1, 1);
+
     public string FilePath { get; } = Path.Combine(
         Path.GetDirectoryName(typeof(FFmpegFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
         GetFFmpegFileName()
@@ -47,10 +51,19 @@ public partial class FFmpegFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        if (File.Exists(FilePath))
-            return;
+        await Lock.WaitAsync();
 
-        await DownloadFFmpegAsync();
+        try
+        {
+            if (File.Exists(FilePath))
+                return;
+
+            await DownloadFFmpegAsync();
+        }
+        finally
+        {
+            Lock.Release();
+        }
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
@@ -65,15 +78,41 @@ public partial class FFmpegFixture
 
     private static string GetFFmpegDownloadUrl()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            return "https://github.com/vot/ffbinaries-prebuilt/releases/download/v4.2.1/ffmpeg-4.2.1-win-64.zip";
+        static string GetPlatformMoniker()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return "win";
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            return "https://github.com/vot/ffbinaries-prebuilt/releases/download/v4.2.1/ffmpeg-4.2.1-linux-64.zip";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return "linux";
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            return "https://github.com/vot/ffbinaries-prebuilt/releases/download/v4.2.1/ffmpeg-4.2.1-osx-64.zip";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return "osx";
 
-        throw new InvalidOperationException("Unknown OS.");
+            throw new NotSupportedException("Unsupported OS platform.");
+        }
+
+        static string GetArchitectureMoniker()
+        {
+            if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                return "64";
+
+            if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
+                return "86";
+
+            if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                return "arm-64";
+
+            if (RuntimeInformation.ProcessArchitecture == Architecture.Arm)
+                return "arm";
+
+            throw new NotSupportedException("Unsupported architecture.");
+        }
+        
+        const string version = "4.4.1";
+        var plat = GetPlatformMoniker();
+        var arch = GetArchitectureMoniker();
+
+        return $"https://github.com/vot/ffbinaries-prebuilt/releases/download/v{version}/ffmpeg-{version}-{plat}-{arch}.zip";
     }
 }

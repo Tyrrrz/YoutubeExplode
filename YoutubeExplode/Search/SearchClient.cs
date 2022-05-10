@@ -132,7 +132,6 @@ public class SearchClient
                 // System playlists have no author
                 var channelId = playlistExtractor.TryGetPlaylistChannelId();
                 var channelTitle = playlistExtractor.TryGetPlaylistAuthor();
-
                 var author = channelId is not null && channelTitle is not null
                     ? new Author(channelId, channelTitle)
                     : null;
@@ -233,7 +232,7 @@ public class SearchClient
         CancellationToken cancellationToken = default) =>
         GetResultBatchesAsync(searchQuery, SearchFilter.Video, cancellationToken)
             .FlattenAsync()
-            .OfType<ISearchResult, VideoSearchResult>();
+            .OfTypeAsync<VideoSearchResult>();
 
     /// <summary>
     /// Enumerates playlist search results returned by the specified query.
@@ -243,7 +242,7 @@ public class SearchClient
         CancellationToken cancellationToken = default) =>
         GetResultBatchesAsync(searchQuery, SearchFilter.Playlist, cancellationToken)
             .FlattenAsync()
-            .OfType<ISearchResult, PlaylistSearchResult>();
+            .OfTypeAsync<PlaylistSearchResult>();
 
     /// <summary>
     /// Enumerates channel search results returned by the specified query.
@@ -253,5 +252,5 @@ public class SearchClient
         CancellationToken cancellationToken = default) =>
         GetResultBatchesAsync(searchQuery, SearchFilter.Channel, cancellationToken)
             .FlattenAsync()
-            .OfType<ISearchResult, ChannelSearchResult>();
+            .OfTypeAsync<ChannelSearchResult>();
 }

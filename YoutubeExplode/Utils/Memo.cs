@@ -7,17 +7,17 @@ namespace YoutubeExplode.Utils;
 // Helper utility used to cache the result of a function
 internal static class Memo
 {
-    private static class ForValue<T>
+    private static class For<T>
     {
         private static readonly ConditionalWeakTable<object, Dictionary<int, T>> CacheManifest = new();
 
-        public static Dictionary<int, T> GetCacheForOwner(object owner) =>
+        public static Dictionary<int, T> GetCache(object owner) =>
             CacheManifest.GetOrCreateValue(owner);
     }
 
     public static T Cache<T>(object owner, Func<T> getValue)
     {
-        var cache = ForValue<T>.GetCacheForOwner(owner);
+        var cache = For<T>.GetCache(owner);
         var key = getValue.Method.GetHashCode();
 
         if (cache.TryGetValue(key, out var cachedValue))

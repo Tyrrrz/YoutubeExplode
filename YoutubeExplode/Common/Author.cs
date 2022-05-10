@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Channels;
 
 namespace YoutubeExplode.Common;
@@ -21,18 +22,22 @@ public class Author
     /// <summary>
     /// Channel title.
     /// </summary>
-    public string Title { get; }
+    public string ChannelTitle { get; }
+
+    /// <inheritdoc cref="ChannelTitle" />
+    [Obsolete("Use ChannelTitle instead."), ExcludeFromCodeCoverage]
+    public string Title => ChannelTitle;
 
     /// <summary>
     /// Initializes an instance of <see cref="Author"/>.
     /// </summary>
-    public Author(ChannelId channelId, string title)
+    public Author(ChannelId channelId, string channelTitle)
     {
         ChannelId = channelId;
-        Title = title;
+        ChannelTitle = channelTitle;
     }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    public override string ToString() => Title;
+    public override string ToString() => ChannelTitle;
 }

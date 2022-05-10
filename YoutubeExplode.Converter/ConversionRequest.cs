@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;
@@ -26,7 +27,7 @@ public class ConversionRequest
     /// <summary>
     /// Output format.
     /// </summary>
-    [Obsolete("Use Container instead.")]
+    [Obsolete("Use Container instead."), ExcludeFromCodeCoverage]
     public ConversionFormat Format => new(Container.Name);
 
     /// <summary>
@@ -52,7 +53,7 @@ public class ConversionRequest
     /// <summary>
     /// Initializes an instance of <see cref="ConversionRequest"/>.
     /// </summary>
-    [Obsolete("Use the other constructor overload")]
+    [Obsolete("Use the other constructor overload"), ExcludeFromCodeCoverage]
     public ConversionRequest(
         string ffmpegCliFilePath,
         string outputFilePath,

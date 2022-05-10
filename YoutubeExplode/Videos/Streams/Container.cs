@@ -14,6 +14,23 @@ public readonly partial struct Container
     public string Name { get; }
 
     /// <summary>
+    /// Whether this container is a known audio-only container.
+    /// </summary>
+    /// <remarks>
+    /// This property only refers to the container's capabilities and not its actual contents.
+    /// If the container IS audio-only, it DOES NOT contain any video streams.
+    /// If the container IS NOT audio-only, it MAY contain video streams, but is not required to.
+    /// </remarks>
+    public bool IsAudioOnly =>
+        string.Equals(Name, "mp3", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Name, "m4a", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Name, "wav", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Name, "wma", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Name, "ogg", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Name, "aac", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(Name, "opus", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Initializes an instance of <see cref="Container"/>.
     /// </summary>
     public Container(string name) => Name = name;
@@ -24,6 +41,11 @@ public readonly partial struct Container
 
 public partial struct Container
 {
+    /// <summary>
+    /// MPEG-2 Audio Layer III (mp3).
+    /// </summary>
+    public static Container Mp3 { get; } = new("mp3");
+
     /// <summary>
     /// MPEG-4 Part 14 (mp4).
     /// </summary>

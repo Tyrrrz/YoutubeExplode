@@ -15,6 +15,14 @@ internal class PlaylistVideoExtractor
 
     public PlaylistVideoExtractor(JsonElement content) => _content = content;
 
+    public int? TryGetIndex() => Memo.Cache(this, () =>
+        _content
+            .GetPropertyOrNull("navigationEndpoint")?
+            .GetPropertyOrNull("watchEndpoint")?
+            .GetPropertyOrNull("index")?
+            .GetInt32OrNull()
+    );
+
     public string? TryGetVideoId() => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("videoId")?
@@ -96,13 +104,5 @@ internal class PlaylistVideoExtractor
             .ToArray() ??
 
         Array.Empty<ThumbnailExtractor>()
-    );
-
-    public int? TryGetIndex() => Memo.Cache(this, () =>
-        _content
-            .GetPropertyOrNull("navigationEndpoint")?
-            .GetPropertyOrNull("watchEndpoint")?
-            .GetPropertyOrNull("index")?
-            .GetInt32OrNull()
     );
 }

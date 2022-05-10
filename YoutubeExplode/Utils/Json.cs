@@ -58,7 +58,7 @@ internal static class Json
         }
     }
 
-    public static HttpContent SerializeToHttpContent(object? obj) => new StringContent(
+    public static HttpContent SerializeToHttpContent<T>(T obj) => new StringContent(
         JsonSerializer.Serialize(obj),
         Encoding.UTF8,
         "application/json"
