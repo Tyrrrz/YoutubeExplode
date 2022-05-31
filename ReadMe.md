@@ -17,7 +17,7 @@ As it doesn't rely on the official API, there's also no need for an API key and 
 
 This library is used in [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — a desktop application for downloading YouTube videos.
 
-## Terms of use
+## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/why-so-political.md)</sup>
 
 By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
 
@@ -113,15 +113,18 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
-> ⚠️ Muxed streams contain both audio and video, but these streams are very limited in quality (up to 720p30).
+> **Warning**:
+> Muxed streams contain both audio and video, but these streams are very limited in quality (up to 720p30).
 > To download video in the highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together.
 > This can be accomplished by using the **YoutubeExplode.Converter** package (see below).
 
 #### Downloading video with muxing or conversion
 
-> ⚠️ Downloading with muxing or conversion requires [YoutubeExplode.Converter](https://nuget.org/packages/YoutubeExplode.Converter).
+> **Warning**:
+> Downloading with muxing or conversion requires [YoutubeExplode.Converter](https://nuget.org/packages/YoutubeExplode.Converter).
 
-> ⚠️ This package also relies on [FFmpeg](https://ffmpeg.org) CLI, which can be downloaded [here](https://ffbinaries.com/downloads).
+> **Warning**:
+> This package also relies on [FFmpeg](https://ffmpeg.org) CLI, which can be downloaded [here](https://ffbinaries.com/downloads).
 > Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or use one of the overloads to provide a custom location directly.
 
 You can download a video with muxing or conversion through one of the extension methods provided on `VideoClient`.
@@ -138,7 +141,8 @@ await youtube.Videos.DownloadAsync("https://youtube.com/watch?v=u_yIGGhubZs", "v
 Under the hood, this resolves the video's media streams and selects the best candidates based on format, bit rate, quality, and frame rate.
 If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
 
-> ⚠️ Stream muxing is a CPU-heavy process.
+> **Warning**:
+> Stream muxing is a CPU-heavy process.
 > You can reduce resource usage and execution time by using streams that don't require transcoding to the output format (e.g. `mp4` audio/video streams for `mp4` output format).
 > Currently, YouTube only provides adaptive streams in `mp4` or `webm` containers, with the highest quality video streams (e.g. 4K) only available in `webm`.
 
