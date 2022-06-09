@@ -43,6 +43,7 @@ public static class Program
         using (var progress = new ConsoleProgress())
             await youtube.Videos.Streams.DownloadAsync(streamInfo, fileName, progress);
 
+        Console.WriteLine();
         Console.WriteLine($"Video saved to '{fileName}'");
 
         return 0;

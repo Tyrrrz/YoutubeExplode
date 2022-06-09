@@ -24,12 +24,12 @@ internal class ConsoleProgress : IProgress<double>, IDisposable
     public void Report(double progress)
     {
         Console.SetCursorPosition(_posX, _posY);
-        _writer.WriteLine($"{progress:P1}");
+        _writer.Write($"{progress:P1}");
     }
 
     public void Dispose()
     {
         Console.SetCursorPosition(_posX, _posY);
-        _writer.WriteLine("Completed ✓");
+        _writer.Write("Completed ✓");
     }
 }
