@@ -9,6 +9,8 @@ internal class ConsoleProgress : IProgress<double>, IDisposable
     private readonly int _posX;
     private readonly int _posY;
 
+    private int _lastLength;
+
     public ConsoleProgress(TextWriter writer)
     {
         _writer = writer;
@@ -21,15 +23,24 @@ internal class ConsoleProgress : IProgress<double>, IDisposable
     {
     }
 
-    public void Report(double progress)
+    private void EraseLast()
     {
-        Console.SetCursorPosition(_posX, _posY);
-        _writer.Write($"{progress:P1}");
+        if (_lastLength > 0)
+        {
+            Console.SetCursorPosition(_posX, _posY);
+            _writer.Write(new string(' ', _lastLength));
+            Console.SetCursorPosition(_posX, _posY);
+        }
     }
 
-    public void Dispose()
+    private void Write(string text)
     {
-        Console.SetCursorPosition(_posX, _posY);
-        _writer.Write("Completed ✓");
+        EraseLast();
+        _writer.Write(text);
+        _lastLength = text.Length;
     }
+
+    public void Report(double progress) => Write($"{progress:P1}");
+
+    public void Dispose() => EraseLast();
 }

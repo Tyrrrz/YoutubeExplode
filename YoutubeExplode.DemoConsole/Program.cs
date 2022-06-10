@@ -5,13 +5,13 @@ using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.DemoConsole;
+
 // This demo prompts for video ID and downloads one media stream.
 // It's intended to be very simple and straight to the point.
 // For a more involved example - check out the WPF demo.
-
 public static class Program
 {
-    public static async Task<int> Main()
+    public static async Task Main()
     {
         Console.Title = "YoutubeExplode Demo";
 
@@ -30,22 +30,20 @@ public static class Program
             // there may not be any muxed streams at all.
             // See the readme to learn how to handle adaptive streams.
             Console.Error.WriteLine("This video has no muxed streams.");
-            return 1;
+            return;
         }
 
         // Download the stream
+        var fileName = $"{videoId}.{streamInfo.Container.Name}";
+
         Console.Write(
             $"Downloading stream: {streamInfo.VideoQuality.Label} / {streamInfo.Container.Name}... "
         );
 
-        var fileName = $"{videoId}.{streamInfo.Container.Name}";
-
         using (var progress = new ConsoleProgress())
             await youtube.Videos.Streams.DownloadAsync(streamInfo, fileName, progress);
 
-        Console.WriteLine();
+        Console.WriteLine("Done");
         Console.WriteLine($"Video saved to '{fileName}'");
-
-        return 0;
     }
 }
