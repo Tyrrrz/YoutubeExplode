@@ -40,14 +40,13 @@ internal class SegmentedHttpStream : Stream
         _segmentSize = segmentSize;
     }
 
-    private void ResetSegmentStream()
+    private void ResetSegment()
     {
         _segmentStream?.Dispose();
         _segmentStream = null;
     }
 
-    private async ValueTask<Stream> ResolveSegmentStreamAsync(
-        CancellationToken cancellationToken = default)
+    private async ValueTask<Stream> ResolveSegmentAsync(CancellationToken cancellationToken = default)
     {
         if (_segmentStream is not null)
             return _segmentStream;
@@ -64,7 +63,7 @@ internal class SegmentedHttpStream : Stream
     }
 
     public async ValueTask PreloadAsync(CancellationToken cancellationToken = default) =>
-        await ResolveSegmentStreamAsync(cancellationToken);
+        await ResolveSegmentAsync(cancellationToken);
 
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
@@ -72,13 +71,13 @@ internal class SegmentedHttpStream : Stream
         {
             // Check if consumer changed position between reads
             if (_actualPosition != Position)
-                ResetSegmentStream();
+                ResetSegment();
 
             // Check if finished reading (exit condition)
             if (Position >= Length)
                 return 0;
 
-            var stream = await ResolveSegmentStreamAsync(cancellationToken);
+            var stream = await ResolveSegmentAsync(cancellationToken);
             var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
             _actualPosition = Position += bytesRead;
 
@@ -86,7 +85,7 @@ internal class SegmentedHttpStream : Stream
                 return bytesRead;
 
             // Reached the end of the segment, try to load the next one
-            ResetSegmentStream();
+            ResetSegment();
         }
     }
 
@@ -120,8 +119,6 @@ internal class SegmentedHttpStream : Stream
         base.Dispose(disposing);
 
         if (disposing)
-        {
-            ResetSegmentStream();
-        }
+            ResetSegment();
     }
 }
