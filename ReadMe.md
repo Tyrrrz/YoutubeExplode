@@ -77,7 +77,9 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs");
+var streamManifest = await youtube.Videos.Streams.GetManifestAsync(
+    "https://youtube.com/watch?v=u_yIGGhubZs"
+);
 ```
 
 Once you get the manifest, you can filter through the streams and select the ones you're interested in:
@@ -171,7 +173,9 @@ using YoutubeExplode.Converter;
 var youtube = new YoutubeClient();
 
 // Get stream manifest
-var streamManifest = await youtube.Videos.Streams.GetManifestAsync("u_yIGGhubZs");
+var streamManifest = await youtube.Videos.Streams.GetManifestAsync(
+    "https://youtube.com/watch?v=u_yIGGhubZs"
+);
 
 // Select streams (1080p60 / highest bitrate audio)
 var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
@@ -192,7 +196,9 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("u_yIGGhubZs");
+var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
+    "https://youtube.com/watch?v=u_yIGGhubZs"
+);
 ```
 
 Then retrieve metadata for a particular track:
@@ -235,7 +241,9 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var playlist = await youtube.Playlists.GetAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6");
+var playlist = await youtube.Playlists.GetAsync(
+    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"
+);
 
 var title = playlist.Title; // "First Steps - Blender 2.80 Fundamentals"
 var author = playlist.Author.ChannelTitle; // "Blender"
@@ -252,7 +260,9 @@ using YoutubeExplode.Common;
 var youtube = new YoutubeClient();
 
 // Get all playlist videos
-var videos = await youtube.Playlists.GetVideosAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6");
+var videos = await youtube.Playlists.GetVideosAsync(
+    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"
+);
 
 // Get only the first 20 playlist videos
 var videosSubset = await youtube.Playlists
@@ -267,7 +277,9 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-await foreach (var video in youtube.Playlists.GetVideosAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"))
+await foreach (var video in youtube.Playlists.GetVideosAsync(
+    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6")
+)
 {
     var title = video.Title;
     var author = video.Author;
@@ -282,7 +294,9 @@ using YoutubeExplode;
 var youtube = new YoutubeClient();
 
 // Each batch corresponds to one request
-await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync("PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"))
+await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(
+    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6")
+)
 {
     foreach (var video in batch.Items)
     {
@@ -303,7 +317,9 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var channel = await youtube.Channels.GetAsync("UCSMOQeBJ2RAnuFungnQOxLg");
+var channel = await youtube.Channels.GetAsync(
+    "https://youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg"
+);
 
 var title = channel.Title; // "Blender"
 ```
@@ -315,7 +331,19 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var channel = await youtube.Channels.GetByUserAsync("Blender");
+var channel = await youtube.Channels.GetByUserAsync("https://youtube.com/user/Blender");
+
+var id = channel.Id; // "UCSMOQeBJ2RAnuFungnQOxLg"
+```
+
+To get channel metadata by slug or custom URL, use `Channels.GetBySlugAsync(...)`:
+
+```csharp
+using YoutubeExplode;
+
+var youtube = new YoutubeClient();
+
+var channel = await youtube.Channels.GetBySlugAsync("https://youtube.com/c/BlenderFoundation");
 
 var id = channel.Id; // "UCSMOQeBJ2RAnuFungnQOxLg"
 ```
@@ -330,7 +358,9 @@ using YoutubeExplode.Common;
 
 var youtube = new YoutubeClient();
 
-var videos = await youtube.Channels.GetUploadsAsync("UCSMOQeBJ2RAnuFungnQOxLg");
+var videos = await youtube.Channels.GetUploadsAsync(
+    "https://youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg"
+);
 ```
 
 ### Searching
