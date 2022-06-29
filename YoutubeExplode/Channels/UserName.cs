@@ -41,11 +41,17 @@ public partial struct UserName
         if (IsValid(userNameOrUrl))
             return userNameOrUrl;
 
-        // URL
+        // Regular URL
         // https://www.youtube.com/user/TheTyrrr
         var regularMatch = Regex.Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
+
+        // Alternative URL
+        // https://www.youtube.com/c/TheTyrrr
+        var alternativeMatch = Regex.Match(userNameOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+        if (!string.IsNullOrWhiteSpace(alternativeMatch) && IsValid(alternativeMatch))
+            return alternativeMatch;
 
         // Invalid input
         return null;
