@@ -48,7 +48,7 @@ public class ChannelSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var channel = await youtube.Channels.GetByUserAsync(ChannelSlugs.Normal);
+        var channel = await youtube.Channels.GetBySlugAsync(ChannelSlugs.Normal);
 
         // Assert
         channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
