@@ -331,7 +331,7 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var channel = await youtube.Channels.GetByUserAsync("https://youtube.com/user/Blender");
+var channel = await youtube.Channels.GetByUserAsync("https://youtube.com/user/BlenderFoundation");
 
 var id = channel.Id; // "UCSMOQeBJ2RAnuFungnQOxLg"
 ```
