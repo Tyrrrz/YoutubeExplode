@@ -23,8 +23,6 @@ public class UserNameSpecs
     [Theory]
     [InlineData("youtube.com/user/ProZD", "ProZD")]
     [InlineData("youtube.com/user/TheTyrrr", "TheTyrrr")]
-    [InlineData("youtube.com/c/ProZD", "ProZD")]
-    [InlineData("youtube.com/c/TheTyrrr", "TheTyrrr")]
     public void User_name_can_be_parsed_from_a_URL_string(string userUrl, string expectedUserName)
     {
         // Act

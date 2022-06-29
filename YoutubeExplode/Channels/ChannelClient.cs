@@ -74,6 +74,14 @@ public class ChannelClient
         Extract(await _controller.GetChannelPageAsync(userName, cancellationToken));
 
     /// <summary>
+    /// Gets the metadata associated with the channel identified by the specified slug or custom URL.
+    /// </summary>
+    public async ValueTask<Channel> GetBySlugAsync(
+        ChannelSlug channelSlug,
+        CancellationToken cancellationToken = default) =>
+        Extract(await _controller.GetChannelPageAsync(channelSlug, cancellationToken));
+
+    /// <summary>
     /// Enumerates videos uploaded by the specified channel.
     /// </summary>
     // TODO: should return <IVideo> sequence instead (breaking change)

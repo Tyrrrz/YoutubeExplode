@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils.Extensions;
 
@@ -22,14 +23,9 @@ public readonly partial struct UserName
 
 public partial struct UserName
 {
-    private static bool IsValid(string userName)
-    {
-        // User names can be up to 20 characters
-        if (userName.Length > 20)
-            return false;
-
-        return !Regex.IsMatch(userName, @"[^0-9a-zA-Z]");
-    }
+    private static bool IsValid(string userName) =>
+        userName.Length <= 20 &&
+        userName.All(char.IsLetterOrDigit);
 
     private static string? TryNormalize(string? userNameOrUrl)
     {
@@ -41,17 +37,11 @@ public partial struct UserName
         if (IsValid(userNameOrUrl))
             return userNameOrUrl;
 
-        // Regular URL
+        // URL
         // https://www.youtube.com/user/TheTyrrr
         var regularMatch = Regex.Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
-
-        // Alternative URL
-        // https://www.youtube.com/c/TheTyrrr
-        var alternativeMatch = Regex.Match(userNameOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)").Groups[1].Value;
-        if (!string.IsNullOrWhiteSpace(alternativeMatch) && IsValid(alternativeMatch))
-            return alternativeMatch;
 
         // Invalid input
         return null;
@@ -65,7 +55,7 @@ public partial struct UserName
         TryNormalize(userNameOrUrl)?.Pipe(name => new UserName(name));
 
     /// <summary>
-    /// Parses the specified string as a YouTube user name.
+    /// Parses the specified string as a YouTube user name or URL.
     /// </summary>
     public static UserName Parse(string userNameOrUrl) =>
         TryParse(userNameOrUrl) ??

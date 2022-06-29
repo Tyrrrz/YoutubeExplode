@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils.Extensions;
 
@@ -22,33 +23,11 @@ public readonly partial struct PlaylistId
 
 public partial struct PlaylistId
 {
-    private static bool IsValid(string playlistId)
-    {
-        // Watch later playlist is special
-        if (playlistId == "WL")
-            return true;
-
-        // My Mix playlist is special
-        if (playlistId == "RDMM")
-            return true;
-
-        // Other playlist IDs should start with these two characters
-        if (!playlistId.StartsWith("PL", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("RD", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("UL", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("UU", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("PU", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("OL", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("LL", StringComparison.Ordinal) &&
-            !playlistId.StartsWith("FL", StringComparison.Ordinal))
-            return false;
-
-        // Playlist IDs vary a lot in lengths
-        if (playlistId.Length < 13)
-            return false;
-
-        return !Regex.IsMatch(playlistId, @"[^0-9a-zA-Z_\-]");
-    }
+    private static bool IsValid(string playlistId) =>
+        // "Watch later" and "My mix" playlists are special
+        playlistId is "WL" or "RDMM" ||
+        playlistId.Length >= 13 &&
+        playlistId.All(c => char.IsLetterOrDigit(c) || c is '_' or '-');
 
     private static string? TryNormalize(string? playlistIdOrUrl)
     {

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils.Extensions;
 
@@ -22,14 +23,9 @@ public readonly partial struct VideoId
 
 public partial struct VideoId
 {
-    private static bool IsValid(string videoId)
-    {
-        // Video IDs are always 11 characters
-        if (videoId.Length != 11)
-            return false;
-
-        return !Regex.IsMatch(videoId, @"[^0-9a-zA-Z_\-]");
-    }
+    private static bool IsValid(string videoId) =>
+        videoId.Length == 11 &&
+        videoId.All(c => char.IsLetterOrDigit(c) || c is '_' or '-');
 
     private static string? TryNormalize(string? videoIdOrUrl)
     {
