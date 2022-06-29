@@ -278,8 +278,8 @@ using YoutubeExplode;
 var youtube = new YoutubeClient();
 
 await foreach (var video in youtube.Playlists.GetVideosAsync(
-    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6")
-)
+    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"
+))
 {
     var title = video.Title;
     var author = video.Author;
@@ -295,8 +295,8 @@ var youtube = new YoutubeClient();
 
 // Each batch corresponds to one request
 await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(
-    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6")
-)
+    "https://youtube.com/playlist?list=PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6"
+))
 {
     foreach (var video in batch.Items)
     {
