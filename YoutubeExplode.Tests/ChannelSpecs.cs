@@ -51,9 +51,9 @@ public class ChannelSpecs
         var channel = await youtube.Channels.GetBySlugAsync(ChannelSlugs.Normal);
 
         // Assert
-        channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+        channel.Id.Value.Should().Be("UCSli-_XJrdRwRoPw8DXRiyw");
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Tyrrrz");
+        channel.Title.Should().Be("Меланія Подоляк");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 

@@ -2,5 +2,5 @@
 
 internal static class ChannelSlugs
 {
-    public const string Normal = "Tyrrrz";
+    public const string Normal = "МеланіяПодоляк";
 }
