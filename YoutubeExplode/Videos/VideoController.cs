@@ -60,7 +60,8 @@ internal class VideoController : YoutubeControllerBase
                 {
                     clientName = "ANDROID",
                     clientScreen = isEmbedded ? "EMBED" : null,
-                    clientVersion = "16.46.37",
+                    clientVersion = "17.29.35",
+                    androidSdkVersion = 30,
                     hl = "en",
                     gl = "US",
                     utcOffsetMinutes = 0
