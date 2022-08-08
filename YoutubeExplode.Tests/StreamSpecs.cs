@@ -11,12 +11,12 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests;
 
-public class StreamsSpecs : IClassFixture<TempOutputFixture>
+public class StreamSpecs : IClassFixture<TempOutputFixture>
 {
     private readonly ITestOutputHelper _testOutput;
     private readonly TempOutputFixture _tempOutputFixture;
 
-    public StreamsSpecs(ITestOutputHelper testOutput, TempOutputFixture tempOutputFixture)
+    public StreamSpecs(ITestOutputHelper testOutput, TempOutputFixture tempOutputFixture)
     {
         _testOutput = testOutput;
         _tempOutputFixture = tempOutputFixture;
