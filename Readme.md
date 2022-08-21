@@ -15,8 +15,6 @@
 Behind a layer of abstraction, the library parses raw page content and uses reverse-engineered requests to retrieve information.
 As it doesn't rely on the official API, there's also no need for an API key and there are no usage quotas.
 
-This library is used in [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — a desktop application for downloading YouTube videos.
-
 ## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/why-so-political.md)</sup>
 
 By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
@@ -28,13 +26,14 @@ By using this project or its source code, for any purpose and in any shape or fo
 
 To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
 
-## Install
-
-- 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
-
 ## Related
 
 - [**YoutubeExplode.Converter**](YoutubeExplode.Converter) — provides capabilities for downloading YouTube videos with conversion to other formats, using FFmpeg.
+- [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — a desktop application for downloading YouTube videos, based on **YoutubeExplode**.
+
+## Install
+
+- 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
 
 ## Screenshots
 
