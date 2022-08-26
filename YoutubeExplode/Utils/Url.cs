@@ -31,26 +31,6 @@ internal static class Url
         }
     }
 
-    public static string SetRouteParameter(string url, string key, string value)
-    {
-        var existingMatch = Regex.Match(url, $"/({Regex.Escape(key)}/?.*?)(?:/|$)");
-
-        // Parameter has already been set to something
-        if (existingMatch.Success)
-        {
-            var group = existingMatch.Groups[1];
-
-            return url
-                .Remove(group.Index, group.Length)
-                .Insert(group.Index, $"{key}/{value}");
-        }
-        // Parameter hasn't been set yet
-        else
-        {
-            return $"{url}/{key}/{value}";
-        }
-    }
-
     public static IReadOnlyDictionary<string, string> SplitQuery(string query)
     {
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

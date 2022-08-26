@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils.Extensions;
 
@@ -22,18 +23,10 @@ public readonly partial struct ChannelId
 
 public partial struct ChannelId
 {
-    private static bool IsValid(string channelId)
-    {
-        // Channel IDs always start with 'UC'
-        if (!channelId.StartsWith("UC", StringComparison.Ordinal))
-            return false;
-
-        // Channel IDs are always 24 characters
-        if (channelId.Length != 24)
-            return false;
-
-        return !Regex.IsMatch(channelId, @"[^0-9a-zA-Z_\-]");
-    }
+    private static bool IsValid(string channelId) =>
+        channelId.StartsWith("UC", StringComparison.Ordinal) &&
+        channelId.Length == 24 &&
+        channelId.All(c => char.IsLetterOrDigit(c) || c is '_' or '-');
 
     private static string? TryNormalize(string? channelIdOrUrl)
     {

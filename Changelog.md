@@ -1,3 +1,11 @@
+### v6.2.1 (08-Aug-2022)
+
+- Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed with an error saying `The following content is not available on this app`. (Thanks [@Curtis Caulfield](https://github.com/codedbycurtis))
+
+### v6.2 (29-Jun-2022)
+
+- Added support for retrieving channel metadata using custom channel URL. You can do that via `ChannelClient.GetBySlugAsync(...)`. To parse a channel slug out of a custom channel URL, use `ChannelSlug.Parse(...)`.
+
 ### v6.1.2 (16-Apr-2022)
 
 - Updated documentation on `Engagement.DislikeCount` and `Engagement.AverageRating` to indicate that dislikes are not supported.
