@@ -48,7 +48,7 @@ Create an instance of this class and use the provided operations on `Videos`, `P
 
 #### Retrieving video metadata
 
-To retrieve metadata associated with a YouTube video, call `Videos.GetAsync(...)`:
+To retrieve the metadata associated with a YouTube video, call `Videos.GetAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -137,7 +137,7 @@ var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
 );
 ```
 
-Then retrieve metadata for a particular track:
+Then retrieve the metadata for a particular track:
 
 ```csharp
 // ...
@@ -170,7 +170,7 @@ await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
 
 #### Retrieving playlist metadata
 
-You can get metadata associated with a YouTube playlist by calling `Playlists.GetAsync(...)` method:
+You can get the metadata associated with a YouTube playlist by calling `Playlists.GetAsync(...)` method:
 
 ```csharp
 using YoutubeExplode;
@@ -206,7 +206,7 @@ var videosSubset = await youtube.Playlists
     .CollectAsync(20);
 ```
 
-You can also enumerate videos lazily without waiting for the whole list to load:
+You can also enumerate the videos iteratively without waiting for the whole list to load:
 
 ```csharp
 using YoutubeExplode;
@@ -246,7 +246,7 @@ await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(
 
 #### Retrieving channel metadata
 
-You can get metadata associated with a YouTube channel by calling `Channels.GetAsync(...)` method:
+You can get the metadata associated with a YouTube channel by calling `Channels.GetAsync(...)` method:
 
 ```csharp
 using YoutubeExplode;
@@ -260,7 +260,7 @@ var channel = await youtube.Channels.GetAsync(
 var title = channel.Title; // "Blender"
 ```
 
-You can also get channel metadata by username with `Channels.GetByUserAsync(...)`:
+You can also get the channel metadata by username with `Channels.GetByUserAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -272,7 +272,7 @@ var channel = await youtube.Channels.GetByUserAsync("https://youtube.com/user/Bl
 var id = channel.Id; // "UCSMOQeBJ2RAnuFungnQOxLg"
 ```
 
-To get channel metadata by slug or custom URL, use `Channels.GetBySlugAsync(...)`:
+To get the channel metadata by slug or custom URL, use `Channels.GetBySlugAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
