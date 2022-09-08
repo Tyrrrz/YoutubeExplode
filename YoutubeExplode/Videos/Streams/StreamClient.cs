@@ -148,12 +148,7 @@ public class StreamClient
     {
         var streamInfos = new List<IStreamInfo>();
 
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
-        if (!playerResponse.IsVideoPlayable())
-        {
-            // Try the embedded variant if this player response comes back unplayable
-            playerResponse = await _controller.GetPlayerResponseAsync(videoId, true, cancellationToken);
-        }
+        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
 
         var purchasePreviewVideoId = playerResponse.TryGetPreviewVideoId();
         if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
@@ -162,6 +157,12 @@ public class StreamClient
                 $"Video '{videoId}' requires purchase and cannot be played.",
                 purchasePreviewVideoId
             );
+        }
+
+        if (!playerResponse.IsVideoPlayable())
+        {
+            // Try the embedded variant if this player response comes back unplayable
+            playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, cancellationToken);
         }
 
         if (playerResponse.IsVideoPlayable())
@@ -197,7 +198,7 @@ public class StreamClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
         if (!playerResponse.IsVideoPlayable())
         {
             var reason = playerResponse.TryGetVideoPlayabilityError();
