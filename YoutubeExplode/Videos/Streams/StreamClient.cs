@@ -32,11 +32,32 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
+    private async Task<string?> TryGetPlayerSource()
+    {
+        //Use iframe api to get player version
+        var iframeContent = await _http.GetStringAsync("https://www.youtube.com/iframe_api");
+        
+        var version = Regex.Match(iframeContent, @"player\\?/([0-9a-fA-F]{8})\\?/");
+        if (!version.Success) return null;
+
+        //Download player and return it
+        var source = await _http.GetStringAsync($"https://www.youtube.com/s/player/{version.Groups[1]}/player_ias.vflset/en_US/base.js");
+        return source;
+    }
+
+    private string? TryGetSignatureTimestamp(string playerSource)
+    {
+        var match = Regex.Match(playerSource, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})");
+        return !match.Success ? null : match.Groups[1].Value;
+    }
+
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
         IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
+        string? playerSource,
         CancellationToken cancellationToken = default)
     {
+
         foreach (var streamInfoExtractor in streamInfoExtractors)
         {
             var itag =
@@ -46,6 +67,18 @@ public class StreamClient
             var url =
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL.");
+            
+            var sp = streamInfoExtractor.TryGetSignatureParameter();
+            var s = streamInfoExtractor.TryGetSignature();
+            
+            //If player source is not null and signature is not null
+            if (playerSource is not null && sp is not null && s is not null)
+            {
+                var signatureScrambler = PlayerSourceExtractor.Create(playerSource).TryGetSignatureScrambler() ?? throw new YoutubeExplodeException("Could not extract signature scrambler.");
+
+                var spValue = signatureScrambler.Unscramble(s);
+                url += $"&{sp}={spValue}";
+            }
 
             // Get content length
             var contentLength =
@@ -159,23 +192,27 @@ public class StreamClient
             );
         }
 
+        string? playerSource = null;
+
         if (!playerResponse.IsVideoPlayable())
         {
+            playerSource = await TryGetPlayerSource() ?? throw new YoutubeExplodeException("Could not get player");
+            var signatureTimestamp = TryGetSignatureTimestamp(playerSource) ?? throw new YoutubeExplodeException("Could not get signature timestamp");
             // Try the embedded variant if this player response comes back unplayable
-            playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, cancellationToken);
+            playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, signatureTimestamp, cancellationToken);
         }
 
         if (playerResponse.IsVideoPlayable())
         {
             // Extract streams from player response
-            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), cancellationToken);
+            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), playerSource, cancellationToken);
 
             // Extract streams from DASH manifest
             var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
             if (!string.IsNullOrWhiteSpace(dashManifestUrl))
             {
                 var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), cancellationToken);
+                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), playerSource, cancellationToken);
             }
         }
 
@@ -192,7 +229,7 @@ public class StreamClient
     }
 
     /// <summary>
-    /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
+    ///     Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
     /// </summary>
     public async ValueTask<string> GetHttpLiveStreamUrlAsync(
         VideoId videoId,

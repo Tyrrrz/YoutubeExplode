@@ -68,6 +68,7 @@ internal class VideoController : YoutubeControllerBase
 
     public async Task<PlayerResponseExtractor> GetPlayerResponseTvEmbedClientAsync(
         VideoId videoId,
+        string signatureTimestamp,
         CancellationToken cancellationToken = default) => await GetPlayerResponseFromPayload(
         new
         {
@@ -79,16 +80,22 @@ internal class VideoController : YoutubeControllerBase
                 client = new
                 {
                     clientName = "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
-                    clientScreen = "EMBED",
                     clientVersion = "2.0",
                     hl = "en",
                     gl = "US",
                     utcOffsetMinutes = 0
+                },
+                thirdParty = new
+                {
+                    embedUrl = "https://www.youtube.com"
                 }
             },
-            thirdParty = new
+            playbackContext = new
             {
-                embedUrl = "https://www.youtube.com"
+                contentPlaybackContext = new
+                {
+                    signatureTimestamp = signatureTimestamp
+                }
             }
         },
         videoId,
