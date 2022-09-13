@@ -33,20 +33,18 @@ public class StreamClient
         _controller = new StreamController(http);
     }
     
-    private async Task<PlayerSourceExtractor?> TryGetPlayerSourceExtractor()
+    private async Task<PlayerSourceExtractor?> TryGetPlayerSourceAsync()
     {
-        //Use iframe api to get player version
         var iframeContent = await _http.GetStringAsync("https://www.youtube.com/iframe_api");
-        
-        var version = Regex.Match(iframeContent, @"player\\?/([0-9a-fA-F]{8})\\?/");
-        if (!version.Success) return null;
 
-        //Download player and return it
-        var source = await _http.GetStringAsync($"https://www.youtube.com/s/player/{version.Groups[1]}/player_ias.vflset/en_US/base.js");
-        var playerSourceExtractor = PlayerSourceExtractor.Create(source);
-        return playerSourceExtractor;
+        var version = Regex.Match(iframeContent, @"player\\?/([0-9a-fA-F]{8})\\?/").Groups[1].Value;
+        if (string.IsNullOrWhiteSpace(version))
+        	return null;
+
+        var source = await _http.GetStringAsync($"https://www.youtube.com/s/player/{version}/player_ias.vflset/en_US/base.js");
+
+        return PlayerSourceExtractor.Create(source);
     }
-
 
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
@@ -54,7 +52,6 @@ public class StreamClient
         SignatureScrambler signatureScrambler,
         CancellationToken cancellationToken = default)
     {
-
         foreach (var streamInfoExtractor in streamInfoExtractors)
         {
             var itag =
