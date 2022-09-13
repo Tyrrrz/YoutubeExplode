@@ -187,7 +187,7 @@ public class StreamClient
 
         if (!playerResponse.IsVideoPlayable())
         {
-            var playerSource = await TryGetPlayerSourceExtractor() ?? throw new YoutubeExplodeException("Could not get player");
+            var playerSource = await TryGetPlayerSourceAsync() ?? throw new YoutubeExplodeException("Could not get player");
             var signatureTimestamp = playerSource.TryGetSignatureTimestamp() ?? throw new YoutubeExplodeException("Could not get signature timestamp");
             // Try the embedded variant if this player response comes back unplayable
             playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, signatureTimestamp, cancellationToken);
