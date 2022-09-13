@@ -62,11 +62,10 @@ public class StreamClient
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL.");
             
-            var signatureParameterp = streamInfoExtractor.TryGetSignatureParameter();
+            var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
             var signature = streamInfoExtractor.TryGetSignature();
-            
-            //If player source is not null and signature is not null
-            if (signatureParameterp is not null && signature is not null)
+
+            if (!string.IsNullOrWhiteSpace(signatureParameter) && !string.IsNullOrWhiteSpace(signature))
             {
                 var spValue = signatureScrambler.Unscramble(signature);
                 url += $"&{signatureParameterp}={spValue}";
