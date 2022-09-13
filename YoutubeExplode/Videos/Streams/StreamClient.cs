@@ -45,6 +45,22 @@ public class StreamClient
 
         return PlayerSourceExtractor.Create(source);
     }
+    
+    private string UnscrambleStreamUrl(
+        SignatureScrambler signatureScrambler,
+        string streamUrl,
+        string? signature,
+        string? signatureParameter)
+    {
+        if (string.IsNullOrWhiteSpace(signature))
+            return streamUrl;
+
+        return Url.SetQueryParameter(
+            streamUrl,
+            signatureParameter ?? "signature",
+            signatureScrambler.Unscramble(signature)
+        );
+    }
 
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
@@ -64,12 +80,7 @@ public class StreamClient
             
             var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
             var signature = streamInfoExtractor.TryGetSignature();
-
-            if (!string.IsNullOrWhiteSpace(signatureParameter) && !string.IsNullOrWhiteSpace(signature))
-            {
-                var spValue = signatureScrambler.Unscramble(signature);
-                url += $"&{signatureParameterp}={spValue}";
-            }
+            url = UnscrambleStreamUrl(signatureScrambler, url, signature, signatureParameter);
 
             // Get content length
             var contentLength =
