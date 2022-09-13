@@ -74,13 +74,12 @@ public class StreamClient
                 streamInfoExtractor.TryGetItag() ??
                 throw new YoutubeExplodeException("Could not extract stream itag.");
 
-            var url =
+            var url = UnscrambleStreamUrl(
                 streamInfoExtractor.TryGetUrl() ??
-                throw new YoutubeExplodeException("Could not extract stream URL.");
-            
-            var signatureParameter = streamInfoExtractor.TryGetSignatureParameter();
-            var signature = streamInfoExtractor.TryGetSignature();
-            url = UnscrambleStreamUrl(signatureScrambler, url, signature, signatureParameter);
+                throw new YoutubeExplodeException("Could not extract stream URL."),
+                streamInfoExtractor.TryGetSignature(),
+                streamInfoExtractor.TryGetSignatureParameter()
+            );
 
             // Get content length
             var contentLength =
