@@ -40,9 +40,7 @@ internal partial class PlayerSourceExtractor
         if (string.IsNullOrWhiteSpace(objName))
             return null;
 
-        var escapedObjName = Regex.Escape(objName);
-
-        return Regex.Match(_content, $@"var\s+{escapedObjName}=\{{(\w+:function\(\w+(,\w+)?\)\{{(.*?)\}}),?\}};",
+        return Regex.Match(_content, $@"var\s+{Regex.Escape(objName)}=\{{(\w+:function\(\w+(,\w+)?\)\{{(.*?)\}}),?\}};",
                 RegexOptions.Singleline)
             .Groups[0]
             .Value
