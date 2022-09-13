@@ -221,7 +221,7 @@ public class StreamClient
     }
 
     /// <summary>
-    ///     Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
+    /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
     /// </summary>
     public async ValueTask<string> GetHttpLiveStreamUrlAsync(
         VideoId videoId,
