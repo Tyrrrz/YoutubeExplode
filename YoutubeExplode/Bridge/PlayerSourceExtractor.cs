@@ -21,10 +21,11 @@ internal partial class PlayerSourceExtractor
     );
     
     public string? TryGetSignatureTimestamp() => Memo.Cache(this, () =>
-    {
-        var match = Regex.Match(_content, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})");
-        return !match.Success ? null : match.Groups[1].Value;
-    });
+				Regex.Match(_content, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})")
+        		.Groups[1]
+            .Value
+            .NullIfWhiteSpace()
+    );
 
     private string? TryGetScramblerDefinition() => Memo.Cache(this, () =>
     {
