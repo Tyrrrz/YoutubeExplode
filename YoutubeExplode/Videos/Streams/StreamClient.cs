@@ -32,6 +32,7 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
+    //TODO return playerSourceExtractor
     private async Task<string?> TryGetPlayerSource()
     {
         //Use iframe api to get player version
@@ -45,6 +46,7 @@ public class StreamClient
         return source;
     }
 
+    //TODO move to playerSourceExtractor
     private string? TryGetSignatureTimestamp(string playerSource)
     {
         var match = Regex.Match(playerSource, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})");
