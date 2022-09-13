@@ -19,6 +19,12 @@ internal partial class PlayerSourceExtractor
             .Value
             .NullIfWhiteSpace()
     );
+    
+    public string? TryGetSignatureTimestamp()
+    {
+        var match = Regex.Match(_content, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})");
+        return !match.Success ? null : match.Groups[1].Value;
+    }
 
     private string? TryGetScramblerDefinition() => Memo.Cache(this, () =>
     {

@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
+using YoutubeExplode.Bridge.SignatureScrambling;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -31,9 +32,8 @@ public class StreamClient
         _http = http;
         _controller = new StreamController(http);
     }
-
-    //TODO return playerSourceExtractor
-    private async Task<string?> TryGetPlayerSource()
+    
+    private async Task<PlayerSourceExtractor?> TryGetPlayerSourceExtractor()
     {
         //Use iframe api to get player version
         var iframeContent = await _http.GetStringAsync("https://www.youtube.com/iframe_api");
@@ -43,20 +43,15 @@ public class StreamClient
 
         //Download player and return it
         var source = await _http.GetStringAsync($"https://www.youtube.com/s/player/{version.Groups[1]}/player_ias.vflset/en_US/base.js");
-        return source;
+        var playerSourceExtractor = PlayerSourceExtractor.Create(source);
+        return playerSourceExtractor;
     }
 
-    //TODO move to playerSourceExtractor
-    private string? TryGetSignatureTimestamp(string playerSource)
-    {
-        var match = Regex.Match(playerSource, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})");
-        return !match.Success ? null : match.Groups[1].Value;
-    }
 
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
         IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
-        string? playerSource,
+        SignatureScrambler signatureScrambler,
         CancellationToken cancellationToken = default)
     {
 
@@ -70,16 +65,14 @@ public class StreamClient
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL.");
             
-            var sp = streamInfoExtractor.TryGetSignatureParameter();
-            var s = streamInfoExtractor.TryGetSignature();
+            var signatureParameterp = streamInfoExtractor.TryGetSignatureParameter();
+            var signature = streamInfoExtractor.TryGetSignature();
             
             //If player source is not null and signature is not null
-            if (playerSource is not null && sp is not null && s is not null)
+            if (signatureParameterp is not null && signature is not null)
             {
-                var signatureScrambler = PlayerSourceExtractor.Create(playerSource).TryGetSignatureScrambler() ?? throw new YoutubeExplodeException("Could not extract signature scrambler.");
-
-                var spValue = signatureScrambler.Unscramble(s);
-                url += $"&{sp}={spValue}";
+                var spValue = signatureScrambler.Unscramble(signature);
+                url += $"&{signatureParameterp}={spValue}";
             }
 
             // Get content length
@@ -194,27 +187,28 @@ public class StreamClient
             );
         }
 
-        string? playerSource = null;
+        var signatureScrambler = SignatureScrambler.Null;
 
         if (!playerResponse.IsVideoPlayable())
         {
-            playerSource = await TryGetPlayerSource() ?? throw new YoutubeExplodeException("Could not get player");
-            var signatureTimestamp = TryGetSignatureTimestamp(playerSource) ?? throw new YoutubeExplodeException("Could not get signature timestamp");
+            var playerSource = await TryGetPlayerSourceExtractor() ?? throw new YoutubeExplodeException("Could not get player");
+            var signatureTimestamp = playerSource.TryGetSignatureTimestamp() ?? throw new YoutubeExplodeException("Could not get signature timestamp");
             // Try the embedded variant if this player response comes back unplayable
             playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, signatureTimestamp, cancellationToken);
+            signatureScrambler = playerSource.TryGetSignatureScrambler() ?? throw new YoutubeExplodeException("Could not get signature scrambler");
         }
 
         if (playerResponse.IsVideoPlayable())
         {
             // Extract streams from player response
-            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), playerSource, cancellationToken);
+            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), signatureScrambler, cancellationToken);
 
             // Extract streams from DASH manifest
             var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
             if (!string.IsNullOrWhiteSpace(dashManifestUrl))
             {
                 var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), playerSource, cancellationToken);
+                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), signatureScrambler, cancellationToken);
             }
         }
 
