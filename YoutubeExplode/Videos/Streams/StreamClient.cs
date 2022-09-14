@@ -33,8 +33,7 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
-    private string UnscrambleStreamUrl(
-        SignatureScrambler signatureScrambler,
+    private string UnscrambleStreamUrl(SignatureScrambler signatureScrambler,
         string streamUrl,
         string? signature,
         string? signatureParameter)
@@ -170,7 +169,7 @@ public class StreamClient
     {
         var streamInfos = new List<IStreamInfo>();
 
-        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
+        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
         var purchasePreviewVideoId = playerResponse.TryGetPreviewVideoId();
         if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
@@ -183,26 +182,47 @@ public class StreamClient
 
         var signatureScrambler = SignatureScrambler.Null;
 
+        // If the video is unplayable, try one more time by fetching the player response
+        // with signature deciphering. This is required for age-restricted videos.
         if (!playerResponse.IsVideoPlayable())
         {
-            var playerSource = await _controller.TryGetPlayerSourceAsync(cancellationToken) ?? throw new YoutubeExplodeException("Could not get player");
-            var signatureTimestamp = playerSource.TryGetSignatureTimestamp() ?? throw new YoutubeExplodeException("Could not get signature timestamp");
-            // Try the embedded variant if this player response comes back unplayable
-            playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, signatureTimestamp, cancellationToken);
-            signatureScrambler = playerSource.TryGetSignatureScrambler() ?? throw new YoutubeExplodeException("Could not get signature scrambler");
+            var playerSource =
+                await _controller.TryGetPlayerSourceAsync(cancellationToken) ??
+                throw new YoutubeExplodeException("Could not get player");
+
+            var signatureTimestamp =
+                playerSource.TryGetSignatureTimestamp() ??
+                throw new YoutubeExplodeException("Could not get signature timestamp");
+
+            signatureScrambler =
+                playerSource.TryGetSignatureScrambler() ??
+                throw new YoutubeExplodeException("Could not get signature scrambler");
+
+            playerResponse = await _controller.GetPlayerResponseAsync(videoId, signatureTimestamp, cancellationToken);
         }
 
         if (playerResponse.IsVideoPlayable())
         {
             // Extract streams from player response
-            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), signatureScrambler, cancellationToken);
+            await PopulateStreamInfosAsync(
+                streamInfos,
+                playerResponse.GetStreams(),
+                signatureScrambler,
+                cancellationToken
+            );
 
             // Extract streams from DASH manifest
             var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
             if (!string.IsNullOrWhiteSpace(dashManifestUrl))
             {
                 var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), signatureScrambler, cancellationToken);
+
+                await PopulateStreamInfosAsync(
+                    streamInfos,
+                    dashManifest.GetStreams(),
+                    signatureScrambler,
+                    cancellationToken
+                );
             }
         }
 
@@ -225,7 +245,7 @@ public class StreamClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
+        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
         if (!playerResponse.IsVideoPlayable())
         {
             var reason = playerResponse.TryGetVideoPlayabilityError();
@@ -265,8 +285,8 @@ public class StreamClient
 
         var stream = new SegmentedHttpStream(_http, streamInfo.Url, streamInfo.Size.Bytes, segmentSize);
 
-        // Pre-resolve inner stream eagerly
-        await stream.PreloadAsync(cancellationToken);
+        // Pre-resolve inner stream
+        await stream.InitializeAsync(cancellationToken);
 
         return stream;
     }

@@ -62,7 +62,7 @@ internal class SegmentedHttpStream : Stream
         return _segmentStream = stream;
     }
 
-    public async ValueTask PreloadAsync(CancellationToken cancellationToken = default) =>
+    public async ValueTask InitializeAsync(CancellationToken cancellationToken = default) =>
         await ResolveSegmentAsync(cancellationToken);
 
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)

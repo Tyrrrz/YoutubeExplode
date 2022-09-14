@@ -71,7 +71,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.AgeRestricted)]
     [InlineData(VideoIds.AgeRestrictedSignature)]
-    [InlineData(VideoIds.AgeRestrictedEmbedRestricted, Skip = "Age restricted videos are currently not supported")]
+    [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     public async Task User_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
     {
         // Arrange
@@ -164,7 +164,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.AgeRestricted)]
     [InlineData(VideoIds.AgeRestrictedSignature)]
-    [InlineData(VideoIds.AgeRestrictedEmbedRestricted, Skip = "Age restricted videos are currently not supported")]
+    [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     public async Task User_can_download_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange
