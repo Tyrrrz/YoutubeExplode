@@ -285,7 +285,7 @@ public class StreamClient
     }
 
     /// <summary>
-    ///     Downloads the stream identified by the specified metadata to the specified file.
+    /// Downloads the stream identified by the specified metadata to the specified file.
     /// </summary>
     public async ValueTask DownloadAsync(
         IStreamInfo streamInfo,
