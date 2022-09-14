@@ -32,20 +32,7 @@ public class StreamClient
         _http = http;
         _controller = new StreamController(http);
     }
-    
-    private async Task<PlayerSourceExtractor?> TryGetPlayerSourceAsync()
-    {
-        var iframeContent = await _http.GetStringAsync("https://www.youtube.com/iframe_api");
 
-        var version = Regex.Match(iframeContent, @"player\\?/([0-9a-fA-F]{8})\\?/").Groups[1].Value;
-        if (string.IsNullOrWhiteSpace(version))
-        	return null;
-
-        var source = await _http.GetStringAsync($"https://www.youtube.com/s/player/{version}/player_ias.vflset/en_US/base.js");
-
-        return PlayerSourceExtractor.Create(source);
-    }
-    
     private string UnscrambleStreamUrl(
         SignatureScrambler signatureScrambler,
         string streamUrl,
@@ -75,6 +62,7 @@ public class StreamClient
                 throw new YoutubeExplodeException("Could not extract stream itag.");
 
             var url = UnscrambleStreamUrl(
+                signatureScrambler,
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL."),
                 streamInfoExtractor.TryGetSignature(),
@@ -197,7 +185,7 @@ public class StreamClient
 
         if (!playerResponse.IsVideoPlayable())
         {
-            var playerSource = await TryGetPlayerSourceAsync() ?? throw new YoutubeExplodeException("Could not get player");
+            var playerSource = await _controller.TryGetPlayerSourceAsync(cancellationToken) ?? throw new YoutubeExplodeException("Could not get player");
             var signatureTimestamp = playerSource.TryGetSignatureTimestamp() ?? throw new YoutubeExplodeException("Could not get signature timestamp");
             // Try the embedded variant if this player response comes back unplayable
             playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, signatureTimestamp, cancellationToken);
@@ -297,7 +285,7 @@ public class StreamClient
     }
 
     /// <summary>
-    /// Downloads the stream identified by the specified metadata to the specified file.
+    ///     Downloads the stream identified by the specified metadata to the specified file.
     /// </summary>
     public async ValueTask DownloadAsync(
         IStreamInfo streamInfo,

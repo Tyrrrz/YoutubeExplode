@@ -19,10 +19,10 @@ internal partial class PlayerSourceExtractor
             .Value
             .NullIfWhiteSpace()
     );
-    
+
     public string? TryGetSignatureTimestamp() => Memo.Cache(this, () =>
-				Regex.Match(_content, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})")
-        		.Groups[1]
+        Regex.Match(_content, @"(?:signatureTimestamp|sts)\s*:\s*(?<sts>[0-9]{5})")
+            .Groups[1]
             .Value
             .NullIfWhiteSpace()
     );
