@@ -30,7 +30,7 @@ public class ClosedCaptionClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
 
         var trackInfos = playerResponse
             .GetClosedCaptionTracks()

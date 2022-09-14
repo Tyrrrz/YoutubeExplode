@@ -48,7 +48,7 @@ public class VideoClient
 
         var playerResponse =
             watchPage.TryGetPlayerResponse() ??
-            await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+            await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
 
         var title =
             playerResponse.TryGetVideoTitle() ??

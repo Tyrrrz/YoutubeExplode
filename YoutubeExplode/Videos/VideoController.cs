@@ -42,14 +42,10 @@ internal class VideoController : YoutubeControllerBase
         );
     }
 
-    public async Task<PlayerResponseExtractor> GetPlayerResponseAsync(
+    public async Task<PlayerResponseExtractor> GetPlayerResponseAndroidClientAsync(
         VideoId videoId,
-        bool isEmbedded,
-        CancellationToken cancellationToken = default)
-    {
-        const string url = $"https://www.youtube.com/youtubei/v1/player?key={ApiKey}";
-
-        var payload = new
+        CancellationToken cancellationToken = default) => await GetPlayerResponseFromPayload(
+        new
         {
             videoId = videoId.Value,
             contentCheckOk = true,
@@ -59,9 +55,32 @@ internal class VideoController : YoutubeControllerBase
                 client = new
                 {
                     clientName = "ANDROID",
-                    clientScreen = isEmbedded ? "EMBED" : null,
                     clientVersion = "17.29.35",
                     androidSdkVersion = 30,
+                    hl = "en",
+                    gl = "US",
+                    utcOffsetMinutes = 0
+                }
+            }
+        },
+        videoId,
+        cancellationToken);
+
+    public async Task<PlayerResponseExtractor> GetPlayerResponseTvEmbedClientAsync(
+        VideoId videoId,
+        string signatureTimestamp,
+        CancellationToken cancellationToken = default) => await GetPlayerResponseFromPayload(
+        new
+        {
+            videoId = videoId.Value,
+            contentCheckOk = true,
+            racyCheckOk = true,
+            context = new
+            {
+                client = new
+                {
+                    clientName = "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                    clientVersion = "2.0",
                     hl = "en",
                     gl = "US",
                     utcOffsetMinutes = 0
@@ -70,8 +89,22 @@ internal class VideoController : YoutubeControllerBase
                 {
                     embedUrl = "https://www.youtube.com"
                 }
+            },
+            playbackContext = new
+            {
+                contentPlaybackContext = new
+                {
+                    signatureTimestamp = signatureTimestamp
+                }
             }
-        };
+        },
+        videoId,
+        cancellationToken);
+
+    private async Task<PlayerResponseExtractor> GetPlayerResponseFromPayload(object payload, VideoId videoId,
+        CancellationToken cancellationToken)
+    {
+        const string url = $"https://www.youtube.com/youtubei/v1/player?key={ApiKey}";
 
         using var request = new HttpRequestMessage(HttpMethod.Post, url)
         {
@@ -88,9 +121,4 @@ internal class VideoController : YoutubeControllerBase
 
         return playerResponse;
     }
-
-    public async Task<PlayerResponseExtractor> GetPlayerResponseAsync(
-        VideoId videoId,
-        CancellationToken cancellationToken = default) =>
-        await GetPlayerResponseAsync(videoId, false, cancellationToken);
 }

@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
+using YoutubeExplode.Bridge.SignatureScrambling;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -32,9 +33,26 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
+    private string UnscrambleStreamUrl(
+        SignatureScrambler signatureScrambler,
+        string streamUrl,
+        string? signature,
+        string? signatureParameter)
+    {
+        if (string.IsNullOrWhiteSpace(signature))
+            return streamUrl;
+
+        return Url.SetQueryParameter(
+            streamUrl,
+            signatureParameter ?? "signature",
+            signatureScrambler.Unscramble(signature)
+        );
+    }
+
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
         IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
+        SignatureScrambler signatureScrambler,
         CancellationToken cancellationToken = default)
     {
         foreach (var streamInfoExtractor in streamInfoExtractors)
@@ -43,9 +61,13 @@ public class StreamClient
                 streamInfoExtractor.TryGetItag() ??
                 throw new YoutubeExplodeException("Could not extract stream itag.");
 
-            var url =
+            var url = UnscrambleStreamUrl(
+                signatureScrambler,
                 streamInfoExtractor.TryGetUrl() ??
-                throw new YoutubeExplodeException("Could not extract stream URL.");
+                throw new YoutubeExplodeException("Could not extract stream URL."),
+                streamInfoExtractor.TryGetSignature(),
+                streamInfoExtractor.TryGetSignatureParameter()
+            );
 
             // Get content length
             var contentLength =
@@ -148,12 +170,7 @@ public class StreamClient
     {
         var streamInfos = new List<IStreamInfo>();
 
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
-        if (!playerResponse.IsVideoPlayable())
-        {
-            // Try the embedded variant if this player response comes back unplayable
-            playerResponse = await _controller.GetPlayerResponseAsync(videoId, true, cancellationToken);
-        }
+        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
 
         var purchasePreviewVideoId = playerResponse.TryGetPreviewVideoId();
         if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
@@ -164,17 +181,28 @@ public class StreamClient
             );
         }
 
+        var signatureScrambler = SignatureScrambler.Null;
+
+        if (!playerResponse.IsVideoPlayable())
+        {
+            var playerSource = await _controller.TryGetPlayerSourceAsync(cancellationToken) ?? throw new YoutubeExplodeException("Could not get player");
+            var signatureTimestamp = playerSource.TryGetSignatureTimestamp() ?? throw new YoutubeExplodeException("Could not get signature timestamp");
+            // Try the embedded variant if this player response comes back unplayable
+            playerResponse = await _controller.GetPlayerResponseTvEmbedClientAsync(videoId, signatureTimestamp, cancellationToken);
+            signatureScrambler = playerSource.TryGetSignatureScrambler() ?? throw new YoutubeExplodeException("Could not get signature scrambler");
+        }
+
         if (playerResponse.IsVideoPlayable())
         {
             // Extract streams from player response
-            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), cancellationToken);
+            await PopulateStreamInfosAsync(streamInfos, playerResponse.GetStreams(), signatureScrambler, cancellationToken);
 
             // Extract streams from DASH manifest
             var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
             if (!string.IsNullOrWhiteSpace(dashManifestUrl))
             {
                 var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
-                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), cancellationToken);
+                await PopulateStreamInfosAsync(streamInfos, dashManifest.GetStreams(), signatureScrambler, cancellationToken);
             }
         }
 
@@ -197,7 +225,7 @@ public class StreamClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+        var playerResponse = await _controller.GetPlayerResponseAndroidClientAsync(videoId, cancellationToken);
         if (!playerResponse.IsVideoPlayable())
         {
             var reason = playerResponse.TryGetVideoPlayabilityError();

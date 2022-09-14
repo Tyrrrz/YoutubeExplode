@@ -69,7 +69,8 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.HighDynamicRange)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
-    [InlineData(VideoIds.AgeRestricted, Skip = "Age restricted videos are currently not supported")]
+    [InlineData(VideoIds.AgeRestricted)]
+    [InlineData(VideoIds.AgeRestrictedSignature)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted, Skip = "Age restricted videos are currently not supported")]
     public async Task User_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
     {
@@ -129,7 +130,8 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
 
     [Theory]
     [InlineData(VideoIds.Normal)]
-    [InlineData(VideoIds.AgeRestricted, Skip = "Age restricted videos are currently not supported")]
+    [InlineData(VideoIds.AgeRestricted)]
+    [InlineData(VideoIds.AgeRestrictedSignature)]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.ContainsDashManifest)]
     [InlineData(VideoIds.Omnidirectional)]
@@ -160,7 +162,8 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.Omnidirectional)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
-    [InlineData(VideoIds.AgeRestricted, Skip = "Age restricted videos are currently not supported")]
+    [InlineData(VideoIds.AgeRestricted)]
+    [InlineData(VideoIds.AgeRestrictedSignature)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted, Skip = "Age restricted videos are currently not supported")]
     public async Task User_can_download_a_specific_stream_from_a_video(string videoId)
     {
