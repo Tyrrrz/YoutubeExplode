@@ -26,7 +26,7 @@ internal class SearchController : YoutubeControllerBase
             query = searchQuery,
             @params = searchFilter switch
             {
-                SearchFilter.Video => "EgIQAQ%3D%3D",
+                SearchFilter.Video => "CAISBAgCEAE%253D",
                 SearchFilter.Playlist => "EgIQAw%3D%3D",
                 SearchFilter.Channel => "EgIQAg%3D%3D",
                 _ => null
