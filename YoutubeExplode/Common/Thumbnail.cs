@@ -22,7 +22,7 @@ public partial class Thumbnail
     public Resolution Resolution { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="Thumbnail"/>.
+    /// Initializes an instance of <see cref="Thumbnail" />.
     /// </summary>
     public Thumbnail(string url, Resolution resolution)
     {
@@ -46,7 +46,7 @@ public partial class Thumbnail
 }
 
 /// <summary>
-/// Extensions for <see cref="Thumbnail"/>.
+/// Extensions for <see cref="Thumbnail" />.
 /// </summary>
 public static class ThumbnailExtensions
 {

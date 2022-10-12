@@ -6,7 +6,7 @@ namespace YoutubeExplode.Exceptions;
 public class VideoUnplayableException : YoutubeExplodeException
 {
     /// <summary>
-    /// Initializes an instance of <see cref="VideoUnplayableException"/>.
+    /// Initializes an instance of <see cref="VideoUnplayableException" />.
     /// </summary>
     public VideoUnplayableException(string message) : base(message)
     {

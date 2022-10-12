@@ -30,7 +30,7 @@ public class VideoOnlyStreamInfo : IVideoStreamInfo
     public Resolution VideoResolution { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="VideoOnlyStreamInfo"/>.
+    /// Initializes an instance of <see cref="VideoOnlyStreamInfo" />.
     /// </summary>
     public VideoOnlyStreamInfo(
         string url,

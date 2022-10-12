@@ -27,7 +27,7 @@ public interface IVideoStreamInfo : IStreamInfo
 }
 
 /// <summary>
-/// Extensions for <see cref="IVideoStreamInfo"/>.
+/// Extensions for <see cref="IVideoStreamInfo" />.
 /// </summary>
 public static class VideoStreamInfoExtensions
 {

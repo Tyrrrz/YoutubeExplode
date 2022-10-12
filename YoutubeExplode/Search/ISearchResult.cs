@@ -10,9 +10,9 @@ namespace YoutubeExplode.Search;
 /// <p>
 ///     Can be either one of the following:
 ///     <list type="bullet">
-///         <item><see cref="VideoSearchResult"/></item>
-///         <item><see cref="PlaylistSearchResult"/></item>
-///         <item><see cref="ChannelSearchResult"/></item>
+///         <item><see cref="VideoSearchResult" /></item>
+///         <item><see cref="PlaylistSearchResult" /></item>
+///         <item><see cref="ChannelSearchResult" /></item>
 ///     </list>
 /// </p>
 /// </summary>

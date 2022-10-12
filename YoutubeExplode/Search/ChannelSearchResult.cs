@@ -23,7 +23,7 @@ public class ChannelSearchResult : ISearchResult, IChannel
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ChannelSearchResult"/>.
+    /// Initializes an instance of <see cref="ChannelSearchResult" />.
     /// </summary>
     public ChannelSearchResult(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
     {

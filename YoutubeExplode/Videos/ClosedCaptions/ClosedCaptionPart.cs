@@ -19,7 +19,7 @@ public class ClosedCaptionPart
     public TimeSpan Offset { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionPart"/>.
+    /// Initializes an instance of <see cref="ClosedCaptionPart" />.
     /// </summary>
     public ClosedCaptionPart(string text, TimeSpan offset)
     {

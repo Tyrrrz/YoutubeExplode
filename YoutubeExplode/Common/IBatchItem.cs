@@ -6,13 +6,13 @@ using YoutubeExplode.Utils.Extensions;
 namespace YoutubeExplode.Common;
 
 /// <summary>
-/// Represents an item that can be included in <see cref="Batch{T}"/>.
+/// Represents an item that can be included in <see cref="Batch{T}" />.
 /// This interface is used as a marker to enable extension methods.
 /// </summary>
 public interface IBatchItem {}
 
 /// <summary>
-/// Extensions for <see cref="IBatchItem"/>.
+/// Extensions for <see cref="IBatchItem" />.
 /// </summary>
 public static class BatchItemExtensions
 {
@@ -36,7 +36,7 @@ public static class BatchItemExtensions
         this IAsyncEnumerable<T> source,
         int count) where T : IBatchItem => await source.TakeAsync(count).ToListAsync();
 
-    /// <inheritdoc cref="CollectAsync{T}(System.Collections.Generic.IAsyncEnumerable{T})"/>
+    /// <inheritdoc cref="CollectAsync{T}(System.Collections.Generic.IAsyncEnumerable{T})" />
     public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(
         this IAsyncEnumerable<T> source) where T : IBatchItem => source.CollectAsync().GetAwaiter();
 }

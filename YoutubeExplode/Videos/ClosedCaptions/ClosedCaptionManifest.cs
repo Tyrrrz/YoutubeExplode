@@ -15,7 +15,7 @@ public class ClosedCaptionManifest
     public IReadOnlyList<ClosedCaptionTrackInfo> Tracks { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionManifest"/>.
+    /// Initializes an instance of <see cref="ClosedCaptionManifest" />.
     /// </summary>
     public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
     {

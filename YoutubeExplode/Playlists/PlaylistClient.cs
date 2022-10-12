@@ -19,7 +19,7 @@ public class PlaylistClient
     private readonly PlaylistController _controller;
 
     /// <summary>
-    /// Initializes an instance of <see cref="PlaylistClient"/>.
+    /// Initializes an instance of <see cref="PlaylistClient" />.
     /// </summary>
     public PlaylistClient(HttpClient http) =>
         _controller = new PlaylistController(http);

@@ -32,7 +32,7 @@ public readonly partial struct VideoQuality
     public bool IsHighDefinition => MaxHeight >= 1080;
 
     /// <summary>
-    /// Initializes an instance of <see cref="VideoQuality"/>.
+    /// Initializes an instance of <see cref="VideoQuality" />.
     /// </summary>
     public VideoQuality(string label, int maxHeight, int framerate)
     {
@@ -42,7 +42,7 @@ public readonly partial struct VideoQuality
     }
 
     /// <summary>
-    /// Initializes an instance of <see cref="VideoQuality"/>.
+    /// Initializes an instance of <see cref="VideoQuality" />.
     /// </summary>
     public VideoQuality(int maxHeight, int framerate)
         : this(FormatLabel(maxHeight, framerate), maxHeight, framerate)

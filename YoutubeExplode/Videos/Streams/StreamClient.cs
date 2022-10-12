@@ -25,7 +25,7 @@ public class StreamClient
     private readonly StreamController _controller;
 
     /// <summary>
-    /// Initializes an instance of <see cref="StreamClient"/>.
+    /// Initializes an instance of <see cref="StreamClient" />.
     /// </summary>
     public StreamClient(HttpClient http)
     {

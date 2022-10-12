@@ -36,7 +36,7 @@ public class ConversionRequest
     public ConversionPreset Preset { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ConversionRequest"/>.
+    /// Initializes an instance of <see cref="ConversionRequest" />.
     /// </summary>
     public ConversionRequest(
         string ffmpegCliFilePath,
@@ -51,7 +51,7 @@ public class ConversionRequest
     }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ConversionRequest"/>.
+    /// Initializes an instance of <see cref="ConversionRequest" />.
     /// </summary>
     [Obsolete("Use the other constructor overload"), ExcludeFromCodeCoverage]
     public ConversionRequest(

@@ -35,7 +35,7 @@ public class PlaylistVideo : IVideo, IBatchItem
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="PlaylistVideo"/>.
+    /// Initializes an instance of <see cref="PlaylistVideo" />.
     /// </summary>
     public PlaylistVideo(
         PlaylistId playlistId,
@@ -54,7 +54,7 @@ public class PlaylistVideo : IVideo, IBatchItem
     }
 
     /// <summary>
-    /// Initializes an instance of <see cref="PlaylistVideo"/>.
+    /// Initializes an instance of <see cref="PlaylistVideo" />.
     /// </summary>
     // Binary backwards compatibility (PlaylistId was added)
     [Obsolete("Use the other constructor instead."), ExcludeFromCodeCoverage]

@@ -18,7 +18,7 @@ public class SearchClient
     private readonly SearchController _controller;
 
     /// <summary>
-    /// Initializes an instance of <see cref="SearchClient"/>.
+    /// Initializes an instance of <see cref="SearchClient" />.
     /// </summary>
     public SearchClient(HttpClient http) =>
         _controller = new SearchController(http);

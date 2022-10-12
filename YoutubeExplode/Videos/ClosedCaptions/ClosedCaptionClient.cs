@@ -18,7 +18,7 @@ public class ClosedCaptionClient
     private readonly ClosedCaptionController _controller;
 
     /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionClient"/>.
+    /// Initializes an instance of <see cref="ClosedCaptionClient" />.
     /// </summary>
     public ClosedCaptionClient(HttpClient http) =>
         _controller = new ClosedCaptionController(http);

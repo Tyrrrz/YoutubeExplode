@@ -11,7 +11,7 @@ using YoutubeExplode.Videos.Streams;
 namespace YoutubeExplode.Converter;
 
 /// <summary>
-/// Extensions for <see cref="VideoClient"/> that provide interface for downloading videos through FFmpeg.
+/// Extensions for <see cref="VideoClient" /> that provide interface for downloading videos through FFmpeg.
 /// </summary>
 public static class ConversionExtensions
 {

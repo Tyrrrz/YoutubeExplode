@@ -6,7 +6,7 @@ namespace YoutubeExplode.Exceptions;
 public class RequestLimitExceededException : YoutubeExplodeException
 {
     /// <summary>
-    /// Initializes an instance of <see cref="RequestLimitExceededException"/>.
+    /// Initializes an instance of <see cref="RequestLimitExceededException" />.
     /// </summary>
     public RequestLimitExceededException(string message) : base(message)
     {

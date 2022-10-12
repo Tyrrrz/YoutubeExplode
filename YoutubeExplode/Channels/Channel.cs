@@ -22,7 +22,7 @@ public class Channel : IChannel
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="Channel"/>.
+    /// Initializes an instance of <see cref="Channel" />.
     /// </summary>
     public Channel(ChannelId id, string title, IReadOnlyList<Thumbnail> thumbnails)
     {

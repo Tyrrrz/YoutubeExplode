@@ -34,7 +34,7 @@ public class ClosedCaption
     public IReadOnlyList<ClosedCaptionPart> Parts { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaption"/>.
+    /// Initializes an instance of <see cref="ClosedCaption" />.
     /// </summary>
     public ClosedCaption(
         string text,

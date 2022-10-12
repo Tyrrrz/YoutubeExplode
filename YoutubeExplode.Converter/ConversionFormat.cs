@@ -21,7 +21,7 @@ public readonly struct ConversionFormat
     public bool IsAudioOnly => new Container(Name).IsAudioOnly();
 
     /// <summary>
-    /// Initializes an instance of <see cref="ConversionFormat"/>.
+    /// Initializes an instance of <see cref="ConversionFormat" />.
     /// </summary>
     public ConversionFormat(string name) => Name = name;
 

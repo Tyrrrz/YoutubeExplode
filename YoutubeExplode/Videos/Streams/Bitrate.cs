@@ -28,7 +28,7 @@ public readonly partial struct Bitrate
     public double GigaBitsPerSecond => MegaBitsPerSecond / 1024.0;
 
     /// <summary>
-    /// Initializes an instance of <see cref="Bitrate"/>.
+    /// Initializes an instance of <see cref="Bitrate" />.
     /// </summary>
     public Bitrate(long bitsPerSecond) => BitsPerSecond = bitsPerSecond;
 

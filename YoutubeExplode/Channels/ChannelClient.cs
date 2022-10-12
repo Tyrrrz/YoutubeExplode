@@ -21,7 +21,7 @@ public class ChannelClient
     private readonly ChannelController _controller;
 
     /// <summary>
-    /// Initializes an instance of <see cref="ChannelClient"/>.
+    /// Initializes an instance of <see cref="ChannelClient" />.
     /// </summary>
     public ChannelClient(HttpClient http)
     {

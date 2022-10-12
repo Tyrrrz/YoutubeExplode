@@ -8,7 +8,7 @@ using YoutubeExplode.Videos.Streams;
 namespace YoutubeExplode.Converter;
 
 /// <summary>
-/// Builder for <see cref="ConversionRequest"/>.
+/// Builder for <see cref="ConversionRequest" />.
 /// </summary>
 public partial class ConversionRequestBuilder
 {
@@ -19,7 +19,7 @@ public partial class ConversionRequestBuilder
     private ConversionPreset _preset;
 
     /// <summary>
-    /// Initializes an instance of <see cref="ConversionRequestBuilder"/>.
+    /// Initializes an instance of <see cref="ConversionRequestBuilder" />.
     /// </summary>
     public ConversionRequestBuilder(string outputFilePath) =>
         _outputFilePath = outputFilePath;

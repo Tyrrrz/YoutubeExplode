@@ -26,7 +26,7 @@ public class PlaylistSearchResult : ISearchResult, IPlaylist
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="PlaylistSearchResult"/>.
+    /// Initializes an instance of <see cref="PlaylistSearchResult" />.
     /// </summary>
     public PlaylistSearchResult(
         PlaylistId id,

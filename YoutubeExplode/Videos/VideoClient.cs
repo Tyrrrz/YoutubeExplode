@@ -27,7 +27,7 @@ public class VideoClient
     public ClosedCaptionClient ClosedCaptions { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="VideoClient"/>.
+    /// Initializes an instance of <see cref="VideoClient" />.
     /// </summary>
     public VideoClient(HttpClient http)
     {

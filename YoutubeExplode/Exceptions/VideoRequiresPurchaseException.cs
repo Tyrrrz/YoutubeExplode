@@ -13,7 +13,7 @@ public class VideoRequiresPurchaseException : VideoUnplayableException
     public VideoId PreviewVideoId { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="VideoRequiresPurchaseException"/>
+    /// Initializes an instance of <see cref="VideoRequiresPurchaseException" />
     /// </summary>
     public VideoRequiresPurchaseException(string message, VideoId previewVideoId) : base(message) =>
         PreviewVideoId = previewVideoId;

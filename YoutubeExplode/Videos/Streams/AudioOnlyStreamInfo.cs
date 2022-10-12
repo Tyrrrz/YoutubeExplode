@@ -23,7 +23,7 @@ public class AudioOnlyStreamInfo : IAudioStreamInfo
     public string AudioCodec { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="AudioOnlyStreamInfo"/>.
+    /// Initializes an instance of <see cref="AudioOnlyStreamInfo" />.
     /// </summary>
     public AudioOnlyStreamInfo(
         string url,

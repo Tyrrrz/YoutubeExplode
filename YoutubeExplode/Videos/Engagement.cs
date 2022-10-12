@@ -36,7 +36,7 @@ public class Engagement
         : 0; // avoid division by 0
 
     /// <summary>
-    /// Initializes an instance of <see cref="Engagement"/>.
+    /// Initializes an instance of <see cref="Engagement" />.
     /// </summary>
     public Engagement(long viewCount, long likeCount, long dislikeCount)
     {

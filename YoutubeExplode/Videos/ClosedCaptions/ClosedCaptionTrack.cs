@@ -15,7 +15,7 @@ public class ClosedCaptionTrack
     public IReadOnlyList<ClosedCaption> Captions { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionTrack"/>.
+    /// Initializes an instance of <see cref="ClosedCaptionTrack" />.
     /// </summary>
     public ClosedCaptionTrack(IReadOnlyList<ClosedCaption> captions)
     {

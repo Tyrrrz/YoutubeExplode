@@ -31,7 +31,7 @@ public readonly partial struct Container
         string.Equals(Name, "opus", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Initializes an instance of <see cref="Container"/>.
+    /// Initializes an instance of <see cref="Container" />.
     /// </summary>
     public Container(string name) => Name = name;
 

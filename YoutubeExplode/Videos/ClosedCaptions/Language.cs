@@ -19,7 +19,7 @@ public readonly partial struct Language
     public string Name { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="Language"/>.
+    /// Initializes an instance of <see cref="Language" />.
     /// </summary>
     public Language(string code, string name)
     {

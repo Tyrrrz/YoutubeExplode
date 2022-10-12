@@ -31,7 +31,7 @@ public interface IStreamInfo
 }
 
 /// <summary>
-/// Extensions for <see cref="IStreamInfo"/>.
+/// Extensions for <see cref="IStreamInfo" />.
 /// </summary>
 public static class StreamInfoExtensions
 {

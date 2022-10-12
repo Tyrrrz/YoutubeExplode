@@ -24,7 +24,7 @@ public readonly partial struct Resolution
     public int Area => Width * Height;
 
     /// <summary>
-    /// Initializes an instance of <see cref="Resolution"/>.
+    /// Initializes an instance of <see cref="Resolution" />.
     /// </summary>
     public Resolution(int width, int height)
     {

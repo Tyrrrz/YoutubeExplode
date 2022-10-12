@@ -29,7 +29,7 @@ public readonly partial struct FileSize
     public double GigaBytes => MegaBytes / 1024.0;
 
     /// <summary>
-    /// Initializes an instance of <see cref="FileSize"/>.
+    /// Initializes an instance of <see cref="FileSize" />.
     /// </summary>
     public FileSize(long bytes) => Bytes = bytes;
 

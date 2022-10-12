@@ -14,7 +14,7 @@ public class Batch<T> where T : IBatchItem
     public IReadOnlyList<T> Items { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="Batch{T}"/>.
+    /// Initializes an instance of <see cref="Batch{T}" />.
     /// </summary>
     public Batch(IReadOnlyList<T> items) => Items = items;
 }

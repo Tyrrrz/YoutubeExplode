@@ -30,7 +30,7 @@ public class Playlist : IPlaylist
     public IReadOnlyList<Thumbnail> Thumbnails { get; }
 
     /// <summary>
-    /// Initializes an instance of <see cref="Playlist"/>.
+    /// Initializes an instance of <see cref="Playlist" />.
     /// </summary>
     public Playlist(
         PlaylistId id,
