@@ -26,11 +26,6 @@ By using this project or its source code, for any purpose and in any shape or fo
 
 To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
 
-## Related
-
-- [**YoutubeExplode.Converter**](YoutubeExplode.Converter) — provides capabilities for downloading YouTube videos with conversion to other formats, using FFmpeg.
-- [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — a desktop application for downloading YouTube videos, based on **YoutubeExplode**.
-
 ## Install
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
@@ -384,3 +379,8 @@ await foreach (var batch in youtube.Search.GetResultBatchesAsync("blender tutori
 ## Etymology
 
 The "Explode" in **YoutubeExplode** comes from the name of a PHP function that splits up strings, [`explode()`](https://www.php.net/manual/en/function.explode.php). When I was starting the development of this library, most of the reference source code I read was written in PHP, hence the inspiration for the name.
+
+## Related projects
+
+- [**YoutubeExplode.Converter**](YoutubeExplode.Converter) — provides capabilities for downloading YouTube videos with conversion to other formats, using FFmpeg.
+- [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — desktop application for downloading YouTube videos, based on **YoutubeExplode**.
