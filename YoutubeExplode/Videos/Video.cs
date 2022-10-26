@@ -44,6 +44,13 @@ public class Video : IVideo
     public IReadOnlyList<string> Keywords { get; }
 
     /// <summary>
+    /// List of the most replayed sections on a video.
+    /// <see cref="Heatmap"/>
+    /// May not be available on all videos.
+    /// </summary>
+    public IReadOnlyList<Heatmap> Heatmap { get; }
+
+    /// <summary>
     /// Engagement statistics for the video.
     /// </summary>
     public Engagement Engagement { get; }
@@ -60,7 +67,8 @@ public class Video : IVideo
         TimeSpan? duration,
         IReadOnlyList<Thumbnail> thumbnails,
         IReadOnlyList<string> keywords,
-        Engagement engagement)
+        Engagement engagement,
+        IReadOnlyList<Heatmap> heatmap)
     {
         Id = id;
         Title = title;
@@ -71,6 +79,7 @@ public class Video : IVideo
         Thumbnails = thumbnails;
         Keywords = keywords;
         Engagement = engagement;
+        Heatmap = heatmap;
     }
 
     /// <inheritdoc />

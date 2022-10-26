@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -45,6 +47,32 @@ public class VideoClient
         CancellationToken cancellationToken = default)
     {
         var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
+
+        var initialData = watchPage.TryGetInitialData();
+
+        // Heatmap could be empty or not exist for a given video.
+        // If so, set it as empty.
+        // If it does exist and we can't extract, then throw.
+        var heatmap = initialData?
+            .TryGetHeatmap()?
+            .Select(t =>
+            {
+                var time =
+                    t.TryGetTimeRangeStartMillis() ??
+                    throw new YoutubeExplodeException("Could not extract time range.");
+
+                var marker =
+                    t.TryGetMarkerRangeStartMillis() ??
+                    throw new YoutubeExplodeException("Could not extract marker range.");
+
+                var score =
+                    t.TryGetHeatMarkerIntensityScoreNormalized() ??
+                    throw new YoutubeExplodeException("Could not extract intensity score.");
+
+                return new Heatmap(time, marker, score);
+            }).ToArray()
+            ?? Array.Empty<Heatmap>();
+        
 
         var playerResponse =
             watchPage.TryGetPlayerResponse() ??
@@ -108,7 +136,8 @@ public class VideoClient
             duration,
             thumbnails,
             keywords,
-            new Engagement(viewCount, likeCount, dislikeCount)
+            new Engagement(viewCount, likeCount, dislikeCount),
+            heatmap
         );
     }
 }

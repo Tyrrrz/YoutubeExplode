@@ -172,6 +172,7 @@ public class StreamClient
         var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
         var purchasePreviewVideoId = playerResponse.TryGetPreviewVideoId();
+
         if (!string.IsNullOrWhiteSpace(purchasePreviewVideoId))
         {
             throw new VideoRequiresPurchaseException(

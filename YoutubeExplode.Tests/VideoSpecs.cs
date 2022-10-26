@@ -41,6 +41,20 @@ public class VideoSpecs
         video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(5);
         video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
         video.Engagement.AverageRating.Should().BeGreaterOrEqualTo(0);
+        video.Heatmap.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task User_can_access_heatmap()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var video = await youtube.Videos.GetAsync(VideoIds.ContainsHeatmap);
+
+        // Assert
+        video.Heatmap.Should().NotBeEmpty();
     }
 
     [Fact]

@@ -49,6 +49,18 @@ internal partial class VideoWatchPageExtractor
             .Pipe(Json.TryParse)
     );
 
+    public InitialDataExtractor? TryGetInitialData() => Memo.Cache(this, () =>
+        _content
+            .GetElementsByTagName("script")
+            .Select(e => e.Text())
+            .Select(s => Regex.Match(s, @"var\s+ytInitialData\s*=\s*(\{.*\})").Groups[1].Value)
+            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))?
+            .NullIfWhiteSpace()?
+            .Pipe(Json.Extract)?
+            .Pipe(Json.TryParse)?
+            .Pipe(j => new InitialDataExtractor(j))
+    );
+
     public PlayerResponseExtractor? TryGetPlayerResponse() => Memo.Cache(this, () =>
         _content
             .GetElementsByTagName("script")
