@@ -39,7 +39,7 @@ internal abstract class YoutubeControllerBase
         );
 
         // Special case check for rate limiting errors
-        if ((int) response.StatusCode == 429)
+        if ((int)response.StatusCode == 429)
         {
             throw new RequestLimitExceededException(
                 "Exceeded request rate limit. " +
