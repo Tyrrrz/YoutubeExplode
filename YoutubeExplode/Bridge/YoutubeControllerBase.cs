@@ -39,7 +39,7 @@ internal abstract class YoutubeControllerBase
         );
 
         // Special case check for rate limiting errors
-        if ((int) response.StatusCode == 429)
+        if ((int)response.StatusCode == 429)
         {
             throw new RequestLimitExceededException(
                 "Exceeded request rate limit. " +
@@ -50,13 +50,17 @@ internal abstract class YoutubeControllerBase
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException(
-                $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode})." +
+            var message = $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode})." +
                 Environment.NewLine +
                 "Request:" +
                 Environment.NewLine +
-                request
-            );
+                request;
+
+#if NET5_0_OR_GREATER
+            throw new HttpRequestException(message, null, response.StatusCode);
+#else
+            throw new HttpRequestException(message);
+#endif
         }
 
         return await response.Content.ReadAsStringAsync(cancellationToken);
