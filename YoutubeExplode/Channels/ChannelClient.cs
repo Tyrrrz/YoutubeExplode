@@ -82,6 +82,15 @@ public class ChannelClient
         Extract(await _controller.GetChannelPageAsync(channelSlug, cancellationToken));
 
     /// <summary>
+    /// Gets the metadata associated with the channel identified by the specified handle
+    /// or handle URL in the form of https://youtube.com/@handle .
+    /// </summary>
+    public async ValueTask<Channel> GetByHandleAsync(
+        ChannelHandle channelHandle,
+        CancellationToken cancellationToken = default) =>
+        Extract(await _controller.GetChannelPageAsync(channelHandle, cancellationToken));
+
+    /// <summary>
     /// Enumerates videos uploaded by the specified channel.
     /// </summary>
     // TODO: should return <IVideo> sequence instead (breaking change)
