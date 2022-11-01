@@ -279,6 +279,18 @@ var channel = await youtube.Channels.GetBySlugAsync("https://youtube.com/c/Blend
 var id = channel.Id; // "UCSMOQeBJ2RAnuFungnQOxLg"
 ```
 
+To get the channel metadata by handle or handle URL, use `Channels.GetByHandleAsync(...)`:
+
+```csharp
+using YoutubeExplode;
+
+var youtube = new YoutubeClient();
+
+var channel = await youtube.Channels.GetByHandleAsync("https://www.youtube.com/@BeauMiles");
+
+var id = channel.Id; // "UCm325cMiw9B15xl22_gr6Dw"
+```
+
 #### Getting channel uploads
 
 To get a list of videos uploaded by a channel, call `Channels.GetUploadsAsync(...)`:

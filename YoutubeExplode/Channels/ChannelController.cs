@@ -48,4 +48,9 @@ internal class ChannelController : YoutubeControllerBase
         ChannelSlug channelSlug,
         CancellationToken cancellationToken = default) =>
         await GetChannelPageAsync("c/" + channelSlug, cancellationToken);
+
+    public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
+        ChannelHandle channelHandle,
+        CancellationToken cancellationToken = default) =>
+        await GetChannelPageAsync("@" + channelHandle, cancellationToken);
 }
