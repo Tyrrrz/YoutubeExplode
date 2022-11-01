@@ -32,12 +32,12 @@ public readonly partial struct ChannelHandle
             return null;
 
         // Handle
-        // a-z.0_9
+        // Tyrrrz
         if (IsValid(channelHandleOrUrl))
             return channelHandleOrUrl;
 
         // URL
-        // https://www.youtube.com/@a-z.0_9
+        // https://www.youtube.com/@Tyrrrz
         var regularMatch = Regex.Match(channelHandleOrUrl, @"youtube\..+?/@(.*?)(?:\?|&|/|$)").Groups[1].Value;
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
