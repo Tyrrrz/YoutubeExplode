@@ -47,20 +47,18 @@ public readonly partial struct ChannelHandle
     }
 
     /// <summary>
-    /// Attempts to parse the specified string as a YouTube channel handle
-    /// or handle URL in the form of https://youtube.com/@handle .
+    /// Attempts to parse the specified string as a YouTube channel handle or handle URL.
     /// Returns null in case of failure.
     /// </summary>
     public static ChannelHandle? TryParse(string? channelHandleOrUrl) =>
         TryNormalize(channelHandleOrUrl)?.Pipe(handle => new ChannelHandle(handle));
 
     /// <summary>
-    /// Parses the specified string as a YouTube channel handle
-    /// or handle URL in the form of https://youtube.com/@handle .
+    /// Parses the specified string as a YouTube channel handle or handle URL.
     /// </summary>
     public static ChannelHandle Parse(string channelHandleOrUrl) =>
         TryParse(channelHandleOrUrl) ??
-        throw new ArgumentException($"Invalid YouTube channel handle or custom URL '{channelHandleOrUrl}'.");
+        throw new ArgumentException($"Invalid YouTube channel handle or handle URL '{channelHandleOrUrl}'.");
 
     /// <summary>
     /// Converts string to channel handle.
