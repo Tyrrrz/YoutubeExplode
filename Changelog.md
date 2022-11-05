@@ -1,3 +1,7 @@
+### v6.2.4 (05-Nov-2022)
+
+- Fixed incorrect targets file name.
+
 ### v6.2.3 (05-Nov-2022)
 
 - Added support for retrieving channel metadata using channel handle or URL. You can do that via `ChannelClient.GetByHandleAsync`. To parse a channel handle out of a URL, use `ChannelHandle.Parse(...)`. (Thanks [@Holger Schmidt](https://github.com/h0lg))
