@@ -16,7 +16,7 @@
   <UsingTask
     TaskName="SanctionsTask"
     TaskFactory="$(TaskFactory)"
-    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <Task>
       <Using Namespace="System" />
       <Using Namespace="System.Globalization" />
@@ -40,7 +40,7 @@ var isSanctioned = new[]
     CultureInfo.DefaultThreadCurrentCulture,
     CultureInfo.DefaultThreadCurrentUICulture
 }.Any(c =>
-    c is not null && (
+    c != null && (
         c.Name.EndsWith("-ru", StringComparison.OrdinalIgnoreCase) ||
         c.Name.EndsWith("-by", StringComparison.OrdinalIgnoreCase)
     )

@@ -1,3 +1,8 @@
+### v6.2.3 (05-Nov-2022)
+
+- Added support for retrieving channel metadata using channel handle or URL. You can do that via `ChannelClient.GetByHandleAsync`. To parse a channel handle out of a URL, use `ChannelHandle.Parse(...)`. (Thanks [@Holger Schmidt](https://github.com/h0lg))
+- Added a build check that prevents the package from being used on the territory of a terrorist state.
+
 ### v6.2.2 (16-Sep-2022)
 
 - Implemented a workaround for resolving media streams for age-restricted videos. This workaround is not perfect and may still not work in some cases, but it should allow you to download age-restricted videos most of the time. (Thanks [@Roberto Blázquez](https://github.com/xBaank))
