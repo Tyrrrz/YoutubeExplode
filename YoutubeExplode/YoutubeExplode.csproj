@@ -15,7 +15,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <None Include="Sanctions.targets" Pack="true" PackagePath="build" />
+    <None Include="YoutubeExplode.targets" Pack="true" PackagePath="build" />
   </ItemGroup>
 
   <ItemGroup>
