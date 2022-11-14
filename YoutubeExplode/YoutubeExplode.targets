@@ -32,19 +32,9 @@ var isSkipped = string.Equals(
 if (isSkipped)
     return true;
 
-var isSanctioned = new[]
-{
-    CultureInfo.CurrentCulture,
-    CultureInfo.CurrentUICulture,
-    CultureInfo.InstalledUICulture,
-    CultureInfo.DefaultThreadCurrentCulture,
-    CultureInfo.DefaultThreadCurrentUICulture
-}.Any(c =>
-    c != null && (
-        c.Name.EndsWith("-ru", StringComparison.OrdinalIgnoreCase) ||
-        c.Name.EndsWith("-by", StringComparison.OrdinalIgnoreCase)
-    )
-);
+var isSanctioned =
+    CultureInfo.CurrentCulture.Name.EndsWith("-ru", StringComparison.OrdinalIgnoreCase) ||
+    CultureInfo.CurrentCulture.Name.EndsWith("-by", StringComparison.OrdinalIgnoreCase);
 
 if (!isSanctioned)
     return true;
