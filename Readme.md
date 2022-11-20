@@ -50,7 +50,7 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-// You can specify both video ID or URL
+// You can specify either video ID or URL
 var video = await youtube.Videos.GetAsync("https://youtube.com/watch?v=u_yIGGhubZs");
 
 var title = video.Title; // "Collections - Blender 2.80 Fundamentals"
@@ -66,6 +66,11 @@ Additionally, depending on the content of the stream, the streams are further di
 - Muxed streams — contain both video and audio
 - Audio-only streams — contain only audio
 - Video-only streams — contain only video
+
+> **Warning**:
+> Muxed streams contain both audio and video, but these streams are very limited in quality (up to 720p30).
+> To download video in the highest available quality, you will need to resolve the best audio-only and video-only streams separately and then mux them together.
+> This can be accomplished by using FFmpeg together with the [**YoutubeExplode.Converter**](YoutubeExplode.Converter) package.
 
 You can request the manifest that lists all available streams for a particular video by calling `Videos.Streams.GetManifestAsync(...)`:
 
@@ -111,11 +116,6 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 // Download the stream to a file
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
-
-> **Warning**:
-> Muxed streams contain both audio and video, but these streams are very limited in quality (up to 720p30).
-> To download video in the highest available quality, you need to resolve the best audio-only and video-only streams separately and then mux them together.
-> This can be accomplished by using the [**YoutubeExplode.Converter**](YoutubeExplode.Converter) package.
 
 #### Downloading closed captions
 
@@ -286,7 +286,7 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var channel = await youtube.Channels.GetByHandleAsync("https://www.youtube.com/@BeauMiles");
+var channel = await youtube.Channels.GetByHandleAsync("https://youtube.com/@BeauMiles");
 
 var id = channel.Id; // "UCm325cMiw9B15xl22_gr6Dw"
 ```
@@ -390,7 +390,7 @@ await foreach (var batch in youtube.Search.GetResultBatchesAsync("blender tutori
 
 ## Etymology
 
-The "Explode" in **YoutubeExplode** comes from the name of a PHP function that splits up strings, [`explode()`](https://www.php.net/manual/en/function.explode.php). When I was starting the development of this library, most of the reference source code I read was written in PHP, hence the inspiration for the name.
+The "Explode" in **YoutubeExplode** comes from the name of a PHP function that splits up strings, [`explode(...)`](https://www.php.net/manual/en/function.explode.php). When I was starting the development of this library, most of the reference source code I read was written in PHP, hence the inspiration for the name.
 
 ## Related projects
 
