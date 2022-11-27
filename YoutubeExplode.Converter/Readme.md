@@ -1,9 +1,9 @@
-﻿# YoutubeExplode.Converter
+# YoutubeExplode.Converter
 
 [![Version](https://img.shields.io/nuget/v/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode.Converter)
 [![Downloads](https://img.shields.io/nuget/dt/YoutubeExplode.svg)](https://nuget.org/packages/YoutubeExplode.Converter)
 
-**YoutubeExplode.Converter** is an extension package for **YoutubeExplode** that provides capabilities for downloading YouTube videos with conversion to other formats.
+**YoutubeExplode.Converter** is an extension package for **YoutubeExplode** that provides capabilities for downloading YouTube videos by muxing streams or converting them to other formats.
 This package relies on [FFmpeg](https://ffmpeg.org) under the hood.
 
 ## Install
@@ -16,12 +16,12 @@ This package relies on [FFmpeg](https://ffmpeg.org) under the hood.
 To use them, simply add the corresponding namespace and follow the examples below.
 
 > **Warning**:
-> This package requires the [FFmpeg](https://ffmpeg.org) CLI to work, which can be downloaded [here](https://ffbinaries.com/downloads).
+> This package requires [FFmpeg](https://ffmpeg.org) CLI to work, which can be downloaded [here](https://ffbinaries.com/downloads).
 > Ensure that the FFmpeg binary is located in your application's probe directory or on the system's `PATH`, or provide a custom location directly using various overloads.
 
-### Downloading video with conversion
+### Downloading videos
 
-You can download a video with conversion through one of the extension methods provided on `VideoClient`.
+You can download a video directly through one of the extension methods provided on `VideoClient`.
 For example, to download a video in the specified format using the highest quality streams, simply call `DownloadAsync(...)` with the video ID and the destination file path:
 
 ```csharp
@@ -32,12 +32,14 @@ var youtube = new YoutubeClient();
 await youtube.Videos.DownloadAsync("https://youtube.com/watch?v=u_yIGGhubZs", "video.mp4");
 ```
 
-Under the hood, this resolves the video's media streams and selects the best candidates based on format, bit rate, quality, and frame rate.
-If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
+Under the hood, this resolves the video's media streams, downloads the best candidates based on format, bit rate, frame rate, and quality, and muxes them together into a single file.
+
+> **Note**:
+> If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
 
 > **Warning**:
 > Stream muxing is a CPU-heavy process.
-> You can reduce resource usage and execution time by using streams that don't require transcoding to the output format (e.g. `mp4` audio/video streams for `mp4` output format).
+> You can improve the execution speed by making sure that both the input streams and the output file use the same format.
 > Currently, YouTube only provides adaptive streams in `mp4` or `webm` containers, with the highest quality video streams (e.g. 4K) only available in `webm`.
 
 ### Custom conversion options
@@ -59,7 +61,7 @@ await youtube.Videos.DownloadAsync("https://youtube.com/watch?v=u_yIGGhubZs", "v
 
 ### Manually selecting streams
 
-If you need precise control over which streams are used for conversion, you can also provide them yourself instead of relying on automatic resolution:
+If you need precise control over which streams are used for the muxing process, you can also provide them yourself instead of relying on automatic resolution:
 
 ```csharp
 using YoutubeExplode;
