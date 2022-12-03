@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Channels;
@@ -38,7 +39,8 @@ public readonly partial struct ChannelSlug
 
         // URL
         // https://www.youtube.com/c/Tyrrrz
-        var regularMatch = Regex.Match(channelSlugOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+        // https://www.youtube.com/c/MuseVi%E1%BB%87tNam
+        var regularMatch = HttpUtility.UrlDecode(Regex.Match(channelSlugOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)").Groups[1].Value);
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
 
