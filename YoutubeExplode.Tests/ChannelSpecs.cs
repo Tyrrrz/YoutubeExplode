@@ -58,6 +58,22 @@ public class ChannelSpecs
     }
 
     [Fact]
+    public async Task User_can_get_metadata_of_a_channel_by_slug_with_url_encoding()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var channel = await youtube.Channels.GetBySlugAsync(ChannelSlugs.UrlEncoding);
+
+        // Assert
+        channel.Id.Value.Should().Be("UCSli-_XJrdRwRoPw8DXRiyw");
+        channel.Url.Should().NotBeNullOrWhiteSpace();
+        channel.Title.Should().Be("Меланія Подоляк");
+        channel.Thumbnails.Should().NotBeEmpty();
+    }
+
+    [Fact]
     public async Task User_can_get_metadata_of_a_channel_by_handle()
     {
         // Arrange
