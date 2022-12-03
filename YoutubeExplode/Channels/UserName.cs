@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils.Extensions;
 
@@ -39,7 +40,12 @@ public partial struct UserName
 
         // URL
         // https://www.youtube.com/user/TheTyrrr
-        var regularMatch = Regex.Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)").Groups[1].Value;
+        var regularMatch = Regex
+            .Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)")
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
+
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
 

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
     <TargetFrameworks>net5.0;netstandard2.1;netstandard2.0;net461;netcoreapp3.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
@@ -13,7 +13,7 @@
     </Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Include="YoutubeExplode.targets" Pack="true" PackagePath="build" />
   </ItemGroup>
@@ -37,7 +37,6 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Web" />
   </ItemGroup>
 
 </Project>
