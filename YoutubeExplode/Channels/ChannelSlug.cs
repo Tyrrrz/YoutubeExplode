@@ -24,7 +24,7 @@ public readonly partial struct ChannelSlug
 public readonly partial struct ChannelSlug
 {
     private static bool IsValid(string channelSlug) =>
-        channelSlug.All(char.IsLetterOrDigit);
+        channelSlug.All(c => c == '%' || char.IsLetterOrDigit(c));
 
     private static string? TryNormalize(string? channelSlugOrUrl)
     {
@@ -33,11 +33,13 @@ public readonly partial struct ChannelSlug
 
         // Slug
         // Tyrrrz
+		// MuseVi%E1%BB%87tNam
         if (IsValid(channelSlugOrUrl))
             return channelSlugOrUrl;
 
         // URL
         // https://www.youtube.com/c/Tyrrrz
+		// https://www.youtube.com/c/MuseVi%E1%BB%87tNam
         var regularMatch = Regex.Match(channelSlugOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)").Groups[1].Value;
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
