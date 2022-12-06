@@ -1,3 +1,8 @@
+### v6.2.5 (06-Dec-2022)
+
+- Fixed an issue where empty text blocks in closed caption tracks were ignored. This makes the behavior consistent with YouTube's player, where empty closed captions are still rendered.
+- Fixed an issue where `ChannelSlug.Parse(...)` failed on URLs that had encoded special characters.
+
 ### v6.2.4 (05-Nov-2022)
 
 - Fixed incorrect targets file name.
