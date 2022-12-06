@@ -74,11 +74,12 @@ public class ClosedCaptionClient
             .GetClosedCaptions()
             .Select(c =>
             {
-                var text = c.TryGetText();
-                if (string.IsNullOrWhiteSpace(text))
-                    return null;
+                // Captions may have no text, but we should still include them to stay consistent
+                // with YouTube player behavior where captions are still displayed even if they're empty.
+                // https://github.com/Tyrrrz/YoutubeExplode/issues/671
+                var text = c.TryGetText() ?? "";
 
-                // Auto-generated captions may have invalid manifests:
+                // Auto-generated captions may be missing offset or duration.
                 // https://github.com/Tyrrrz/YoutubeExplode/discussions/619
 
                 if (c.TryGetOffset() is not { } offset)
@@ -91,9 +92,10 @@ public class ClosedCaptionClient
                     .GetParts()
                     .Select(p =>
                     {
-                        var partText = p.TryGetText();
-                        if (string.IsNullOrWhiteSpace(partText))
-                            return null;
+                        // Caption parts may have no text, but we should still include them to stay consistent
+                        // with YouTube player behavior where captions are still displayed even if they're empty.
+                        // https://github.com/Tyrrrz/YoutubeExplode/issues/671
+                        var partText = p.TryGetText() ?? "";
 
                         var partOffset =
                             p.TryGetOffset() ??
