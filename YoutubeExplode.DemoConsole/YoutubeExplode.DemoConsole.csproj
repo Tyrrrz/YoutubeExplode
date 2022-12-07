@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
   </PropertyGroup>
 

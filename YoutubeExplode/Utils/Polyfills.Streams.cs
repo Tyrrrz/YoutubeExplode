@@ -1,6 +1,6 @@
 ﻿// ReSharper disable CheckNamespace
 
-#if !NET5_0
+#if !NET5_0_OR_GREATER
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 internal static class StreamPolyfills
 {
-#if !NETSTANDARD2_1 && !NETCOREAPP3_0
+#if NETSTANDARD2_0 || NET461
     public static async Task<int> ReadAsync(this Stream stream, byte[] buffer, CancellationToken cancellationToken) =>
         await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
 #endif
