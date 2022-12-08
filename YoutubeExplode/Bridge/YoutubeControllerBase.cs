@@ -50,11 +50,13 @@ internal abstract class YoutubeControllerBase
 
         if (!response.IsSuccessStatusCode)
         {
-            var message = $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode})." +
-                Environment.NewLine +
-                "Request:" +
-                Environment.NewLine +
-                request;
+            var message =
+                $"""
+                Response status code does not indicate success: {(int) response.StatusCode} ({response.StatusCode}).
+
+                Request:
+                {request}
+                """;
 
 #if NET5_0_OR_GREATER
             throw new HttpRequestException(message, null, response.StatusCode);

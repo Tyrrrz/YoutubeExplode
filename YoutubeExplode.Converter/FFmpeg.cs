@@ -41,17 +41,15 @@ internal partial class FFmpeg
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException(
-                $"FFmpeg exited with a non-zero exit code ({result.ExitCode})." +
-                Environment.NewLine +
+                $"""
+                FFmpeg exited with a non-zero exit code ({result.ExitCode}).
 
-                "Arguments:" +
-                Environment.NewLine +
-                arguments +
-                Environment.NewLine +
+                Arguments:
+                {arguments}
 
-                "Standard error:" +
-                Environment.NewLine +
-                stdErrBuffer
+                Standard error:
+                {stdErrBuffer}
+                """
             );
         }
     }
