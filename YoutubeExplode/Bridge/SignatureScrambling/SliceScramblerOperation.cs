@@ -8,7 +8,7 @@ namespace YoutubeExplode.Bridge.SignatureScrambling
 
         public SliceScramblerOperation(int index) => _index = index;
 
-        public string Unscramble(string input) => input.Substring(_index);
+        public string Unscramble(string input) => input[_index..];
 
         [ExcludeFromCodeCoverage]
         public override string ToString() => $"Slice ({_index})";

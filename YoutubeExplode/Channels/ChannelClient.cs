@@ -98,7 +98,7 @@ public class ChannelClient
         CancellationToken cancellationToken = default)
     {
         // Replace 'UC' in channel ID with 'UU'
-        var playlistId = "UU" + channelId.Value.Substring(2);
+        var playlistId = "UU" + channelId.Value[2..];
         return new PlaylistClient(_http).GetVideosAsync(playlistId, cancellationToken);
     }
 }

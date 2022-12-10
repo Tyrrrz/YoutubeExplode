@@ -20,7 +20,7 @@ internal static class StringExtensions
 
         return index < 0
             ? s
-            : s.Substring(0, index);
+            : s[..index];
     }
 
     public static string SubstringAfter(this string s, string sub,
