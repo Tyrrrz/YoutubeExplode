@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-internal static class PolyfillExtensions
+internal static class CollectionPolyfills
 {
     public static IEnumerable<(TFirst left, TSecond right)> Zip<TFirst, TSecond>(
         this IEnumerable<TFirst> first,

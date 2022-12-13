@@ -74,7 +74,7 @@ internal partial class FFmpeg
 
         private TimeSpan? TryParseCurrentOffset(string data) => data
             .Pipe(s => Regex.Matches(s, @"time=(\d\d:\d\d:\d\d.\d\d)")
-                .Cast<Match>()
+                .ToArray()
                 .LastOrDefault()?
                 .Groups[1]
                 .Value)?

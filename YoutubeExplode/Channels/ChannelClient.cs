@@ -45,7 +45,7 @@ public class ChannelClient
 
         var logoSize = Regex
             .Matches(logoUrl, @"\bs(\d+)\b")
-            .Cast<Match>()
+            .ToArray()
             .LastOrDefault()?
             .Groups[1]
             .Value
