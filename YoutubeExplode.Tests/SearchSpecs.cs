@@ -8,7 +8,7 @@ namespace YoutubeExplode.Tests;
 public class SearchSpecs
 {
     [Fact]
-    public async Task User_can_get_results_from_a_search_query()
+    public async Task I_can_get_results_from_a_search_query()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -21,7 +21,7 @@ public class SearchSpecs
     }
 
     [Fact]
-    public async Task User_can_get_video_results_from_a_search_query()
+    public async Task I_can_get_video_results_from_a_search_query()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -34,7 +34,7 @@ public class SearchSpecs
     }
 
     [Fact]
-    public async Task User_can_get_playlist_results_from_a_search_query()
+    public async Task I_can_get_playlist_results_from_a_search_query()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -47,7 +47,7 @@ public class SearchSpecs
     }
 
     [Fact]
-    public async Task User_can_get_channel_results_from_a_search_query()
+    public async Task I_can_get_channel_results_from_a_search_query()
     {
         // Arrange
         var youtube = new YoutubeClient();

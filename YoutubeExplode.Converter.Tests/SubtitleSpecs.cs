@@ -23,7 +23,7 @@ public class SubtitleSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFm
     }
 
     [Fact]
-    public async Task User_can_download_a_video_with_subtitles_into_a_single_mp4_file()
+    public async Task I_can_download_a_video_with_subtitles_into_a_single_mp4_file()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -57,7 +57,7 @@ public class SubtitleSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFm
     }
 
     [Fact]
-    public async Task User_can_download_a_video_with_subtitles_into_a_single_webm_file()
+    public async Task I_can_download_a_video_with_subtitles_into_a_single_webm_file()
     {
         // Arrange
         var youtube = new YoutubeClient();

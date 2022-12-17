@@ -23,7 +23,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_can_get_the_list_of_available_streams_on_a_video()
+    public async Task I_can_get_the_list_of_available_streams_on_a_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -72,7 +72,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.AgeRestricted)]
     [InlineData(VideoIds.AgeRestrictedSignature)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
-    public async Task User_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
+    public async Task I_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -85,7 +85,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_cannot_get_the_list_of_available_streams_on_a_paid_video()
+    public async Task I_cannot_get_the_list_of_available_streams_on_a_paid_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -101,7 +101,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_cannot_get_the_list_of_available_streams_on_a_private_video()
+    public async Task I_cannot_get_the_list_of_available_streams_on_a_private_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -115,7 +115,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_cannot_get_the_list_of_available_streams_on_a_non_existing_video()
+    public async Task I_cannot_get_the_list_of_available_streams_on_a_non_existing_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -135,7 +135,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.ContainsDashManifest)]
     [InlineData(VideoIds.Omnidirectional)]
-    public async Task User_can_get_a_specific_stream_from_a_video(string videoId)
+    public async Task I_can_get_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange
         var buffer = new byte[1024];
@@ -165,7 +165,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.AgeRestricted)]
     [InlineData(VideoIds.AgeRestrictedSignature)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
-    public async Task User_can_download_a_specific_stream_from_a_video(string videoId)
+    public async Task I_can_download_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange
         var filePath = _tempOutputFixture.GetTempFilePath();
@@ -184,7 +184,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_can_download_the_highest_bitrate_stream_from_a_video()
+    public async Task I_can_download_the_highest_bitrate_stream_from_a_video()
     {
         // Arrange
         var filePath = _tempOutputFixture.GetTempFilePath();
@@ -203,7 +203,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_can_download_the_highest_quality_stream_from_a_video()
+    public async Task I_can_download_the_highest_quality_stream_from_a_video()
     {
         // Arrange
         var filePath = _tempOutputFixture.GetTempFilePath();
@@ -222,7 +222,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_can_seek_to_a_specific_position_on_a_stream_from_a_video()
+    public async Task I_can_seek_to_a_specific_position_on_a_stream_from_a_video()
     {
         // Arrange
         await using var buffer = new MemoryStream();
@@ -241,7 +241,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_can_get_HTTP_live_stream_URL_from_a_video()
+    public async Task I_can_get_HTTP_live_stream_URL_from_a_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -254,7 +254,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_cannot_get_HTTP_live_stream_URL_from_an_unplayable_video()
+    public async Task I_cannot_get_HTTP_live_stream_URL_from_an_unplayable_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -268,7 +268,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     }
 
     [Fact]
-    public async Task User_cannot_get_HTTP_live_stream_URL_from_a_non_live_video()
+    public async Task I_cannot_get_HTTP_live_stream_URL_from_a_non_live_video()
     {
         // Arrange
         var youtube = new YoutubeClient();

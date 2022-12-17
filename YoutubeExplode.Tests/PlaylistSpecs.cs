@@ -17,7 +17,7 @@ public class PlaylistSpecs
         _testOutput = testOutput;
 
     [Fact]
-    public async Task User_can_get_metadata_of_a_playlist()
+    public async Task I_can_get_metadata_of_a_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -38,7 +38,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task User_cannot_get_metadata_of_a_private_playlist()
+    public async Task I_cannot_get_metadata_of_a_private_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -52,7 +52,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task User_cannot_get_metadata_of_a_non_existing_playlist()
+    public async Task I_cannot_get_metadata_of_a_non_existing_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -72,7 +72,7 @@ public class PlaylistSpecs
     [InlineData(PlaylistIds.MusicAlbum)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
     [InlineData(PlaylistIds.Weird)]
-    public async Task User_can_get_metadata_of_any_available_playlist(string playlistId)
+    public async Task I_can_get_metadata_of_any_available_playlist(string playlistId)
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -89,7 +89,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task User_can_get_videos_included_in_a_playlist()
+    public async Task I_can_get_videos_included_in_a_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -126,7 +126,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task User_can_get_videos_included_in_a_large_playlist()
+    public async Task I_can_get_videos_included_in_a_large_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -158,7 +158,7 @@ public class PlaylistSpecs
     [InlineData(PlaylistIds.UserUploads)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
     [InlineData(PlaylistIds.Weird)]
-    public async Task User_can_get_videos_included_in_any_available_playlist(string playlistId)
+    public async Task I_can_get_videos_included_in_any_available_playlist(string playlistId)
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -171,7 +171,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task User_can_get_a_subset_of_videos_included_in_a_playlist()
+    public async Task I_can_get_a_subset_of_videos_included_in_a_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
