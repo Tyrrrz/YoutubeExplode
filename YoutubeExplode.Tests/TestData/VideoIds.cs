@@ -19,6 +19,6 @@ internal static class VideoIds
     public const string AgeRestrictedSignature = "SkRSXFQerZs";
     public const string AgeRestricted = "rXMX4YJ7Lks";
     public const string AgeRestrictedEmbedRestricted = "hySoCSoH-g8";
-    public const string RatingDisabled = "5VGm0dczmHc";
+    public const string RatingDisabled = "OB7-JzGZTWY";
     public const string RequiresPurchase = "p3dDcKOFXQg";
 }
