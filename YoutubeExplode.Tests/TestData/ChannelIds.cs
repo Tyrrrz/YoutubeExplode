@@ -2,5 +2,5 @@
 
 internal static class ChannelIds
 {
-    public const string Normal = "UCEnBXANsKmyj2r9xVyKoDiQ";
+    public const string Normal = "UCX6OQ3DkcsbYNE6H8uQQuVA";
 }

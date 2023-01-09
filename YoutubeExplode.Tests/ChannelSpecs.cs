@@ -21,7 +21,7 @@ public class ChannelSpecs
         // Assert
         channel.Id.Value.Should().Be(ChannelIds.Normal);
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Oleksii Holub");
+        channel.Title.Should().Be("MrBeast");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -35,9 +35,9 @@ public class ChannelSpecs
         var channel = await youtube.Channels.GetByUserAsync(UserNames.Normal);
 
         // Assert
-        channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+        channel.Id.Value.Should().Be("UCX6OQ3DkcsbYNE6H8uQQuVA");
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Oleksii Holub");
+        channel.Title.Should().Be("MrBeast");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -67,9 +67,9 @@ public class ChannelSpecs
         var channel = await youtube.Channels.GetByHandleAsync(ChannelHandles.Normal);
 
         // Assert
-        channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
+        channel.Id.Value.Should().Be("UCX6OQ3DkcsbYNE6H8uQQuVA");
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Oleksii Holub");
+        channel.Title.Should().Be("MrBeast");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -83,7 +83,7 @@ public class ChannelSpecs
         var videos = await youtube.Channels.GetUploadsAsync(ChannelIds.Normal);
 
         // Assert
-        videos.Should().HaveCountGreaterOrEqualTo(25);
+        videos.Should().HaveCountGreaterOrEqualTo(730);
         videos.Select(v => v.Author.ChannelId).Should().OnlyContain(i => i == ChannelIds.Normal);
     }
 }

@@ -64,7 +64,6 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.Normal)]
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.LiveStreamRecording)]
-    [InlineData(VideoIds.ContainsDashManifest)]
     [InlineData(VideoIds.Omnidirectional)]
     [InlineData(VideoIds.HighDynamicRange)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
@@ -133,7 +132,6 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.AgeRestricted)]
     [InlineData(VideoIds.AgeRestrictedSignature)]
     [InlineData(VideoIds.LiveStreamRecording)]
-    [InlineData(VideoIds.ContainsDashManifest)]
     [InlineData(VideoIds.Omnidirectional)]
     public async Task I_can_get_a_specific_stream_from_a_video(string videoId)
     {
@@ -158,7 +156,6 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.Normal)]
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.LiveStreamRecording)]
-    [InlineData(VideoIds.ContainsDashManifest)]
     [InlineData(VideoIds.Omnidirectional)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
@@ -191,7 +188,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsDashManifest);
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.Streams.GetWithHighestBitrate();
 
         await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
@@ -210,7 +207,7 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsDashManifest);
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.GetVideoStreams().GetWithHighestVideoQuality();
 
         await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);

@@ -9,7 +9,6 @@ internal static class VideoIds
     public const string LiveStream = "jfKfPfyJRdk";
     public const string LiveStreamRecording = "rsAAeyAr-9Y";
     public const string ContainsHighQualityStreams = "V5Fsj_sCKdg";
-    public const string ContainsDashManifest = "AI7ULzgf8RU";
     public const string Omnidirectional = "-xNN-bJQ4vI";
     public const string HighDynamicRange = "vX2vsvdq8nw";
     public const string ContainsClosedCaptions = "YltHGKX80Y8";
@@ -19,6 +18,5 @@ internal static class VideoIds
     public const string AgeRestrictedSignature = "SkRSXFQerZs";
     public const string AgeRestricted = "rXMX4YJ7Lks";
     public const string AgeRestrictedEmbedRestricted = "hySoCSoH-g8";
-    public const string RatingDisabled = "OB7-JzGZTWY";
     public const string RequiresPurchase = "p3dDcKOFXQg";
 }

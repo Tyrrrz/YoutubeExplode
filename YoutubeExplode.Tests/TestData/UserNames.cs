@@ -2,5 +2,5 @@
 
 internal static class UserNames
 {
-    public const string Normal = "TheTyrrr";
+    public const string Normal = "mrbeast6000";
 }

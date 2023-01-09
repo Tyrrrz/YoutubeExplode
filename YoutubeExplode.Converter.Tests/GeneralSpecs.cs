@@ -33,7 +33,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = Path.ChangeExtension(_tempOutputFixture.GetTempFilePath(), "mp4");
 
         // Act
-        await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
+        await youtube.Videos.DownloadAsync("9bZkp7q19f0", outputFilePath);
 
         // Assert
         MediaFormat.IsMp4File(outputFilePath).Should().BeTrue();
@@ -47,7 +47,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = Path.ChangeExtension(_tempOutputFixture.GetTempFilePath(), "webm");
 
         // Act
-        await youtube.Videos.DownloadAsync("5NmxuoNyDss", outputFilePath);
+        await youtube.Videos.DownloadAsync("9bZkp7q19f0", outputFilePath);
 
         // Assert
         MediaFormat.IsWebMFile(outputFilePath).Should().BeTrue();
@@ -61,7 +61,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = Path.ChangeExtension(_tempOutputFixture.GetTempFilePath(), "mp3");
 
         // Act
-        await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
+        await youtube.Videos.DownloadAsync("9bZkp7q19f0", outputFilePath);
 
         // Assert
         MediaFormat.IsMp3File(outputFilePath).Should().BeTrue();
@@ -75,7 +75,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = Path.ChangeExtension(_tempOutputFixture.GetTempFilePath(), "ogg");
 
         // Act
-        await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath);
+        await youtube.Videos.DownloadAsync("9bZkp7q19f0", outputFilePath);
 
         // Assert
         MediaFormat.IsOggFile(outputFilePath).Should().BeTrue();
@@ -89,7 +89,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = _tempOutputFixture.GetTempFilePath();
 
         // Act
-        await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath, o => o
+        await youtube.Videos.DownloadAsync("9bZkp7q19f0", outputFilePath, o => o
             .SetFFmpegPath(_ffmpegFixture.FilePath)
             .SetContainer("mp4")
             .SetPreset(ConversionPreset.UltraFast)
@@ -109,7 +109,7 @@ public class GeneralSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmp
         var outputFilePath = _tempOutputFixture.GetTempFilePath();
 
         // Act
-        await youtube.Videos.DownloadAsync("AI7ULzgf8RU", outputFilePath, progress);
+        await youtube.Videos.DownloadAsync("9bZkp7q19f0", outputFilePath, progress);
 
         // Assert
         var progressValues = progress.GetValues();
