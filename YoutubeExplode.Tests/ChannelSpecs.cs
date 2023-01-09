@@ -21,7 +21,7 @@ public class ChannelSpecs
         // Assert
         channel.Id.Value.Should().Be(ChannelIds.Normal);
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Tyrrrz");
+        channel.Title.Should().Be("Oleksii Holub");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -37,7 +37,7 @@ public class ChannelSpecs
         // Assert
         channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Tyrrrz");
+        channel.Title.Should().Be("Oleksii Holub");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -67,9 +67,9 @@ public class ChannelSpecs
         var channel = await youtube.Channels.GetByHandleAsync(ChannelHandles.Normal);
 
         // Assert
-        channel.Id.Value.Should().Be("UCm325cMiw9B15xl22_gr6Dw");
+        channel.Id.Value.Should().Be("UCEnBXANsKmyj2r9xVyKoDiQ");
         channel.Url.Should().NotBeNullOrWhiteSpace();
-        channel.Title.Should().Be("Beau Miles");
+        channel.Title.Should().Be("Oleksii Holub");
         channel.Thumbnails.Should().NotBeEmpty();
     }
 

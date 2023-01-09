@@ -2,5 +2,5 @@
 
 internal static class ChannelHandles
 {
-    public const string Normal = "BeauMiles";
+    public const string Normal = "Tyrrrz";
 }
