@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
-using YoutubeExplode.Bridge.SignatureScrambling;
+using YoutubeExplode.Bridge.Scrambling;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -33,7 +33,8 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
-    private string UnscrambleStreamUrl(SignatureScrambler signatureScrambler,
+    private string UnscrambleStreamUrl(
+        ScramblingManifest scramblingManifest,
         string streamUrl,
         string? signature,
         string? signatureParameter)
@@ -44,14 +45,14 @@ public class StreamClient
         return Url.SetQueryParameter(
             streamUrl,
             signatureParameter ?? "signature",
-            signatureScrambler.Unscramble(signature)
+            scramblingManifest.Unscramble(signature)
         );
     }
 
     private async ValueTask PopulateStreamInfosAsync(
         ICollection<IStreamInfo> streamInfos,
         IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
-        SignatureScrambler signatureScrambler,
+        ScramblingManifest scramblingManifest,
         CancellationToken cancellationToken = default)
     {
         foreach (var streamInfoExtractor in streamInfoExtractors)
@@ -61,7 +62,7 @@ public class StreamClient
                 throw new YoutubeExplodeException("Could not extract stream itag.");
 
             var url = UnscrambleStreamUrl(
-                signatureScrambler,
+                scramblingManifest,
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL."),
                 streamInfoExtractor.TryGetSignature(),
@@ -180,7 +181,7 @@ public class StreamClient
             );
         }
 
-        var signatureScrambler = SignatureScrambler.Null;
+        var scramblingManifest = ScramblingManifest.Null;
 
         // If the video is unplayable, try one more time by fetching the player response
         // with signature deciphering. This is required for age-restricted videos.
@@ -194,9 +195,9 @@ public class StreamClient
                 playerSource.TryGetSignatureTimestamp() ??
                 throw new YoutubeExplodeException("Could not get signature timestamp");
 
-            signatureScrambler =
-                playerSource.TryGetSignatureScrambler() ??
-                throw new YoutubeExplodeException("Could not get signature scrambler");
+            scramblingManifest =
+                playerSource.TryGetScramblingManifest() ??
+                throw new YoutubeExplodeException("Could not get scrambling manifest");
 
             playerResponse = await _controller.GetPlayerResponseAsync(videoId, signatureTimestamp, cancellationToken);
         }
@@ -207,7 +208,7 @@ public class StreamClient
             await PopulateStreamInfosAsync(
                 streamInfos,
                 playerResponse.GetStreams(),
-                signatureScrambler,
+                scramblingManifest,
                 cancellationToken
             );
 
@@ -220,7 +221,7 @@ public class StreamClient
                 await PopulateStreamInfosAsync(
                     streamInfos,
                     dashManifest.GetStreams(),
-                    signatureScrambler,
+                    scramblingManifest,
                     cancellationToken
                 );
             }
