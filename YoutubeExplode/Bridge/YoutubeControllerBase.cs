@@ -8,7 +8,7 @@ namespace YoutubeExplode.Bridge;
 internal abstract class YoutubeControllerBase
 {
     // This key doesn't appear to change
-    protected const string ApiKey = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
+    protected const string ApiKey = "AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w";
 
     private readonly HttpClient _http;
 
