@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Bridge.Scrambling;
+using YoutubeExplode.Bridge.Cipher;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -19,7 +19,7 @@ internal partial class PlayerSourceExtractor
             .NullIfWhiteSpace()
     );
 
-    private string? TryGetScramblerBody() => Memo.Cache(this, () =>
+    private string? TryGetCipherBody() => Memo.Cache(this, () =>
         Regex.Match(_content,
                 @"(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}")
             .Groups[0]
@@ -27,9 +27,9 @@ internal partial class PlayerSourceExtractor
             .NullIfWhiteSpace()
     );
 
-    private string? TryGetScramblerDefinition() => Memo.Cache(this, () =>
+    private string? TryGetCipherDefinition() => Memo.Cache(this, () =>
     {
-        var body = TryGetScramblerBody();
+        var body = TryGetCipherBody();
         if (string.IsNullOrWhiteSpace(body))
             return null;
 
@@ -47,19 +47,19 @@ internal partial class PlayerSourceExtractor
             .NullIfWhiteSpace();
     });
 
-    public ScramblingManifest? TryGetScramblingManifest() => Memo.Cache(this, () =>
+    public CipherManifest? TryGetCipherManifest() => Memo.Cache(this, () =>
     {
-        var scramblerBody = TryGetScramblerBody();
-        if (string.IsNullOrWhiteSpace(scramblerBody))
+        var body = TryGetCipherBody();
+        if (string.IsNullOrWhiteSpace(body))
             return null;
 
-        var scramblerDefinition = TryGetScramblerDefinition();
-        if (string.IsNullOrWhiteSpace(scramblerDefinition))
+        var definition = TryGetCipherDefinition();
+        if (string.IsNullOrWhiteSpace(definition))
             return null;
 
-        var operations = new List<IScramblingOperation>();
+        var operations = new List<ICipherOperation>();
 
-        foreach (var statement in scramblerBody.Split(";"))
+        foreach (var statement in body.Split(";"))
         {
             // Get the name of the function called in this statement
             var calledFuncName = Regex.Match(statement, @"\w+(?:.|\[)(\""?\w+(?:\"")?)\]?\(").Groups[1].Value;
@@ -67,30 +67,30 @@ internal partial class PlayerSourceExtractor
                 continue;
 
             // Slice
-            if (Regex.IsMatch(scramblerDefinition,
+            if (Regex.IsMatch(definition,
                     $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
             {
                 var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
-                operations.Add(new SliceScramblingOperation(index));
+                operations.Add(new SliceCipherOperation(index));
             }
 
             // Swap
-            else if (Regex.IsMatch(scramblerDefinition,
+            else if (Regex.IsMatch(definition,
                          $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\,\w\).\bvar\b.\bc=a\b"))
             {
                 var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
-                operations.Add(new SwapScramblingOperation(index));
+                operations.Add(new SwapCipherOperation(index));
             }
 
             // Reverse
-            else if (Regex.IsMatch(scramblerDefinition,
+            else if (Regex.IsMatch(definition,
                          $@"{Regex.Escape(calledFuncName)}:\bfunction\b\(\w+\)"))
             {
-                operations.Add(new ReverseScramblingOperation());
+                operations.Add(new ReverseCipherOperation());
             }
         }
 
-        return new ScramblingManifest(operations);
+        return new CipherManifest(operations);
     });
 }
 
