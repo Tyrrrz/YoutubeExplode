@@ -66,12 +66,12 @@ internal partial class PlayerSourceExtractor
             if (string.IsNullOrWhiteSpace(calledFuncName))
                 continue;
 
-            // Slice
+            // Splice
             if (Regex.IsMatch(definition,
                     $@"{Regex.Escape(calledFuncName)}:\bfunction\b\([a],b\).(\breturn\b)?.?\w+\."))
             {
                 var index = Regex.Match(statement, @"\(\w+,(\d+)\)").Groups[1].Value.ParseInt();
-                operations.Add(new SliceCipherOperation(index));
+                operations.Add(new SpliceCipherOperation(index));
             }
 
             // Swap

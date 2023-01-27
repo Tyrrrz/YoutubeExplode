@@ -2,11 +2,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace YoutubeExplode.Bridge.Cipher;
 
-internal class SliceCipherOperation : ICipherOperation
+internal class SpliceCipherOperation : ICipherOperation
 {
     private readonly int _index;
 
-    public SliceCipherOperation(int index) => _index = index;
+    public SpliceCipherOperation(int index) => _index = index;
 
     public string Decipher(string input) => input[_index..];
 
