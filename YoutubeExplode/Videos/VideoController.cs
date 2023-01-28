@@ -58,8 +58,8 @@ internal class VideoController : YoutubeControllerBase
                     client = new
                     {
                         clientName = "ANDROID",
-                        clientVersion = "18.03.33",
-                        androidSdkVersion = 33,
+                        clientVersion = "17.10.35",
+                        androidSdkVersion = 30,
                         hl = "en",
                         gl = "US",
                         utcOffsetMinutes = 0
@@ -72,7 +72,7 @@ internal class VideoController : YoutubeControllerBase
         // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
         request.Headers.Add(
             "User-Agent",
-            "com.google.android.youtube/18.03.33 (Linux; U; Android 13; GB) gzip"
+            "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
         );
 
         var raw = await SendHttpRequestAsync(request, cancellationToken);
