@@ -60,7 +60,7 @@ internal class VideoController : YoutubeControllerBase
                     client = new
                     {
                         clientName = "ANDROID",
-                        clientVersion = "17.29.35",
+                        clientVersion = "18.03.33",
                         androidSdkVersion = 30,
                         hl = "en",
                         gl = "US",
