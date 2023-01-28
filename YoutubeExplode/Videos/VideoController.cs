@@ -107,6 +107,11 @@ internal class VideoController : YoutubeControllerBase
                         hl = "en",
                         gl = "US",
                         utcOffsetMinutes = 0
+                    },
+                    // Required for videos that don't support embedding on third-party websites
+                    thirdParty = new
+                    {
+                        embedUrl = "https://www.youtube.com"
                     }
                 },
                 playbackContext = new
