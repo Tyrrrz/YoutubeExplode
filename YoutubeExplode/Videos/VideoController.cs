@@ -59,7 +59,7 @@ internal class VideoController : YoutubeControllerBase
                     {
                         clientName = "ANDROID",
                         clientVersion = "18.03.33",
-                        androidSdkVersion = 30,
+                        androidSdkVersion = 33,
                         hl = "en",
                         gl = "US",
                         utcOffsetMinutes = 0
@@ -67,6 +67,13 @@ internal class VideoController : YoutubeControllerBase
                 }
             })
         };
+
+        // User agent appears to be sometimes required when impersonating Android
+        // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
+        request.Headers.Add(
+            "User-Agent",
+            "com.google.android.youtube/18.03.33 (Linux; U; Android 13; GB) gzip"
+        );
 
         var raw = await SendHttpRequestAsync(request, cancellationToken);
         var playerResponse = PlayerResponseExtractor.Create(raw);

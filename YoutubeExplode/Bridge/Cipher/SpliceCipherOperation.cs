@@ -11,5 +11,5 @@ internal class SpliceCipherOperation : ICipherOperation
     public string Decipher(string input) => input[_index..];
 
     [ExcludeFromCodeCoverage]
-    public override string ToString() => $"Slice ({_index})";
+    public override string ToString() => $"Splice ({_index})";
 }
