@@ -53,8 +53,6 @@ internal class VideoController : YoutubeControllerBase
             Content = Json.SerializeToHttpContent(new
             {
                 videoId = videoId.Value,
-                contentCheckOk = true,
-                racyCheckOk = true,
                 context = new
                 {
                     client = new
@@ -93,8 +91,6 @@ internal class VideoController : YoutubeControllerBase
             Content = Json.SerializeToHttpContent(new
             {
                 videoId = videoId.Value,
-                contentCheckOk = true,
-                racyCheckOk = true,
                 context = new
                 {
                     client = new
@@ -104,10 +100,6 @@ internal class VideoController : YoutubeControllerBase
                         hl = "en",
                         gl = "US",
                         utcOffsetMinutes = 0
-                    },
-                    thirdParty = new
-                    {
-                        embedUrl = "https://www.youtube.com"
                     }
                 },
                 playbackContext = new

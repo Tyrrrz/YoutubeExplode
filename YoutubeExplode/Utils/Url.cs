@@ -10,6 +10,7 @@ internal static class Url
 {
     public static string SetQueryParameter(string url, string key, string value)
     {
+        var parameterFormatted = $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}";
         var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
 
         // Parameter has already been set to something
@@ -19,7 +20,7 @@ internal static class Url
 
             return url
                 .Remove(group.Index, group.Length)
-                .Insert(group.Index, $"{key}={value}");
+                .Insert(group.Index, parameterFormatted);
         }
         // Parameter hasn't been set yet
         else
@@ -27,7 +28,7 @@ internal static class Url
             var hasOtherParams = url.IndexOf('?') >= 0;
             var separator = hasOtherParams ? '&' : '?';
 
-            return url + separator + key + '=' + value;
+            return url + separator + parameterFormatted;
         }
     }
 
