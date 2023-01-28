@@ -11,7 +11,7 @@ internal static class Url
     public static string SetQueryParameter(string url, string key, string value)
     {
         var parameterFormatted = $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}";
-        var existingMatch = Regex.Match(url, $"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
+        var existingMatch = Regex.Match(url, $@"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
 
         // Parameter has already been set to something
         if (existingMatch.Success)
@@ -25,7 +25,7 @@ internal static class Url
         // Parameter hasn't been set yet
         else
         {
-            var hasOtherParams = url.IndexOf('?') >= 0;
+            var hasOtherParams = url.Contains('?');
             var separator = hasOtherParams ? '&' : '?';
 
             return url + separator + parameterFormatted;
