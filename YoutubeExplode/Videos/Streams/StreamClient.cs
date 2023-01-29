@@ -61,10 +61,13 @@ public class StreamClient
                 streamInfoExtractor.TryGetItag() ??
                 throw new YoutubeExplodeException("Could not extract stream itag.");
 
+            var baseUrl =
+                streamInfoExtractor.TryGetUrl() ??
+                throw new YoutubeExplodeException("Could not extract stream URL.");
+
             var url = DecipherStreamUrl(
                 cipherManifest,
-                streamInfoExtractor.TryGetUrl() ??
-                throw new YoutubeExplodeException("Could not extract stream URL."),
+                baseUrl,
                 streamInfoExtractor.TryGetSignature(),
                 streamInfoExtractor.TryGetSignatureParameter()
             );
