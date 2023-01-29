@@ -125,7 +125,7 @@ internal partial class PlayerResponseExtractor
             .GetPropertyOrNull("ypcTrailerRenderer")?
             .GetPropertyOrNull("playerVars")?
             .GetStringOrNull()?
-            .Pipe(Url.SplitQuery)
+            .Pipe(Url.GetQueryParameters)
             .GetValueOrDefault("video_id") ??
 
         TryGetVideoPlayability()?

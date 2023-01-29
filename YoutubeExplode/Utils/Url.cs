@@ -10,47 +10,44 @@ internal static class Url
 {
     public static string SetQueryParameter(string url, string key, string value)
     {
-        var parameterFormatted = $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}";
-        var existingMatch = Regex.Match(url, $@"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)");
+        var parameterEncoded = $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}";
 
-        // Parameter has already been set to something
+        // Replacing an existing parameter
+        var existingMatch = Regex.Match(url, $@"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)").Groups[1];
         if (existingMatch.Success)
         {
-            var group = existingMatch.Groups[1];
-
             return url
-                .Remove(group.Index, group.Length)
-                .Insert(group.Index, parameterFormatted);
+                .Remove(existingMatch.Index, existingMatch.Length)
+                .Insert(existingMatch.Index, parameterEncoded);
         }
-        // Parameter hasn't been set yet
+        // Adding a new parameter
         else
         {
-            var hasOtherParams = url.Contains('?');
-            var separator = hasOtherParams ? '&' : '?';
-
-            return url + separator + parameterFormatted;
+            var separator = url.Contains('?') ? '&' : '?';
+            return url + separator + parameterEncoded;
         }
     }
 
-    public static IReadOnlyDictionary<string, string> SplitQuery(string query)
+    public static IReadOnlyDictionary<string, string> GetQueryParameters(string url)
     {
-        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var query = url.Contains('?')
+            ? url.SubstringAfter("?")
+            : url;
 
-        var paramsEncoded = query.Split("&");
-
-        foreach (var paramEncoded in paramsEncoded)
+        var parameters = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var parameterEncoded in query.Split("&"))
         {
-            var param = WebUtility.UrlDecode(paramEncoded);
+            var parameterRaw = WebUtility.UrlDecode(parameterEncoded);
 
-            var key = param.SubstringUntil("=");
-            var value = param.SubstringAfter("=");
+            var key = parameterRaw.SubstringUntil("=");
+            var value = parameterRaw.SubstringAfter("=");
 
             if (string.IsNullOrWhiteSpace(key))
                 continue;
 
-            result[key] = value;
+            parameters[key] = value;
         }
 
-        return result;
+        return parameters;
     }
 }

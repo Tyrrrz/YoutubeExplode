@@ -23,12 +23,12 @@ internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
         _content
             .GetPropertyOrNull("cipher")?
             .GetStringOrNull()?
-            .Pipe(Url.SplitQuery) ??
+            .Pipe(Url.GetQueryParameters) ??
 
         _content
             .GetPropertyOrNull("signatureCipher")?
             .GetStringOrNull()?
-            .Pipe(Url.SplitQuery)
+            .Pipe(Url.GetQueryParameters)
     );
 
     public string? TryGetUrl() => Memo.Cache(this, () =>
