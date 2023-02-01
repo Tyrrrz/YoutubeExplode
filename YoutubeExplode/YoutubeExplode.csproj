@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>
-      The ultimate dirty YouTube library.
-      Parses public metadata on YouTube videos, lets you download them and much more.
-      Does not require an API key and does not impose usage quotas.
-    </Description>
+    <Description>Abstraction layer over YouTube's internal API</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
