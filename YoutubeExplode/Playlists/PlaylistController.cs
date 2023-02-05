@@ -46,9 +46,7 @@ internal class PlaylistController : YoutubeControllerBase
         var playlistResponse = PlaylistBrowseResponseExtractor.Create(raw);
 
         if (!playlistResponse.IsPlaylistAvailable())
-        {
             throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
-        }
 
         return playlistResponse;
     }
@@ -90,9 +88,7 @@ internal class PlaylistController : YoutubeControllerBase
         var playlistResponse = PlaylistNextResponseExtractor.Create(raw);
 
         if (!playlistResponse.IsPlaylistAvailable())
-        {
             throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
-        }
 
         return playlistResponse;
     }

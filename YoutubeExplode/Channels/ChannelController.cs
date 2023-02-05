@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Channels;
 
@@ -19,19 +20,16 @@ internal class ChannelController : YoutubeControllerBase
     {
         var url = $"https://www.youtube.com/{channelRoute}?hl=en";
 
-        for (var retry = 0; retry <= 5; retry++)
-        {
-            var raw = await SendHttpRequestAsync(url, cancellationToken);
-
-            var channelPage = ChannelPageExtractor.TryCreate(raw);
-            if (channelPage is not null)
-                return channelPage;
-        }
-
-        throw new YoutubeExplodeException(
-            "Channel page is broken. " +
-            "Please try again in a few minutes."
-        );
+        return
+            await Retry.WhileNullAsync(
+                async () => ChannelPageExtractor.TryCreate(
+                    await SendHttpRequestAsync(url, cancellationToken)
+                )
+            ) ??
+            throw new YoutubeExplodeException(
+                "Channel page is broken. " +
+                "Please try again in a few minutes."
+            );
     }
 
     public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(

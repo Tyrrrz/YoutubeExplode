@@ -20,26 +20,21 @@ internal class VideoController : YoutubeControllerBase
     {
         var url = $"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
 
-        for (var retry = 0; retry <= 5; retry++)
-        {
-            var raw = await SendHttpRequestAsync(url, cancellationToken);
+        var watchPage =
+            await Retry.WhileNullAsync(
+                async () => VideoWatchPageExtractor.TryCreate(
+                    await SendHttpRequestAsync(url, cancellationToken)
+                )
+            ) ??
+            throw new YoutubeExplodeException(
+                "Video watch page is broken. " +
+                "Please try again in a few minutes."
+            );
 
-            var watchPage = VideoWatchPageExtractor.TryCreate(raw);
-            if (watchPage is not null)
-            {
-                if (!watchPage.IsVideoAvailable())
-                {
-                    throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-                }
+        if (!watchPage.IsVideoAvailable())
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
 
-                return watchPage;
-            }
-        }
-
-        throw new YoutubeExplodeException(
-            "Video watch page is broken. " +
-            "Please try again in a few minutes."
-        );
+        return watchPage;
     }
 
     public async ValueTask<PlayerResponseExtractor> GetPlayerResponseAsync(
@@ -79,9 +74,7 @@ internal class VideoController : YoutubeControllerBase
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
         if (!playerResponse.IsVideoAvailable())
-        {
             throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-        }
 
         return playerResponse;
     }
@@ -128,9 +121,7 @@ internal class VideoController : YoutubeControllerBase
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
         if (!playerResponse.IsVideoAvailable())
-        {
             throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-        }
 
         return playerResponse;
     }
