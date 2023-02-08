@@ -11,12 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="YoutubeExplode.targets" Pack="true" PackagePath="build" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- Higher versions of AngleSharp are incompatible with netcoreapp3.0 target framework -->
     <PackageReference Include="AngleSharp" Version="0.17.0" />
+    <PackageReference Include="FuckRussia" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="PolySharp" Version="1.8.1" PrivateAssets="all" />
