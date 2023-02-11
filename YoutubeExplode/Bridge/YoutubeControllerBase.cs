@@ -29,7 +29,7 @@ internal abstract class YoutubeControllerBase
 
         // Set API key if necessary
         if (request.RequestUri is not null &&
-            request.RequestUri.AbsolutePath.StartsWith("/youtubei/")&&
+            request.RequestUri.AbsolutePath.StartsWith("/youtubei/") &&
             !Url.ContainsQueryParameter(request.RequestUri.Query, "key"))
         {
             request.RequestUri = new Uri(
