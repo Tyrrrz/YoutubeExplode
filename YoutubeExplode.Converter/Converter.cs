@@ -66,10 +66,18 @@ internal partial class Converter
         if (container == Container.Mp4 && subtitleInputs.Any())
             arguments.Add("-c:s").Add("mov_text");
 
-        // MP3: specify bitrate manually, otherwise the metadata will contain wrong duration
-        // https://superuser.com/questions/892996/ffmpeg-is-doubling-audio-length-when-extracting-from-video
+        // MP3: set constant bitrate, otherwise the metadata may contain wrong duration
+        // https://superuser.com/a/893044
         if (container == Container.Mp3)
-            arguments.Add("-b:a").Add("165k");
+        {
+            var audioBitrate = streamInputs
+                .Select(i => i.Info)
+                .OfType<IAudioStreamInfo>()
+                .Single()
+                .Bitrate;
+
+            arguments.Add("-b:a").Add(Math.Round(audioBitrate.KiloBitsPerSecond) + "K");
+        }
 
         // Inject language metadata for subtitles
         for (var i = 0; i < subtitleInputs.Count; i++)
