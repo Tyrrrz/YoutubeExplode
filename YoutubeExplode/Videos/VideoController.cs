@@ -78,7 +78,7 @@ internal class VideoController : YoutubeControllerBase
 
     public async ValueTask<PlayerResponseExtractor> GetPlayerResponseAsync(
         VideoId videoId,
-        string signatureTimestamp,
+        string? signatureTimestamp,
         CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")

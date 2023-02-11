@@ -23,6 +23,12 @@ public class StreamClient
     private readonly HttpClient _http;
     private readonly StreamController _controller;
 
+    // Because we determine the player version ourselves, it's safe to cache
+    // the cipher manifest and signature timestamp for the lifetime of the client.
+    private readonly object _cipherLock = new();
+    private CipherManifest? _cipherManifest;
+    private string? _signatureTimestamp;
+
     /// <summary>
     /// Initializes an instance of <see cref="StreamClient" />.
     /// </summary>
@@ -32,9 +38,27 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
+    private async ValueTask EnsureCipherManifestResolvedAsync(CancellationToken cancellationToken)
+    {
+        if (_cipherManifest is not null && !string.IsNullOrWhiteSpace(_signatureTimestamp))
+            return;
+
+        var playerSource = await _controller.GetPlayerSourceAsync(cancellationToken);
+
+        lock (_cipherLock)
+        {
+            _cipherManifest =
+                playerSource.TryGetCipherManifest() ??
+                throw new YoutubeExplodeException("Could not get cipher manifest.");
+
+            _signatureTimestamp =
+                playerSource.TryGetSignatureTimestamp() ??
+                throw new YoutubeExplodeException("Could not get signature timestamp.");
+        }
+    }
+
     private async IAsyncEnumerable<IStreamInfo> GetStreamInfosAsync(
         IEnumerable<IStreamInfoExtractor> streamInfoExtractors,
-        CipherManifest cipherManifest,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         foreach (var streamInfoExtractor in streamInfoExtractors)
@@ -47,26 +71,24 @@ public class StreamClient
                 streamInfoExtractor.TryGetUrl() ??
                 throw new YoutubeExplodeException("Could not extract stream URL.");
 
-            var signature = streamInfoExtractor.TryGetSignature();
-            if (!string.IsNullOrWhiteSpace(signature))
+            // Handle cipher-protected streams
+            if (streamInfoExtractor.TryGetSignature() is { } signature)
             {
+                if (_cipherManifest is null)
+                    throw new YoutubeExplodeException("Stream is protected but the cipher manifest was not resolved.");
+
                 url = Url.SetQueryParameter(
                     url,
                     streamInfoExtractor.TryGetSignatureParameter() ?? "sig",
-                    cipherManifest.Decipher(signature)
+                    _cipherManifest.Decipher(signature)
                 );
             }
 
-            // Get content length
-            var contentLength =
+            var fileSize = new FileSize(
                 streamInfoExtractor.TryGetContentLength() ??
                 await _http.TryGetContentLengthAsync(url, true, cancellationToken) ??
-                0;
-
-            if (contentLength <= 0)
-                throw new YoutubeExplodeException("Could not extract stream content length.");
-
-            var fileSize = new FileSize(contentLength);
+                throw new YoutubeExplodeException("Could not extract stream content length.")
+            );
 
             var container =
                 streamInfoExtractor.TryGetContainer()?.Pipe(s => new Container(s)) ??
@@ -152,7 +174,6 @@ public class StreamClient
         VideoId videoId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var cipherManifest = CipherManifest.Null;
         var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
         // Check if the video is pay-to-play
@@ -169,17 +190,8 @@ public class StreamClient
         // with signature deciphering. This is required for age-restricted videos.
         if (!playerResponse.IsVideoPlayable())
         {
-            var playerSource = await _controller.GetPlayerSourceAsync(cancellationToken);
-
-            var signatureTimestamp =
-                playerSource.TryGetSignatureTimestamp() ??
-                throw new YoutubeExplodeException("Could not get signature timestamp.");
-
-            cipherManifest =
-                playerSource.TryGetCipherManifest() ??
-                throw new YoutubeExplodeException("Could not get cipher manifest.");
-
-            playerResponse = await _controller.GetPlayerResponseAsync(videoId, signatureTimestamp, cancellationToken);
+            await EnsureCipherManifestResolvedAsync(cancellationToken);
+            playerResponse = await _controller.GetPlayerResponseAsync(videoId, _signatureTimestamp, cancellationToken);
         }
 
         // If the video is still unplayable, error out
@@ -192,11 +204,8 @@ public class StreamClient
         }
 
         // Extract streams from player response
-        await foreach (var streamInfo in
-                       GetStreamInfosAsync(playerResponse.GetStreams(), cipherManifest, cancellationToken))
-        {
+        await foreach (var streamInfo in GetStreamInfosAsync(playerResponse.GetStreams(), cancellationToken))
             yield return streamInfo;
-        }
 
         // Extract streams from DASH manifest
         var dashManifestUrl = playerResponse.TryGetDashManifestUrl();
@@ -204,11 +213,8 @@ public class StreamClient
         {
             var dashManifest = await _controller.GetDashManifestAsync(dashManifestUrl, cancellationToken);
 
-            await foreach (var streamInfo in
-                           GetStreamInfosAsync(dashManifest.GetStreams(), cipherManifest, cancellationToken))
-            {
+            await foreach (var streamInfo in GetStreamInfosAsync(dashManifest.GetStreams(), cancellationToken))
                 yield return streamInfo;
-            }
         }
     }
 
@@ -218,8 +224,8 @@ public class StreamClient
     public async ValueTask<StreamManifest> GetManifestAsync(
         VideoId videoId,
         CancellationToken cancellationToken = default) => new(
-        // YouTube sometimes returns streams that produce 403 Forbidden errors when accessed.
-        // This happens for both encrypted and non-encrypted URLs, so I'm not sure what's causing it.
+        // YouTube sometimes returns stream URLs that produce 403 Forbidden errors when accessed.
+        // This happens for both protected and non-protected streams, so I'm not sure what's causing it.
         // As a workaround, we'll retry a few times if we encounter this error.
         await Retry.WhileExceptionAsync(
             async innerCancellationToken => await GetStreamInfosAsync(videoId, innerCancellationToken),
