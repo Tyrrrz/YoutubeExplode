@@ -5,21 +5,19 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Tests.Fixtures;
 using YoutubeExplode.Tests.TestData;
+using YoutubeExplode.Tests.Utils;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests;
 
-public class StreamSpecs : IClassFixture<TempOutputFixture>
+public class StreamSpecs
 {
     private readonly ITestOutputHelper _testOutput;
-    private readonly TempOutputFixture _tempOutputFixture;
 
-    public StreamSpecs(ITestOutputHelper testOutput, TempOutputFixture tempOutputFixture)
+    public StreamSpecs(ITestOutputHelper testOutput)
     {
         _testOutput = testOutput;
-        _tempOutputFixture = tempOutputFixture;
     }
 
     [Fact]
@@ -165,17 +163,17 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     public async Task I_can_download_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange
-        var filePath = _tempOutputFixture.GetTempFilePath();
+        using var file = TempFile.Create();
         var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
         var streamInfo = manifest.Streams.OrderBy(s => s.Size).First();
 
-        await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
+        await youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
 
         // Assert
-        var fileInfo = new FileInfo(filePath);
+        var fileInfo = new FileInfo(file.Path);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
     }
@@ -184,17 +182,17 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     public async Task I_can_download_the_highest_bitrate_stream_from_a_video()
     {
         // Arrange
-        var filePath = _tempOutputFixture.GetTempFilePath();
+        using var file = TempFile.Create();
         var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.Streams.GetWithHighestBitrate();
 
-        await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
+        await youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
 
         // Assert
-        var fileInfo = new FileInfo(filePath);
+        var fileInfo = new FileInfo(file.Path);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
     }
@@ -203,17 +201,17 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     public async Task I_can_download_the_highest_quality_stream_from_a_video()
     {
         // Arrange
-        var filePath = _tempOutputFixture.GetTempFilePath();
+        using var file = TempFile.Create();
         var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.GetVideoStreams().GetWithHighestVideoQuality();
 
-        await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
+        await youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
 
         // Assert
-        var fileInfo = new FileInfo(filePath);
+        var fileInfo = new FileInfo(file.Path);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
     }

@@ -3,18 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using YoutubeExplode.Tests.Fixtures;
 using YoutubeExplode.Tests.TestData;
+using YoutubeExplode.Tests.Utils;
 
 namespace YoutubeExplode.Tests;
 
-public class ClosedCaptionSpecs : IClassFixture<TempOutputFixture>
+public class ClosedCaptionSpecs
 {
-    private readonly TempOutputFixture _tempOutputFixture;
-
-    public ClosedCaptionSpecs(TempOutputFixture tempOutputFixture) =>
-        _tempOutputFixture = tempOutputFixture;
-
     [Fact]
     public async Task I_can_get_the_list_of_available_closed_caption_tracks_on_a_video()
     {
@@ -120,17 +115,17 @@ public class ClosedCaptionSpecs : IClassFixture<TempOutputFixture>
     public async Task I_can_download_a_specific_closed_caption_track_from_a_video()
     {
         // Arrange
-        var filePath = _tempOutputFixture.GetTempFilePath();
+        using var file = TempFile.Create();
         var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
         var trackInfo = manifest.GetByLanguage("en-US");
 
-        await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath);
+        await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, file.Path);
 
         // Assert
-        var fileInfo = new FileInfo(filePath);
+        var fileInfo = new FileInfo(file.Path);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().BeGreaterThan(0);
     }

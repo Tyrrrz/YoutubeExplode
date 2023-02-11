@@ -1,33 +1,28 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
-using YoutubeExplode.Converter.Tests.Fixtures;
 using YoutubeExplode.Converter.Tests.Utils;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter.Tests;
 
-public class SubtitleSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFmpegFixture>
+public class SubtitleSpecs : IAsyncLifetime
 {
-    private readonly TempOutputFixture _tempOutputFixture;
-    private readonly FFmpegFixture _ffmpegFixture;
+    public async Task InitializeAsync() => await FFmpeg.InitializeAsync();
 
-    public SubtitleSpecs(
-        TempOutputFixture tempOutputFixture,
-        FFmpegFixture ffmpegFixture)
-    {
-        _tempOutputFixture = tempOutputFixture;
-        _ffmpegFixture = ffmpegFixture;
-    }
+    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task I_can_download_a_video_with_subtitles_as_a_single_mp4_file()
     {
         // Arrange
         var youtube = new YoutubeClient();
-        var outputFilePath = _tempOutputFixture.GetTempFilePath();
+
+        using var dir = TempDir.Create();
+        var filePath = Path.Combine(dir.Path, "video.mp4");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("YltHGKX80Y8");
         var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("YltHGKX80Y8");
@@ -43,17 +38,14 @@ public class SubtitleSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFm
         await youtube.Videos.DownloadAsync(
             streamInfos,
             trackInfos,
-            new ConversionRequestBuilder(outputFilePath)
-                .SetFFmpegPath(_ffmpegFixture.FilePath)
-                .SetContainer("mp4")
-                .Build()
+            new ConversionRequestBuilder(filePath).Build()
         );
 
         // Assert
-        MediaFormat.IsMp4File(outputFilePath).Should().BeTrue();
+        MediaFormat.IsMp4File(filePath).Should().BeTrue();
 
         foreach (var trackInfo in trackInfos)
-            FileEx.ContainsBytes(outputFilePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name)).Should().BeTrue();
+            FileEx.ContainsBytes(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name)).Should().BeTrue();
     }
 
     [Fact]
@@ -61,7 +53,9 @@ public class SubtitleSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFm
     {
         // Arrange
         var youtube = new YoutubeClient();
-        var outputFilePath = _tempOutputFixture.GetTempFilePath();
+
+        using var dir = TempDir.Create();
+        var filePath = Path.Combine(dir.Path, "video.webm");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("YltHGKX80Y8");
         var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("YltHGKX80Y8");
@@ -77,16 +71,13 @@ public class SubtitleSpecs : IClassFixture<TempOutputFixture>, IClassFixture<FFm
         await youtube.Videos.DownloadAsync(
             streamInfos,
             trackInfos,
-            new ConversionRequestBuilder(outputFilePath)
-                .SetFFmpegPath(_ffmpegFixture.FilePath)
-                .SetContainer("webm")
-                .Build()
+            new ConversionRequestBuilder(filePath).Build()
         );
 
         // Assert
-        MediaFormat.IsWebMFile(outputFilePath).Should().BeTrue();
+        MediaFormat.IsWebMFile(filePath).Should().BeTrue();
 
         foreach (var trackInfo in trackInfos)
-            FileEx.ContainsBytes(outputFilePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name)).Should().BeTrue();
+            FileEx.ContainsBytes(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name)).Should().BeTrue();
     }
 }

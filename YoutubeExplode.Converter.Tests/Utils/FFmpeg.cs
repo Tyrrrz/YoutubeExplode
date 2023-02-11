@@ -2,25 +2,29 @@
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
-using Xunit;
 
-namespace YoutubeExplode.Converter.Tests.Fixtures;
+namespace YoutubeExplode.Converter.Tests.Utils;
 
-public partial class FFmpegFixture : IAsyncLifetime
+public static class FFmpeg
 {
-    // Allow this fixture to be reused across multiple tests
     private static readonly SemaphoreSlim Lock = new(1, 1);
 
-    public string FilePath { get; } = Path.Combine(
-        Path.GetDirectoryName(typeof(FFmpegFixture).Assembly.Location) ?? Directory.GetCurrentDirectory(),
-        GetFFmpegFileName()
+    private static readonly string FileName =
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "ffmpeg.exe"
+            : "ffmpeg";
+
+    public static readonly string FilePath = Path.Combine(
+        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
+        FileName
     );
 
-    private async ValueTask EnsureFFmpegHasExecutePermissionAsync()
+    private static async ValueTask EnsureExecutePermissionAsync()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             return;
@@ -30,53 +34,7 @@ public partial class FFmpegFixture : IAsyncLifetime
             .ExecuteAsync();
     }
 
-    private async ValueTask DownloadFFmpegAsync()
-    {
-        using var httpClient = new HttpClient();
-
-        await using var zipStream = await httpClient.GetStreamAsync(GetFFmpegDownloadUrl());
-        using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read);
-
-        var entry = zip.GetEntry(GetFFmpegFileName());
-
-        if (entry is null)
-            throw new FileNotFoundException("Downloaded archive doesn't contain FFmpeg.");
-
-        await using var entryStream = entry.Open();
-        await using var fileStream = File.Create(FilePath);
-        await entryStream.CopyToAsync(fileStream);
-
-        await EnsureFFmpegHasExecutePermissionAsync();
-    }
-
-    public async Task InitializeAsync()
-    {
-        await Lock.WaitAsync();
-
-        try
-        {
-            if (File.Exists(FilePath))
-                return;
-
-            await DownloadFFmpegAsync();
-        }
-        finally
-        {
-            Lock.Release();
-        }
-    }
-
-    public Task DisposeAsync() => Task.CompletedTask;
-}
-
-public partial class FFmpegFixture
-{
-    private static string GetFFmpegFileName() =>
-        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? "ffmpeg.exe"
-            : "ffmpeg";
-
-    private static string GetFFmpegDownloadUrl()
+    private static string GetDownloadUrl()
     {
         static string GetPlatformMoniker()
         {
@@ -108,11 +66,44 @@ public partial class FFmpegFixture
 
             throw new NotSupportedException("Unsupported architecture.");
         }
-        
+
         const string version = "4.4.1";
         var plat = GetPlatformMoniker();
         var arch = GetArchitectureMoniker();
 
         return $"https://github.com/vot/ffbinaries-prebuilt/releases/download/v{version}/ffmpeg-{version}-{plat}-{arch}.zip";
+    }
+
+    private static async ValueTask DownloadAsync()
+    {
+        using var httpClient = new HttpClient();
+
+        await using var zipStream = await httpClient.GetStreamAsync(GetDownloadUrl());
+        using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read);
+
+        var entry = zip.GetEntry(FileName);
+        if (entry is null)
+            throw new FileNotFoundException("Downloaded archive doesn't contain FFmpeg.");
+
+        await using var entryStream = entry.Open();
+        await using var fileStream = File.Create(FilePath);
+        await entryStream.CopyToAsync(fileStream);
+
+        await EnsureExecutePermissionAsync();
+    }
+
+    public static async ValueTask InitializeAsync()
+    {
+        await Lock.WaitAsync();
+
+        try
+        {
+            if (!File.Exists(FilePath))
+                await DownloadAsync();
+        }
+        finally
+        {
+            Lock.Release();
+        }
     }
 }
