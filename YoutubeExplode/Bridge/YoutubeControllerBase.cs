@@ -42,6 +42,18 @@ internal abstract class YoutubeControllerBase
             );
         }
 
+        // Set language if necessary
+        if (request.RequestUri is not null && !Url.ContainsQueryParameter(request.RequestUri.Query, "hl"))
+        {
+            request.RequestUri = new Uri(
+                Url.SetQueryParameter(
+                    request.RequestUri.OriginalString,
+                    "hl",
+                    "en"
+                )
+            );
+        }
+
         // Set user agent if necessary
         if (!request.Headers.Contains("User-Agent"))
         {

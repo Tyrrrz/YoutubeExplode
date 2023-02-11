@@ -29,7 +29,7 @@ public class ChannelClient
         _controller = new ChannelController(http);
     }
 
-    private Channel Extract(ChannelPageExtractor channelPage)
+    private Channel Get(ChannelPageExtractor channelPage)
     {
         var channelId =
             channelPage.TryGetChannelId() ??
@@ -63,7 +63,7 @@ public class ChannelClient
     public async ValueTask<Channel> GetAsync(
         ChannelId channelId,
         CancellationToken cancellationToken = default) =>
-        Extract(await _controller.GetChannelPageAsync(channelId, cancellationToken));
+        Get(await _controller.GetChannelPageAsync(channelId, cancellationToken));
 
     /// <summary>
     /// Gets the metadata associated with the channel of the specified user.
@@ -71,7 +71,7 @@ public class ChannelClient
     public async ValueTask<Channel> GetByUserAsync(
         UserName userName,
         CancellationToken cancellationToken = default) =>
-        Extract(await _controller.GetChannelPageAsync(userName, cancellationToken));
+        Get(await _controller.GetChannelPageAsync(userName, cancellationToken));
 
     /// <summary>
     /// Gets the metadata associated with the channel identified by the specified slug or custom URL.
@@ -79,7 +79,7 @@ public class ChannelClient
     public async ValueTask<Channel> GetBySlugAsync(
         ChannelSlug channelSlug,
         CancellationToken cancellationToken = default) =>
-        Extract(await _controller.GetChannelPageAsync(channelSlug, cancellationToken));
+        Get(await _controller.GetChannelPageAsync(channelSlug, cancellationToken));
 
     /// <summary>
     /// Gets the metadata associated with the channel identified by the specified handle or handle URL.
@@ -87,7 +87,7 @@ public class ChannelClient
     public async ValueTask<Channel> GetByHandleAsync(
         ChannelHandle channelHandle,
         CancellationToken cancellationToken = default) =>
-        Extract(await _controller.GetChannelPageAsync(channelHandle, cancellationToken));
+        Get(await _controller.GetChannelPageAsync(channelHandle, cancellationToken));
 
     /// <summary>
     /// Enumerates videos uploaded by the specified channel.

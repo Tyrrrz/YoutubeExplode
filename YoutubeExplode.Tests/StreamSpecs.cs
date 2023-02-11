@@ -68,8 +68,8 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.HighDynamicRange)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
-    [InlineData(VideoIds.AgeRestricted)]
-    [InlineData(VideoIds.AgeRestrictedSignature)]
+    [InlineData(VideoIds.AgeRestrictedViolent)]
+    [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     public async Task I_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
     {
@@ -129,8 +129,8 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
 
     [Theory]
     [InlineData(VideoIds.Normal)]
-    [InlineData(VideoIds.AgeRestricted)]
-    [InlineData(VideoIds.AgeRestrictedSignature)]
+    [InlineData(VideoIds.AgeRestrictedViolent)]
+    [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.Omnidirectional)]
     public async Task I_can_get_a_specific_stream_from_a_video(string videoId)
@@ -159,8 +159,8 @@ public class StreamSpecs : IClassFixture<TempOutputFixture>
     [InlineData(VideoIds.Omnidirectional)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
-    [InlineData(VideoIds.AgeRestricted)]
-    [InlineData(VideoIds.AgeRestrictedSignature)]
+    [InlineData(VideoIds.AgeRestrictedViolent)]
+    [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     public async Task I_can_download_a_specific_stream_from_a_video(string videoId)
     {

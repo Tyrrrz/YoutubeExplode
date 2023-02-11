@@ -21,7 +21,7 @@ internal class VideoController : YoutubeControllerBase
         var watchPage =
             await Retry.WhileNullAsync(async innerCancellationToken =>
                 VideoWatchPageExtractor.TryCreate(
-                    await GetStringAsync($"/watch?v={videoId}&bpctr=9999999999&hl=en", innerCancellationToken)
+                    await GetStringAsync($"/watch?v={videoId}&bpctr=9999999999", innerCancellationToken)
                 ), 5, cancellationToken
             ) ??
             throw new YoutubeExplodeException(
@@ -67,6 +67,7 @@ internal class VideoController : YoutubeControllerBase
         );
 
         var raw = await GetStringAsync(request, cancellationToken);
+
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
         if (!playerResponse.IsVideoAvailable())

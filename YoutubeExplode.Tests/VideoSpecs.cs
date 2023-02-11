@@ -80,7 +80,7 @@ public class VideoSpecs
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
-    [InlineData(VideoIds.AgeRestricted)]
+    [InlineData(VideoIds.AgeRestrictedViolent)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     public async Task I_can_get_metadata_of_any_available_video(string videoId)
     {

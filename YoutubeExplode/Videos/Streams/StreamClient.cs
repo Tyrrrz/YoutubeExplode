@@ -169,9 +169,7 @@ public class StreamClient
         // with signature deciphering. This is required for age-restricted videos.
         if (!playerResponse.IsVideoPlayable())
         {
-            var playerSource =
-                await _controller.TryGetPlayerSourceAsync(cancellationToken) ??
-                throw new YoutubeExplodeException("Could not get player source.");
+            var playerSource = await _controller.GetPlayerSourceAsync(cancellationToken);
 
             var signatureTimestamp =
                 playerSource.TryGetSignatureTimestamp() ??
