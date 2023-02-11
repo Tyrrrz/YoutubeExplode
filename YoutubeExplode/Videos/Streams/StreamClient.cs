@@ -217,8 +217,17 @@ public class StreamClient
     /// </summary>
     public async ValueTask<StreamManifest> GetManifestAsync(
         VideoId videoId,
-        CancellationToken cancellationToken = default) =>
-        new(await GetStreamInfosAsync(videoId, cancellationToken));
+        CancellationToken cancellationToken = default) => new(
+        // YouTube sometimes returns streams that produce 403 Forbidden errors when accessed.
+        // This happens for both encrypted and non-encrypted URLs, so I'm not sure what's causing it.
+        // As a workaround, we'll retry a few times if we encounter this error.
+        await Retry.WhileExceptionAsync(
+            async innerCancellationToken => await GetStreamInfosAsync(videoId, innerCancellationToken),
+            typeof(HttpRequestException),
+            5,
+            cancellationToken
+        )
+    );
 
     /// <summary>
     /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
