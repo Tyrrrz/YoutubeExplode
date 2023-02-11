@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.2.6 (11-Feb-2023)
+
+- Fixed an issue where an attempt to retrieve a stream occasionally failed with a 403 Forbidden error.
+- [Converter] Fixed an issue where downloading a video as an `mp3` file sometimes resulted in lower bitrate than the original audio.
+
 ## v6.2.5 (06-Dec-2022)
 
 - Fixed an issue where empty text blocks in closed caption tracks were ignored. This makes the behavior consistent with YouTube's player, where empty closed captions are still rendered.
