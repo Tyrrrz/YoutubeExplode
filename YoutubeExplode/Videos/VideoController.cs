@@ -18,13 +18,11 @@ internal class VideoController : YoutubeControllerBase
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var url = $"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999&hl=en";
-
         var watchPage =
-            await Retry.WhileNullAsync(
-                async () => VideoWatchPageExtractor.TryCreate(
-                    await SendHttpRequestAsync(url, cancellationToken)
-                )
+            await Retry.WhileNullAsync(async innerCancellationToken =>
+                VideoWatchPageExtractor.TryCreate(
+                    await GetStringAsync($"/watch?v={videoId}&bpctr=9999999999&hl=en", innerCancellationToken)
+                ), 5, cancellationToken
             ) ??
             throw new YoutubeExplodeException(
                 "Video watch page is broken. " +
@@ -41,9 +39,7 @@ internal class VideoController : YoutubeControllerBase
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        const string url = $"https://www.youtube.com/youtubei/v1/player?key={ApiKey}";
-
-        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -70,7 +66,7 @@ internal class VideoController : YoutubeControllerBase
             "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
         );
 
-        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var raw = await GetStringAsync(request, cancellationToken);
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
         if (!playerResponse.IsVideoAvailable())
@@ -84,9 +80,7 @@ internal class VideoController : YoutubeControllerBase
         string signatureTimestamp,
         CancellationToken cancellationToken = default)
     {
-        const string url = $"https://www.youtube.com/youtubei/v1/player?key={ApiKey}";
-
-        using var request = new HttpRequestMessage(HttpMethod.Post, url)
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -117,7 +111,7 @@ internal class VideoController : YoutubeControllerBase
             })
         };
 
-        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var raw = await GetStringAsync(request, cancellationToken);
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
         if (!playerResponse.IsVideoAvailable())

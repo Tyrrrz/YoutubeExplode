@@ -16,17 +16,14 @@ internal class StreamController : VideoController
     public async ValueTask<PlayerSourceExtractor?> TryGetPlayerSourceAsync(
         CancellationToken cancellationToken = default)
     {
-        var iframeContent = await SendHttpRequestAsync(
-            "https://www.youtube.com/iframe_api",
-            cancellationToken
-        );
+        var iframe = await GetStringAsync("/iframe_api", cancellationToken);
 
-        var version = Regex.Match(iframeContent, @"player\\?/([0-9a-fA-F]{8})\\?/").Groups[1].Value;
+        var version = Regex.Match(iframe, @"player\\?/([0-9a-fA-F]{8})\\?/").Groups[1].Value;
         if (string.IsNullOrWhiteSpace(version))
             return null;
 
-        var source = await SendHttpRequestAsync(
-            $"https://www.youtube.com/s/player/{version}/player_ias.vflset/en_US/base.js",
+        var source = await GetStringAsync(
+            $"/s/player/{version}/player_ias.vflset/en_US/base.js",
             cancellationToken
         );
 
@@ -37,7 +34,7 @@ internal class StreamController : VideoController
         string url,
         CancellationToken cancellationToken = default)
     {
-        var raw = await SendHttpRequestAsync(url, cancellationToken);
+        var raw = await GetStringAsync(url, cancellationToken);
         return DashManifestExtractor.Create(raw);
     }
 }

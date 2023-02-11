@@ -10,7 +10,7 @@ namespace YoutubeExplode.Converter;
 public class ConversionRequest
 {
     /// <summary>
-    /// Path to FFmpeg CLI.
+    /// Path to the FFmpeg CLI.
     /// </summary>
     public string FFmpegCliFilePath { get; }
 

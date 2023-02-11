@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace YoutubeExplode.Utils.Extensions;
@@ -49,4 +50,7 @@ internal static class AsyncEnumerableExtensions
 
         return list;
     }
+
+    public static ValueTaskAwaiter<List<T>> GetAwaiter<T>(this IAsyncEnumerable<T> source) =>
+        source.ToListAsync().GetAwaiter();
 }

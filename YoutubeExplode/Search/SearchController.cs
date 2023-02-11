@@ -19,38 +19,34 @@ internal class SearchController : YoutubeControllerBase
         string? continuationToken,
         CancellationToken cancellationToken = default)
     {
-        const string url = $"https://www.youtube.com/youtubei/v1/search?key={ApiKey}";
-
-        var payload = new
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/search")
         {
-            query = searchQuery,
-            @params = searchFilter switch
+            Content = Json.SerializeToHttpContent(new
             {
-                SearchFilter.Video => "EgIQAQ%3D%3D",
-                SearchFilter.Playlist => "EgIQAw%3D%3D",
-                SearchFilter.Channel => "EgIQAg%3D%3D",
-                _ => null
-            },
-            continuation = continuationToken,
-            context = new
-            {
-                client = new
+                query = searchQuery,
+                @params = searchFilter switch
                 {
-                    clientName = "WEB",
-                    clientVersion = "2.20210408.08.00",
-                    hl = "en",
-                    gl = "US",
-                    utcOffsetMinutes = 0
+                    SearchFilter.Video => "EgIQAQ%3D%3D",
+                    SearchFilter.Playlist => "EgIQAw%3D%3D",
+                    SearchFilter.Channel => "EgIQAg%3D%3D",
+                    _ => null
+                },
+                continuation = continuationToken,
+                context = new
+                {
+                    client = new
+                    {
+                        clientName = "WEB",
+                        clientVersion = "2.20210408.08.00",
+                        hl = "en",
+                        gl = "US",
+                        utcOffsetMinutes = 0
+                    }
                 }
-            }
+            })
         };
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = Json.SerializeToHttpContent(payload)
-        };
-
-        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var raw = await GetStringAsync(request, cancellationToken);
         return SearchResultsExtractor.Create(raw);
     }
 }

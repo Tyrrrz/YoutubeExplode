@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -45,6 +46,7 @@ public class SearchClient
                 cancellationToken
             );
 
+            // Video results
             foreach (var videoExtractor in searchResults.GetVideos())
             {
                 if (searchFilter is not SearchFilter.None and not SearchFilter.Video)
@@ -53,62 +55,63 @@ public class SearchClient
                     break;
                 }
 
-                var id =
+                var videoId =
                     videoExtractor.TryGetVideoId() ??
                     throw new YoutubeExplodeException("Could not extract video ID.");
 
                 // Don't yield the same result twice
-                if (!encounteredIds.Add(id))
+                if (!encounteredIds.Add(videoId))
                     continue;
 
-                var title =
+                var videoTitle =
                     videoExtractor.TryGetVideoTitle() ??
                     throw new YoutubeExplodeException("Could not extract video title.");
 
-                var channelTitle =
+                var videoChannelTitle =
                     videoExtractor.TryGetVideoAuthor() ??
                     throw new YoutubeExplodeException("Could not extract video author.");
 
-                var channelId =
+                var videoChannelId =
                     videoExtractor.TryGetVideoChannelId() ??
                     throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-                var duration = videoExtractor.TryGetVideoDuration();
+                var videoDuration = videoExtractor.TryGetVideoDuration();
 
-                var thumbnails = new List<Thumbnail>();
+                var videoThumbnails = videoExtractor
+                    .GetVideoThumbnails()
+                    .Select(t =>
+                    {
+                        var thumbnailUrl =
+                            t.TryGetUrl() ??
+                            throw new YoutubeExplodeException("Could not extract video thumbnail URL.");
 
-                thumbnails.AddRange(Thumbnail.GetDefaultSet(id));
+                        var thumbnailWidth =
+                            t.TryGetWidth() ??
+                            throw new YoutubeExplodeException("Could not extract video thumbnail width.");
 
-                foreach (var thumbnailExtractor in videoExtractor.GetVideoThumbnails())
-                {
-                    var thumbnailUrl =
-                        thumbnailExtractor.TryGetUrl() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+                        var thumbnailHeight =
+                            t.TryGetHeight() ??
+                            throw new YoutubeExplodeException("Could not extract video thumbnail height.");
 
-                    var thumbnailWidth =
-                        thumbnailExtractor.TryGetWidth() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                    var thumbnailHeight =
-                        thumbnailExtractor.TryGetHeight() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail height.");
-
-                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-                    var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    thumbnails.Add(thumbnail);
-                }
+                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                    })
+                    .Concat(Thumbnail.GetDefaultSet(videoId))
+                    .ToArray();
 
                 var video = new VideoSearchResult(
-                    id,
-                    title,
-                    new Author(channelId, channelTitle),
-                    duration,
-                    thumbnails
+                    videoId,
+                    videoTitle,
+                    new Author(videoChannelId, videoChannelTitle),
+                    videoDuration,
+                    videoThumbnails
                 );
 
                 results.Add(video);
             }
 
+            // Playlist results
             foreach (var playlistExtractor in searchResults.GetPlaylists())
             {
                 if (searchFilter is not SearchFilter.None and not SearchFilter.Playlist)
@@ -117,50 +120,58 @@ public class SearchClient
                     break;
                 }
 
-                var id =
+                var playlistId =
                     playlistExtractor.TryGetPlaylistId() ??
                     throw new YoutubeExplodeException("Could not extract playlist ID.");
 
                 // Don't yield the same result twice
-                if (!encounteredIds.Add(id))
+                if (!encounteredIds.Add(playlistId))
                     continue;
 
-                var title =
+                var playlistTitle =
                     playlistExtractor.TryGetPlaylistTitle() ??
                     throw new YoutubeExplodeException("Could not extract playlist title.");
 
                 // System playlists have no author
-                var channelId = playlistExtractor.TryGetPlaylistChannelId();
-                var channelTitle = playlistExtractor.TryGetPlaylistAuthor();
-                var author = channelId is not null && channelTitle is not null
-                    ? new Author(channelId, channelTitle)
+                var playlistChannelId = playlistExtractor.TryGetPlaylistChannelId();
+                var playlistChannelTitle = playlistExtractor.TryGetPlaylistAuthor();
+                var playlistAuthor = playlistChannelId is not null && playlistChannelTitle is not null
+                    ? new Author(playlistChannelId, playlistChannelTitle)
                     : null;
 
-                var thumbnails = new List<Thumbnail>();
+                var playlistThumbnails = playlistExtractor
+                    .GetPlaylistThumbnails()
+                    .Select(t =>
+                    {
+                        var thumbnailUrl =
+                            t.TryGetUrl() ??
+                            throw new YoutubeExplodeException("Could not extract playlist thumbnail URL.");
 
-                foreach (var thumbnailExtractor in playlistExtractor.GetPlaylistThumbnails())
-                {
-                    var thumbnailUrl =
-                        thumbnailExtractor.TryGetUrl() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+                        var thumbnailWidth =
+                            t.TryGetWidth() ??
+                            throw new YoutubeExplodeException("Could not extract playlist thumbnail width.");
 
-                    var thumbnailWidth =
-                        thumbnailExtractor.TryGetWidth() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                        var thumbnailHeight =
+                            t.TryGetHeight() ??
+                            throw new YoutubeExplodeException("Could not extract playlist thumbnail height.");
 
-                    var thumbnailHeight =
-                        thumbnailExtractor.TryGetHeight() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail height.");
+                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-                    var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    thumbnails.Add(thumbnail);
-                }
+                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                    })
+                    .ToArray();
 
-                var playlist = new PlaylistSearchResult(id, title, author, thumbnails);
+                var playlist = new PlaylistSearchResult(
+                    playlistId,
+                    playlistTitle,
+                    playlistAuthor,
+                    playlistThumbnails
+                );
+
                 results.Add(playlist);
             }
 
+            // Channel results
             foreach (var channelExtractor in searchResults.GetChannels())
             {
                 if (searchFilter is not SearchFilter.None and not SearchFilter.Channel)
@@ -173,32 +184,38 @@ public class SearchClient
                     channelExtractor.TryGetChannelId() ??
                     throw new YoutubeExplodeException("Could not extract channel ID.");
 
-                var title =
+                var channelTitle =
                     channelExtractor.TryGetChannelTitle() ??
                     throw new YoutubeExplodeException("Could not extract channel title.");
 
-                var thumbnails = new List<Thumbnail>();
+                var channelThumbnails = channelExtractor
+                    .GetChannelThumbnails()
+                    .Select(t =>
+                    {
+                        var thumbnailUrl =
+                            t.TryGetUrl() ??
+                            throw new YoutubeExplodeException("Could not extract channel thumbnail URL.");
 
-                foreach (var thumbnailExtractor in channelExtractor.GetChannelThumbnails())
-                {
-                    var thumbnailUrl =
-                        thumbnailExtractor.TryGetUrl() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+                        var thumbnailWidth =
+                            t.TryGetWidth() ??
+                            throw new YoutubeExplodeException("Could not extract channel thumbnail width.");
 
-                    var thumbnailWidth =
-                        thumbnailExtractor.TryGetWidth() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                        var thumbnailHeight =
+                            t.TryGetHeight() ??
+                            throw new YoutubeExplodeException("Could not extract channel thumbnail height.");
 
-                    var thumbnailHeight =
-                        thumbnailExtractor.TryGetHeight() ??
-                        throw new YoutubeExplodeException("Could not extract thumbnail height.");
+                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-                    var thumbnail = new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    thumbnails.Add(thumbnail);
-                }
+                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                    })
+                    .ToArray();
 
-                var channel = new ChannelSearchResult(channelId, title, thumbnails);
+                var channel = new ChannelSearchResult(
+                    channelId,
+                    channelTitle,
+                    channelThumbnails
+                );
+
                 results.Add(channel);
             }
 

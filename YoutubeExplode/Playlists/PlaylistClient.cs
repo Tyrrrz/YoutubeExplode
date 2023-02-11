@@ -84,7 +84,13 @@ public class PlaylistClient
             })
             .ToArray();
 
-        return new Playlist(playlistId, title, author, description, thumbnails);
+        return new Playlist(
+            playlistId,
+            title,
+            author,
+            description,
+            thumbnails
+        );
     }
 
     /// <summary>
@@ -139,9 +145,9 @@ public class PlaylistClient
                     videoExtractor.TryGetVideoChannelId() ??
                     throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-                var duration = videoExtractor.TryGetVideoDuration();
+                var videoDuration = videoExtractor.TryGetVideoDuration();
 
-                var thumbnails = videoExtractor
+                var videoThumbnails = videoExtractor
                     .GetVideoThumbnails()
                     .Select(t =>
                     {
@@ -169,8 +175,8 @@ public class PlaylistClient
                     videoId,
                     videoTitle,
                     new Author(videoChannelId, videoChannelTitle),
-                    duration,
-                    thumbnails
+                    videoDuration,
+                    videoThumbnails
                 );
 
                 videos.Add(video);

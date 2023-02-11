@@ -19,30 +19,26 @@ internal class PlaylistController : YoutubeControllerBase
         PlaylistId playlistId,
         CancellationToken cancellationToken = default)
     {
-        const string url = $"https://www.youtube.com/youtubei/v1/browse?key={ApiKey}";
-
-        var payload = new
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/browse")
         {
-            browseId = "VL" + playlistId,
-            context = new
+            Content = Json.SerializeToHttpContent(new
             {
-                client = new
+                browseId = "VL" + playlistId,
+                context = new
                 {
-                    clientName = "WEB",
-                    clientVersion = "2.20210408.08.00",
-                    hl = "en",
-                    gl = "US",
-                    utcOffsetMinutes = 0
+                    client = new
+                    {
+                        clientName = "WEB",
+                        clientVersion = "2.20210408.08.00",
+                        hl = "en",
+                        gl = "US",
+                        utcOffsetMinutes = 0
+                    }
                 }
-            }
+            })
         };
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = Json.SerializeToHttpContent(payload)
-        };
-
-        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var raw = await GetStringAsync(request, cancellationToken);
         var playlistResponse = PlaylistBrowseResponseExtractor.Create(raw);
 
         if (!playlistResponse.IsPlaylistAvailable())
@@ -58,33 +54,29 @@ internal class PlaylistController : YoutubeControllerBase
         string? visitorData = null,
         CancellationToken cancellationToken = default)
     {
-        const string url = $"https://www.youtube.com/youtubei/v1/next?key={ApiKey}";
-
-        var payload = new
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/next")
         {
-            playlistId = playlistId.Value,
-            videoId = videoId?.Value,
-            playlistIndex = index,
-            context = new
+            Content = Json.SerializeToHttpContent(new
             {
-                client = new
+                playlistId = playlistId.Value,
+                videoId = videoId?.Value,
+                playlistIndex = index,
+                context = new
                 {
-                    clientName = "WEB",
-                    clientVersion = "2.20210408.08.00",
-                    hl = "en",
-                    gl = "US",
-                    utcOffsetMinutes = 0,
-                    visitorData
+                    client = new
+                    {
+                        clientName = "WEB",
+                        clientVersion = "2.20210408.08.00",
+                        hl = "en",
+                        gl = "US",
+                        utcOffsetMinutes = 0,
+                        visitorData
+                    }
                 }
-            }
+            })
         };
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = Json.SerializeToHttpContent(payload)
-        };
-
-        var raw = await SendHttpRequestAsync(request, cancellationToken);
+        var raw = await GetStringAsync(request, cancellationToken);
         var playlistResponse = PlaylistNextResponseExtractor.Create(raw);
 
         if (!playlistResponse.IsPlaylistAvailable())

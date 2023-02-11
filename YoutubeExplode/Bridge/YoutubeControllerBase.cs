@@ -1,25 +1,48 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Bridge;
 
 internal abstract class YoutubeControllerBase
 {
-    // This key doesn't appear to change
-    protected const string ApiKey = "AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w";
-
     private readonly HttpClient _http;
 
     protected YoutubeControllerBase(HttpClient http) =>
         _http = http;
 
-    protected async ValueTask<string> SendHttpRequestAsync(
+    protected async ValueTask<string> GetStringAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken = default)
     {
-        // User-agent
+        // Root the URL if necessary
+        if (request.RequestUri is { IsAbsoluteUri: false })
+        {
+            request.RequestUri = new Uri(
+                new Uri("https://www.youtube.com/", UriKind.Absolute),
+                request.RequestUri
+            );
+        }
+
+        // Set API key if necessary
+        if (request.RequestUri is not null &&
+            request.RequestUri.AbsolutePath.StartsWith("/youtubei/")&&
+            !Url.ContainsQueryParameter(request.RequestUri.Query, "key"))
+        {
+            request.RequestUri = new Uri(
+                Url.SetQueryParameter(
+                    request.RequestUri.OriginalString,
+                    "key",
+                    // This key doesn't appear to change
+                    "AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w"
+                )
+            );
+        }
+
+        // Set user agent if necessary
         if (!request.Headers.Contains("User-Agent"))
         {
             request.Headers.Add(
@@ -43,7 +66,7 @@ internal abstract class YoutubeControllerBase
             throw new RequestLimitExceededException(
                 "Exceeded request rate limit. " +
                 "Please try again in a few hours. " +
-                "Alternatively, inject an instance of HttpClient that includes cookies for authenticated user."
+                "Alternatively, inject an instance of HttpClient that includes cookies for a pre-authenticated user."
             );
         }
 
@@ -67,11 +90,11 @@ internal abstract class YoutubeControllerBase
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
 
-    protected async ValueTask<string> SendHttpRequestAsync(
+    protected async ValueTask<string> GetStringAsync(
         string url,
         CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
-        return await SendHttpRequestAsync(request, cancellationToken);
+        return await GetStringAsync(request, cancellationToken);
     }
 }

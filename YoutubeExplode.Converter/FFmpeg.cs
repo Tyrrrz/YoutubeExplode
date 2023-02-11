@@ -57,6 +57,24 @@ internal partial class FFmpeg
 
 internal partial class FFmpeg
 {
+    public static string GetFilePath() =>
+        // Try to find FFmpeg in the probe directory
+        Directory
+            .EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory())
+            .FirstOrDefault(f =>
+                string.Equals(
+                    Path.GetFileNameWithoutExtension(f),
+                    "ffmpeg",
+                    StringComparison.OrdinalIgnoreCase
+                )
+            ) ??
+
+        // Otherwise fallback to just "ffmpeg" and hope it's on the PATH
+        "ffmpeg";
+}
+
+internal partial class FFmpeg
+{
     private class FFmpegProgressRouter : PipeTarget
     {
         private readonly StringBuilder _buffer  = new();
