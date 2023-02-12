@@ -14,12 +14,12 @@ public static class FFmpeg
 {
     private static readonly SemaphoreSlim Lock = new(1, 1);
 
-    private static readonly string FileName =
+    private static string FileName { get; } =
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "ffmpeg.exe"
             : "ffmpeg";
 
-    public static readonly string FilePath = Path.Combine(
+    public static string FilePath { get; } = Path.Combine(
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
         FileName
     );
