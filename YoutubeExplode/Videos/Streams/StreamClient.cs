@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -199,7 +200,7 @@ public class StreamClient
         {
             var reason = playerResponse.TryGetVideoPlayabilityError();
             throw new VideoUnplayableException(
-                $"Video '{videoId}' does not contain any playable streams. Reason: '{reason}'."
+                $"Video '{videoId}' is unplayable. Reason: '{reason}'."
             );
         }
 
@@ -223,17 +224,35 @@ public class StreamClient
     /// </summary>
     public async ValueTask<StreamManifest> GetManifestAsync(
         VideoId videoId,
-        CancellationToken cancellationToken = default) => new(
+        CancellationToken cancellationToken = default) =>
         // YouTube sometimes returns stream URLs that produce 403 Forbidden errors when accessed.
-        // This happens for both protected and non-protected streams, so I'm not sure what's causing it.
-        // As a workaround, we'll retry a few times if we encounter this error.
-        await Retry.WhileExceptionAsync(
-            async innerCancellationToken => await GetStreamInfosAsync(videoId, innerCancellationToken),
-            typeof(HttpRequestException),
+        // This happens for both protected and non-protected streams, so the cause is unclear.
+        // As a workaround, we'll try to access one of the stream URLs and retry if it fails.
+        await Retry.WhileExceptionAsync(async innerCancellationToken =>
+            {
+                var streamInfos = await GetStreamInfosAsync(videoId, innerCancellationToken);
+                if (!streamInfos.Any())
+                {
+                    throw new VideoUnplayableException(
+                        $"Video '{videoId}' does not contain any playable streams."
+                    );
+                }
+
+                // Send a HEAD request to one of the stream URLs to make sure it works.
+                // Usually, if one of the stream works, all of them should work.
+                // In case of failure, the wrapper will trigger a retry and pull a new manifest.
+                using var response = await _http.HeadAsync(streamInfos.First().Url, innerCancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                return new StreamManifest(streamInfos);
+            },
+            ex =>
+                ex is HttpRequestException hrex &&
+                hrex.TryGetStatusCode() is { } status &&
+                (int) status is 401 or 403 or >= 500,
             5,
             cancellationToken
-        )
-    );
+        );
 
     /// <summary>
     /// Gets the HTTP Live Stream (HLS) manifest URL for the specified video (if it is a livestream).
@@ -280,7 +299,7 @@ public class StreamClient
             ? 9_898_989 // breakpoint after which the throttling kicks in
             : (long?)null; // no segmentation for non-throttled streams
 
-        var stream = new SegmentedHttpStream(_http, streamInfo.Url, streamInfo.Size.Bytes, segmentSize);
+        var stream = new PlaybackStream(_http, streamInfo.Url, streamInfo.Size.Bytes, segmentSize);
 
         // Pre-resolve inner stream
         await stream.InitializeAsync(cancellationToken);

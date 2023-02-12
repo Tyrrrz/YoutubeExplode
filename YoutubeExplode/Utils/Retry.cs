@@ -6,8 +6,9 @@ namespace YoutubeExplode.Utils;
 
 internal static class Retry
 {
-    public static async ValueTask<T?> WhileNullAsync<T>(
-        Func<CancellationToken, Task<T?>> getResultAsync,
+    public static async ValueTask<T> WhileAsync<T>(
+        Func<CancellationToken, Task<T>> getResultAsync,
+        Func<T, bool> shouldRetry,
         int maxRetries = 5,
         CancellationToken cancellationToken = default)
     {
@@ -17,18 +18,31 @@ internal static class Retry
         {
             var result = await getResultAsync(cancellationToken);
 
-            if (result is not null ||
-                remainingRetries-- <= 0 ||
-                cancellationToken.IsCancellationRequested)
+            if (shouldRetry(result) &&
+                remainingRetries-- > 0 &&
+                !cancellationToken.IsCancellationRequested)
             {
-                return result;
+                continue;
             }
+
+            return result;
         }
     }
 
+    public static async ValueTask<T?> WhileNullAsync<T>(
+        Func<CancellationToken, Task<T?>> getResultAsync,
+        int maxRetries = 5,
+        CancellationToken cancellationToken = default) =>
+        await WhileAsync(
+            getResultAsync,
+            r => r is null,
+            maxRetries,
+            cancellationToken
+        );
+
     public static async ValueTask<T> WhileExceptionAsync<T>(
         Func<CancellationToken, Task<T>> getResultAsync,
-        Type exceptionType,
+        Func<Exception, bool> shouldRetry,
         int maxRetries = 5,
         CancellationToken cancellationToken = default)
     {
@@ -41,7 +55,7 @@ internal static class Retry
                 return await getResultAsync(cancellationToken);
             }
             catch (Exception ex) when (
-                ex.GetType() == exceptionType &&
+                shouldRetry(ex) &&
                 remainingRetries-- > 0 &&
                 !cancellationToken.IsCancellationRequested)
             {
