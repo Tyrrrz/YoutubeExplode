@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
+using System.Text;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Utils;
@@ -15,14 +15,10 @@ internal static class Url
             ? url.SubstringAfter("?")
             : url;
 
-        foreach (var parameter in query.Split("&").Select(WebUtility.UrlDecode))
+        foreach (var parameter in query.Split("&"))
         {
-            // This check is only needed to suppress the NRT warning on UrlDecode
-            if (string.IsNullOrWhiteSpace(parameter))
-                continue;
-
-            var key = parameter.SubstringUntil("=");
-            var value = parameter.SubstringAfter("=");
+            var key = WebUtility.UrlDecode(parameter.SubstringUntil("="));
+            var value = WebUtility.UrlDecode(parameter.SubstringAfter("="));
 
             if (string.IsNullOrWhiteSpace(key))
                 continue;
@@ -34,32 +30,62 @@ internal static class Url
     public static IReadOnlyDictionary<string, string> GetQueryParameters(string url) =>
         EnumerateQueryParameters(url).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-    public static string? TryGetQueryParameter(string url, string key) =>
-        EnumerateQueryParameters(url)
-            .Where(p => string.Equals(p.Key, key, StringComparison.Ordinal))
-            .Select(p => p.Value)
-            .FirstOrDefault();
+    private static KeyValuePair<string, string>? TryGetQueryParameter(string url, string key)
+    {
+        foreach (var parameter in EnumerateQueryParameters(url))
+        {
+            if (string.Equals(parameter.Key, key, StringComparison.Ordinal))
+                return parameter;
+        }
+
+        return null;
+    }
+
+    public static string? TryGetQueryParameterValue(string url, string key) =>
+        TryGetQueryParameter(url, key)?.Value;
 
     public static bool ContainsQueryParameter(string url, string key) =>
-        TryGetQueryParameter(url, key) is not null;
+        TryGetQueryParameterValue(url, key) is not null;
+
+    public static string RemoveQueryParameter(string url, string key)
+    {
+        if (!ContainsQueryParameter(url, key))
+            return url;
+
+        var urlBuilder = new UriBuilder(url);
+        var queryBuilder = new StringBuilder();
+
+        foreach (var parameter in EnumerateQueryParameters(url))
+        {
+            if (string.Equals(parameter.Key, key, StringComparison.Ordinal))
+                continue;
+
+            queryBuilder.Append(
+                queryBuilder.Length > 0
+                    ? '&'
+                    : '?'
+            );
+
+            queryBuilder.Append(WebUtility.UrlEncode(parameter.Key));
+            queryBuilder.Append('=');
+            queryBuilder.Append(WebUtility.UrlEncode(parameter.Value));
+        }
+
+        urlBuilder.Query = queryBuilder.ToString();
+
+        return urlBuilder.ToString();
+    }
 
     public static string SetQueryParameter(string url, string key, string value)
     {
-        var parameterEncoded = $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}";
+        var urlWithoutParameter = RemoveQueryParameter(url, key);
+        var hasOtherParameters = urlWithoutParameter.Contains('?');
 
-        // Replacing an existing parameter
-        var existingMatch = Regex.Match(url, $@"[?&]({Regex.Escape(key)}=?.*?)(?:&|/|$)").Groups[1];
-        if (existingMatch.Success)
-        {
-            return url
-                .Remove(existingMatch.Index, existingMatch.Length)
-                .Insert(existingMatch.Index, parameterEncoded);
-        }
-        // Adding a new parameter
-        else
-        {
-            var separator = url.Contains('?') ? '&' : '?';
-            return url + separator + parameterEncoded;
-        }
+        return
+            urlWithoutParameter +
+            (hasOtherParameters ? '&' : '?') +
+            WebUtility.UrlEncode(key) +
+            '=' +
+            WebUtility.UrlEncode(value);
     }
 }

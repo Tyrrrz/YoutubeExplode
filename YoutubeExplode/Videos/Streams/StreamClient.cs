@@ -293,7 +293,7 @@ public class StreamClient
         // them all separately.
 
         var isThrottled = !string.Equals(
-            Url.TryGetQueryParameter(streamInfo.Url, "ratebypass"),
+            Url.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
             "yes",
             StringComparison.OrdinalIgnoreCase
         );

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -54,7 +53,7 @@ internal class PlayerStreamInfoExtractor : IStreamInfoExtractor
             .ParseLongOrNull() ??
 
         TryGetUrl()?
-            .Pipe(s => Regex.Match(s, @"[\?&]clen=(\d+)").Groups[1].Value)
+            .Pipe(s => Url.TryGetQueryParameterValue(s, "clen"))?
             .NullIfWhiteSpace()?
             .ParseLongOrNull()
     );
