@@ -18,16 +18,19 @@ internal class VideoController : YoutubeControllerBase
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var watchPage =
-            await Retry.WhileNullAsync(async innerCancellationToken =>
-                VideoWatchPageExtractor.TryCreate(
-                    await GetStringAsync($"/watch?v={videoId}&bpctr=9999999999", innerCancellationToken)
-                ), 5, cancellationToken
-            ) ??
+        var watchPage = await Retry.WhileNullAsync(async innerCancellationToken =>
+        {
+            var raw = await GetStringAsync($"/watch?v={videoId}&bpctr=9999999999", innerCancellationToken);
+            return VideoWatchPageExtractor.TryCreate(raw);
+        }, 5, cancellationToken);
+
+        if (watchPage is null)
+        {
             throw new YoutubeExplodeException(
                 "Video watch page is broken. " +
                 "Please try again in a few minutes."
             );
+        }
 
         if (!watchPage.IsVideoAvailable())
             throw new VideoUnavailableException($"Video '{videoId}' is not available.");
@@ -39,34 +42,37 @@ internal class VideoController : YoutubeControllerBase
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+        var raw = await GetStringAsync(() =>
         {
-            Content = Json.SerializeToHttpContent(new
+            var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
             {
-                videoId = videoId.Value,
-                context = new
+                Content = Json.SerializeToHttpContent(new
                 {
-                    client = new
+                    videoId = videoId.Value,
+                    context = new
                     {
-                        clientName = "ANDROID",
-                        clientVersion = "17.10.35",
-                        androidSdkVersion = 30,
-                        hl = "en",
-                        gl = "US",
-                        utcOffsetMinutes = 0
+                        client = new
+                        {
+                            clientName = "ANDROID",
+                            clientVersion = "17.10.35",
+                            androidSdkVersion = 30,
+                            hl = "en",
+                            gl = "US",
+                            utcOffsetMinutes = 0
+                        }
                     }
-                }
-            })
-        };
+                })
+            };
 
-        // User agent appears to be sometimes required when impersonating Android
-        // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
-        request.Headers.Add(
-            "User-Agent",
-            "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
-        );
+            // User agent appears to be sometimes required when impersonating Android
+            // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
+            request.Headers.Add(
+                "User-Agent",
+                "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
+            );
 
-        var raw = await GetStringAsync(request, cancellationToken);
+            return request;
+        }, cancellationToken);
 
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
@@ -81,7 +87,7 @@ internal class VideoController : YoutubeControllerBase
         string? signatureTimestamp,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -110,9 +116,8 @@ internal class VideoController : YoutubeControllerBase
                     }
                 }
             })
-        };
+        }, cancellationToken);
 
-        var raw = await GetStringAsync(request, cancellationToken);
         var playerResponse = PlayerResponseExtractor.Create(raw);
 
         if (!playerResponse.IsVideoAvailable())

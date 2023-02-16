@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -14,7 +16,7 @@ internal abstract class YoutubeControllerBase
     protected YoutubeControllerBase(HttpClient http) =>
         _http = http;
 
-    protected async ValueTask<string> GetStringAsync(
+    private async ValueTask<string> GetStringAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken = default)
     {
@@ -86,7 +88,7 @@ internal abstract class YoutubeControllerBase
         {
             var message =
                 $"""
-                Response status code does not indicate success: {(int) response.StatusCode} ({response.StatusCode}).
+                Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}).
 
                 Request:
                 {request}
@@ -103,10 +105,25 @@ internal abstract class YoutubeControllerBase
     }
 
     protected async ValueTask<string> GetStringAsync(
+        Func<HttpRequestMessage> getRequest,
+        CancellationToken cancellationToken = default) =>
+        await Retry.WhileExceptionAsync(async innerCancellationToken =>
+            {
+                using var request = getRequest();
+                return await GetStringAsync(request, innerCancellationToken);
+            },
+            ex =>
+                ex is HttpRequestException hrex &&
+                (
+                    (hrex.TryGetStatusCode() is { } status && (int)status >= 500) ||
+                    hrex.InnerException is IOException
+                ),
+            5,
+            cancellationToken
+        );
+
+    protected async ValueTask<string> GetStringAsync(
         string url,
-        CancellationToken cancellationToken = default)
-    {
-        using var request = new HttpRequestMessage(HttpMethod.Get, url);
-        return await GetStringAsync(request, cancellationToken);
-    }
+        CancellationToken cancellationToken = default) =>
+        await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Get, url), cancellationToken);
 }

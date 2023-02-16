@@ -57,13 +57,15 @@ internal class PlaybackStream : Stream
             ? Position + _segmentSize - 1
             : null;
 
-        // YouTube sometimes return 5XX errors, so we need to handle that
+        // YouTube sometimes returns 5XX errors, so we need to handle that
         var stream = await Retry.WhileExceptionAsync(
             async innerCancellationToken => await _http.GetStreamAsync(_url, from, to, true, innerCancellationToken),
             ex =>
                 ex is HttpRequestException hrex &&
-                hrex.TryGetStatusCode() is { } status &&
-                (int) status >= 500,
+                (
+                    (hrex.TryGetStatusCode() is { } status && (int)status >= 500) ||
+                    hrex.InnerException is IOException
+                ),
             5,
             cancellationToken
         );

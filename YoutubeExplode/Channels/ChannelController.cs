@@ -16,16 +16,24 @@ internal class ChannelController : YoutubeControllerBase
 
     private async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
         string channelRoute,
-        CancellationToken cancellationToken = default) =>
-        await Retry.WhileNullAsync(async innerCancellationToken =>
-                ChannelPageExtractor.TryCreate(
-                    await GetStringAsync(channelRoute, innerCancellationToken)
-                ), 5, cancellationToken
-        ) ??
-        throw new YoutubeExplodeException(
-            "Channel page is broken. " +
-            "Please try again in a few minutes."
-        );
+        CancellationToken cancellationToken = default)
+    {
+        var channelPage = await Retry.WhileNullAsync(async innerCancellationToken =>
+        {
+            var raw = await GetStringAsync(channelRoute, innerCancellationToken);
+            return ChannelPageExtractor.TryCreate(raw);
+        }, 5, cancellationToken);
+
+        if (channelPage is null)
+        {
+            throw new YoutubeExplodeException(
+                "Channel page is broken. " +
+                "Please try again in a few minutes."
+            );
+        }
+
+        return channelPage;
+    }
 
     public async ValueTask<ChannelPageExtractor> GetChannelPageAsync(
         ChannelId channelId,

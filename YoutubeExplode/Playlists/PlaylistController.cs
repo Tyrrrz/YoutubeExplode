@@ -19,7 +19,7 @@ internal class PlaylistController : YoutubeControllerBase
         PlaylistId playlistId,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/browse")
+        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/browse")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -36,9 +36,8 @@ internal class PlaylistController : YoutubeControllerBase
                     }
                 }
             })
-        };
+        }, cancellationToken);
 
-        var raw = await GetStringAsync(request, cancellationToken);
         var playlistResponse = PlaylistBrowseResponseExtractor.Create(raw);
 
         if (!playlistResponse.IsPlaylistAvailable())
@@ -54,7 +53,7 @@ internal class PlaylistController : YoutubeControllerBase
         string? visitorData = null,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/next")
+        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/next")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -74,9 +73,8 @@ internal class PlaylistController : YoutubeControllerBase
                     }
                 }
             })
-        };
+        }, cancellationToken);
 
-        var raw = await GetStringAsync(request, cancellationToken);
         var playlistResponse = PlaylistNextResponseExtractor.Create(raw);
 
         if (!playlistResponse.IsPlaylistAvailable())

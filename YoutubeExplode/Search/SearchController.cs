@@ -19,7 +19,7 @@ internal class SearchController : YoutubeControllerBase
         string? continuationToken,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/search")
+        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/search")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -44,9 +44,8 @@ internal class SearchController : YoutubeControllerBase
                     }
                 }
             })
-        };
+        }, cancellationToken);
 
-        var raw = await GetStringAsync(request, cancellationToken);
         return SearchResultsExtractor.Create(raw);
     }
 }

@@ -249,7 +249,7 @@ public class StreamClient
             ex =>
                 ex is HttpRequestException hrex &&
                 hrex.TryGetStatusCode() is { } status &&
-                (int) status is 401 or 403 or >= 500,
+                (int)status is 401 or 403,
             5,
             cancellationToken
         );
