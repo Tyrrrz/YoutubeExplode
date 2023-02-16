@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
@@ -293,7 +292,11 @@ public class StreamClient
         // To solve this, we divide the logical stream up into multiple segments and download
         // them all separately.
 
-        var isThrottled = !Regex.IsMatch(streamInfo.Url, "ratebypass[=/]yes");
+        var isThrottled = !string.Equals(
+            Url.TryGetQueryParameter(streamInfo.Url, "ratebypass"),
+            "yes",
+            StringComparison.OrdinalIgnoreCase
+        );
 
         var segmentSize = isThrottled
             ? 9_898_989 // breakpoint after which the throttling kicks in

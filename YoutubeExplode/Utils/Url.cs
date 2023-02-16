@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Utils.Extensions;
@@ -8,45 +9,39 @@ namespace YoutubeExplode.Utils;
 
 internal static class Url
 {
-    public static IReadOnlyDictionary<string, string> GetQueryParameters(string url)
+    private static IEnumerable<KeyValuePair<string, string>> EnumerateQueryParameters(string url)
     {
         var query = url.Contains('?')
             ? url.SubstringAfter("?")
             : url;
 
-        var parameters = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var parameterEncoded in query.Split("&"))
+        foreach (var parameter in query.Split("&").Select(WebUtility.UrlDecode))
         {
-            var parameterRaw = WebUtility.UrlDecode(parameterEncoded);
+            // This check is only needed to suppress the NRT warning on UrlDecode
+            if (string.IsNullOrWhiteSpace(parameter))
+                continue;
 
-            var key = parameterRaw.SubstringUntil("=");
-            var value = parameterRaw.SubstringAfter("=");
+            var key = parameter.SubstringUntil("=");
+            var value = parameter.SubstringAfter("=");
 
             if (string.IsNullOrWhiteSpace(key))
                 continue;
 
-            parameters[key] = value;
+            yield return new KeyValuePair<string, string>(key, value);
         }
-
-        return parameters;
     }
 
-    public static bool ContainsQueryParameter(string url, string key)
-    {
-        var query = url.Contains('?')
-            ? url.SubstringAfter("?")
-            : url;
+    public static IReadOnlyDictionary<string, string> GetQueryParameters(string url) =>
+        EnumerateQueryParameters(url).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-        foreach (var parameterEncoded in query.Split("&"))
-        {
-            var parameterRaw = WebUtility.UrlDecode(parameterEncoded);
+    public static string? TryGetQueryParameter(string url, string key) =>
+        EnumerateQueryParameters(url)
+            .Where(p => string.Equals(p.Key, key, StringComparison.Ordinal))
+            .Select(p => p.Value)
+            .FirstOrDefault();
 
-            if (string.Equals(key, parameterRaw.SubstringUntil("="), StringComparison.Ordinal))
-                return true;
-        }
-
-        return false;
-    }
+    public static bool ContainsQueryParameter(string url, string key) =>
+        TryGetQueryParameter(url, key) is not null;
 
     public static string SetQueryParameter(string url, string key, string value)
     {
