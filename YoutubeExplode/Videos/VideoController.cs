@@ -7,87 +7,91 @@ using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Videos;
 
-internal class VideoController : YoutubeControllerBase
+internal class VideoController
 {
-    public VideoController(HttpClient http)
-        : base(http)
-    {
-    }
+    protected HttpClient Http { get; }
 
-    public async ValueTask<VideoWatchPageExtractor> GetVideoWatchPageAsync(
+    public VideoController(HttpClient http) => Http = http;
+
+    public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var watchPage = await Retry.WhileNullAsync(async innerCancellationToken =>
+        var retriesRemaining = 5;
+        while (true)
         {
-            var raw = await GetStringAsync($"/watch?v={videoId}&bpctr=9999999999", innerCancellationToken);
-            return VideoWatchPageExtractor.TryCreate(raw);
-        }, 5, cancellationToken);
-
-        if (watchPage is null)
-        {
-            throw new YoutubeExplodeException(
-                "Video watch page is broken. " +
-                "Please try again in a few minutes."
+            var watchPage = VideoWatchPage.TryParse(
+                await Http.GetStringAsync($"/watch?v={videoId}&bpctr=9999999999", cancellationToken)
             );
-        }
 
-        if (!watchPage.IsVideoAvailable())
-            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-
-        return watchPage;
-    }
-
-    public async ValueTask<PlayerResponseExtractor> GetPlayerResponseAsync(
-        VideoId videoId,
-        CancellationToken cancellationToken = default)
-    {
-        var raw = await GetStringAsync(() =>
-        {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+            if (watchPage is null)
             {
-                Content = Json.SerializeToHttpContent(new
+                if (retriesRemaining-- > 0)
+                    continue;
+
+                throw new YoutubeExplodeException(
+                    "Video watch page is broken. " +
+                    "Please try again in a few minutes."
+                );
+            }
+
+            if (!watchPage.IsAvailable)
+                throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+
+            return watchPage;
+        }
+    }
+
+    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+        {
+            Content = Json.SerializeToHttpContent(new
+            {
+                videoId = videoId.Value,
+                context = new
                 {
-                    videoId = videoId.Value,
-                    context = new
+                    client = new
                     {
-                        client = new
-                        {
-                            clientName = "ANDROID",
-                            clientVersion = "17.10.35",
-                            androidSdkVersion = 30,
-                            hl = "en",
-                            gl = "US",
-                            utcOffsetMinutes = 0
-                        }
+                        clientName = "ANDROID",
+                        clientVersion = "17.10.35",
+                        androidSdkVersion = 30,
+                        hl = "en",
+                        gl = "US",
+                        utcOffsetMinutes = 0
                     }
-                })
-            };
+                }
+            })
+        };
 
-            // User agent appears to be sometimes required when impersonating Android
-            // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
-            request.Headers.Add(
-                "User-Agent",
-                "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
-            );
+        // User agent appears to be sometimes required when impersonating Android
+        // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
+        request.Headers.Add(
+            "User-Agent",
+            "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
+        );
 
-            return request;
-        }, cancellationToken);
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-        var playerResponse = PlayerResponseExtractor.Create(raw);
+        var playerResponse = PlayerResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
 
-        if (!playerResponse.IsVideoAvailable())
+        if (!playerResponse.IsAvailable)
             throw new VideoUnavailableException($"Video '{videoId}' is not available.");
 
         return playerResponse;
     }
 
-    public async ValueTask<PlayerResponseExtractor> GetPlayerResponseAsync(
+    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
         VideoId videoId,
         string? signatureTimestamp,
         CancellationToken cancellationToken = default)
     {
-        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -116,11 +120,16 @@ internal class VideoController : YoutubeControllerBase
                     }
                 }
             })
-        }, cancellationToken);
+        };
 
-        var playerResponse = PlayerResponseExtractor.Create(raw);
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-        if (!playerResponse.IsVideoAvailable())
+        var playerResponse = PlayerResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
+
+        if (!playerResponse.IsAvailable)
             throw new VideoUnavailableException($"Video '{videoId}' is not available.");
 
         return playerResponse;

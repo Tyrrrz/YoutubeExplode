@@ -7,15 +7,11 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal class PlaylistVideoExtractor
+internal class PlaylistVideoData
 {
-    private static readonly string[] DurationFormats = {@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"};
-
     private readonly JsonElement _content;
 
-    public PlaylistVideoExtractor(JsonElement content) => _content = content;
-
-    public int? TryGetIndex() => Memo.Cache(this, () =>
+    public int? Index => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("watchEndpoint")?
@@ -23,13 +19,13 @@ internal class PlaylistVideoExtractor
             .GetInt32OrNull()
     );
 
-    public string? TryGetVideoId() => Memo.Cache(this, () =>
+    public string? Id => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("videoId")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoTitle() => Memo.Cache(this, () =>
+    public string? Title => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -44,7 +40,7 @@ internal class PlaylistVideoExtractor
             .ConcatToString()
     );
 
-    private JsonElement? TryGetAuthorDetails() => Memo.Cache(this, () =>
+    private JsonElement? AuthorDetails => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("longBylineText")?
             .GetPropertyOrNull("runs")?
@@ -58,21 +54,21 @@ internal class PlaylistVideoExtractor
             .ElementAtOrNull(0)
     );
 
-    public string? TryGetVideoAuthor() => Memo.Cache(this, () =>
-        TryGetAuthorDetails()?
+    public string? Author => Memo.Cache(this, () =>
+        AuthorDetails?
             .GetPropertyOrNull("text")?
             .GetStringOrNull()
     );
 
-    public string? TryGetVideoChannelId() => Memo.Cache(this, () =>
-        TryGetAuthorDetails()?
+    public string? ChannelId => Memo.Cache(this, () =>
+        AuthorDetails?
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("browseEndpoint")?
             .GetPropertyOrNull("browseId")?
             .GetStringOrNull()
     );
 
-    public TimeSpan? TryGetVideoDuration() => Memo.Cache(this, () =>
+    public TimeSpan? Duration => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("lengthSeconds")?
             .GetStringOrNull()?
@@ -83,7 +79,7 @@ internal class PlaylistVideoExtractor
             .GetPropertyOrNull("lengthText")?
             .GetPropertyOrNull("simpleText")?
             .GetStringOrNull()?
-            .ParseTimeSpanOrNull(DurationFormats) ??
+            .ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" }) ??
 
         _content
             .GetPropertyOrNull("lengthText")?
@@ -92,17 +88,19 @@ internal class PlaylistVideoExtractor
             .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
             .ConcatToString()
-            .ParseTimeSpanOrNull(DurationFormats)
+            .ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" })
     );
 
-    public IReadOnlyList<ThumbnailExtractor> GetVideoThumbnails() => Memo.Cache(this, () =>
+    public IReadOnlyList<ThumbnailData> Thumbnails => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("thumbnail")?
             .GetPropertyOrNull("thumbnails")?
             .EnumerateArrayOrNull()?
-            .Select(j => new ThumbnailExtractor(j))
+            .Select(j => new ThumbnailData(j))
             .ToArray() ??
 
-        Array.Empty<ThumbnailExtractor>()
+        Array.Empty<ThumbnailData>()
     );
+
+    public PlaylistVideoData(JsonElement content) => _content = content;
 }

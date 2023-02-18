@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Videos;
@@ -21,23 +20,7 @@ public class PlaylistClient
     /// <summary>
     /// Initializes an instance of <see cref="PlaylistClient" />.
     /// </summary>
-    public PlaylistClient(HttpClient http) =>
-        _controller = new PlaylistController(http);
-
-    private async ValueTask<IPlaylistExtractor> GetExtractorForMetadataAsync(
-        PlaylistId playlistId,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            return await _controller.GetPlaylistBrowseResponseAsync(playlistId, cancellationToken);
-        }
-        catch (PlaylistUnavailableException)
-        {
-            // Metadata associated with mix playlists is only available through the /next endpoint
-            return await _controller.GetPlaylistNextResponseAsync(playlistId, cancellationToken);
-        }
-    }
+    public PlaylistClient(HttpClient http) => _controller = new PlaylistController(http);
 
     /// <summary>
     /// Gets the metadata associated with the specified playlist.
@@ -46,43 +29,40 @@ public class PlaylistClient
         PlaylistId playlistId,
         CancellationToken cancellationToken = default)
     {
-        var playlistExtractor = await GetExtractorForMetadataAsync(playlistId, cancellationToken);
+        var response = await _controller.GetPlaylistResponseAsync(playlistId, cancellationToken);
 
         var title =
-            playlistExtractor.TryGetPlaylistTitle() ??
+            response.Title ??
             throw new YoutubeExplodeException("Could not extract playlist title.");
 
         // System playlists have no author
-        var channelId = playlistExtractor.TryGetPlaylistChannelId();
-        var channelTitle = playlistExtractor.TryGetPlaylistAuthor();
+        var channelId = response.ChannelId;
+        var channelTitle = response.Author;
         var author = channelId is not null && channelTitle is not null
             ? new Author(channelId, channelTitle)
             : null;
 
         // System playlists have no description
-        var description = playlistExtractor.TryGetPlaylistDescription() ?? "";
+        var description = response.Description ?? "";
 
-        var thumbnails = playlistExtractor
-            .GetPlaylistThumbnails()
-            .Select(t =>
-            {
-                var thumbnailUrl =
-                    t.TryGetUrl() ??
-                    throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+        var thumbnails = response.Thumbnails.Select(t =>
+        {
+            var thumbnailUrl =
+                t.Url ??
+                throw new YoutubeExplodeException("Could not extract thumbnail URL.");
 
-                var thumbnailWidth =
-                    t.TryGetWidth() ??
-                    throw new YoutubeExplodeException("Could not extract thumbnail width.");
+            var thumbnailWidth =
+                t.Width ??
+                throw new YoutubeExplodeException("Could not extract thumbnail width.");
 
-                var thumbnailHeight =
-                    t.TryGetHeight() ??
-                    throw new YoutubeExplodeException("Could not extract thumbnail height.");
+            var thumbnailHeight =
+                t.Height ??
+                throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
-                var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+            var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                return new Thumbnail(thumbnailUrl, thumbnailResolution);
-            })
-            .ToArray();
+            return new Thumbnail(thumbnailUrl, thumbnailResolution);
+        }).ToArray();
 
         return new Playlist(
             playlistId,
@@ -107,7 +87,7 @@ public class PlaylistClient
 
         do
         {
-            var playlistExtractor = await _controller.GetPlaylistNextResponseAsync(
+            var response = await _controller.GetPlaylistNextResponseAsync(
                 playlistId,
                 lastVideoId,
                 lastVideoIndex,
@@ -117,16 +97,16 @@ public class PlaylistClient
 
             var videos = new List<PlaylistVideo>();
 
-            foreach (var videoExtractor in playlistExtractor.GetVideos())
+            foreach (var videoData in response.Videos)
             {
                 var videoId =
-                    videoExtractor.TryGetVideoId() ??
+                    videoData.Id ??
                     throw new YoutubeExplodeException("Could not extract video ID.");
 
                 lastVideoId = videoId;
 
                 lastVideoIndex =
-                    videoExtractor.TryGetIndex() ??
+                    videoData.Index ??
                     throw new YoutubeExplodeException("Could not extract video index.");
 
                 // Don't yield the same video twice
@@ -134,48 +114,42 @@ public class PlaylistClient
                     continue;
 
                 var videoTitle =
-                    videoExtractor.TryGetVideoTitle() ??
+                    videoData.Title ??
                     throw new YoutubeExplodeException("Could not extract video title.");
 
                 var videoChannelTitle =
-                    videoExtractor.TryGetVideoAuthor() ??
+                    videoData.Author ??
                     throw new YoutubeExplodeException("Could not extract video author.");
 
                 var videoChannelId =
-                    videoExtractor.TryGetVideoChannelId() ??
+                    videoData.ChannelId ??
                     throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-                var videoDuration = videoExtractor.TryGetVideoDuration();
+                var videoThumbnails = videoData.Thumbnails.Select(t =>
+                {
+                    var thumbnailUrl =
+                        t.Url ??
+                        throw new YoutubeExplodeException("Could not extract thumbnail URL.");
 
-                var videoThumbnails = videoExtractor
-                    .GetVideoThumbnails()
-                    .Select(t =>
-                    {
-                        var thumbnailUrl =
-                            t.TryGetUrl() ??
-                            throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+                    var thumbnailWidth =
+                        t.Width ??
+                        throw new YoutubeExplodeException("Could not extract thumbnail width.");
 
-                        var thumbnailWidth =
-                            t.TryGetWidth() ??
-                            throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                    var thumbnailHeight =
+                        t.Height ??
+                        throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
-                        var thumbnailHeight =
-                            t.TryGetHeight() ??
-                            throw new YoutubeExplodeException("Could not extract thumbnail height.");
+                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-
-                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    })
-                    .Concat(Thumbnail.GetDefaultSet(videoId))
-                    .ToArray();
+                    return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                }).Concat(Thumbnail.GetDefaultSet(videoId)).ToArray();
 
                 var video = new PlaylistVideo(
                     playlistId,
                     videoId,
                     videoTitle,
                     new Author(videoChannelId, videoChannelTitle),
-                    videoDuration,
+                    videoData.Duration,
                     videoThumbnails
                 );
 
@@ -188,7 +162,7 @@ public class PlaylistClient
 
             yield return Batch.Create(videos);
 
-            visitorData ??= playlistExtractor.TryGetVisitorData();
+            visitorData ??= response.VisitorData;
         } while (true);
     }
 

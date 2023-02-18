@@ -21,8 +21,7 @@ public class SearchClient
     /// <summary>
     /// Initializes an instance of <see cref="SearchClient" />.
     /// </summary>
-    public SearchClient(HttpClient http) =>
-        _controller = new SearchController(http);
+    public SearchClient(HttpClient http) => _controller = new SearchController(http);
 
     /// <summary>
     /// Enumerates batches of search results returned by the specified query.
@@ -47,7 +46,7 @@ public class SearchClient
             );
 
             // Video results
-            foreach (var videoExtractor in searchResults.GetVideos())
+            foreach (var videoData in searchResults.Videos)
             {
                 if (searchFilter is not SearchFilter.None and not SearchFilter.Video)
                 {
@@ -56,7 +55,7 @@ public class SearchClient
                 }
 
                 var videoId =
-                    videoExtractor.TryGetVideoId() ??
+                    videoData.Id ??
                     throw new YoutubeExplodeException("Could not extract video ID.");
 
                 // Don't yield the same result twice
@@ -64,47 +63,41 @@ public class SearchClient
                     continue;
 
                 var videoTitle =
-                    videoExtractor.TryGetVideoTitle() ??
+                    videoData.Title ??
                     throw new YoutubeExplodeException("Could not extract video title.");
 
                 var videoChannelTitle =
-                    videoExtractor.TryGetVideoAuthor() ??
+                    videoData.Author ??
                     throw new YoutubeExplodeException("Could not extract video author.");
 
                 var videoChannelId =
-                    videoExtractor.TryGetVideoChannelId() ??
+                    videoData.ChannelId ??
                     throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-                var videoDuration = videoExtractor.TryGetVideoDuration();
+                var videoThumbnails = videoData.Thumbnails.Select(t =>
+                {
+                    var thumbnailUrl =
+                        t.Url ??
+                        throw new YoutubeExplodeException("Could not extract video thumbnail URL.");
 
-                var videoThumbnails = videoExtractor
-                    .GetVideoThumbnails()
-                    .Select(t =>
-                    {
-                        var thumbnailUrl =
-                            t.TryGetUrl() ??
-                            throw new YoutubeExplodeException("Could not extract video thumbnail URL.");
+                    var thumbnailWidth =
+                        t.Width ??
+                        throw new YoutubeExplodeException("Could not extract video thumbnail width.");
 
-                        var thumbnailWidth =
-                            t.TryGetWidth() ??
-                            throw new YoutubeExplodeException("Could not extract video thumbnail width.");
+                    var thumbnailHeight =
+                        t.Height ??
+                        throw new YoutubeExplodeException("Could not extract video thumbnail height.");
 
-                        var thumbnailHeight =
-                            t.TryGetHeight() ??
-                            throw new YoutubeExplodeException("Could not extract video thumbnail height.");
+                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
-
-                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    })
-                    .Concat(Thumbnail.GetDefaultSet(videoId))
-                    .ToArray();
+                    return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                }).Concat(Thumbnail.GetDefaultSet(videoId)).ToArray();
 
                 var video = new VideoSearchResult(
                     videoId,
                     videoTitle,
                     new Author(videoChannelId, videoChannelTitle),
-                    videoDuration,
+                    videoData.Duration,
                     videoThumbnails
                 );
 
@@ -112,7 +105,7 @@ public class SearchClient
             }
 
             // Playlist results
-            foreach (var playlistExtractor in searchResults.GetPlaylists())
+            foreach (var playlistData in searchResults.Playlists)
             {
                 if (searchFilter is not SearchFilter.None and not SearchFilter.Playlist)
                 {
@@ -121,7 +114,7 @@ public class SearchClient
                 }
 
                 var playlistId =
-                    playlistExtractor.TryGetPlaylistId() ??
+                    playlistData.Id ??
                     throw new YoutubeExplodeException("Could not extract playlist ID.");
 
                 // Don't yield the same result twice
@@ -129,37 +122,34 @@ public class SearchClient
                     continue;
 
                 var playlistTitle =
-                    playlistExtractor.TryGetPlaylistTitle() ??
+                    playlistData.Title ??
                     throw new YoutubeExplodeException("Could not extract playlist title.");
 
                 // System playlists have no author
-                var playlistChannelId = playlistExtractor.TryGetPlaylistChannelId();
-                var playlistChannelTitle = playlistExtractor.TryGetPlaylistAuthor();
-                var playlistAuthor = playlistChannelId is not null && playlistChannelTitle is not null
-                    ? new Author(playlistChannelId, playlistChannelTitle)
-                    : null;
+                var playlistAuthor =
+                    !string.IsNullOrWhiteSpace(playlistData.ChannelId) &&
+                    !string.IsNullOrWhiteSpace(playlistData.Author)
+                        ? new Author(playlistData.ChannelId, playlistData.Author)
+                        : null;
 
-                var playlistThumbnails = playlistExtractor
-                    .GetPlaylistThumbnails()
-                    .Select(t =>
-                    {
-                        var thumbnailUrl =
-                            t.TryGetUrl() ??
-                            throw new YoutubeExplodeException("Could not extract playlist thumbnail URL.");
+                var playlistThumbnails = playlistData.Thumbnails.Select(t =>
+                {
+                    var thumbnailUrl =
+                        t.Url ??
+                        throw new YoutubeExplodeException("Could not extract playlist thumbnail URL.");
 
-                        var thumbnailWidth =
-                            t.TryGetWidth() ??
-                            throw new YoutubeExplodeException("Could not extract playlist thumbnail width.");
+                    var thumbnailWidth =
+                        t.Width ??
+                        throw new YoutubeExplodeException("Could not extract playlist thumbnail width.");
 
-                        var thumbnailHeight =
-                            t.TryGetHeight() ??
-                            throw new YoutubeExplodeException("Could not extract playlist thumbnail height.");
+                    var thumbnailHeight =
+                        t.Height ??
+                        throw new YoutubeExplodeException("Could not extract playlist thumbnail height.");
 
-                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    })
-                    .ToArray();
+                    return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                }).ToArray();
 
                 var playlist = new PlaylistSearchResult(
                     playlistId,
@@ -172,7 +162,7 @@ public class SearchClient
             }
 
             // Channel results
-            foreach (var channelExtractor in searchResults.GetChannels())
+            foreach (var channelData in searchResults.Channels)
             {
                 if (searchFilter is not SearchFilter.None and not SearchFilter.Channel)
                 {
@@ -181,34 +171,31 @@ public class SearchClient
                 }
 
                 var channelId =
-                    channelExtractor.TryGetChannelId() ??
+                    channelData.Id ??
                     throw new YoutubeExplodeException("Could not extract channel ID.");
 
                 var channelTitle =
-                    channelExtractor.TryGetChannelTitle() ??
+                    channelData.Title ??
                     throw new YoutubeExplodeException("Could not extract channel title.");
 
-                var channelThumbnails = channelExtractor
-                    .GetChannelThumbnails()
-                    .Select(t =>
-                    {
-                        var thumbnailUrl =
-                            t.TryGetUrl() ??
-                            throw new YoutubeExplodeException("Could not extract channel thumbnail URL.");
+                var channelThumbnails = channelData.Thumbnails.Select(t =>
+                {
+                    var thumbnailUrl =
+                        t.Url ??
+                        throw new YoutubeExplodeException("Could not extract channel thumbnail URL.");
 
-                        var thumbnailWidth =
-                            t.TryGetWidth() ??
-                            throw new YoutubeExplodeException("Could not extract channel thumbnail width.");
+                    var thumbnailWidth =
+                        t.Width ??
+                        throw new YoutubeExplodeException("Could not extract channel thumbnail width.");
 
-                        var thumbnailHeight =
-                            t.TryGetHeight() ??
-                            throw new YoutubeExplodeException("Could not extract channel thumbnail height.");
+                    var thumbnailHeight =
+                        t.Height ??
+                        throw new YoutubeExplodeException("Could not extract channel thumbnail height.");
 
-                        var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+                    var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-                        return new Thumbnail(thumbnailUrl, thumbnailResolution);
-                    })
-                    .ToArray();
+                    return new Thumbnail(thumbnailUrl, thumbnailResolution);
+                }).ToArray();
 
                 var channel = new ChannelSearchResult(
                     channelId,
@@ -221,7 +208,7 @@ public class SearchClient
 
             yield return Batch.Create(results);
 
-            continuationToken = searchResults.TryGetContinuationToken();
+            continuationToken = searchResults.ContinuationToken;
         } while (!string.IsNullOrWhiteSpace(continuationToken));
     }
 

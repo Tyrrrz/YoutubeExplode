@@ -1,8 +1,6 @@
 ﻿using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,14 +8,18 @@ namespace YoutubeExplode.Utils.Extensions;
 
 internal static class HttpExtensions
 {
-    // NET5.0+ has a better API for this, but it's annoying to target multiple frameworks
-    public static HttpStatusCode? TryGetStatusCode(this HttpRequestException exception) => Regex
-        .Match(exception.Message, @"\b(\d{3})\b")
-        .Groups[1]
-        .Value
-        .NullIfWhiteSpace()?
-        .ParseIntOrNull()?
-        .Pipe(s => (HttpStatusCode)s);
+    public static HttpRequestMessage Clone(this HttpRequestMessage request)
+    {
+        var clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+
+        clonedRequest.Content = request.Content;
+        clonedRequest.Version = request.Version;
+
+        foreach (var (key, value) in request.Headers)
+            clonedRequest.Headers.TryAddWithoutValidation(key, value);
+
+        return clonedRequest;
+    }
 
     public static async ValueTask<HttpResponseMessage> HeadAsync(
         this HttpClient http,

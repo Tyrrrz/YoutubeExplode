@@ -5,7 +5,7 @@ using System.Linq;
 namespace YoutubeExplode.Videos.ClosedCaptions;
 
 /// <summary>
-/// Contains information about available closed caption tracks on a YouTube video.
+/// Describes available closed caption tracks for a YouTube video.
 /// </summary>
 public class ClosedCaptionManifest
 {
@@ -17,10 +17,8 @@ public class ClosedCaptionManifest
     /// <summary>
     /// Initializes an instance of <see cref="ClosedCaptionManifest" />.
     /// </summary>
-    public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
-    {
+    public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks) =>
         Tracks = tracks;
-    }
 
     /// <summary>
     /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).

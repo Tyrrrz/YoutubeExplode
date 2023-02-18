@@ -5,38 +5,38 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class ChannelPageExtractor
+internal partial class ChannelPage
 {
     private readonly IHtmlDocument _content;
 
-    public ChannelPageExtractor(IHtmlDocument content) => _content = content;
-
-    public string? TryGetChannelUrl() => Memo.Cache(this, () =>
+    public string? Url => Memo.Cache(this, () =>
         _content
             .QuerySelector("meta[property=\"og:url\"]")?
             .GetAttribute("content")
     );
 
-    public string? TryGetChannelId() => Memo.Cache(this, () =>
-        TryGetChannelUrl()?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase)
+    public string? Id => Memo.Cache(this, () =>
+        Url?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase)
     );
 
-    public string? TryGetChannelTitle() => Memo.Cache(this, () =>
+    public string? Title => Memo.Cache(this, () =>
         _content
             .QuerySelector("meta[property=\"og:title\"]")?
             .GetAttribute("content")
     );
 
-    public string? TryGetChannelLogoUrl() => Memo.Cache(this, () =>
+    public string? LogoUrl => Memo.Cache(this, () =>
         _content
             .QuerySelector("meta[property=\"og:image\"]")?
             .GetAttribute("content")
     );
+
+    public ChannelPage(IHtmlDocument content) => _content = content;
 }
 
-internal partial class ChannelPageExtractor
+internal partial class ChannelPage
 {
-    public static ChannelPageExtractor? TryCreate(string raw)
+    public static ChannelPage? TryParse(string raw)
     {
         var content = Html.Parse(raw);
 
@@ -44,6 +44,6 @@ internal partial class ChannelPageExtractor
         if (!isValid)
             return null;
 
-        return new ChannelPageExtractor(content);
+        return new ChannelPage(content);
     }
 }

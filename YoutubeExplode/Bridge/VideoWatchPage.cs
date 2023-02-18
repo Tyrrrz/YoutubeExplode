@@ -8,17 +8,15 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class VideoWatchPageExtractor
+internal partial class VideoWatchPage
 {
     private readonly IHtmlDocument _content;
 
-    public VideoWatchPageExtractor(IHtmlDocument content) => _content = content;
-
-    public bool IsVideoAvailable() => Memo.Cache(this, () =>
+    public bool IsAvailable => Memo.Cache(this, () =>
         _content.QuerySelector("meta[property=\"og:url\"]") is not null
     );
 
-    public long? TryGetVideoLikeCount() => Memo.Cache(this, () =>
+    public long? LikeCount => Memo.Cache(this, () =>
         _content
             .Source
             .Text
@@ -28,7 +26,7 @@ internal partial class VideoWatchPageExtractor
             .ParseLongOrNull()
     );
 
-    public long? TryGetVideoDislikeCount() => Memo.Cache(this, () =>
+    public long? DislikeCount => Memo.Cache(this, () =>
         _content
             .Source
             .Text
@@ -38,7 +36,7 @@ internal partial class VideoWatchPageExtractor
             .ParseLongOrNull()
     );
 
-    private JsonElement? TryGetPlayerConfig() => Memo.Cache(this, () =>
+    private JsonElement? PlayerConfig => Memo.Cache(this, () =>
         _content
             .GetElementsByTagName("script")
             .Select(e => e.Text())
@@ -49,7 +47,7 @@ internal partial class VideoWatchPageExtractor
             .Pipe(Json.TryParse)
     );
 
-    public PlayerResponseExtractor? TryGetPlayerResponse() => Memo.Cache(this, () =>
+    public PlayerResponse? PlayerResponse => Memo.Cache(this, () =>
         _content
             .GetElementsByTagName("script")
             .Select(e => e.Text())
@@ -58,20 +56,22 @@ internal partial class VideoWatchPageExtractor
             .NullIfWhiteSpace()?
             .Pipe(Json.Extract)
             .Pipe(Json.TryParse)?
-            .Pipe(j => new PlayerResponseExtractor(j)) ??
+            .Pipe(j => new PlayerResponse(j)) ??
 
-        TryGetPlayerConfig()?
+        PlayerConfig?
             .GetPropertyOrNull("args")?
             .GetPropertyOrNull("player_response")?
             .GetStringOrNull()?
             .Pipe(Json.TryParse)?
-            .Pipe(j => new PlayerResponseExtractor(j))
+            .Pipe(j => new PlayerResponse(j))
     );
+
+    public VideoWatchPage(IHtmlDocument content) => _content = content;
 }
 
-internal partial class VideoWatchPageExtractor
+internal partial class VideoWatchPage
 {
-    public static VideoWatchPageExtractor? TryCreate(string raw)
+    public static VideoWatchPage? TryParse(string raw)
     {
         var content = Html.Parse(raw);
 
@@ -79,6 +79,6 @@ internal partial class VideoWatchPageExtractor
         if (!isValid)
             return null;
 
-        return new VideoWatchPageExtractor(content);
+        return new VideoWatchPage(content);
     }
 }

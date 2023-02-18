@@ -8,18 +8,18 @@ using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists;
 
-internal class PlaylistController : YoutubeControllerBase
+internal class PlaylistController
 {
-    public PlaylistController(HttpClient http)
-        : base(http)
-    {
-    }
+    private readonly HttpClient _http;
 
-    public async ValueTask<PlaylistBrowseResponseExtractor> GetPlaylistBrowseResponseAsync(
+    public PlaylistController(HttpClient http) => _http = http;
+
+    // Works only with user-made playlists
+    public async ValueTask<PlaylistBrowseResponse> GetPlaylistBrowseResponseAsync(
         PlaylistId playlistId,
         CancellationToken cancellationToken = default)
     {
-        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/browse")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/browse")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -36,24 +36,30 @@ internal class PlaylistController : YoutubeControllerBase
                     }
                 }
             })
-        }, cancellationToken);
+        };
 
-        var playlistResponse = PlaylistBrowseResponseExtractor.Create(raw);
+        using var response = await _http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-        if (!playlistResponse.IsPlaylistAvailable())
+        var playlistResponse = PlaylistBrowseResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
+
+        if (!playlistResponse.IsAvailable)
             throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
 
         return playlistResponse;
     }
 
-    public async ValueTask<PlaylistNextResponseExtractor> GetPlaylistNextResponseAsync(
+    // Works on all playlists, but contains limited metadata
+    public async ValueTask<PlaylistNextResponse> GetPlaylistNextResponseAsync(
         PlaylistId playlistId,
         VideoId? videoId = null,
         int index = 0,
         string? visitorData = null,
         CancellationToken cancellationToken = default)
     {
-        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/next")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/next")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -73,18 +79,32 @@ internal class PlaylistController : YoutubeControllerBase
                     }
                 }
             })
-        }, cancellationToken);
+        };
 
-        var playlistResponse = PlaylistNextResponseExtractor.Create(raw);
+        using var response = await _http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-        if (!playlistResponse.IsPlaylistAvailable())
+        var playlistResponse = PlaylistNextResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
+
+        if (!playlistResponse.IsAvailable)
             throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
 
         return playlistResponse;
     }
 
-    public async ValueTask<PlaylistNextResponseExtractor> GetPlaylistNextResponseAsync(
+    public async ValueTask<IPlaylistData> GetPlaylistResponseAsync(
         PlaylistId playlistId,
-        CancellationToken cancellationToken = default) =>
-        await GetPlaylistNextResponseAsync(playlistId, null, 0, null, cancellationToken);
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await GetPlaylistBrowseResponseAsync(playlistId, cancellationToken);
+        }
+        catch (PlaylistUnavailableException)
+        {
+            return await GetPlaylistNextResponseAsync(playlistId, null, 0, null, cancellationToken);
+        }
+    }
 }

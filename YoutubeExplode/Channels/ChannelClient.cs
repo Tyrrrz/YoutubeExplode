@@ -29,18 +29,18 @@ public class ChannelClient
         _controller = new ChannelController(http);
     }
 
-    private Channel Get(ChannelPageExtractor channelPage)
+    private Channel Get(ChannelPage channelPage)
     {
         var channelId =
-            channelPage.TryGetChannelId() ??
+            channelPage.Id ??
             throw new YoutubeExplodeException("Could not extract channel ID.");
 
         var title =
-            channelPage.TryGetChannelTitle() ??
+            channelPage.Title ??
             throw new YoutubeExplodeException("Could not extract channel title.");
 
         var logoUrl =
-            channelPage.TryGetChannelLogoUrl() ??
+            channelPage.LogoUrl ??
             throw new YoutubeExplodeException("Could not extract channel logo URL.");
 
         var logoSize = Regex
@@ -52,7 +52,10 @@ public class ChannelClient
             .NullIfWhiteSpace()?
             .ParseIntOrNull() ?? 100;
 
-        var thumbnails = new[] { new Thumbnail(logoUrl, new Resolution(logoSize, logoSize)) };
+        var thumbnails = new[]
+        {
+            new Thumbnail(logoUrl, new Resolution(logoSize, logoSize))
+        };
 
         return new Channel(channelId, title, thumbnails);
     }
@@ -97,7 +100,7 @@ public class ChannelClient
         ChannelId channelId,
         CancellationToken cancellationToken = default)
     {
-        // Replace 'UC' in channel ID with 'UU'
+        // Replace 'UC' in the channel ID with 'UU'
         var playlistId = "UU" + channelId.Value[2..];
         return new PlaylistClient(_http).GetVideosAsync(playlistId, cancellationToken);
     }

@@ -7,44 +7,42 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class PlaylistBrowseResponseExtractor : IPlaylistExtractor
+internal partial class PlaylistBrowseResponse : IPlaylistData
 {
     private readonly JsonElement _content;
 
-    public PlaylistBrowseResponseExtractor(JsonElement content) => _content = content;
-
-    public bool IsPlaylistAvailable() => Memo.Cache(this, () =>
-        TryGetSidebar() is not null
-    );
-
-    private JsonElement? TryGetSidebar() => Memo.Cache(this, () =>
+    private JsonElement? Sidebar => Memo.Cache(this, () =>
         _content
             .GetPropertyOrNull("sidebar")?
             .GetPropertyOrNull("playlistSidebarRenderer")?
             .GetPropertyOrNull("items")
     );
 
-    private JsonElement? TryGetSidebarPrimary() => Memo.Cache(this, () =>
-        TryGetSidebar()?
+    private JsonElement? SidebarPrimary => Memo.Cache(this, () =>
+        Sidebar?
             .EnumerateArrayOrNull()?
             .ElementAtOrNull(0)?
             .GetPropertyOrNull("playlistSidebarPrimaryInfoRenderer")
     );
 
-    private JsonElement? TryGetSidebarSecondary() => Memo.Cache(this, () =>
-        TryGetSidebar()?
+    private JsonElement? SidebarSecondary => Memo.Cache(this, () =>
+        Sidebar?
             .EnumerateArrayOrNull()?
             .ElementAtOrNull(1)?
             .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer")
     );
 
-    public string? TryGetPlaylistTitle() => Memo.Cache(this, () =>
-        TryGetSidebarPrimary()?
+    public bool IsAvailable => Memo.Cache(this, () =>
+        Sidebar is not null
+    );
+
+    public string? Title => Memo.Cache(this, () =>
+        SidebarPrimary?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
             .GetStringOrNull() ??
 
-        TryGetSidebarPrimary()?
+        SidebarPrimary?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("runs")?
             .EnumerateArrayOrNull()?
@@ -53,19 +51,19 @@ internal partial class PlaylistBrowseResponseExtractor : IPlaylistExtractor
             .ConcatToString()
     );
 
-    private JsonElement? TryGetPlaylistAuthorDetails() => Memo.Cache(this, () =>
-        TryGetSidebarSecondary()?
+    private JsonElement? AuthorDetails => Memo.Cache(this, () =>
+        SidebarSecondary?
             .GetPropertyOrNull("videoOwner")?
             .GetPropertyOrNull("videoOwnerRenderer")
     );
 
-    public string? TryGetPlaylistAuthor() => Memo.Cache(this, () =>
-        TryGetPlaylistAuthorDetails()?
+    public string? Author => Memo.Cache(this, () =>
+        AuthorDetails?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
             .GetStringOrNull() ??
 
-        TryGetPlaylistAuthorDetails()?
+        AuthorDetails?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("runs")?
             .EnumerateArrayOrNull()?
@@ -74,21 +72,21 @@ internal partial class PlaylistBrowseResponseExtractor : IPlaylistExtractor
             .ConcatToString()
     );
 
-    public string? TryGetPlaylistChannelId() => Memo.Cache(this, () =>
-        TryGetPlaylistAuthorDetails()?
+    public string? ChannelId => Memo.Cache(this, () =>
+        AuthorDetails?
             .GetPropertyOrNull("navigationEndpoint")?
             .GetPropertyOrNull("browseEndpoint")?
             .GetPropertyOrNull("browseId")?
             .GetStringOrNull()
     );
 
-    public string? TryGetPlaylistDescription() => Memo.Cache(this, () =>
-        TryGetSidebarPrimary()?
+    public string? Description => Memo.Cache(this, () =>
+        SidebarPrimary?
             .GetPropertyOrNull("description")?
             .GetPropertyOrNull("simpleText")?
             .GetStringOrNull() ??
 
-        TryGetSidebarPrimary()?
+        SidebarPrimary?
             .GetPropertyOrNull("description")?
             .GetPropertyOrNull("runs")?
             .EnumerateArrayOrNull()?
@@ -97,30 +95,32 @@ internal partial class PlaylistBrowseResponseExtractor : IPlaylistExtractor
             .ConcatToString()
     );
 
-    public IReadOnlyList<ThumbnailExtractor> GetPlaylistThumbnails() => Memo.Cache(this, () =>
-        TryGetSidebarPrimary()?
+    public IReadOnlyList<ThumbnailData> Thumbnails => Memo.Cache(this, () =>
+        SidebarPrimary?
             .GetPropertyOrNull("thumbnailRenderer")?
             .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
             .GetPropertyOrNull("thumbnail")?
             .GetPropertyOrNull("thumbnails")?
             .EnumerateArrayOrNull()?
-            .Select(j => new ThumbnailExtractor(j))
+            .Select(j => new ThumbnailData(j))
             .ToArray() ??
 
-        TryGetSidebarPrimary()?
+        SidebarPrimary?
             .GetPropertyOrNull("thumbnailRenderer")?
             .GetPropertyOrNull("playlistCustomThumbnailRenderer")?
             .GetPropertyOrNull("thumbnail")?
             .GetPropertyOrNull("thumbnails")?
             .EnumerateArrayOrNull()?
-            .Select(j => new ThumbnailExtractor(j))
+            .Select(j => new ThumbnailData(j))
             .ToArray() ??
 
-        Array.Empty<ThumbnailExtractor>()
+        Array.Empty<ThumbnailData>()
     );
+
+    public PlaylistBrowseResponse(JsonElement content) => _content = content;
 }
 
-internal partial class PlaylistBrowseResponseExtractor
+internal partial class PlaylistBrowseResponse
 {
-    public static PlaylistBrowseResponseExtractor Create(string raw) => new(Json.Parse(raw));
+    public static PlaylistBrowseResponse Parse(string raw) => new(Json.Parse(raw));
 }

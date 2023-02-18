@@ -7,20 +7,18 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class PlayerSourceExtractor
+internal partial class PlayerSource
 {
     private readonly string _content;
 
-    public PlayerSourceExtractor(string content) => _content = content;
-
-    public string? TryGetSignatureTimestamp() => Memo.Cache(this, () =>
+    public string? SignatureTimestamp => Memo.Cache(this, () =>
         Regex.Match(_content, @"(?:signatureTimestamp|sts):(\d{5})")
             .Groups[1]
             .Value
             .NullIfWhiteSpace()
     );
 
-    private string? TryGetCipherCallsite() => Memo.Cache(this, () =>
+    private string? CipherCallsite => Memo.Cache(this, () =>
         Regex.Match(
             _content,
             """
@@ -30,13 +28,12 @@ internal partial class PlayerSourceExtractor
         ).Groups[0].Value.NullIfWhiteSpace()
     );
 
-    private string? TryGetCipherDefinition() => Memo.Cache(this, () =>
+    private string? CipherDefinition => Memo.Cache(this, () =>
     {
-        var callsite = TryGetCipherCallsite();
-        if (string.IsNullOrWhiteSpace(callsite))
+        if (string.IsNullOrWhiteSpace(CipherCallsite))
             return null;
 
-        var objName = Regex.Match(callsite, @"(\w+)\.\w+\(\w+,\d+\);")
+        var objName = Regex.Match(CipherCallsite, @"(\w+)\.\w+\(\w+,\d+\);")
             .Groups[1]
             .Value;
 
@@ -44,45 +41,43 @@ internal partial class PlayerSourceExtractor
             return null;
 
         return Regex.Match(
-                _content,
-                $$"""
-                var {{Regex.Escape(objName)}}={.*?};
-                """,
-                RegexOptions.Singleline
-            ).Groups[0].Value.NullIfWhiteSpace();
+            _content,
+            $$"""
+            var {{Regex.Escape(objName)}}={.*?};
+            """,
+            RegexOptions.Singleline
+        ).Groups[0].Value.NullIfWhiteSpace();
     });
 
-    public CipherManifest? TryGetCipherManifest() => Memo.Cache(this, () =>
+    public CipherManifest? CipherManifest => Memo.Cache(this, () =>
     {
-        var callsite = TryGetCipherCallsite();
-        if (string.IsNullOrWhiteSpace(callsite))
+        if (string.IsNullOrWhiteSpace(CipherCallsite))
             return null;
 
-        var definition = TryGetCipherDefinition();
-        if (string.IsNullOrWhiteSpace(definition))
+        if (string.IsNullOrWhiteSpace(CipherDefinition))
             return null;
 
         var swapFuncName = Regex.Match(
-            definition,
+            CipherDefinition,
             @"(\w+):function\(\w+,\w+\){+[^}]*?%[^}]*?}",
             RegexOptions.Singleline
         ).Groups[1].Value.NullIfWhiteSpace();
 
         var spliceFuncName = Regex.Match(
-            definition,
+            CipherDefinition,
             @"(\w+):function\(\w+,\w+\){+[^}]*?splice[^}]*?}",
             RegexOptions.Singleline
         ).Groups[1].Value.NullIfWhiteSpace();
 
         var reverseFuncName = Regex.Match(
-            definition,
+            CipherDefinition,
             @"(\w+):function\(\w+\){+[^}]*?reverse[^}]*?}",
             RegexOptions.Singleline
         ).Groups[1].Value.NullIfWhiteSpace();
 
         var operations = new List<ICipherOperation>();
 
-        foreach (var statement in callsite.Split(";"))
+        foreach (var statement in CipherCallsite.Split(";"))
         {
             var calledFuncName = Regex.Match(statement, @"\w+\.(\w+)\(\w+,\d+\)").Groups[1].Value;
             if (string.IsNullOrWhiteSpace(calledFuncName))
@@ -106,9 +101,11 @@ internal partial class PlayerSourceExtractor
 
         return new CipherManifest(operations);
     });
+
+    public PlayerSource(string content) => _content = content;
 }
 
-internal partial class PlayerSourceExtractor
+internal partial class PlayerSource
 {
-    public static PlayerSourceExtractor Create(string raw) => new(raw);
+    public static PlayerSource Parse(string raw) => new(raw);
 }

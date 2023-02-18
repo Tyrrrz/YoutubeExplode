@@ -4,21 +4,21 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal class ThumbnailExtractor
+internal class ThumbnailData
 {
     private readonly JsonElement _content;
 
-    public ThumbnailExtractor(JsonElement content) => _content = content;
+    public ThumbnailData(JsonElement content) => _content = content;
 
-    public string? TryGetUrl() => Memo.Cache(this, () =>
+    public string? Url => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("url")?.GetStringOrNull()
     );
 
-    public int? TryGetWidth() => Memo.Cache(this, () =>
+    public int? Width => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("width")?.GetInt32OrNull()
     );
 
-    public int? TryGetHeight() => Memo.Cache(this, () =>
+    public int? Height => Memo.Cache(this, () =>
         _content.GetPropertyOrNull("height")?.GetInt32OrNull()
     );
 }

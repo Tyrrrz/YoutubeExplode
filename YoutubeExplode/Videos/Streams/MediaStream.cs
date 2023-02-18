@@ -4,13 +4,12 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.Streams;
 
 // Works around YouTube's rate throttling, provides seeking support and some resiliency
-internal class PlaybackStream : Stream
+internal class MediaStream : Stream
 {
     private readonly HttpClient _http;
     private readonly string _url;
@@ -32,7 +31,7 @@ internal class PlaybackStream : Stream
 
     public override long Position { get; set; }
 
-    public PlaybackStream(HttpClient http, string url, long length, long? segmentSize)
+    public MediaStream(HttpClient http, string url, long length, long? segmentSize)
     {
         _url = url;
         _http = http;
@@ -57,18 +56,7 @@ internal class PlaybackStream : Stream
             ? Position + _segmentSize - 1
             : null;
 
-        // YouTube sometimes returns 5XX errors, so we need to handle that
-        var stream = await Retry.WhileExceptionAsync(
-            async innerCancellationToken => await _http.GetStreamAsync(_url, from, to, true, innerCancellationToken),
-            ex =>
-                ex is HttpRequestException hrex &&
-                (
-                    (hrex.TryGetStatusCode() is { } status && (int)status >= 500) ||
-                    hrex.InnerException is IOException
-                ),
-            5,
-            cancellationToken
-        );
+        var stream = await _http.GetStreamAsync(_url, from, to, true, cancellationToken);
 
         return _segmentStream = stream;
     }

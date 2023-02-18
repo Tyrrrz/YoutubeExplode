@@ -6,20 +6,19 @@ using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Search;
 
-internal class SearchController : YoutubeControllerBase
+internal class SearchController
 {
-    public SearchController(HttpClient http)
-        : base(http)
-    {
-    }
+    private readonly HttpClient _http;
 
-    public async ValueTask<SearchResultsExtractor> GetSearchResultsAsync(
+    public SearchController(HttpClient http) => _http = http;
+
+    public async ValueTask<SearchResultsResponse> GetSearchResultsAsync(
         string searchQuery,
         SearchFilter searchFilter,
         string? continuationToken,
         CancellationToken cancellationToken = default)
     {
-        var raw = await GetStringAsync(() => new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/search")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/search")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -44,8 +43,13 @@ internal class SearchController : YoutubeControllerBase
                     }
                 }
             })
-        }, cancellationToken);
+        };
 
-        return SearchResultsExtractor.Create(raw);
+        using var response = await _http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        return SearchResultsResponse.Parse(
+            await response.Content.ReadAsStringAsync(cancellationToken)
+        );
     }
 }
