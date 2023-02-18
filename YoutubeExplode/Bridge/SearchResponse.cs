@@ -7,7 +7,7 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class SearchResultsResponse
+internal partial class SearchResponse
 {
     private readonly JsonElement _content;
 
@@ -54,10 +54,10 @@ internal partial class SearchResultsResponse
             .GetStringOrNull()
     );
 
-    public SearchResultsResponse(JsonElement content) => _content = content;
+    public SearchResponse(JsonElement content) => _content = content;
 }
 
-internal partial class SearchResultsResponse
+internal partial class SearchResponse
 {
     internal class VideoData
     {
@@ -144,7 +144,7 @@ internal partial class SearchResultsResponse
     }
 }
 
-internal partial class SearchResultsResponse
+internal partial class SearchResponse
 {
     public class PlaylistData
     {
@@ -208,7 +208,7 @@ internal partial class SearchResultsResponse
     }
 }
 
-internal partial class SearchResultsResponse
+internal partial class SearchResponse
 {
     public class ChannelData
     {
@@ -250,7 +250,7 @@ internal partial class SearchResultsResponse
     }
 }
 
-internal partial class SearchResultsResponse
+internal partial class SearchResponse
 {
-    public static SearchResultsResponse Parse(string raw) => new(Json.Parse(raw));
+    public static SearchResponse Parse(string raw) => new(Json.Parse(raw));
 }

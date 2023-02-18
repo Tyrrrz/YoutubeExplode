@@ -8,7 +8,7 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class DashManifestResponse
+internal partial class DashManifest
 {
     private readonly XElement _content;
 
@@ -35,10 +35,10 @@ internal partial class DashManifestResponse
             .ToArray()
     );
 
-    public DashManifestResponse(XElement content) => _content = content;
+    public DashManifest(XElement content) => _content = content;
 }
 
-internal partial class DashManifestResponse
+internal partial class DashManifest
 {
     public class StreamData : IStreamData
     {
@@ -111,7 +111,7 @@ internal partial class DashManifestResponse
     }
 }
 
-internal partial class DashManifestResponse
+internal partial class DashManifest
 {
-    public static DashManifestResponse Parse(string raw) => new(Xml.Parse(raw));
+    public static DashManifest Parse(string raw) => new(Xml.Parse(raw));
 }

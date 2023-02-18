@@ -12,7 +12,7 @@ internal class SearchController
 
     public SearchController(HttpClient http) => _http = http;
 
-    public async ValueTask<SearchResultsResponse> GetSearchResultsAsync(
+    public async ValueTask<SearchResponse> GetSearchResponseAsync(
         string searchQuery,
         SearchFilter searchFilter,
         string? continuationToken,
@@ -48,7 +48,7 @@ internal class SearchController
         using var response = await _http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return SearchResultsResponse.Parse(
+        return SearchResponse.Parse(
             await response.Content.ReadAsStringAsync(cancellationToken)
         );
     }

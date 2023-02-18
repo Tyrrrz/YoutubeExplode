@@ -38,7 +38,7 @@ public class SearchClient
         {
             var results = new List<ISearchResult>();
 
-            var searchResults = await _controller.GetSearchResultsAsync(
+            var searchResults = await _controller.GetSearchResponseAsync(
                 searchQuery,
                 searchFilter,
                 continuationToken,

@@ -30,11 +30,12 @@ internal class StreamController : VideoController
         );
     }
 
-    public async ValueTask<DashManifestResponse> GetDashManifestAsync(
+    public async ValueTask<DashManifest> GetDashManifestAsync(
         string url,
         CancellationToken cancellationToken = default)
     {
-        var raw = await Http.GetStringAsync(url, cancellationToken);
-        return DashManifestResponse.Parse(raw);
+        return DashManifest.Parse(
+            await Http.GetStringAsync(url, cancellationToken)
+        );
     }
 }
