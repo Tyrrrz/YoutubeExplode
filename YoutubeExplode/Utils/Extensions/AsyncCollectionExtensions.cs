@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace YoutubeExplode.Utils.Extensions;
 
-internal static class AsyncEnumerableExtensions
+internal static class AsyncCollectionExtensions
 {
     public static async IAsyncEnumerable<T> TakeAsync<T>(this IAsyncEnumerable<T> source, int count)
     {

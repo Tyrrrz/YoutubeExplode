@@ -8,36 +8,40 @@ namespace YoutubeExplode.Utils.Extensions;
 
 internal static class StringExtensions
 {
-    public static string? NullIfWhiteSpace(this string s) =>
-        !string.IsNullOrWhiteSpace(s)
-            ? s
+    public static string? NullIfWhiteSpace(this string str) =>
+        !string.IsNullOrWhiteSpace(str)
+            ? str
             : null;
 
-    public static string SubstringUntil(this string s, string sub,
+    public static string SubstringUntil(
+        this string str,
+        string sub,
         StringComparison comparison = StringComparison.Ordinal)
     {
-        var index = s.IndexOf(sub, comparison);
+        var index = str.IndexOf(sub, comparison);
 
         return index < 0
-            ? s
-            : s[..index];
+            ? str
+            : str[..index];
     }
 
-    public static string SubstringAfter(this string s, string sub,
+    public static string SubstringAfter(
+        this string str,
+        string sub,
         StringComparison comparison = StringComparison.Ordinal)
     {
-        var index = s.IndexOf(sub, comparison);
+        var index = str.IndexOf(sub, comparison);
 
         return index < 0
             ? string.Empty
-            : s.Substring(index + sub.Length, s.Length - index - sub.Length);
+            : str.Substring(index + sub.Length, str.Length - index - sub.Length);
     }
 
-    public static string StripNonDigit(this string s)
+    public static string StripNonDigit(this string str)
     {
         var buffer = new StringBuilder();
 
-        foreach (var c in s.Where(char.IsDigit))
+        foreach (var c in str.Where(char.IsDigit))
         {
             buffer.Append(c);
         }
@@ -45,44 +49,48 @@ internal static class StringExtensions
         return buffer.ToString();
     }
 
-    public static string Reverse(this string s)
+    public static string Reverse(this string str)
     {
-        var buffer = new StringBuilder(s.Length);
+        var buffer = new StringBuilder(str.Length);
 
-        for (var i = s.Length - 1; i >= 0; i--)
-            buffer.Append(s[i]);
+        for (var i = str.Length - 1; i >= 0; i--)
+            buffer.Append(str[i]);
 
         return buffer.ToString();
     }
 
-    public static string SwapChars(this string s, int firstCharIndex, int secondCharIndex) => new StringBuilder(s)
-    {
-        [firstCharIndex] = s[secondCharIndex],
-        [secondCharIndex] = s[firstCharIndex]
-    }.ToString();
+    public static string SwapChars(
+        this string str,
+        int firstCharIndex,
+        int secondCharIndex) =>
+        new StringBuilder(str)
+        {
+            [firstCharIndex] = str[secondCharIndex],
+            [secondCharIndex] = str[firstCharIndex]
+        }.ToString();
 
-    public static int? ParseIntOrNull(this string s) =>
-        int.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
+    public static int? ParseIntOrNull(this string str) =>
+        int.TryParse(str, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
             ? result
             : null;
 
-    public static int ParseInt(this string s) =>
-        ParseIntOrNull(s) ??
-        throw new FormatException($"Cannot parse integer number from string '{s}'.");
+    public static int ParseInt(this string str) =>
+        ParseIntOrNull(str) ??
+        throw new FormatException($"Cannot parse integer number from string '{str}'.");
 
-    public static long? ParseLongOrNull(this string s) =>
-        long.TryParse(s, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
+    public static long? ParseLongOrNull(this string str) =>
+        long.TryParse(str, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
             ? result
             : null;
 
-    public static double? ParseDoubleOrNull(this string s) =>
-        double.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo,
+    public static double? ParseDoubleOrNull(this string str) =>
+        double.TryParse(str, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo,
             out var result)
             ? result
             : null;
 
-    public static TimeSpan? ParseTimeSpanOrNull(this string s, string[] formats) =>
-        TimeSpan.TryParseExact(s, formats, DateTimeFormatInfo.InvariantInfo, out var result)
+    public static TimeSpan? ParseTimeSpanOrNull(this string str, string[] formats) =>
+        TimeSpan.TryParseExact(str, formats, DateTimeFormatInfo.InvariantInfo, out var result)
             ? result
             : null;
 

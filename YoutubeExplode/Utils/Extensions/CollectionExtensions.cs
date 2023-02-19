@@ -34,9 +34,7 @@ internal static class CollectionExtensions
     public static T? FirstOrNull<T>(this IEnumerable<T> source) where T : struct
     {
         foreach (var i in source)
-        {
             return i;
-        }
 
         return null;
     }
