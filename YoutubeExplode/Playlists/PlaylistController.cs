@@ -59,39 +59,49 @@ internal class PlaylistController
         string? visitorData = null,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/next")
+        for (var retriesRemaining = 5;; retriesRemaining--)
         {
-            Content = Json.SerializeToHttpContent(new
+            using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/next")
             {
-                playlistId = playlistId.Value,
-                videoId = videoId?.Value,
-                playlistIndex = index,
-                context = new
+                Content = Json.SerializeToHttpContent(new
                 {
-                    client = new
+                    playlistId = playlistId.Value,
+                    videoId = videoId?.Value,
+                    playlistIndex = index,
+                    context = new
                     {
-                        clientName = "WEB",
-                        clientVersion = "2.20210408.08.00",
-                        hl = "en",
-                        gl = "US",
-                        utcOffsetMinutes = 0,
-                        visitorData
+                        client = new
+                        {
+                            clientName = "WEB",
+                            clientVersion = "2.20210408.08.00",
+                            hl = "en",
+                            gl = "US",
+                            utcOffsetMinutes = 0,
+                            visitorData
+                        }
                     }
-                }
-            })
-        };
+                })
+            };
 
-        using var response = await _http.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
+            using var response = await _http.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
 
-        var playlistResponse = PlaylistNextResponse.Parse(
-            await response.Content.ReadAsStringAsync(cancellationToken)
-        );
+            var playlistResponse = PlaylistNextResponse.Parse(
+                await response.Content.ReadAsStringAsync(cancellationToken)
+            );
 
-        if (!playlistResponse.IsAvailable)
-            throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
+            if (!playlistResponse.IsAvailable)
+            {
+                // Retry if this is not the first request, meaning that the previous requests were successful,
+                // and that the playlist is probably not actually unavailable.
+                if (index > 0 && !string.IsNullOrWhiteSpace(visitorData) && retriesRemaining > 0)
+                    continue;
 
-        return playlistResponse;
+                throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
+            }
+
+            return playlistResponse;
+        }
     }
 
     public async ValueTask<IPlaylistData> GetPlaylistResponseAsync(

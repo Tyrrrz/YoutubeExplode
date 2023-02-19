@@ -17,8 +17,7 @@ internal class VideoController
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var retriesRemaining = 5;
-        while (true)
+        for (var retriesRemaining = 5;; retriesRemaining--)
         {
             var watchPage = VideoWatchPage.TryParse(
                 await Http.GetStringAsync($"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999", cancellationToken)
@@ -26,7 +25,7 @@ internal class VideoController
 
             if (watchPage is null)
             {
-                if (retriesRemaining-- > 0)
+                if (retriesRemaining > 0)
                     continue;
 
                 throw new YoutubeExplodeException(

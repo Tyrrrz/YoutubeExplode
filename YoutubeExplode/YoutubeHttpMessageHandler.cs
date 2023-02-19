@@ -81,18 +81,15 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        var retriesRemaining = 5;
-        while (true)
+        for (var retriesRemaining = 5;; retriesRemaining--)
         {
-            var canRetry = retriesRemaining-- > 0;
-
             try
             {
                 using var clonedRequest = request.Clone();
                 var response = await SendOnceAsync(clonedRequest, cancellationToken);
 
                 // Retry on 5XX errors
-                if (canRetry && (int)response.StatusCode >= 500)
+                if ((int)response.StatusCode >= 500 && retriesRemaining > 0)
                 {
                     response.Dispose();
                     continue;
@@ -101,7 +98,7 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
                 return response;
             }
             // Retry on connectivity issues
-            catch (HttpRequestException ex) when (canRetry && ex.InnerException is IOException)
+            catch (HttpRequestException ex) when (ex.InnerException is IOException && retriesRemaining > 0)
             {
             }
         }

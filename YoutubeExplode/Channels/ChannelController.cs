@@ -16,8 +16,7 @@ internal class ChannelController
         string channelRoute,
         CancellationToken cancellationToken = default)
     {
-        var retriesRemaining = 5;
-        while (true)
+        for (var retriesRemaining = 5;; retriesRemaining--)
         {
             var channelPage = ChannelPage.TryParse(
                 await _http.GetStringAsync("https://www.youtube.com/" + channelRoute, cancellationToken)
@@ -25,7 +24,7 @@ internal class ChannelController
 
             if (channelPage is null)
             {
-                if (retriesRemaining-- > 0)
+                if (retriesRemaining > 0)
                     continue;
 
                 throw new YoutubeExplodeException(

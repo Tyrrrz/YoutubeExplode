@@ -224,8 +224,7 @@ public class StreamClient
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        var retriesRemaining = 5;
-        while (true)
+        for (var retriesRemaining = 5;; retriesRemaining--)
         {
             var streamInfos = await GetStreamInfosAsync(videoId, cancellationToken);
 
@@ -238,9 +237,9 @@ public class StreamClient
 
             // YouTube sometimes returns stream URLs that produce 403 Forbidden errors when accessed.
             // This happens for both protected and non-protected streams, so the cause is unclear.
-            // As a workaround, we try to access one of the stream URLs and retry if it fails.
+            // As a workaround, we can access one of the stream URLs and retry if it fails.
             using var response = await _http.HeadAsync(streamInfos.First().Url, cancellationToken);
-            if ((int)response.StatusCode == 403 && retriesRemaining-- > 0)
+            if ((int)response.StatusCode == 403 && retriesRemaining > 0)
                 continue;
 
             response.EnsureSuccessStatusCode();

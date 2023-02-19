@@ -75,8 +75,7 @@ internal partial class VideoWatchPage
     {
         var content = Html.Parse(raw);
 
-        var isValid = content.Body?.QuerySelector("#player") is not null;
-        if (!isValid)
+        if (content.Body?.QuerySelector("#player") is null)
             return null;
 
         return new VideoWatchPage(content);

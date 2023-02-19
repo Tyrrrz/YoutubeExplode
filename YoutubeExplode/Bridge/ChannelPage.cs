@@ -40,8 +40,7 @@ internal partial class ChannelPage
     {
         var content = Html.Parse(raw);
 
-        var isValid = content.QuerySelector("meta[property=\"og:url\"]") is not null;
-        if (!isValid)
+        if (content.QuerySelector("meta[property=\"og:url\"]") is null)
             return null;
 
         return new ChannelPage(content);
