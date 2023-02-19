@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Playlists;
@@ -38,10 +37,7 @@ public class YoutubeClient
     /// </summary>
     public YoutubeClient(HttpClient http)
     {
-        var youtubeHttp = new HttpClient(new YoutubeHttpMessageHandler(http), true)
-        {
-            BaseAddress = new Uri("https://www.youtube.com")
-        };
+        var youtubeHttp = new HttpClient(new YoutubeHttpMessageHandler(http), true);
 
         Videos = new VideoClient(youtubeHttp);
         Playlists = new PlaylistClient(youtubeHttp);

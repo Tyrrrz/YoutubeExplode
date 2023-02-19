@@ -17,7 +17,7 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
 
     private async ValueTask<HttpResponseMessage> SendOnceAsync(
         HttpRequestMessage request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         // Set API key if necessary
         if (request.RequestUri is not null &&

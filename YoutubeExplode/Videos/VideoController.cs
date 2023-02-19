@@ -21,7 +21,7 @@ internal class VideoController
         while (true)
         {
             var watchPage = VideoWatchPage.TryParse(
-                await Http.GetStringAsync($"/watch?v={videoId}&bpctr=9999999999", cancellationToken)
+                await Http.GetStringAsync($"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999", cancellationToken)
             );
 
             if (watchPage is null)
@@ -46,7 +46,7 @@ internal class VideoController
         VideoId videoId,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -91,7 +91,7 @@ internal class VideoController
         string? signatureTimestamp,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/player")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
         {
             Content = Json.SerializeToHttpContent(new
             {

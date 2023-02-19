@@ -20,7 +20,7 @@ internal class ChannelController
         while (true)
         {
             var channelPage = ChannelPage.TryParse(
-                await _http.GetStringAsync(channelRoute, cancellationToken)
+                await _http.GetStringAsync("https://www.youtube.com/" + channelRoute, cancellationToken)
             );
 
             if (channelPage is null)

@@ -19,7 +19,7 @@ internal class PlaylistController
         PlaylistId playlistId,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/browse")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/browse")
         {
             Content = Json.SerializeToHttpContent(new
             {
@@ -59,7 +59,7 @@ internal class PlaylistController
         string? visitorData = null,
         CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/youtubei/v1/next")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/next")
         {
             Content = Json.SerializeToHttpContent(new
             {
