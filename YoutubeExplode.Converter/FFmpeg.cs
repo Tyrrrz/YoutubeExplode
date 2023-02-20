@@ -28,8 +28,10 @@ internal partial class FFmpeg
         var stdErrBuffer = new StringBuilder();
 
         var stdErrPipe = PipeTarget.Merge(
-            PipeTarget.ToStringBuilder(stdErrBuffer), // error data collector
-            progress?.Pipe(p => new FFmpegProgressRouter(p)) ?? PipeTarget.Null // progress
+            // Collect error output in case of failure
+            PipeTarget.ToStringBuilder(stdErrBuffer),
+            // Collect progress output if requested
+            progress?.Pipe(CreateProgressRouter) ?? PipeTarget.Null
         );
 
         var result = await Cli.Wrap(_filePath)
@@ -71,68 +73,40 @@ internal partial class FFmpeg
 
         // Otherwise fallback to just "ffmpeg" and hope it's on the PATH
         "ffmpeg";
-}
 
-internal partial class FFmpeg
-{
-    private class FFmpegProgressRouter : PipeTarget
+    private static PipeTarget CreateProgressRouter(IProgress<double> progress)
     {
-        private readonly StringBuilder _buffer  = new();
-        private readonly IProgress<double> _output;
+        TimeSpan? totalDuration = null;
+        TimeSpan? processedDuration;
 
-        private TimeSpan? _totalDuration;
-        private TimeSpan? _lastOffset;
+        return PipeTarget.ToDelegate(l =>
+        {
+            totalDuration ??= Regex
+                .Match(l, @"Duration:\s(\d\d:\d\d:\d\d.\d\d)")
+                .Groups[1]
+                .Value
+                .NullIfWhiteSpace()?
+                .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
 
-        public FFmpegProgressRouter(IProgress<double> output) => _output = output;
+            if (totalDuration is null)
+                return;
 
-        private TimeSpan? TryParseTotalDuration(string data) => data
-            .Pipe(s => Regex.Match(s, @"Duration:\s(\d\d:\d\d:\d\d.\d\d)").Groups[1].Value)
-            .NullIfWhiteSpace()?
-            .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
-
-        private TimeSpan? TryParseCurrentOffset(string data) => data
-            .Pipe(s => Regex.Matches(s, @"time=(\d\d:\d\d:\d\d.\d\d)")
+            processedDuration = Regex
+                .Matches(l, @"time=(\d\d:\d\d:\d\d.\d\d)")
                 .ToArray()
                 .LastOrDefault()?
                 .Groups[1]
-                .Value)?
-            .NullIfWhiteSpace()?
-            .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
+                .Value
+                .NullIfWhiteSpace()?
+                .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
 
-        private void HandleBuffer()
-        {
-            var data = _buffer.ToString();
-
-            _totalDuration ??= TryParseTotalDuration(data);
-            if (_totalDuration is null)
+            if (processedDuration is null)
                 return;
 
-            var currentOffset = TryParseCurrentOffset(data);
-            if (currentOffset is null || currentOffset == _lastOffset)
-                return;
-
-            _lastOffset = currentOffset;
-
-            var progress = (
-                currentOffset.Value.TotalMilliseconds / _totalDuration.Value.TotalMilliseconds
-            ).Clamp(0, 1);
-
-            _output.Report(progress);
-        }
-
-        public override async Task CopyFromAsync(Stream source, CancellationToken cancellationToken = default)
-        {
-            using var reader = new StreamReader(source, Console.OutputEncoding, false, 1024, true);
-
-            var buffer = new char[1024];
-            int charsRead;
-
-            while ((charsRead = await reader.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false)) > 0)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                _buffer.Append(buffer, 0, charsRead);
-                HandleBuffer();
-            }
-        }
+            progress.Report((
+                processedDuration.Value.TotalMilliseconds /
+                totalDuration.Value.TotalMilliseconds
+            ).Clamp(0, 1));
+        });
     }
 }

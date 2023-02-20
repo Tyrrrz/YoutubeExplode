@@ -15,10 +15,8 @@ public class StreamSpecs
 {
     private readonly ITestOutputHelper _testOutput;
 
-    public StreamSpecs(ITestOutputHelper testOutput)
-    {
+    public StreamSpecs(ITestOutputHelper testOutput) =>
         _testOutput = testOutput;
-    }
 
     [Fact]
     public async Task I_can_get_the_list_of_available_streams_on_a_video()

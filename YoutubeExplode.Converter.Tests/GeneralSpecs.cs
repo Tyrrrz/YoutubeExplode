@@ -12,10 +12,8 @@ public class GeneralSpecs : IAsyncLifetime
 {
     private readonly ITestOutputHelper _testOutput;
 
-    public GeneralSpecs(ITestOutputHelper testOutput)
-    {
+    public GeneralSpecs(ITestOutputHelper testOutput) =>
         _testOutput = testOutput;
-    }
 
     public async Task InitializeAsync() => await FFmpeg.InitializeAsync();
 
@@ -110,7 +108,7 @@ public class GeneralSpecs : IAsyncLifetime
         var youtube = new YoutubeClient();
 
         using var dir = TempDir.Create();
-        var filePath = Path.Combine(dir.Path, "video.mp4");
+        var filePath = Path.Combine(dir.Path, "video.mp3");
 
         var progress = new ProgressCollector<double>();
 
@@ -119,10 +117,15 @@ public class GeneralSpecs : IAsyncLifetime
 
         // Assert
         var progressValues = progress.GetValues();
-
         progressValues.Should().NotBeEmpty();
 
+        var lastValue = 0.0;
         foreach (var value in progress.GetValues())
+        {
+            value.Should().BeGreaterThan(lastValue);
+            lastValue = value;
+
             _testOutput.WriteLine($"Progress: {value:P2}");
+        }
     }
 }
