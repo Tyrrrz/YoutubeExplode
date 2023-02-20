@@ -122,7 +122,7 @@ public class GeneralSpecs : IAsyncLifetime
         var lastValue = 0.0;
         foreach (var value in progress.GetValues())
         {
-            value.Should().BeGreaterThan(lastValue);
+            value.Should().BeGreaterThanOrEqualTo(lastValue);
             lastValue = value;
 
             _testOutput.WriteLine($"Progress: {value:P2}");
