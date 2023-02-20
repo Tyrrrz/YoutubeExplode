@@ -92,9 +92,7 @@ internal partial class FFmpeg
                 return;
 
             processedDuration = Regex
-                .Matches(l, @"time=(\d\d:\d\d:\d\d.\d\d)")
-                .ToArray()
-                .LastOrDefault()?
+                .Match(l, @"time=(\d\d:\d\d:\d\d.\d\d)")
                 .Groups[1]
                 .Value
                 .NullIfWhiteSpace()?
