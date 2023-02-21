@@ -76,8 +76,7 @@ internal partial class FFmpeg
 
     private static PipeTarget CreateProgressRouter(IProgress<double> progress)
     {
-        TimeSpan? totalDuration = null;
-        TimeSpan? processedDuration;
+        var totalDuration = default(TimeSpan?);
 
         return PipeTarget.ToDelegate(l =>
         {
@@ -88,10 +87,10 @@ internal partial class FFmpeg
                 .NullIfWhiteSpace()?
                 .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
 
-            if (totalDuration is null)
+            if (totalDuration is null || totalDuration == TimeSpan.Zero)
                 return;
 
-            processedDuration = Regex
+            var processedDuration = Regex
                 .Match(l, @"time=(\d\d:\d\d:\d\d.\d\d)")
                 .Groups[1]
                 .Value
