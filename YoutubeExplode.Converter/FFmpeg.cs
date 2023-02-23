@@ -77,7 +77,6 @@ internal partial class FFmpeg
     private static PipeTarget CreateProgressRouter(IProgress<double> progress)
     {
         var totalDuration = default(TimeSpan?);
-        var lastProcessedDuration = default(TimeSpan?);
 
         return PipeTarget.ToDelegate(l =>
         {
@@ -101,17 +100,10 @@ internal partial class FFmpeg
             if (processedDuration is null)
                 return;
 
-            // FFmpeg progress updates may sometimes be out of order, so we need to
-            // make sure that we only report progress in the ascending direction.
-            if (processedDuration < lastProcessedDuration)
-                return;
-
             progress.Report((
                 processedDuration.Value.TotalMilliseconds /
                 totalDuration.Value.TotalMilliseconds
             ).Clamp(0, 1));
-
-            lastProcessedDuration = processedDuration;
         });
     }
 }
