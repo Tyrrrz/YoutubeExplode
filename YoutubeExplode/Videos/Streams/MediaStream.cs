@@ -64,7 +64,32 @@ internal class MediaStream : Stream
     public async ValueTask InitializeAsync(CancellationToken cancellationToken = default) =>
         await ResolveSegmentAsync(cancellationToken);
 
-    public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+    private async ValueTask<int> ReadSegmentAsync(
+        byte[] buffer,
+        int offset,
+        int count,
+        CancellationToken cancellationToken = default)
+    {
+        for (var retriesRemaining = 5;; retriesRemaining--)
+        {
+            try
+            {
+                var stream = await ResolveSegmentAsync(cancellationToken);
+                return await stream.ReadAsync(buffer, offset, count, cancellationToken);
+            }
+            // Retry on connectivity issues
+            catch (IOException) when (retriesRemaining > 0)
+            {
+                ResetSegment();
+            }
+        }
+    }
+
+    public override async Task<int> ReadAsync(
+        byte[] buffer,
+        int offset,
+        int count,
+        CancellationToken cancellationToken)
     {
         while (true)
         {
@@ -76,8 +101,7 @@ internal class MediaStream : Stream
             if (Position >= Length)
                 return 0;
 
-            var stream = await ResolveSegmentAsync(cancellationToken);
-            var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+            var bytesRead = await ReadSegmentAsync(buffer, offset, count, cancellationToken);
             _actualPosition = Position += bytesRead;
 
             if (bytesRead != 0)
@@ -93,6 +117,14 @@ internal class MediaStream : Stream
         ReadAsync(buffer, offset, count).GetAwaiter().GetResult();
 
     [ExcludeFromCodeCoverage]
+    public override void Write(byte[] buffer, int offset, int count) =>
+        throw new NotSupportedException();
+
+    [ExcludeFromCodeCoverage]
+    public override void SetLength(long value) =>
+        throw new NotSupportedException();
+
+    [ExcludeFromCodeCoverage]
     public override long Seek(long offset, SeekOrigin origin) => Position = origin switch
     {
         SeekOrigin.Begin => offset,
@@ -105,19 +137,11 @@ internal class MediaStream : Stream
     public override void Flush() =>
         throw new NotSupportedException();
 
-    [ExcludeFromCodeCoverage]
-    public override void SetLength(long value) =>
-        throw new NotSupportedException();
-
-    [ExcludeFromCodeCoverage]
-    public override void Write(byte[] buffer, int offset, int count) =>
-        throw new NotSupportedException();
-
     protected override void Dispose(bool disposing)
     {
-        base.Dispose(disposing);
-
         if (disposing)
             ResetSegment();
+
+        base.Dispose(disposing);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -98,7 +97,7 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
                 return response;
             }
             // Retry on connectivity issues
-            catch (HttpRequestException ex) when (ex.InnerException is IOException && retriesRemaining > 0)
+            catch (HttpRequestException) when (retriesRemaining > 0)
             {
             }
         }
