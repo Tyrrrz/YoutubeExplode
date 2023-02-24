@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.2.7 (25-Feb-2023)
+
+- Added more built-in retry policies to resolve transient errors, such as internal server errors (5XX status codes), abruptly closed connections, broken streams, etc.
+
 ## v6.2.6 (11-Feb-2023)
 
 - Fixed an issue where an attempt to retrieve a stream occasionally failed with a 403 Forbidden error.
