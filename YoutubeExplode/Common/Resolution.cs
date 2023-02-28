@@ -9,17 +9,17 @@ namespace YoutubeExplode.Common;
 public readonly partial struct Resolution
 {
     /// <summary>
-    /// Canvas width (in pixels).
+    /// Viewport width, measured in pixels.
     /// </summary>
     public int Width { get; }
 
     /// <summary>
-    /// Canvas height (in pixels).
+    /// Viewport height, measured in pixels.
     /// </summary>
     public int Height { get; }
 
     /// <summary>
-    /// Canvas area (width multiplied by height).
+    /// Viewport area (i.e. width multiplied by height).
     /// </summary>
     public int Area => Width * Height;
 
