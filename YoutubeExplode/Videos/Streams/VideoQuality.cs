@@ -11,23 +11,23 @@ namespace YoutubeExplode.Videos.Streams;
 public readonly partial struct VideoQuality
 {
     /// <summary>
-    /// Quality label as seen on YouTube (e.g. 1080p, 720p60, etc).
+    /// Quality label, as seen on YouTube (e.g. 1080p, 720p60, etc).
     /// </summary>
     public string Label { get; }
 
     /// <summary>
-    /// Maximum established height of the video stream.
-    /// Actual height can vary.
+    /// Maximum video height allowed by this quality (e.g. 1080 for 1080p60).
+    /// Actual video height may be lower in some cases.
     /// </summary>
     public int MaxHeight { get; }
 
     /// <summary>
-    /// Video stream framerate (in frames per second).
+    /// Video framerate, measured in frames per second.
     /// </summary>
     public int Framerate { get; }
 
     /// <summary>
-    /// Whether this is a high definition video quality (i.e. 1080p or above).
+    /// Whether this is a high definition video (i.e. 1080p or above).
     /// </summary>
     public bool IsHighDefinition => MaxHeight >= 1080;
 
@@ -204,21 +204,32 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
     public int CompareTo(VideoQuality other)
     {
         var maxHeightComparison = MaxHeight.CompareTo(other.MaxHeight);
-        var framerateComparison = Framerate.CompareTo(other.Framerate);
+        if (maxHeightComparison != 0)
+            return maxHeightComparison;
 
-        return maxHeightComparison != 0
-            ? maxHeightComparison
-            : framerateComparison;
+        var framerateComparison = Framerate.CompareTo(other.Framerate);
+        if (framerateComparison != 0)
+            return framerateComparison;
+
+        var labelComparison = StringComparer.OrdinalIgnoreCase.Compare(Label, other.Label);
+        return labelComparison;
     }
 
     /// <inheritdoc />
-    public bool Equals(VideoQuality other) => CompareTo(other) == 0;
+    public bool Equals(VideoQuality other) =>
+        StringComparer.OrdinalIgnoreCase.Equals(Label, other.Label) &&
+        MaxHeight == other.MaxHeight &&
+        Framerate == other.Framerate;
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is VideoQuality other && Equals(other);
 
     /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(MaxHeight, Framerate);
+    public override int GetHashCode() => HashCode.Combine(
+        StringComparer.OrdinalIgnoreCase.GetHashCode(Label),
+        MaxHeight,
+        Framerate
+    );
 
     /// <summary>
     /// Equality check.
