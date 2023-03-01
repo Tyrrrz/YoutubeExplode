@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.2.8 (02-Mar-2023)
+
+- Fixed an issue where the streams returned by `StreamClient.GetAsync(...)` were very slow to read, due to recent YouTube changes.
+- Fixed an issue where two instances of `VideoQuality` were incorrectly treated as equal if they had the same `MaxHeight` and `Framerate` but different `Label`. That meant that, for example, a `1080p60` and `1080p60 HDR` playback options were considered the same when filtering available streams by quality.
+
 ## v6.2.7 (25-Feb-2023)
 
 - Added more built-in retry policies to resolve transient errors, such as internal server errors (5XX status codes), abruptly closed connections, broken streams, etc.
