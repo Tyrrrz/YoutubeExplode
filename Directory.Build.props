@@ -32,7 +32,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../Readme.md" Pack="true" PackagePath="" Visible="false" />
     <None Include="../favicon.png" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 
