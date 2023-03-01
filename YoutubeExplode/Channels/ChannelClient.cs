@@ -77,7 +77,7 @@ public class ChannelClient
         Get(await _controller.GetChannelPageAsync(userName, cancellationToken));
 
     /// <summary>
-    /// Gets the metadata associated with the channel identified by the specified slug or custom URL.
+    /// Gets the metadata associated with the channel identified by the specified slug or legacy custom URL.
     /// </summary>
     public async ValueTask<Channel> GetBySlugAsync(
         ChannelSlug channelSlug,
@@ -85,7 +85,7 @@ public class ChannelClient
         Get(await _controller.GetChannelPageAsync(channelSlug, cancellationToken));
 
     /// <summary>
-    /// Gets the metadata associated with the channel identified by the specified handle or handle URL.
+    /// Gets the metadata associated with the channel identified by the specified handle or custom URL.
     /// </summary>
     public async ValueTask<Channel> GetByHandleAsync(
         ChannelHandle channelHandle,

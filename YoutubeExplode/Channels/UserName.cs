@@ -54,14 +54,14 @@ public partial struct UserName
     }
 
     /// <summary>
-    /// Attempts to parse the specified string as a YouTube user name or URL.
+    /// Attempts to parse the specified string as a YouTube user name or profile URL.
     /// Returns null in case of failure.
     /// </summary>
     public static UserName? TryParse(string? userNameOrUrl) =>
         TryNormalize(userNameOrUrl)?.Pipe(name => new UserName(name));
 
     /// <summary>
-    /// Parses the specified string as a YouTube user name or URL.
+    /// Parses the specified string as a YouTube user name or profile URL.
     /// </summary>
     public static UserName Parse(string userNameOrUrl) =>
         TryParse(userNameOrUrl) ??

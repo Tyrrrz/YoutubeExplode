@@ -53,18 +53,18 @@ public readonly partial struct ChannelSlug
     }
 
     /// <summary>
-    /// Attempts to parse the specified string as a YouTube channel slug or custom URL.
+    /// Attempts to parse the specified string as a YouTube channel slug or legacy custom URL.
     /// Returns null in case of failure.
     /// </summary>
     public static ChannelSlug? TryParse(string? channelSlugOrUrl) =>
         TryNormalize(channelSlugOrUrl)?.Pipe(slug => new ChannelSlug(slug));
 
     /// <summary>
-    /// Parses the specified string as a YouTube channel slug or custom url.
+    /// Parses the specified string as a YouTube channel slug or legacy custom url.
     /// </summary>
     public static ChannelSlug Parse(string channelSlugOrUrl) =>
         TryParse(channelSlugOrUrl) ??
-        throw new ArgumentException($"Invalid YouTube channel slug or custom URL '{channelSlugOrUrl}'.");
+        throw new ArgumentException($"Invalid YouTube channel slug or legacy custom URL '{channelSlugOrUrl}'.");
 
     /// <summary>
     /// Converts string to channel slug.
