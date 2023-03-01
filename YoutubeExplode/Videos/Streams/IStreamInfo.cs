@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Videos.Streams;
 
@@ -35,6 +36,12 @@ public interface IStreamInfo
 /// </summary>
 public static class StreamInfoExtensions
 {
+    internal static bool IsThrottled(this IStreamInfo streamInfo) => !string.Equals(
+        UriEx.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
+        "yes",
+        StringComparison.OrdinalIgnoreCase
+    );
+
     /// <summary>
     /// Gets the stream with the highest bitrate.
     /// Returns null if the sequence is empty.

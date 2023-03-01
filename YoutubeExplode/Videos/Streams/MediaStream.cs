@@ -4,7 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using YoutubeExplode.Utils.Extensions;
+using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Videos.Streams;
 
@@ -12,8 +12,9 @@ namespace YoutubeExplode.Videos.Streams;
 internal class MediaStream : Stream
 {
     private readonly HttpClient _http;
-    private readonly string _url;
-    private readonly long? _segmentSize;
+    private readonly IStreamInfo _streamInfo;
+
+    private readonly long _segmentLength;
 
     private Stream? _segmentStream;
     private long _actualPosition;
@@ -27,16 +28,23 @@ internal class MediaStream : Stream
     [ExcludeFromCodeCoverage]
     public override bool CanWrite => false;
 
-    public override long Length { get; }
+    public override long Length => _streamInfo.Size.Bytes;
 
     public override long Position { get; set; }
 
-    public MediaStream(HttpClient http, string url, long length, long? segmentSize)
+    public MediaStream(HttpClient http, IStreamInfo streamInfo)
     {
-        _url = url;
         _http = http;
-        Length = length;
-        _segmentSize = segmentSize;
+        _streamInfo = streamInfo;
+
+        // For most streams, YouTube limits transfer speed to match the video playback rate.
+        // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
+        // we want to download the stream as fast as possible.
+        // To solve this, we divide the logical stream up into multiple segments and download
+        // them all separately.
+        _segmentLength = streamInfo.IsThrottled()
+            ? 9_898_989
+            : streamInfo.Size.Bytes;
     }
 
     private void ResetSegment()
@@ -51,12 +59,10 @@ internal class MediaStream : Stream
             return _segmentStream;
 
         var from = Position;
+        var to = Position + _segmentLength - 1;
+        var url = UriEx.SetQueryParameter(_streamInfo.Url, "range", $"{from}-{to}");
 
-        var to = _segmentSize is not null
-            ? Position + _segmentSize - 1
-            : null;
-
-        var stream = await _http.GetStreamAsync(_url, from, to, true, cancellationToken);
+        var stream = await _http.GetStreamAsync(url, cancellationToken);
 
         return _segmentStream = stream;
     }

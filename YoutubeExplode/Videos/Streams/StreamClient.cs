@@ -282,25 +282,7 @@ public class StreamClient
         IStreamInfo streamInfo,
         CancellationToken cancellationToken = default)
     {
-        // For most streams, YouTube limits transfer speed to match the video playback rate.
-        // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
-        // we want to download the stream as fast as possible.
-        // To solve this, we divide the logical stream up into multiple segments and download
-        // them all separately.
-
-        var isThrottled = !string.Equals(
-            UriEx.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
-            "yes",
-            StringComparison.OrdinalIgnoreCase
-        );
-
-        var segmentSize = isThrottled
-            ? 9_898_989 // breakpoint after which the throttling kicks in
-            : (long?)null; // no segmentation for non-throttled streams
-
-        var stream = new MediaStream(_http, streamInfo.Url, streamInfo.Size.Bytes, segmentSize);
-
-        // Pre-resolve inner stream
+        var stream = new MediaStream(_http, streamInfo);
         await stream.InitializeAsync(cancellationToken);
 
         return stream;

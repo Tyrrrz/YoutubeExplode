@@ -34,5 +34,16 @@ internal static class HttpPolyfills
 
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
+
+    public static async Task<Stream> GetStreamAsync(
+        this HttpClient httpClient,
+        string requestUri,
+        CancellationToken cancellationToken)
+    {
+        using var response = await httpClient.GetAsync(requestUri, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadAsStreamAsync(cancellationToken);
+    }
 }
 #endif
