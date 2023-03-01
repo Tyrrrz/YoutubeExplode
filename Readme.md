@@ -43,7 +43,7 @@ Create an instance of this class and use the provided operations on `Videos`, `P
 
 ### Videos
 
-#### Retrieve video metadata
+#### Retrieving video metadata
 
 To retrieve the metadata associated with a YouTube video, call `Videos.GetAsync(...)`:
 
@@ -61,7 +61,7 @@ var author = video.Author.ChannelTitle; // "Blender"
 var duration = video.Duration; // 00:07:20
 ```
 
-#### Download video streams
+#### Downloading video streams
 
 Every YouTube video has a number of streams available, differing in containers, video quality, bitrate, framerate, and other parameters.
 Additionally, the streams are further divided into 3 categories based on their content:
@@ -119,7 +119,7 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
-#### Download closed captions
+#### Downloading closed captions
 
 Closed captions can be downloaded in a similar way to media streams.
 To get the list of available closed caption tracks, call `Videos.ClosedCaptions.GetManifestAsync(...)`:
@@ -164,7 +164,7 @@ await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
 
 ### Playlists
 
-#### Retrieve playlist metadata
+#### Retrieving playlist metadata
 
 You can get the metadata associated with a YouTube playlist by calling `Playlists.GetAsync(...)` method:
 
@@ -180,7 +180,7 @@ var title = playlist.Title; // "First Steps - Blender 2.80 Fundamentals"
 var author = playlist.Author.ChannelTitle; // "Blender"
 ```
 
-#### Retrieve videos included in a playlist
+#### Retrieving videos included in a playlist
 
 To get the videos included in a playlist, call `Playlists.GetVideosAsync(...)`:
 
@@ -234,7 +234,7 @@ await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(playlistUrl))
 
 ### Channels
 
-#### Retrieve channel metadata
+#### Retrieving channel metadata
 
 You can get the metadata associated with a YouTube channel by calling `Channels.GetAsync(...)` method:
 
@@ -288,7 +288,7 @@ var channel = await youtube.Channels.GetByHandleAsync(channelUrl);
 var id = channel.Id; // "UCm325cMiw9B15xl22_gr6Dw"
 ```
 
-#### Retrieve channel uploads
+#### Retrieving channel uploads
 
 To get the list of videos uploaded by a channel, call `Channels.GetUploadsAsync(...)`:
 
@@ -302,7 +302,7 @@ var channelUrl = "https://youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg";
 var videos = await youtube.Channels.GetUploadsAsync(channelUrl);
 ```
 
-### Searching
+### Search
 
 You can execute a search query and get its results by calling `Search.GetResultsAsync(...)`.
 Each result may represent either a video, a playlist, or a channel, so you need to apply pattern matching to handle the corresponding cases:

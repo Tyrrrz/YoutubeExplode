@@ -19,7 +19,7 @@ To use them, simply add the corresponding namespace and follow the examples belo
 > This package requires the [FFmpeg](https://ffmpeg.org) executable to work, which can be downloaded [here](https://ffbinaries.com/downloads).
 > Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location directly using various overloads.
 
-### Download videos
+### Downloading videos
 
 You can download a video directly through one of the extension methods provided on `VideoClient`.
 For example, to download a video in the specified format using the highest quality streams, simply call `DownloadAsync(...)` with the video ID and the destination path:
@@ -44,7 +44,7 @@ Under the hood, this resolves the video's media streams, downloads the best cand
 > You can improve the execution speed by making sure that both the input streams and the output file use the same format, which eliminates the need for transcoding.
 > Currently, YouTube provides adaptive streams only in `mp4` and `webm` containers, with the highest quality video streams (e.g. 4K) only available in `webm`.
 
-### Custom conversion options
+### Customizing the conversion process
 
 To configure various aspects of the conversion process, use the following overload of `DownloadAsync(...)`:
 
@@ -62,7 +62,7 @@ await youtube.Videos.DownloadAsync(videoUrl, "video.mp4", o => o
 );
 ```
 
-### Provide streams manually
+### Manually selecting streams
 
 If you need precise control over which streams are used for the muxing process, you can also provide them yourself instead of relying on the automatic resolution:
 
