@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace YoutubeExplode.Converter.Utils.Extensions;
 
-internal static class AsyncEnumerableExtensions
+internal static class AsyncCollectionExtensions
 {
     public static async ValueTask<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> source)
     {

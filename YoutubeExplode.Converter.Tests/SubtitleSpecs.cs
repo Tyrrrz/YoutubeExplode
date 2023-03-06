@@ -16,7 +16,7 @@ public class SubtitleSpecs : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async Task I_can_download_a_video_with_subtitles_as_a_single_mp4_file()
+    public async Task I_can_download_a_video_as_a_single_mp4_file_with_subtitles()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -25,13 +25,14 @@ public class SubtitleSpecs : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("YltHGKX80Y8");
+        var streamInfos = streamManifest
+            .GetVideoStreams()
+            .Where(s => s.Container == Container.Mp4)
+            .OrderBy(s => s.Size)
+            .Take(1)
+            .ToArray();
+
         var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("YltHGKX80Y8");
-
-        var streamInfos = new[]
-        {
-            streamManifest.GetVideoStreams().OrderBy(s => s.Size).First(s => s.Container == Container.Mp4)
-        };
-
         var trackInfos = trackManifest.Tracks;
 
         // Act
@@ -49,7 +50,7 @@ public class SubtitleSpecs : IAsyncLifetime
     }
 
     [Fact]
-    public async Task I_can_download_a_video_with_subtitles_as_a_single_webm_file()
+    public async Task I_can_download_a_video_as_a_single_webm_file_with_subtitles()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -58,13 +59,14 @@ public class SubtitleSpecs : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("YltHGKX80Y8");
+        var streamInfos = streamManifest
+            .GetVideoStreams()
+            .Where(s => s.Container == Container.WebM)
+            .OrderBy(s => s.Size)
+            .Take(1)
+            .ToArray();
+
         var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("YltHGKX80Y8");
-
-        var streamInfos = new[]
-        {
-            streamManifest.GetVideoStreams().OrderBy(s => s.Size).First(s => s.Container == Container.WebM)
-        };
-
         var trackInfos = trackManifest.Tracks;
 
         // Act

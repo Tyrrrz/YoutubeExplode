@@ -44,42 +44,95 @@ internal partial class Converter
         foreach (var subtitleInput in subtitleInputs)
             arguments.Add("-i").Add(subtitleInput.FilePath);
 
+        // Input mapping
+        for (var i = 0; i < streamInputs.Count + subtitleInputs.Count; i++)
+            arguments.Add("-map").Add(i);
+
         // Format
         arguments.Add("-f").Add(container.Name);
 
         // Preset
         arguments.Add("-preset").Add(_preset);
 
-        // Mapping
-        for (var i = 0; i < streamInputs.Count + subtitleInputs.Count; i++)
-            arguments.Add("-map").Add(i);
-
-        // Avoid transcoding if possible
-        if (streamInputs.All(s => s.Info.Container == container))
+        // Avoid transcoding where possible
         {
-            arguments
-                .Add("-c:a").Add("copy")
-                .Add("-c:v").Add("copy");
+            var lastAudioStreamIndex = 0;
+            var lastVideoStreamIndex = 0;
+            foreach (var streamInput in streamInputs)
+            {
+                // Note: a muxed stream input will map to two separate audio and video streams
+
+                if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
+                {
+                    if (audioStreamInfo.Container == container)
+                    {
+                        arguments
+                            .Add($"-c:a:{lastAudioStreamIndex}")
+                            .Add("copy");
+                    }
+
+                    lastAudioStreamIndex++;
+                }
+
+                if (streamInput.Info is IVideoStreamInfo videoStreamInfo)
+                {
+                    if (videoStreamInfo.Container == container)
+                    {
+                        arguments
+                            .Add($"-c:v:{lastVideoStreamIndex}")
+                            .Add("copy");
+                    }
+
+                    lastVideoStreamIndex++;
+                }
+            }
         }
 
-        // MP4: specify subtitle codec manually, otherwise they're not injected
+        // MP4: specify the codec for subtitles manually, otherwise they may not get injected
         if (container == Container.Mp4 && subtitleInputs.Any())
             arguments.Add("-c:s").Add("mov_text");
 
-        // MP3: set constant bitrate, otherwise the metadata may contain wrong duration
+        // MP3: set constant bitrate for audio streams, otherwise the metadata may contain invalid total duration
         // https://superuser.com/a/893044
         if (container == Container.Mp3)
         {
-            var audioBitrate = streamInputs
-                .Select(i => i.Info)
-                .OfType<IAudioStreamInfo>()
-                .Single()
-                .Bitrate;
-
-            arguments.Add("-b:a").Add(Math.Round(audioBitrate.KiloBitsPerSecond) + "K");
+            var lastAudioStreamIndex = 0;
+            foreach (var streamInput in streamInputs)
+            {
+                if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
+                {
+                    arguments
+                        .Add($"-b:a:{lastAudioStreamIndex++}")
+                        .Add(Math.Round(audioStreamInfo.Bitrate.KiloBitsPerSecond) + "K");
+                }
+            }
         }
 
-        // Inject language metadata for subtitles
+        // Metadata for stream inputs
+        {
+            var lastAudioStreamIndex = 0;
+            var lastVideoStreamIndex = 0;
+            foreach (var streamInput in streamInputs)
+            {
+                // Note: a muxed stream input will map to two separate audio and video streams
+
+                if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
+                {
+                    arguments
+                        .Add($"-metadata:s:a:{lastAudioStreamIndex++}")
+                        .Add($"title={audioStreamInfo.Bitrate}");
+                }
+
+                if (streamInput.Info is IVideoStreamInfo videoStreamInfo)
+                {
+                    arguments
+                        .Add($"-metadata:s:v:{lastVideoStreamIndex++}")
+                        .Add($"title={videoStreamInfo.VideoQuality.Label} | {videoStreamInfo.Bitrate}");
+                }
+            }
+        }
+
+        // Metadata for subtitles
         for (var i = 0; i < subtitleInputs.Count; i++)
         {
             arguments
@@ -98,7 +151,6 @@ internal partial class Converter
         // Output
         arguments.Add(filePath);
 
-        // Run FFmpeg
         await _ffmpeg.ExecuteAsync(arguments.Build(), progress, cancellationToken);
     }
 
@@ -177,18 +229,17 @@ internal partial class Converter
         if (!streamInfos.Any())
             throw new InvalidOperationException("No streams provided.");
 
-        if (streamInfos.Count > 2)
-            throw new InvalidOperationException("Too many streams provided.");
-
+        // Configure progress aggregation
         var progressMuxer = progress?.Pipe(p => new ProgressMuxer(p));
         var streamDownloadProgress = progressMuxer?.CreateInput();
         var subtitleDownloadProgress = progressMuxer?.CreateInput(0.01);
         var conversionProgress = progressMuxer?.CreateInput(
-            streamInfos.All(s => s.Container == container)
-                ? 0.05 // transcoding is not required
-                : 10 // transcoding is required
+            0.05 +
+            // Increase weight for each stream that needs to be transcoded
+            5 * streamInfos.Count(s => s.Container != container)
         );
 
+        // Populate inputs
         var streamInputs = new List<StreamInput>(streamInfos.Count);
         var subtitleInputs = new List<SubtitleInput>(closedCaptionTrackInfos.Count);
 
