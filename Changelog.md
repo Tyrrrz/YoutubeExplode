@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.2.9 (10-Mar-2023)
+
+- [Converter] Added support for providing more than 2 input streams, when using the manual overload of `VideoClient.DownloadAsync(...)`. This allows you to download a video with multiple audio and/or video tracks, and switch between them in the player.
+
 ## v6.2.8 (02-Mar-2023)
 
 - Fixed an issue where the streams returned by `StreamClient.GetAsync(...)` were very slow to read, due to recent YouTube changes.
