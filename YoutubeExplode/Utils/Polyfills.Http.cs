@@ -29,7 +29,12 @@ internal static class HttpPolyfills
         string requestUri,
         CancellationToken cancellationToken)
     {
-        using var response = await httpClient.GetAsync(requestUri, cancellationToken);
+        using var response = await httpClient.GetAsync(
+            requestUri,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken
+        );
+
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadAsStringAsync(cancellationToken);
@@ -40,7 +45,13 @@ internal static class HttpPolyfills
         string requestUri,
         CancellationToken cancellationToken)
     {
-        using var response = await httpClient.GetAsync(requestUri, cancellationToken);
+        // Must not be disposed for the stream to be usable
+        var response = await httpClient.GetAsync(
+            requestUri,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken
+        );
+
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadAsStreamAsync(cancellationToken);
