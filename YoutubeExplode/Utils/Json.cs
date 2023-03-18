@@ -1,4 +1,5 @@
-using System.Net.Http;
+using System;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 
@@ -6,6 +7,18 @@ namespace YoutubeExplode.Utils;
 
 internal static class Json
 {
+    public static string Create(Action<JsonWriter> write)
+    {
+        using var stream = new MemoryStream();
+        using var writer = new Utf8JsonWriter(stream);
+
+        var objectWriter = new JsonWriter(writer);
+        write(objectWriter);
+
+        writer.Flush();
+        return Encoding.UTF8.GetString(stream.ToArray());
+    }
+
     public static string Extract(string source)
     {
         var buffer = new StringBuilder();
@@ -57,10 +70,4 @@ internal static class Json
             return null;
         }
     }
-
-    public static HttpContent SerializeToHttpContent<T>(T obj) => new StringContent(
-        JsonSerializer.Serialize(obj),
-        Encoding.UTF8,
-        "application/json"
-    );
 }
