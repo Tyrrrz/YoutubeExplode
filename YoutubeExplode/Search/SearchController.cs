@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
-using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Search;
 
@@ -20,28 +19,30 @@ internal class SearchController
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/search")
         {
-            // ReSharper disable VariableHidesOuterVariable
-            Content = new StringContent(Json.Create(x => x.Object(x => x
-                .Property("query", x => x.String(searchQuery))
-                .Property("params", x => x.String(searchFilter switch
+            Content = new StringContent(
+                $$"""
                 {
-                    SearchFilter.Video => "EgIQAQ%3D%3D",
-                    SearchFilter.Playlist => "EgIQAw%3D%3D",
-                    SearchFilter.Channel => "EgIQAg%3D%3D",
-                    _ => null
-                }))
-                .Property("continuation", x => x.String(continuationToken))
-                .Property("context", x => x.Object(x => x
-                    .Property("client", x => x.Object(x => x
-                        .Property("clientName", x => x.String("WEB"))
-                        .Property("clientVersion", x => x.String("2.20210408.08.00"))
-                        .Property("hl", x => x.String("en"))
-                        .Property("gl", x => x.String("US"))
-                        .Property("utcOffsetMinutes", x => x.Number(0))
-                    ))
-                ))
-            )))
-            // ReSharper restore VariableHidesOuterVariable
+                    "query": "{{searchQuery}}",
+                    "params": "{{searchFilter switch
+                    {
+                        SearchFilter.Video => "EgIQAQ%3D%3D",
+                        SearchFilter.Playlist => "EgIQAw%3D%3D",
+                        SearchFilter.Channel => "EgIQAg%3D%3D",
+                        _ => null
+                    }}}",
+                    "continuation": "{{continuationToken}}",
+                    "context": {
+                        "client": {
+                            "clientName": "WEB",
+                            "clientVersion": "2.20210408.08.00",
+                            "hl": "en",
+                            "gl": "US",
+                            "utcOffsetMinutes": 0
+                        }
+                    }
+                }
+                """
+            )
         };
 
         using var response = await _http.SendAsync(request, cancellationToken);

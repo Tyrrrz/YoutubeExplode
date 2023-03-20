@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Utils;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists;
@@ -21,20 +20,22 @@ internal class PlaylistController
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/browse")
         {
-            // ReSharper disable VariableHidesOuterVariable
-            Content = new StringContent(Json.Create(x => x.Object(x => x
-                .Property("browseId", x => x.String("VL" + playlistId))
-                .Property("context", x => x.Object(x => x
-                    .Property("client", x => x.Object(x => x
-                        .Property("clientName", x => x.String("WEB"))
-                        .Property("clientVersion", x => x.String("2.20210408.08.00"))
-                        .Property("hl", x => x.String("en"))
-                        .Property("gl", x => x.String("US"))
-                        .Property("utcOffsetMinutes", x => x.Number(0))
-                    ))
-                ))
-            )))
-            // ReSharper restore VariableHidesOuterVariable
+            Content = new StringContent(
+                $$"""
+                {
+                    "browseId": "VL{{playlistId}}",
+                    "context": {
+                        "client": {
+                            "clientName": "WEB",
+                            "clientVersion": "2.20210408.08.00",
+                            "hl": "en",
+                            "gl": "US",
+                            "utcOffsetMinutes": 0
+                        }
+                    }
+                }
+                """
+            )
         };
 
         using var response = await _http.SendAsync(request, cancellationToken);
@@ -62,23 +63,25 @@ internal class PlaylistController
         {
             using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/next")
             {
-                // ReSharper disable VariableHidesOuterVariable
-                Content = new StringContent(Json.Create(x => x.Object(x => x
-                    .Property("playlistId", x => x.String(playlistId))
-                    .Property("videoId", x => x.String(videoId?.Value))
-                    .Property("playlistIndex", x => x.Number(index))
-                    .Property("context", x => x.Object(x => x
-                        .Property("client", x => x.Object(x => x
-                            .Property("clientName", x => x.String("WEB"))
-                            .Property("clientVersion", x => x.String("2.20210408.08.00"))
-                            .Property("hl", x => x.String("en"))
-                            .Property("gl", x => x.String("US"))
-                            .Property("utcOffsetMinutes", x => x.Number(0))
-                            .Property("visitorData", x => x.String(visitorData))
-                        ))
-                    ))
-                )))
-                // ReSharper restore VariableHidesOuterVariable
+                Content = new StringContent(
+                    $$"""
+                    {
+                        "playlistId": "{{playlistId}}",
+                        "videoId": "{{videoId}}",
+                        "playlistIndex": {{index}},
+                        "context": {
+                            "client": {
+                                "clientName": "WEB",
+                                "clientVersion": "2.20210408.08.00",
+                                "hl": "en",
+                                "gl": "US",
+                                "utcOffsetMinutes": 0,
+                                "visitorData": "{{visitorData}}"
+                            }
+                        }
+                    }
+                    """
+                )
             };
 
             using var response = await _http.SendAsync(request, cancellationToken);

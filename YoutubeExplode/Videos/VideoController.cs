@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Videos;
 
@@ -47,21 +46,23 @@ internal class VideoController
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
         {
-            // ReSharper disable VariableHidesOuterVariable
-            Content = new StringContent(Json.Create(x => x.Object(x => x
-                .Property("videoId", x => x.String(videoId))
-                .Property("context", x => x.Object(x => x
-                    .Property("client", x => x.Object(x => x
-                        .Property("clientName", x => x.String("ANDROID"))
-                        .Property("clientVersion", x => x.String("17.10.35"))
-                        .Property("androidSdkVersion", x => x.Number(30))
-                        .Property("hl", x => x.String("en"))
-                        .Property("gl", x => x.String("US"))
-                        .Property("utcOffsetMinutes", x => x.Number(0))
-                    ))
-                ))
-            )))
-            // ReSharper restore VariableHidesOuterVariable
+            Content = new StringContent(
+                $$"""
+                {
+                    "videoId": "{{videoId}}",
+                    "context": {
+                        "client": {
+                            "clientName": "ANDROID",
+                            "clientVersion": "17.10.35",
+                            "androidSdkVersion": 30,
+                            "hl": "en",
+                            "gl": "US",
+                            "utcOffsetMinutes": 0
+                        }
+                    }
+                }
+                """
+            )
         };
 
         // User agent appears to be sometimes required when impersonating Android
@@ -91,28 +92,30 @@ internal class VideoController
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
         {
-            // ReSharper disable VariableHidesOuterVariable
-            Content = new StringContent(Json.Create(x => x.Object(x => x
-                .Property("videoId", x => x.String(videoId))
-                .Property("context", x => x.Object(x => x
-                    .Property("client", x => x.Object(x => x
-                        .Property("clientName", x => x.String("TVHTML5_SIMPLY_EMBEDDED_PLAYER"))
-                        .Property("clientVersion", x => x.String("2.0"))
-                        .Property("hl", x => x.String("en"))
-                        .Property("gl", x => x.String("US"))
-                        .Property("utcOffsetMinutes", x => x.Number(0))
-                    ))
-                    .Property("thirdParty", x => x.Object(x => x
-                        .Property("embedUrl", x => x.String("https://www.youtube.com"))
-                    ))
-                ))
-                .Property("playbackContext", x => x.Object(x => x
-                    .Property("contentPlaybackContext", x => x.Object(x => x
-                        .Property("signatureTimestamp", x => x.String(signatureTimestamp))
-                    ))
-                ))
-            )))
-            // ReSharper restore VariableHidesOuterVariable
+            Content = new StringContent(
+                $$"""
+                {
+                    "videoId": "{{videoId}}",
+                    "context": {
+                        "client": {
+                            "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                            "clientVersion": "2.0",
+                            "hl": "en",
+                            "gl": "US",
+                            "utcOffsetMinutes": 0
+                        },
+                        "thirdParty": {
+                            "embedUrl": "https://www.youtube.com"
+                        }
+                    },
+                    "playbackContext": {
+                        "contentPlaybackContext": {
+                            "signatureTimestamp": "{{signatureTimestamp}}"
+                        }
+                    }
+                }
+                """
+            )
         };
 
         using var response = await Http.SendAsync(request, cancellationToken);
