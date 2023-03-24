@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.2.11 (24-Mar-2023)
+
+- Fixed an issue which caused the library to throw an exception when trying to use it in an application built with assembly trimming enabled.
+
 ## v6.2.10 (17-Mar-2023)
 
 - Fixed an issue where trying to read a stream returned by `StreamClient.GetAsync(...)` resulted in an exception when targeting the legacy .NET Framework.
