@@ -94,5 +94,15 @@ internal static class StringExtensions
             ? result
             : null;
 
+    public static DateTimeOffset? ParseDateTimeOffsetOrNull(this string str, string[] formats) =>
+        DateTimeOffset.TryParseExact(
+            str,
+            formats,
+            DateTimeFormatInfo.InvariantInfo,
+            DateTimeStyles.None,
+            out var result)
+            ? result
+            : null;
+
     public static string ConcatToString<T>(this IEnumerable<T> source) => string.Concat(source);
 }

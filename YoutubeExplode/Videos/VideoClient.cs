@@ -64,6 +64,7 @@ public class VideoClient
 
         var uploadDate =
             playerResponse.UploadDate ??
+            watchPage.UploadDate ??
             throw new YoutubeExplodeException("Could not extract video upload date.");
 
         var thumbnails = playerResponse.Thumbnails.Select(t =>

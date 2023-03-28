@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -14,6 +15,14 @@ internal partial class VideoWatchPage
 
     public bool IsAvailable => Memo.Cache(this, () =>
         _content.QuerySelector("meta[property=\"og:url\"]") is not null
+    );
+
+    public DateTimeOffset? UploadDate => Memo.Cache(this, () =>
+        _content
+            .QuerySelector("meta[itemprop=\"datePublished\"]")?
+            .GetAttribute("content")?
+            .NullIfWhiteSpace()?
+            .ParseDateTimeOffsetOrNull(new[] { @"yyyy-MM-dd" })
     );
 
     public long? LikeCount => Memo.Cache(this, () =>
