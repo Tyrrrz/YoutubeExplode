@@ -115,7 +115,9 @@ public class PlaylistClient
 
                 var videoTitle =
                     videoData.Title ??
-                    throw new YoutubeExplodeException("Could not extract video title.");
+                    // Videos without title are legal
+                    // https://github.com/Tyrrrz/YoutubeExplode/issues/700
+                    "";
 
                 var videoChannelTitle =
                     videoData.Author ??

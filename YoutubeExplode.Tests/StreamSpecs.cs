@@ -25,7 +25,7 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.ContainsHighQualityStreams);
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.WithHighQualityStreams);
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
@@ -59,14 +59,14 @@ public class StreamSpecs
     [Theory]
     [InlineData(VideoIds.Normal)]
     [InlineData(VideoIds.Unlisted)]
-    [InlineData(VideoIds.LiveStreamRecording)]
-    [InlineData(VideoIds.Omnidirectional)]
-    [InlineData(VideoIds.HighDynamicRange)]
-    [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+    [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.AgeRestrictedViolent)]
     [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+    [InlineData(VideoIds.LiveStreamRecording)]
+    [InlineData(VideoIds.WithOmnidirectionalStreams)]
+    [InlineData(VideoIds.WithHighDynamicRangeStreams)]
     public async Task I_can_get_the_list_of_available_streams_on_any_playable_video(string videoId)
     {
         // Arrange
@@ -117,7 +117,7 @@ public class StreamSpecs
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.NonExisting)
+            await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
         );
 
         _testOutput.WriteLine(ex.Message);
@@ -128,7 +128,7 @@ public class StreamSpecs
     [InlineData(VideoIds.AgeRestrictedViolent)]
     [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.LiveStreamRecording)]
-    [InlineData(VideoIds.Omnidirectional)]
+    [InlineData(VideoIds.WithOmnidirectionalStreams)]
     public async Task I_can_get_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange
@@ -151,13 +151,13 @@ public class StreamSpecs
     [Theory]
     [InlineData(VideoIds.Normal)]
     [InlineData(VideoIds.Unlisted)]
-    [InlineData(VideoIds.LiveStreamRecording)]
-    [InlineData(VideoIds.Omnidirectional)]
-    [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
+    [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.AgeRestrictedViolent)]
     [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+    [InlineData(VideoIds.LiveStreamRecording)]
+    [InlineData(VideoIds.WithOmnidirectionalStreams)]
     public async Task I_can_download_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange

@@ -52,7 +52,9 @@ public class VideoClient
 
         var title =
             playerResponse.Title ??
-            throw new YoutubeExplodeException("Could not extract video title.");
+            // Videos without title are legal
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/700
+            "";
 
         var channelTitle =
             playerResponse.Author ??

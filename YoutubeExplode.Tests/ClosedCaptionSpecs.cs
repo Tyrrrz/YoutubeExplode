@@ -17,7 +17,7 @@ public class ClosedCaptionSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
+        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.WithClosedCaptions);
 
         // Assert
         manifest.Tracks.Should().HaveCountGreaterOrEqualTo(3);
@@ -48,7 +48,7 @@ public class ClosedCaptionSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsBrokenClosedCaptions);
+        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.WithBrokenClosedCaptions);
         var trackInfo = manifest.GetByLanguage("en");
 
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -64,7 +64,7 @@ public class ClosedCaptionSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
+        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.WithClosedCaptions);
         var trackInfo = manifest.GetByLanguage("en-US");
 
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -80,7 +80,7 @@ public class ClosedCaptionSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
+        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.WithClosedCaptions);
         var trackInfo = manifest.GetByLanguage("en-US");
 
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -98,7 +98,7 @@ public class ClosedCaptionSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
+        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.WithClosedCaptions);
         var trackInfo = manifest.GetByLanguage("en");
 
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
@@ -119,7 +119,7 @@ public class ClosedCaptionSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.ContainsClosedCaptions);
+        var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoIds.WithClosedCaptions);
         var trackInfo = manifest.GetByLanguage("en-US");
 
         await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, file.Path);
