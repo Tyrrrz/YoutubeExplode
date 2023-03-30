@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.2.12 (31-Mar-2023)
+
+- Fixed an issue where calling `VideoClient.GetAsync(...)` failed with `Could not extract video upload date` on certain videos.
+- Fixed an issue where retrieving metadata for a video that didn't have a title failed with `Could not extract video title`. This affected metadata obtained for specific videos, videos inside playlists, or channel uploads. Apparently, videos on YouTube may sometimes not have a title, which should not be considered an error.
+
 ## v6.2.11 (24-Mar-2023)
 
 - Fixed an issue which caused the library to throw an exception when trying to use it in an application built with assembly trimming enabled.
