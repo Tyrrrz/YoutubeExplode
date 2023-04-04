@@ -15,7 +15,7 @@ internal static class UriEx
             ? url.SubstringAfter("?")
             : url;
 
-        foreach (var parameter in query.Split("&"))
+        foreach (var parameter in query.Split('&'))
         {
             var key = WebUtility.UrlDecode(parameter.SubstringUntil("="));
             var value = WebUtility.UrlDecode(parameter.SubstringAfter("="));

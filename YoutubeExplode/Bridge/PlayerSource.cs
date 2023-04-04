@@ -77,7 +77,7 @@ internal partial class PlayerSource
 
         var operations = new List<ICipherOperation>();
 
-        foreach (var statement in CipherCallsite.Split(";"))
+        foreach (var statement in CipherCallsite.Split(';'))
         {
             var calledFuncName = Regex.Match(statement, @"\w+\.(\w+)\(\w+,\d+\)").Groups[1].Value;
             if (string.IsNullOrWhiteSpace(calledFuncName))
