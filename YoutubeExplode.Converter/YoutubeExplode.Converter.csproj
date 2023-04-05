@@ -21,8 +21,7 @@
     <PackageReference Include="CliWrap" Version="3.6.0" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-    <PackageReference Include="PolyShim" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="PolyShim" Version="1.1.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
