@@ -10,14 +10,14 @@ This package relies on [FFmpeg](https://ffmpeg.org) under the hood.
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode.Converter): `dotnet add package YoutubeExplode.Converter`
 
+> **Warning**:
+> This package requires the [FFmpeg CLI](https://ffmpeg.org) to work, which can be downloaded [here](https://ffbinaries.com/downloads).
+> Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location yourself using one of the available method overloads.
+
 ## Usage
 
 **YoutubeExplode.Converter** exposes its functionality by enhancing **YoutubeExplode**'s clients with additional extension methods.
 To use them, simply add the corresponding namespace and follow the examples below.
-
-> **Warning**:
-> This package requires the [FFmpeg CLI](https://ffmpeg.org) to work, which can be downloaded [here](https://ffbinaries.com/downloads).
-> Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location yourself using one of the available method overloads.
 
 ### Downloading videos
 
