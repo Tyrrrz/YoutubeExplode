@@ -16,12 +16,12 @@ This package relies on [FFmpeg](https://ffmpeg.org) under the hood.
 To use them, simply add the corresponding namespace and follow the examples below.
 
 > **Warning**:
-> This package requires the [FFmpeg](https://ffmpeg.org) executable to work, which can be downloaded [here](https://ffbinaries.com/downloads).
-> Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location directly using various overloads.
+> This package requires the [FFmpeg CLI](https://ffmpeg.org) to work, which can be downloaded [here](https://ffbinaries.com/downloads).
+> Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location yourself using one of the available method overloads.
 
 ### Downloading videos
 
-You can download a video directly through one of the extension methods provided on `VideoClient`.
+You can download a video directly to a file through one of the extension methods provided on `VideoClient`.
 For example, to download a video in the specified format using the highest quality streams, simply call `DownloadAsync(...)` with the video ID and the destination path:
 
 ```csharp
@@ -40,9 +40,8 @@ Under the hood, this resolves the video's media streams, downloads the best cand
 > If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
 
 > **Warning**:
-> Stream muxing is a resource-intensive process.
-> You can improve the execution speed by making sure that both the input streams and the output file use the same format, which eliminates the need for transcoding.
-> Currently, YouTube provides adaptive streams only in `mp4` and `webm` containers, with the highest quality video streams (e.g. 4K) only available in `webm`.
+> Stream muxing is a resource-intensive process, especially when transcoding is involved.
+> To avoid transcoding, consider specifying either `mp4` or `webm` for the output format, as these are the containers that YouTube uses for most of its streams. 
 
 ### Customizing the conversion process
 
@@ -77,11 +76,23 @@ var youtube = new YoutubeClient();
 var videoUrl = "https://youtube.com/watch?v=u_yIGGhubZs";
 var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoUrl);
 
-// Select streams (1080p60 / highest bitrate audio)
-var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
-var videoStreamInfo = streamManifest.GetVideoStreams().First(s => s.VideoQuality.Label == "1080p60");
-var streamInfos = new IStreamInfo[] { audioStreamInfo, videoStreamInfo };
+// Select best audio stream (highest bitrate)
+var audioStreamInfo = streamManifest
+    .GetAudioStreams()
+    .Where(s => s.Container == Container.Mp4)
+    .GetWithHighestBitrate();
 
-// Download and process them into one file
+// Select best video stream (1080p60 in this example)
+var videoStreamInfo = streamManifest
+    .GetVideoStreams()
+    .Where(s => s.Container == Container.Mp4)
+    .First(s => s.VideoQuality.Label == "1080p60");
+
+// Download and mux streams into a single file
+var streamInfos = new IStreamInfo[] { audioStreamInfo, videoStreamInfo };
 await youtube.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder("video.mp4").Build());
 ```
+
+> **Warning**:
+> Stream muxing is a resource-intensive process, especially when transcoding is involved.
+> To avoid transcoding, consider prioritizing streams that are already encoded in the desired format (e.g. `mp4` or `webm`).
