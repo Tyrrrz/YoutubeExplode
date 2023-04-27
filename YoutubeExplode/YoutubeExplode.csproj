@@ -6,21 +6,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Abstraction layer over YouTube's internal API</Description>
+    <Description>
+      Abstraction layer over YouTube's internal API. Note: this package has limited availability in Russia and Belarus.
+    </Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../Readme.md" Pack="true" PackagePath="" Visible="false" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.1" />
-    <PackageReference Include="FuckRussia" Version="1.0.1" PrivateAssets="all" />
+    <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-    <PackageReference Include="PolyShim" Version="1.1.0" PrivateAssets="all" />
+    <PackageReference Include="PolyShim" Version="1.2.0" PrivateAssets="all" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'net461'" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
   </ItemGroup>
