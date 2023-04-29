@@ -5,10 +5,17 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PackageIcon>favicon.png</PackageIcon>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Description>Just YoutubeExplore, but without "F***Russia" package</Description>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>$(AssemblyName)RussianEdition</Authors>
+		<Company />
+		<Product>$(AssemblyName)RussianEdition</Product>
+		<PackageProjectUrl>https://github.com/Desmon2D/YoutubeExplodeRussianEdition</PackageProjectUrl>
+		<PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard.</PackageTags>
+		<PackageId>$(AssemblyName)RussianEdition</PackageId>
+	</PropertyGroup>
 
   <ItemGroup>
     <None Include="../favicon.png" Pack="true" PackagePath="" Visible="false" />
@@ -17,7 +24,6 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.1.2" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.28.2" PrivateAssets="all" />
-    <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Lazy.Fody" Version="1.11.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
