@@ -170,7 +170,7 @@ public class StreamClient
     {
         var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
-        // Check if the video is pay-to-play
+        // If the video is pay-to-play, error out
         if (!string.IsNullOrWhiteSpace(playerResponse.PreviewVideoId))
         {
             throw new VideoRequiresPurchaseException(
@@ -180,7 +180,7 @@ public class StreamClient
         }
 
         // If the video is unplayable, try one more time by fetching the player response
-        // with signature deciphering. This is required for age-restricted videos.
+        // with signature deciphering. This is (only) required for age-restricted videos.
         if (!playerResponse.IsPlayable)
         {
             await EnsureCipherManifestResolvedAsync(cancellationToken);
