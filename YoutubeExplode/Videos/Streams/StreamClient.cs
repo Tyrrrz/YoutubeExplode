@@ -25,7 +25,6 @@ public class StreamClient
 
     // Because we determine the player version ourselves, it's safe to cache
     // the cipher manifest and signature timestamp for the lifetime of the client.
-    private readonly object _cipherLock = new();
     private CipherManifest? _cipherManifest;
     private string? _signatureTimestamp;
 
@@ -45,16 +44,13 @@ public class StreamClient
 
         var playerSource = await _controller.GetPlayerSourceAsync(cancellationToken);
 
-        lock (_cipherLock)
-        {
-            _cipherManifest =
-                playerSource.CipherManifest ??
-                throw new YoutubeExplodeException("Could not get cipher manifest.");
+        _cipherManifest =
+            playerSource.CipherManifest ??
+            throw new YoutubeExplodeException("Could not get cipher manifest.");
 
-            _signatureTimestamp =
-                playerSource.SignatureTimestamp ??
-                throw new YoutubeExplodeException("Could not get signature timestamp.");
-        }
+        _signatureTimestamp =
+            playerSource.SignatureTimestamp ??
+            throw new YoutubeExplodeException("Could not get signature timestamp.");
     }
 
     private async IAsyncEnumerable<IStreamInfo> GetStreamInfosAsync(
