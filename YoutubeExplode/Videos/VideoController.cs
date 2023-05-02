@@ -53,7 +53,7 @@ internal class VideoController
                     "context": {
                         "client": {
                             "clientName": "ANDROID",
-                            "clientVersion": "17.10.35",
+                            "clientVersion": "17.36.4",
                             "androidSdkVersion": 30,
                             "hl": "en",
                             "gl": "US",
@@ -69,7 +69,7 @@ internal class VideoController
         // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
         request.Headers.Add(
             "User-Agent",
-            "com.google.android.youtube/17.10.35 (Linux; U; Android 12; GB) gzip"
+            "com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip"
         );
 
         using var response = await Http.SendAsync(request, cancellationToken);
