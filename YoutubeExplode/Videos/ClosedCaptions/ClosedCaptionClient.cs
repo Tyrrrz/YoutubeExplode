@@ -28,7 +28,8 @@ public class ClosedCaptionClient
         VideoId videoId,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+        // Use the TVHTML5 client instead of ANDROID_TESTSUITE because the latter doesn't provide closed captions
+        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, null, cancellationToken);
 
         foreach (var trackData in playerResponse.ClosedCaptionTracks)
         {

@@ -19,7 +19,10 @@ internal class VideoController
         for (var retriesRemaining = 5;; retriesRemaining--)
         {
             var watchPage = VideoWatchPage.TryParse(
-                await Http.GetStringAsync($"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999", cancellationToken)
+                await Http.GetStringAsync(
+                    $"https://www.youtube.com/watch?v={videoId}&bpctr=9999999999",
+                    cancellationToken
+                )
             );
 
             if (watchPage is null)
@@ -120,7 +123,7 @@ internal class VideoController
                     },
                     "playbackContext": {
                         "contentPlaybackContext": {
-                            "signatureTimestamp": "{{signatureTimestamp}}"
+                            "signatureTimestamp": "{{signatureTimestamp ?? "19369"}}"
                         }
                     }
                 }
