@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.2.14 (02-May-2023)
+
+- Fixed an issue where an attempt to read a media stream sometimes resulted in a `403 Forbidden` error.
+
 ## v6.2.13 (27-Apr-2023)
 
 - Improved support for older target frameworks via polyfills.
@@ -32,7 +36,7 @@
 
 ## v6.2.6 (11-Feb-2023)
 
-- Fixed an issue where an attempt to retrieve a stream occasionally failed with a 403 Forbidden error.
+- Fixed an issue where an attempt to retrieve a stream occasionally failed with a `403 Forbidden` error.
 - [Converter] Fixed an issue where downloading a video as an `mp3` file sometimes resulted in lower bitrate than the original audio.
 
 ## v6.2.5 (06-Dec-2022)
@@ -262,14 +266,14 @@ Thanks to [@d4n3436](https://github.com/d4n3436), [@Benjamin K.](https://github.
 - Improved exceptions, exception messages, and everything related to exceptions. Additionally, all exception types now derive from `YoutubeExplodeException`, making them easier to catch.
 - Added built-in retry mechanisms to work around transient errors on YouTube's side.
 - Improved resilience of the library in general.
-- Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
+- Fixed an issue where attempts to download some videos were periodically causing `403 Forbidden`.
 - Fixed a metric ton of YouTube-related issues.
 - Many, many others improvements that I didn't think to mention.
 - Dropped .NET Framework v4.5 target in favor of v4.6.1 and .NET Standard v1.1 target in favor of v2.0.
 
 ## v4.7.16 (16-Mar-2020)
 
-- Fixed an issue where attempts to download some videos were periodically causing 403 Forbidden.
+- Fixed an issue where attempts to download some videos were periodically causing `403 Forbidden`.
 
 ## v4.7.15 (11-Mar-2020)
 
@@ -430,7 +434,7 @@ Thanks to [@d4n3436](https://github.com/d4n3436), [@Benjamin K.](https://github.
 
 ## v4.3.1 (28-Aug-2018)
 
-- Fixed an issue where retrieving some streams may throw a 403 HTTP error due to recent YouTube changes.
+- Fixed an issue where retrieving some streams may throw a `403 Forbidden` error due to recent YouTube changes.
 
 ## v4.3 (25-Jul-2018)
 
