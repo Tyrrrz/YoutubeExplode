@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace YoutubeExplode.DemoWpf.ViewModels.Framework;
+namespace YoutubeExplode.Demo.Gui.ViewModels.Framework;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {

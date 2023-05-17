@@ -16,7 +16,7 @@ public class ClosedCaption
     public string Text { get; }
 
     /// <summary>
-    /// Time at which the caption starts being displayed.
+    /// Time at which the caption starts displaying.
     /// </summary>
     public TimeSpan Offset { get; }
 
@@ -26,7 +26,7 @@ public class ClosedCaption
     public TimeSpan Duration { get; }
 
     /// <summary>
-    /// Caption parts (usually representing individual words).
+    /// Caption parts, usually representing individual words.
     /// </summary>
     /// <remarks>
     /// May be empty because not all captions have parts.

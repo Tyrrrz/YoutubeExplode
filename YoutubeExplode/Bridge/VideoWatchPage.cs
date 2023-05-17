@@ -29,7 +29,12 @@ internal partial class VideoWatchPage
         _content
             .Source
             .Text
-            .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) likes""").Groups[1].Value)
+            .Pipe(s => Regex.Match(
+                s,
+                """
+                "label"\s*:\s*"([\d,\.]+) likes"
+                """
+            ).Groups[1].Value)
             .NullIfWhiteSpace()?
             .StripNonDigit()
             .ParseLongOrNull()
@@ -39,7 +44,12 @@ internal partial class VideoWatchPage
         _content
             .Source
             .Text
-            .Pipe(s => Regex.Match(s, @"""label""\s*:\s*""([\d,\.]+) dislikes""").Groups[1].Value)
+            .Pipe(s => Regex.Match(
+                s,
+                """
+                "label"\s*:\s*"([\d,\.]+) dislikes"
+                """
+            ).Groups[1].Value)
             .NullIfWhiteSpace()?
             .StripNonDigit()
             .ParseLongOrNull()

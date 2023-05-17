@@ -8,7 +8,7 @@ using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Videos.Streams;
 
-// Works around YouTube's rate throttling, provides seeking support and some resiliency
+// Works around YouTube's rate throttling, provides seeking support, and some resiliency
 internal class MediaStream : Stream
 {
     private readonly HttpClient _http;
@@ -60,7 +60,7 @@ internal class MediaStream : Stream
 
         var from = Position;
         var to = Position + _segmentLength - 1;
-        var url = UriEx.SetQueryParameter(_streamInfo.Url, "range", $"{from}-{to}");
+        var url = UrlEx.SetQueryParameter(_streamInfo.Url, "range", $"{from}-{to}");
 
         var stream = await _http.GetStreamAsync(url, cancellationToken);
 
@@ -99,21 +99,24 @@ internal class MediaStream : Stream
     {
         while (true)
         {
-            // Check if consumer changed position between reads
-            if (_actualPosition != Position)
+            var requestedPosition = Position;
+
+            // If the consumer changed position since the last read, reset the segment
+            // to get the correct data.
+            if (_actualPosition != requestedPosition)
                 ResetSegment();
 
-            // Check if finished reading (exit condition)
-            if (Position >= Length)
+            // Exit if we reached the end of the stream
+            if (requestedPosition >= Length)
                 return 0;
 
             var bytesRead = await ReadSegmentAsync(buffer, offset, count, cancellationToken);
-            _actualPosition = Position += bytesRead;
+            Position = _actualPosition = requestedPosition + bytesRead;
 
-            if (bytesRead != 0)
+            if (bytesRead > 0)
                 return bytesRead;
 
-            // Reached the end of the segment, try to load the next one
+            // Reached the end of the segment, load the next one and loop around
             ResetSegment();
         }
     }

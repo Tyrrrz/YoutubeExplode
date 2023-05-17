@@ -20,7 +20,8 @@ internal partial class DashManifest
             .Where(x => x
                 .Attribute("id")?
                 .Value
-                .All(char.IsDigit) == true)
+                .All(char.IsDigit) == true
+            )
             // Skip segmented streams
             // https://github.com/Tyrrrz/YoutubeExplode/issues/159
             .Where(x => x
@@ -28,7 +29,8 @@ internal partial class DashManifest
                 .FirstOrDefault()?
                 .Attribute("sourceURL")?
                 .Value
-                .Contains("sq/") != true)
+                .Contains("sq/") != true
+            )
             // Skip streams without codecs
             .Where(x => !string.IsNullOrWhiteSpace(x.Attribute("codecs")?.Value))
             .Select(x => new StreamData(x))

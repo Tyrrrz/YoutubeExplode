@@ -1,11 +1,11 @@
 using System;
 
 namespace YoutubeExplode.Videos.Streams;
-// Loosely based on https://github.com/omar/ByteSize (MIT license)
 
 /// <summary>
 /// File size.
 /// </summary>
+// Loosely based on https://github.com/omar/ByteSize (MIT license)
 public readonly partial struct FileSize
 {
     /// <summary>

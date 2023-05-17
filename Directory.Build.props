@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <!-- Disable nullability warnings on frameworks where BCL is not annotated -->
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'">
     <Nullable>annotations</Nullable>
   </PropertyGroup>
 
@@ -22,16 +22,11 @@
     <PackageTags>youtube video download playlist user channel closed caption tracks subtitles parse extract metadata info net core standard</PackageTags>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/Tyrrrz/YoutubeExplode/blob/master/Changelog.md</PackageReleaseNotes>
-    <PackageIcon>favicon.png</PackageIcon>
     <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="../favicon.png" Pack="true" PackagePath="" Visible="false" />
-  </ItemGroup>
 
 </Project>

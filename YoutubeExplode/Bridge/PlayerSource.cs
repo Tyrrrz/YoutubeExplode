@@ -11,73 +11,73 @@ internal partial class PlayerSource
 {
     private readonly string _content;
 
-    public string? SignatureTimestamp => Memo.Cache(this, () =>
-        Regex.Match(_content, @"(?:signatureTimestamp|sts):(\d{5})")
+    public CipherManifest? CipherManifest => Memo.Cache(this, () =>
+    {
+        // Extract the signature timestamp
+        var signatureTimestamp = Regex.Match(_content, @"(?:signatureTimestamp|sts):(\d{5})")
             .Groups[1]
             .Value
-            .NullIfWhiteSpace()
-    );
+            .NullIfWhiteSpace();
 
-    private string? CipherCallsite => Memo.Cache(this, () =>
-        Regex.Match(
+        if (string.IsNullOrWhiteSpace(signatureTimestamp))
+            return null;
+
+        // Find where the player calls the cipher functions
+        var cipherCallsite = Regex.Match(
             _content,
             """
             \w+=function\(\w+\){(\w+)=\1\.split\(['"]{2}\);.*?return \1\.join\(['"]{2}\)}
             """,
             RegexOptions.Singleline
-        ).Groups[0].Value.NullIfWhiteSpace()
-    );
+        ).Groups[0].Value.NullIfWhiteSpace();
 
-    private string? CipherDefinition => Memo.Cache(this, () =>
-    {
-        if (string.IsNullOrWhiteSpace(CipherCallsite))
+        if (string.IsNullOrWhiteSpace(cipherCallsite))
             return null;
 
-        var objName = Regex.Match(CipherCallsite, @"(\w+)\.\w+\(\w+,\d+\);")
+        // Find the object that defines the cipher functions
+        var cipherContainerName = Regex.Match(cipherCallsite, @"(\w+)\.\w+\(\w+,\d+\);")
             .Groups[1]
             .Value;
 
-        if (string.IsNullOrWhiteSpace(objName))
+        if (string.IsNullOrWhiteSpace(cipherContainerName))
             return null;
 
-        return Regex.Match(
+        // Find the definition of the cipher functions
+        var cipherDefinition = Regex.Match(
             _content,
             $$"""
-            var {{Regex.Escape(objName)}}={.*?};
+            var {{Regex.Escape(cipherContainerName)}}={.*?};
             """,
             RegexOptions.Singleline
         ).Groups[0].Value.NullIfWhiteSpace();
-    });
 
-    public CipherManifest? CipherManifest => Memo.Cache(this, () =>
-    {
-        if (string.IsNullOrWhiteSpace(CipherCallsite))
+        if (string.IsNullOrWhiteSpace(cipherDefinition))
             return null;
 
-        if (string.IsNullOrWhiteSpace(CipherDefinition))
-            return null;
-
+        // Identify the swap cipher function
         var swapFuncName = Regex.Match(
-            CipherDefinition,
+            cipherDefinition,
             @"(\w+):function\(\w+,\w+\){+[^}]*?%[^}]*?}",
             RegexOptions.Singleline
         ).Groups[1].Value.NullIfWhiteSpace();
 
+        // Identify the splice cipher function
         var spliceFuncName = Regex.Match(
-            CipherDefinition,
+            cipherDefinition,
             @"(\w+):function\(\w+,\w+\){+[^}]*?splice[^}]*?}",
             RegexOptions.Singleline
         ).Groups[1].Value.NullIfWhiteSpace();
 
+        // Identify the reverse cipher function
         var reverseFuncName = Regex.Match(
-            CipherDefinition,
+            cipherDefinition,
             @"(\w+):function\(\w+\){+[^}]*?reverse[^}]*?}",
             RegexOptions.Singleline
         ).Groups[1].Value.NullIfWhiteSpace();
 
         var operations = new List<ICipherOperation>();
 
-        foreach (var statement in CipherCallsite.Split(';'))
+        foreach (var statement in cipherCallsite.Split(';'))
         {
             var calledFuncName = Regex.Match(statement, @"\w+\.(\w+)\(\w+,\d+\)").Groups[1].Value;
             if (string.IsNullOrWhiteSpace(calledFuncName))
@@ -99,7 +99,7 @@ internal partial class PlayerSource
             }
         }
 
-        return new CipherManifest(operations);
+        return new CipherManifest(signatureTimestamp, operations);
     });
 
     public PlayerSource(string content) => _content = content;

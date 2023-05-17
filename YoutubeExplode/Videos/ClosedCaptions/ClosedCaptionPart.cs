@@ -14,7 +14,7 @@ public class ClosedCaptionPart
     public string Text { get; }
 
     /// <summary>
-    /// Time at which the caption part starts being displayed (relative to the caption's own offset).
+    /// Time at which the caption part starts displaying, relative to the caption's own offset.
     /// </summary>
     public TimeSpan Offset { get; }
 

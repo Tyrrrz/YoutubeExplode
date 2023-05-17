@@ -19,8 +19,8 @@ internal class ClosedCaptionController : VideoController
     {
         // Enforce known format
         var urlWithFormat = url
-            .Pipe(s => UriEx.SetQueryParameter(s, "format", "3"))
-            .Pipe(s => UriEx.SetQueryParameter(s, "fmt", "3"));
+            .Pipe(s => UrlEx.SetQueryParameter(s, "format", "3"))
+            .Pipe(s => UrlEx.SetQueryParameter(s, "fmt", "3"));
 
         return ClosedCaptionTrackResponse.Parse(
             await Http.GetStringAsync(urlWithFormat, cancellationToken)

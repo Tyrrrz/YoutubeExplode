@@ -20,6 +20,7 @@ internal class SearchController
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/search")
         {
             Content = new StringContent(
+                // lang=json
                 $$"""
                 {
                     "query": "{{searchQuery}}",

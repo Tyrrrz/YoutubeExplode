@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.DemoWpf.Views;
+﻿namespace YoutubeExplode.Demo.Gui.Views;
 
 public partial class MainWindow
 {

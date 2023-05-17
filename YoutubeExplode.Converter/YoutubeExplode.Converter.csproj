@@ -9,9 +9,14 @@
     <Description>
       Extension for YoutubeExplode that provides an interface to download and convert videos using FFmpeg
     </Description>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode/tree/master/YoutubeExplode.Converter</PackageProjectUrl>
+    <PackageIcon>favicon.png</PackageIcon>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../favicon.png" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.6.0" />

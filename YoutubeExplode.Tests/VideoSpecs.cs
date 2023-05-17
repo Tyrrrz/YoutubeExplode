@@ -17,7 +17,7 @@ public class VideoSpecs
         _testOutput = testOutput;
 
     [Fact]
-    public async Task I_can_get_metadata_of_a_video()
+    public async Task I_can_get_the_metadata_of_a_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -48,7 +48,7 @@ public class VideoSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_metadata_of_a_private_video()
+    public async Task I_cannot_get_the_metadata_of_a_private_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -62,7 +62,7 @@ public class VideoSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_metadata_of_a_non_existing_video()
+    public async Task I_cannot_get_the_metadata_of_a_non_existing_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -83,7 +83,7 @@ public class VideoSpecs
     [InlineData(VideoIds.AgeRestrictedViolent)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     [InlineData(VideoIds.WithBrokenTitle)]
-    public async Task I_can_get_metadata_of_any_available_video(string videoId)
+    public async Task I_can_get_the_metadata_of_any_available_video(string videoId)
     {
         // Arrange
         var youtube = new YoutubeClient();

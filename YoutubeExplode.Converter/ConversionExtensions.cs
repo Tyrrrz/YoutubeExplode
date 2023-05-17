@@ -20,7 +20,7 @@ public static class ConversionExtensions
     /// <summary>
     /// Checks whether the container is a known audio-only container.
     /// </summary>
-    [Obsolete("Use Container.IsAudioOnly instead."), ExcludeFromCodeCoverage]
+    [Obsolete("Use the Container.IsAudioOnly property instead."), ExcludeFromCodeCoverage]
     public static bool IsAudioOnly(this Container container) => container.IsAudioOnly;
 
     private static async IAsyncEnumerable<IStreamInfo> GetOptimalStreamInfosAsync(
@@ -106,8 +106,8 @@ public static class ConversionExtensions
         );
 
     /// <summary>
-    /// Resolves the most optimal media streams for the specified video,
-    /// downloads them, and processes into a single file.
+    /// Resolves the most optimal media streams for the specified video, downloads them,
+    /// and processes into a single file.
     /// </summary>
     public static async ValueTask DownloadAsync(
         this VideoClient videoClient,
@@ -123,11 +123,11 @@ public static class ConversionExtensions
         );
 
     /// <summary>
-    /// Resolves the most optimal media streams for the specified video,
-    /// downloads them, and processes into a single file.
+    /// Resolves the most optimal media streams for the specified video, downloads them,
+    /// and processes into a single file.
     /// </summary>
     /// <remarks>
-    /// Output container is derived from the file extension, unless explicitly specified.
+    /// Output container is inferred from the file extension, unless explicitly specified.
     /// </remarks>
     public static async ValueTask DownloadAsync(
         this VideoClient videoClient,
@@ -149,7 +149,7 @@ public static class ConversionExtensions
     /// downloads them, and processes into a single file.
     /// </summary>
     /// <remarks>
-    /// Output container is derived from the file extension.
+    /// Output container is inferred from the file extension.
     /// If none is specified, mp4 is chosen by default.
     /// </remarks>
     public static async ValueTask DownloadAsync(

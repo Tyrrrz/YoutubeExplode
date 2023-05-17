@@ -21,6 +21,7 @@ internal class PlaylistController
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/browse")
         {
             Content = new StringContent(
+                // lang=json
                 $$"""
                 {
                     "browseId": "VL{{playlistId}}",
@@ -64,6 +65,7 @@ internal class PlaylistController
             using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/next")
             {
                 Content = new StringContent(
+                    // lang=json
                     $$"""
                     {
                         "playlistId": "{{playlistId}}",

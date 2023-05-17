@@ -92,7 +92,7 @@ internal partial class Converter
         if (container == Container.Mp4 && subtitleInputs.Any())
             arguments.Add("-c:s").Add("mov_text");
 
-        // MP3: set constant bitrate for audio streams, otherwise the metadata may contain invalid total duration
+        // MP3: set a constant bitrate for audio streams, otherwise the metadata may contain invalid total duration
         // https://superuser.com/a/893044
         if (container == Container.Mp3)
         {

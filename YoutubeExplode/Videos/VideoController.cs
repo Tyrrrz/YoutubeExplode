@@ -57,6 +57,7 @@ internal class VideoController
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
         {
             Content = new StringContent(
+                // lang=json
                 $$"""
                 {
                     "videoId": "{{videoId}}",
@@ -106,6 +107,7 @@ internal class VideoController
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
         {
             Content = new StringContent(
+                // lang=json
                 $$"""
                 {
                     "videoId": "{{videoId}}",

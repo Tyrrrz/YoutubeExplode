@@ -23,10 +23,9 @@ public class StreamClient
     private readonly HttpClient _http;
     private readonly StreamController _controller;
 
-    // Because we determine the player version ourselves, it's safe to cache
-    // the cipher manifest and signature timestamp for the lifetime of the client.
+    // Because we determine the player version ourselves, it's safe to cache the cipher manifest
+    // for the entire lifetime of the client.
     private CipherManifest? _cipherManifest;
-    private string? _signatureTimestamp;
 
     /// <summary>
     /// Initializes an instance of <see cref="StreamClient" />.
@@ -37,20 +36,16 @@ public class StreamClient
         _controller = new StreamController(http);
     }
 
-    private async ValueTask EnsureCipherManifestResolvedAsync(CancellationToken cancellationToken)
+    private async ValueTask<CipherManifest> ResolveCipherManifestAsync(CancellationToken cancellationToken)
     {
-        if (_cipherManifest is not null && !string.IsNullOrWhiteSpace(_signatureTimestamp))
-            return;
+        if (_cipherManifest is not null)
+            return _cipherManifest;
 
         var playerSource = await _controller.GetPlayerSourceAsync(cancellationToken);
 
-        _cipherManifest =
+        return _cipherManifest =
             playerSource.CipherManifest ??
             throw new YoutubeExplodeException("Could not get cipher manifest.");
-
-        _signatureTimestamp =
-            playerSource.SignatureTimestamp ??
-            throw new YoutubeExplodeException("Could not get signature timestamp.");
     }
 
     private async IAsyncEnumerable<IStreamInfo> GetStreamInfosAsync(
@@ -70,13 +65,12 @@ public class StreamClient
             // Handle cipher-protected streams
             if (!string.IsNullOrWhiteSpace(streamData.Signature))
             {
-                if (_cipherManifest is null)
-                    throw new YoutubeExplodeException("Stream is protected but the cipher manifest was not resolved.");
+                var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
 
-                url = UriEx.SetQueryParameter(
+                url = UrlEx.SetQueryParameter(
                     url,
                     streamData.SignatureParameter ?? "sig",
-                    _cipherManifest.Decipher(streamData.Signature)
+                    cipherManifest.Decipher(streamData.Signature)
                 );
             }
 
@@ -183,8 +177,12 @@ public class StreamClient
         // with signature deciphering. This is (only) required for age-restricted videos.
         if (!playerResponse.IsPlayable)
         {
-            await EnsureCipherManifestResolvedAsync(cancellationToken);
-            playerResponse = await _controller.GetPlayerResponseAsync(videoId, _signatureTimestamp, cancellationToken);
+            var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
+            playerResponse = await _controller.GetPlayerResponseAsync(
+                videoId,
+                cipherManifest.SignatureTimestamp,
+                cancellationToken
+            );
         }
 
         // If the video is still unplayable, error out
@@ -196,11 +194,11 @@ public class StreamClient
             );
         }
 
-        // Extract streams from player response
+        // Extract streams from the player response
         await foreach (var streamInfo in GetStreamInfosAsync(playerResponse.Streams, cancellationToken))
             yield return streamInfo;
 
-        // Extract streams from DASH manifest
+        // Extract streams from the DASH manifest
         if (!string.IsNullOrWhiteSpace(playerResponse.DashManifestUrl))
         {
             var dashManifest = await _controller.GetDashManifestAsync(

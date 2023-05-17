@@ -10,13 +10,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeExplode.DemoConsole", "YoutubeExplode.DemoConsole\YoutubeExplode.DemoConsole.csproj", "{6983B0A4-44B0-4FAF-81C7-94CC784570F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeExplode.Demo.Cli", "YoutubeExplode.Demo.Cli\YoutubeExplode.Demo.Cli.csproj", "{6983B0A4-44B0-4FAF-81C7-94CC784570F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeExplode.Tests", "YoutubeExplode.Tests\YoutubeExplode.Tests.csproj", "{5E5CDC04-EA05-46CC-8D72-970F0F0E2CD1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeExplode", "YoutubeExplode\YoutubeExplode.csproj", "{2019E360-0E05-4824-9EDE-7723AF45E10C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode.DemoWpf", "YoutubeExplode.DemoWpf\YoutubeExplode.DemoWpf.csproj", "{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode.Demo.Gui", "YoutubeExplode.Demo.Gui\YoutubeExplode.Demo.Gui.csproj", "{21F838B4-11B6-4C54-957A-9B7EFDE8F19E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeExplode.Converter", "YoutubeExplode.Converter\YoutubeExplode.Converter.csproj", "{CF1CA267-32A2-4E91-8207-8FA9C697BC8B}"
 EndProject

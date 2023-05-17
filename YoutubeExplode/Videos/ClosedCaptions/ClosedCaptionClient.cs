@@ -126,12 +126,10 @@ public class ClosedCaptionClient
         CancellationToken cancellationToken = default)
     {
         var track = await GetAsync(trackInfo, cancellationToken);
-
-        var buffer = new StringBuilder();
         for (var i = 0; i < track.Captions.Count; i++)
         {
             var caption = track.Captions[i];
-            buffer.Clear();
+            var buffer = new StringBuilder();
 
             cancellationToken.ThrowIfCancellationRequested();
 

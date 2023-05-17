@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace YoutubeExplode.DemoConsole.Utils;
+namespace YoutubeExplode.Demo.Cli.Utils;
 
 internal class ConsoleProgress : IProgress<double>, IDisposable
 {

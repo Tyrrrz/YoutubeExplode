@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Input;
 
-namespace YoutubeExplode.DemoWpf.ViewModels.Framework;
+namespace YoutubeExplode.Demo.Gui.ViewModels.Framework;
 
 public class RelayCommand<T> : ICommand
 {

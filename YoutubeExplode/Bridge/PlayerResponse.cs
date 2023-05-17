@@ -123,7 +123,7 @@ internal partial class PlayerResponse
             .GetPropertyOrNull("ypcTrailerRenderer")?
             .GetPropertyOrNull("playerVars")?
             .GetStringOrNull()?
-            .Pipe(UriEx.GetQueryParameters)
+            .Pipe(UrlEx.GetQueryParameters)
             .GetValueOrDefault("video_id") ??
 
         Playability?
@@ -257,12 +257,12 @@ internal partial class PlayerResponse
             _content
                 .GetPropertyOrNull("cipher")?
                 .GetStringOrNull()?
-                .Pipe(UriEx.GetQueryParameters) ??
+                .Pipe(UrlEx.GetQueryParameters) ??
 
             _content
                 .GetPropertyOrNull("signatureCipher")?
                 .GetStringOrNull()?
-                .Pipe(UriEx.GetQueryParameters)
+                .Pipe(UrlEx.GetQueryParameters)
         );
 
         public string? Url => Memo.Cache(this, () =>
@@ -288,7 +288,7 @@ internal partial class PlayerResponse
                 .ParseLongOrNull() ??
 
             Url?
-                .Pipe(s => UriEx.TryGetQueryParameterValue(s, "clen"))?
+                .Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))?
                 .NullIfWhiteSpace()?
                 .ParseLongOrNull()
         );

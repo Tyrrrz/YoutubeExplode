@@ -42,9 +42,7 @@ internal static class StringExtensions
         var buffer = new StringBuilder();
 
         foreach (var c in str.Where(char.IsDigit))
-        {
             buffer.Append(c);
-        }
 
         return buffer.ToString();
     }
@@ -59,10 +57,7 @@ internal static class StringExtensions
         return buffer.ToString();
     }
 
-    public static string SwapChars(
-        this string str,
-        int firstCharIndex,
-        int secondCharIndex) =>
+    public static string SwapChars(this string str, int firstCharIndex, int secondCharIndex) =>
         new StringBuilder(str)
         {
             [firstCharIndex] = str[secondCharIndex],

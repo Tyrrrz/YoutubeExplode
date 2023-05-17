@@ -37,7 +37,7 @@ public interface IStreamInfo
 public static class StreamInfoExtensions
 {
     internal static bool IsThrottled(this IStreamInfo streamInfo) => !string.Equals(
-        UriEx.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
+        UrlEx.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
         "yes",
         StringComparison.OrdinalIgnoreCase
     );

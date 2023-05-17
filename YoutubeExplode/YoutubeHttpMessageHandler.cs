@@ -14,17 +14,17 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
 
     public YoutubeHttpMessageHandler(HttpClient http) => _http = http;
 
-    private async ValueTask<HttpResponseMessage> SendOnceAsync(
+    private async ValueTask<HttpResponseMessage> SendCoreAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken = default)
     {
-        // Set API key if necessary
+        // Set the API key if necessary
         if (request.RequestUri is not null &&
             request.RequestUri.AbsolutePath.StartsWith("/youtubei/") &&
-            !UriEx.ContainsQueryParameter(request.RequestUri.Query, "key"))
+            !UrlEx.ContainsQueryParameter(request.RequestUri.Query, "key"))
         {
             request.RequestUri = new Uri(
-                UriEx.SetQueryParameter(
+                UrlEx.SetQueryParameter(
                     request.RequestUri.OriginalString,
                     "key",
                     // This key doesn't appear to change
@@ -33,11 +33,11 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
             );
         }
 
-        // Set language if necessary
-        if (request.RequestUri is not null && !UriEx.ContainsQueryParameter(request.RequestUri.Query, "hl"))
+        // Set the language if necessary
+        if (request.RequestUri is not null && !UrlEx.ContainsQueryParameter(request.RequestUri.Query, "hl"))
         {
             request.RequestUri = new Uri(
-                UriEx.SetQueryParameter(
+                UrlEx.SetQueryParameter(
                     request.RequestUri.OriginalString,
                     "hl",
                     "en"
@@ -45,7 +45,7 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
             );
         }
 
-        // Set user agent if necessary
+        // Set the user agent if necessary
         if (!request.Headers.Contains("User-Agent"))
         {
             request.Headers.Add(
@@ -85,7 +85,7 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
             try
             {
                 using var clonedRequest = request.Clone();
-                var response = await SendOnceAsync(clonedRequest, cancellationToken);
+                var response = await SendCoreAsync(clonedRequest, cancellationToken);
 
                 // Retry on 5XX errors
                 if ((int)response.StatusCode >= 500 && retriesRemaining > 0)

@@ -19,7 +19,7 @@ public class PlaylistIdSpecs
     [InlineData("UUTMt7iMWa7jy0fNXIktwyLA")]
     [InlineData("OLAK5uy_lLeonUugocG5J0EUAEDmbskX4emejKwcM")]
     [InlineData("FLEnBXANsKmyj2r9xVyKoDiQ")]
-    public void Playlist_ID_can_be_parsed_from_an_ID_string(string playlistId)
+    public void I_can_parse_a_playlist_ID_from_an_ID_string(string playlistId)
     {
         // Act
         var parsed = PlaylistId.Parse(playlistId);
@@ -34,7 +34,7 @@ public class PlaylistIdSpecs
     [InlineData("youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
     [InlineData("youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
     [InlineData("youtube.com/watch?v=x2ZRoWQ0grU&list=RDEMNJhLy4rECJ_fG8NL-joqsg", "RDEMNJhLy4rECJ_fG8NL-joqsg")]
-    public void Playlist_ID_can_be_parsed_from_a_URL_string(string playlistUrl, string expectedPlaylistId)
+    public void I_can_parse_a_playlist_ID_from_a_URL_string(string playlistUrl, string expectedPlaylistId)
     {
         // Act
         var parsed = PlaylistId.Parse(playlistUrl);
@@ -50,7 +50,7 @@ public class PlaylistIdSpecs
     [InlineData("youtube.com/playlist?lisp=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H")]
     [InlineData("youtube.com/playlist?list=asd")]
     [InlineData("youtube.com/")]
-    public void Playlist_ID_cannot_be_parsed_from_an_invalid_string(string playlistIdOrUrl)
+    public void I_cannot_parse_a_playlist_ID_from_an_invalid_string(string playlistIdOrUrl)
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => PlaylistId.Parse(playlistIdOrUrl));

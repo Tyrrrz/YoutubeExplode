@@ -27,7 +27,7 @@ public class ConversionRequest
     /// <summary>
     /// Output format.
     /// </summary>
-    [Obsolete("Use Container instead."), ExcludeFromCodeCoverage]
+    [Obsolete("Use the Container property instead."), ExcludeFromCodeCoverage]
     public ConversionFormat Format => new(Container.Name);
 
     /// <summary>

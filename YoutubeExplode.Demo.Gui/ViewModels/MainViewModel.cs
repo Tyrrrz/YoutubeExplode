@@ -5,12 +5,12 @@ using System.Linq;
 using Microsoft.Win32;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
-using YoutubeExplode.DemoWpf.ViewModels.Framework;
+using YoutubeExplode.Demo.Gui.ViewModels.Framework;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
 
-namespace YoutubeExplode.DemoWpf.ViewModels;
+namespace YoutubeExplode.Demo.Gui.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {

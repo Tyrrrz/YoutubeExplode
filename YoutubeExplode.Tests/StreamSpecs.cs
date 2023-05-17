@@ -234,7 +234,7 @@ public class StreamSpecs
     }
 
     [Fact]
-    public async Task I_can_get_HTTP_live_stream_URL_from_a_video()
+    public async Task I_can_get_the_HTTP_live_stream_URL_from_a_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -247,7 +247,7 @@ public class StreamSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_HTTP_live_stream_URL_from_an_unplayable_video()
+    public async Task I_cannot_get_the_HTTP_live_stream_URL_from_an_unplayable_video()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -261,7 +261,7 @@ public class StreamSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_HTTP_live_stream_URL_from_a_non_live_video()
+    public async Task I_cannot_get_the_HTTP_live_stream_URL_from_a_non_live_video()
     {
         // Arrange
         var youtube = new YoutubeClient();

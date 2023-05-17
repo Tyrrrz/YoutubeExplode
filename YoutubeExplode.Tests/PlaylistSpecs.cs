@@ -17,7 +17,7 @@ public class PlaylistSpecs
         _testOutput = testOutput;
 
     [Fact]
-    public async Task I_can_get_metadata_of_a_playlist()
+    public async Task I_can_get_the_metadata_of_a_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -38,7 +38,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_metadata_of_a_private_playlist()
+    public async Task I_cannot_get_the_metadata_of_a_private_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -52,7 +52,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_metadata_of_a_non_existing_playlist()
+    public async Task I_cannot_get_the_metadata_of_a_non_existing_playlist()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -72,7 +72,7 @@ public class PlaylistSpecs
     [InlineData(PlaylistIds.MusicAlbum)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
     [InlineData(PlaylistIds.Weird)]
-    public async Task I_can_get_metadata_of_any_available_playlist(string playlistId)
+    public async Task I_can_get_the_metadata_of_any_available_playlist(string playlistId)
     {
         // Arrange
         var youtube = new YoutubeClient();

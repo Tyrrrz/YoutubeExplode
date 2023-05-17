@@ -11,7 +11,7 @@ internal partial class SearchResponse
 {
     private readonly JsonElement _content;
 
-    // Search results response is incredibly inconsistent (5+ variations),
+    // Search response is incredibly inconsistent (with at least 5 variations),
     // so we employ descendant searching, which is inefficient but resilient.
 
     private JsonElement? ContentRoot => Memo.Cache(this, () =>
