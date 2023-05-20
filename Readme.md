@@ -86,7 +86,7 @@ var videoUrl = "https://youtube.com/watch?v=u_yIGGhubZs";
 var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoUrl);
 ```
 
-Once you get the manifest, you can filter through the streams and identify the ones you're interested in:
+Once the manifest is obtained, you can filter through the streams and identify the ones you're interested in:
 
 ```csharp
 using YoutubeExplode;
@@ -166,7 +166,7 @@ await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, "cc_track.srt");
 
 #### Retrieving playlist metadata
 
-You can get the metadata associated with a YouTube playlist by calling `Playlists.GetAsync(...)` method:
+You can get the metadata associated with a YouTube playlist by calling the `Playlists.GetAsync(...)` method:
 
 ```csharp
 using YoutubeExplode;
@@ -236,7 +236,7 @@ await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(playlistUrl))
 
 #### Retrieving channel metadata
 
-You can get the metadata associated with a YouTube channel by calling `Channels.GetAsync(...)` method:
+You can get the metadata associated with a YouTube channel by calling the `Channels.GetAsync(...)` method:
 
 ```csharp
 using YoutubeExplode;
@@ -249,7 +249,7 @@ var channel = await youtube.Channels.GetAsync(channelUrl);
 var title = channel.Title; // "Blender"
 ```
 
-You can also get the channel metadata by username with `Channels.GetByUserAsync(...)`:
+You can also get the channel metadata by username or profile URL with `Channels.GetByUserAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
@@ -304,8 +304,8 @@ var videos = await youtube.Channels.GetUploadsAsync(channelUrl);
 
 ### Search
 
-You can execute a search query and get its results by calling `Search.GetResultsAsync(...)`.
-Each result may represent either a video, a playlist, or a channel, so you need to apply pattern matching to handle the corresponding cases:
+You can execute a search query by calling the `Search.GetResultsAsync(...)` method.
+Each search result may represent either a video, a playlist, or a channel, so you need to apply pattern matching to handle the corresponding cases:
 
 ```csharp
 using YoutubeExplode;
@@ -340,7 +340,7 @@ await foreach (var result in youtube.Search.GetResultsAsync("blender tutorials")
 }
 ```
 
-To limit results to a specific type, use `Search.GetVideosAsync(...)`, `Search.GetPlaylistsAsync(...)`, or `Search.GetChannelsAsync(...)`:
+To limit the results to a specific type, use `Search.GetVideosAsync(...)`, `Search.GetPlaylistsAsync(...)`, or `Search.GetChannelsAsync(...)`:
 
 ```csharp
 using YoutubeExplode;
