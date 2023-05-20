@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using CliWrap;
 
 namespace YoutubeExplode.Converter.Tests.Utils;
 
@@ -23,16 +22,6 @@ public static class FFmpeg
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
         FileName
     );
-
-    private static async ValueTask EnsureExecutePermissionAsync()
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            return;
-
-        await Cli.Wrap("/bin/bash")
-            .WithArguments(new[] {"-c", $"chmod +x {FilePath}"})
-            .ExecuteAsync();
-    }
 
     private static string GetDownloadUrl()
     {
@@ -78,6 +67,7 @@ public static class FFmpeg
     {
         using var httpClient = new HttpClient();
 
+        // Extract the FFmpeg binary from the downloaded archive
         await using var zipStream = await httpClient.GetStreamAsync(GetDownloadUrl());
         using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read);
 
@@ -89,7 +79,9 @@ public static class FFmpeg
         await using var fileStream = File.Create(FilePath);
         await entryStream.CopyToAsync(fileStream);
 
-        await EnsureExecutePermissionAsync();
+        // Add the execute permission on Unix
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            new FileInfo(FilePath).UnixFileMode = UnixFileMode.UserExecute;
     }
 
     public static async ValueTask InitializeAsync()
