@@ -81,7 +81,7 @@ public static class FFmpeg
 
         // Add the execute permission on Unix
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            new FileInfo(FilePath).UnixFileMode = UnixFileMode.UserExecute;
+            File.SetUnixFileMode(FilePath, UnixFileMode.UserExecute);
     }
 
     public static async ValueTask InitializeAsync()
