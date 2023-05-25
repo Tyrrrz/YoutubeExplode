@@ -55,7 +55,7 @@ public static class ThumbnailExtensions
     /// Returns null if the sequence is empty.
     /// </summary>
     public static Thumbnail? TryGetWithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
-        thumbnails.OrderByDescending(t => t.Resolution.Area).FirstOrDefault();
+        thumbnails.MaxBy(t => t.Resolution.Area);
 
     /// <summary>
     /// Gets the thumbnail with the highest resolution (by area).
