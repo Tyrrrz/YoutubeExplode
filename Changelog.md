@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.2.15 (25-May-2023)
+
+- Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed on some videos with an error saying `Could not get cipher manifest`.
+
 ## v6.2.14 (02-May-2023)
 
 - Fixed an issue where an attempt to read a media stream sometimes resulted in a `403 Forbidden` error.
