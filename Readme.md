@@ -11,6 +11,10 @@
 
 > 🟡 **Project status**: maintenance mode<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/project-status.md)</sup>
 
+<p align="center">
+    <img src="favicon.png" alt="Icon" />
+</p>
+
 **YoutubeExplode** is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks.
 Behind a layer of abstraction, this library works by scraping raw page data and exploiting reverse-engineered internal endpoints.
 
