@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -132,7 +133,7 @@ public class StreamSpecs
     public async Task I_can_get_a_specific_stream_from_a_video(string videoId)
     {
         // Arrange
-        var buffer = new byte[1024];
+        using var buffer = MemoryPool<byte>.Shared.Rent(1024);
         var youtube = new YoutubeClient();
 
         // Act
@@ -141,7 +142,7 @@ public class StreamSpecs
         foreach (var streamInfo in manifest.Streams)
         {
             await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
-            var bytesRead = await stream.ReadAsync(buffer);
+            var bytesRead = await stream.ReadAsync(buffer.Memory);
 
             // Assert
             bytesRead.Should().BeGreaterThan(0);
