@@ -202,8 +202,10 @@ public class GeneralSpecs : IAsyncLifetime
         // Assert
         var progressValues = progress.GetValues();
         progressValues.Should().NotBeEmpty();
+        progressValues.Should().Contain(p => p >= 0.99);
+        progressValues.Should().NotContain(p => p < 0 || p > 1);
 
-        foreach (var value in progress.GetValues())
+        foreach (var value in progressValues)
             _testOutput.WriteLine($"Progress: {value:P2}");
     }
 }

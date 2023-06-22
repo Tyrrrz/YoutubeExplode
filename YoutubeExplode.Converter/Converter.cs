@@ -144,6 +144,11 @@ internal partial class Converter
 
         // Misc settings
         arguments
+            .Add("-hide_banner")
+            // Info log level is required to extract total stream duration,
+            // which is used for progress reporting.
+            .Add("-loglevel").Add("info")
+            .Add("-stats")
             .Add("-threads").Add(Environment.ProcessorCount)
             .Add("-nostdin")
             .Add("-y");
