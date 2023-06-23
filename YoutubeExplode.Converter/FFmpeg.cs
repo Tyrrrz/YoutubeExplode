@@ -78,32 +78,48 @@ internal partial class FFmpeg
     {
         var totalDuration = default(TimeSpan?);
 
-        return PipeTarget.ToDelegate(l =>
+        return PipeTarget.ToDelegate(line =>
         {
-            totalDuration ??= Regex
-                .Match(l, @"Duration:\s(\d\d:\d\d:\d\d.\d\d)")
-                .Groups[1]
-                .Value
-                .NullIfWhiteSpace()?
-                .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
+            // Extract total stream duration
+            if (totalDuration is null)
+            {
+                // Need to extract all components separately because TimeSpan cannot directly
+                // parse a time string that is greater than 24 hours.
+                var totalDurationMatch = Regex.Match(line, @"Duration:\s(\d\d):(\d\d):(\d\d.\d+)");
+                if (totalDurationMatch.Success)
+                {
+                    var hours = int.Parse(totalDurationMatch.Groups[1].Value, CultureInfo.InvariantCulture);
+                    var minutes = int.Parse(totalDurationMatch.Groups[2].Value, CultureInfo.InvariantCulture);
+                    var seconds = double.Parse(totalDurationMatch.Groups[3].Value, CultureInfo.InvariantCulture);
+
+                    totalDuration =
+                        TimeSpan.FromHours(hours) +
+                        TimeSpan.FromMinutes(minutes) +
+                        TimeSpan.FromSeconds(seconds);
+                }
+            }
 
             if (totalDuration is null || totalDuration == TimeSpan.Zero)
                 return;
 
-            var processedDuration = Regex
-                .Match(l, @"time=(\d\d:\d\d:\d\d.\d\d)")
-                .Groups[1]
-                .Value
-                .NullIfWhiteSpace()?
-                .Pipe(s => TimeSpan.ParseExact(s, "c", CultureInfo.InvariantCulture));
+            // Extract processed stream duration
+            var processedDurationMatch = Regex.Match(line, @"time=(\d\d):(\d\d):(\d\d.\d+)");
+            if (processedDurationMatch.Success)
+            {
+                var hours = int.Parse(processedDurationMatch.Groups[1].Value, CultureInfo.InvariantCulture);
+                var minutes = int.Parse(processedDurationMatch.Groups[2].Value, CultureInfo.InvariantCulture);
+                var seconds = double.Parse(processedDurationMatch.Groups[3].Value, CultureInfo.InvariantCulture);
 
-            if (processedDuration is null)
-                return;
+                var processedDuration =
+                    TimeSpan.FromHours(hours) +
+                    TimeSpan.FromMinutes(minutes) +
+                    TimeSpan.FromSeconds(seconds);
 
-            progress.Report((
-                processedDuration.Value.TotalMilliseconds /
-                totalDuration.Value.TotalMilliseconds
-            ).Clamp(0, 1));
+                progress.Report((
+                    processedDuration.TotalMilliseconds /
+                    totalDuration.Value.TotalMilliseconds
+                ).Clamp(0, 1));
+            }
         });
     }
 }

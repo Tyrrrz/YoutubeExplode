@@ -186,7 +186,7 @@ public class GeneralSpecs : IAsyncLifetime
     }
 
     [Fact]
-    public async Task I_can_download_a_video_and_track_the_progress()
+    public async Task I_can_download_a_video_while_tracking_progress()
     {
         // Arrange
         var youtube = new YoutubeClient();
