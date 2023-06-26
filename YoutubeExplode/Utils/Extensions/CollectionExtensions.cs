@@ -5,6 +5,13 @@ namespace YoutubeExplode.Utils.Extensions;
 
 internal static class CollectionExtensions
 {
+    public static IEnumerable<(T value, int index)> WithIndex<T>(this IEnumerable<T> source)
+    {
+        var i = 0;
+        foreach (var o in source)
+            yield return (o, i++);
+    }
+
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
     {
         foreach (var i in source)

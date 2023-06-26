@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -69,10 +69,12 @@ public class ClosedCaptionClient
 
         foreach (var captionData in response.Captions)
         {
-            // Captions may have no text, but we should still include them to stay consistent
-            // with YouTube player behavior where captions are still displayed even if they're empty.
+            var text = captionData.Text;
+
+            // Skip over empty captions, but not captions containing only whitespace
             // https://github.com/Tyrrrz/YoutubeExplode/issues/671
-            var text = captionData.Text ?? "";
+            if (string.IsNullOrEmpty(text))
+                continue;
 
             // Auto-generated captions may be missing offset or duration.
             // https://github.com/Tyrrrz/YoutubeExplode/discussions/619
@@ -82,19 +84,24 @@ public class ClosedCaptionClient
                 continue;
             }
 
-            var parts = captionData.Parts.Select(p =>
+            var parts = new List<ClosedCaptionPart>();
+            foreach (var partData in captionData.Parts)
             {
-                // Caption parts may have no text, but we should still include them to stay consistent
-                // with YouTube player behavior where captions are still displayed even if they're empty.
+                var partText = partData.Text;
+
+                // Skip over empty parts, but not parts containing only whitespace
                 // https://github.com/Tyrrrz/YoutubeExplode/issues/671
-                var partText = p.Text ?? "";
+                if (string.IsNullOrEmpty(partText))
+                    continue;
 
                 var partOffset =
-                    p.Offset ??
+                    partData.Offset ??
                     throw new YoutubeExplodeException("Could not extract caption part offset.");
 
-                return new ClosedCaptionPart(partText, partOffset);
-            }).ToArray();
+                var part = new ClosedCaptionPart(partText, partOffset);
+
+                parts.Add(part);
+            }
 
             yield return new ClosedCaption(
                 text,
@@ -125,27 +132,29 @@ public class ClosedCaptionClient
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        // Would be better to use GetClosedCaptionsAsync(...) instead for streaming,
+        // but we need the total number of captions to report progress.
         var track = await GetAsync(trackInfo, cancellationToken);
-        for (var i = 0; i < track.Captions.Count; i++)
-        {
-            var caption = track.Captions[i];
-            var buffer = new StringBuilder();
 
+        var buffer = new StringBuilder();
+        foreach (var (caption, i) in track.Captions.WithIndex())
+        {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Line number
-            buffer.AppendLine((i + 1).ToString());
-
-            // Time start --> time end
-            buffer.Append(caption.Offset.ToString(@"hh\:mm\:ss\,fff"));
-            buffer.Append(" --> ");
-            buffer.Append((caption.Offset + caption.Duration).ToString(@"hh\:mm\:ss\,fff"));
-            buffer.AppendLine();
-
-            // Actual text
-            buffer.AppendLine(caption.Text);
+            buffer
+                // Line number
+                .AppendLine((i + 1).ToString())
+                // Time start --> time end
+                .Append(caption.Offset.ToLongString(CultureInfo.InvariantCulture))
+                .Append(" --> ")
+                .Append((caption.Offset + caption.Duration).ToLongString(CultureInfo.InvariantCulture))
+                .AppendLine()
+                // Content
+                .AppendLine(caption.Text);
 
             await writer.WriteLineAsync(buffer.ToString());
+            buffer.Clear();
+
             progress?.Report((i + 1.0) / track.Captions.Count);
         }
     }

@@ -44,17 +44,17 @@ internal partial class Converter
         foreach (var subtitleInput in subtitleInputs)
             arguments.Add("-i").Add(subtitleInput.FilePath);
 
-        // Input mapping
+        // Explicitly specify that all inputs should be used, because by default
+        // FFmpeg only picks one input per stream type (audio, video, subtitle).
         for (var i = 0; i < streamInputs.Count + subtitleInputs.Count; i++)
             arguments.Add("-map").Add(i);
 
-        // Format
-        arguments.Add("-f").Add(container.Name);
+        // Output format and encoding preset
+        arguments
+            .Add("-f").Add(container.Name)
+            .Add("-preset").Add(_preset);
 
-        // Preset
-        arguments.Add("-preset").Add(_preset);
-
-        // Avoid transcoding where possible
+        // Avoid transcoding inputs that have the same container as the output
         {
             var lastAudioStreamIndex = 0;
             var lastVideoStreamIndex = 0;
@@ -88,11 +88,12 @@ internal partial class Converter
             }
         }
 
-        // MP4: specify the codec for subtitles manually, otherwise they may not get injected
+        // MP4: explicitly specify the codec for subtitles, otherwise they won't get embedded
         if (container == Container.Mp4 && subtitleInputs.Any())
             arguments.Add("-c:s").Add("mov_text");
 
-        // MP3: set a constant bitrate for audio streams, otherwise the metadata may contain invalid total duration
+        // MP3: explicitly specify the bitrate for audio streams, otherwise their metadata
+        // might contain invalid total duration.
         // https://superuser.com/a/893044
         if (container == Container.Mp3)
         {
@@ -133,22 +134,24 @@ internal partial class Converter
         }
 
         // Metadata for subtitles
-        for (var i = 0; i < subtitleInputs.Count; i++)
+        foreach (var (subtitleInput, i) in subtitleInputs.WithIndex())
         {
             arguments
                 .Add($"-metadata:s:s:{i}")
-                .Add($"language={subtitleInputs[i].Info.Language.Code}")
+                .Add($"language={subtitleInput.Info.Language.Code}")
                 .Add($"-metadata:s:s:{i}")
-                .Add($"title={subtitleInputs[i].Info.Language.Name}");
+                .Add($"title={subtitleInput.Info.Language.Name}");
         }
+
+        // Enable progress reporting
+        arguments
+            // Info log level is required to extract total stream duration
+            .Add("-loglevel").Add("info")
+            .Add("-stats");
 
         // Misc settings
         arguments
             .Add("-hide_banner")
-            // Info log level is required to extract total stream duration,
-            // which is used for progress reporting.
-            .Add("-loglevel").Add("info")
-            .Add("-stats")
             .Add("-threads").Add(Environment.ProcessorCount)
             .Add("-nostdin")
             .Add("-y");
