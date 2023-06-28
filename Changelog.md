@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.2.16 (28-Jun-2023)
+
+- Fixed an issue where `ClosedCaptionClient.WriteToAsync(...)` and `ClosedCaptionClient.DownloadAsync(...)` produced invalid SRT timestamps for caption tracks that exceeded 24 hours in length.
+- [Converter] Fixed an issue where processing a video longer than 24 hours failed with an error or resulted in a deadlock.
+- [Converter] Reduced the amount of irrelevant output that is displayed as part of an error message when FFmpeg fails to process a video.
+
 ## v6.2.15 (25-May-2023)
 
 - Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed on some videos with an error saying `Could not get cipher manifest`.
