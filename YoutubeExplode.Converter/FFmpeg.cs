@@ -85,7 +85,7 @@ internal partial class FFmpeg
             {
                 // Need to extract all components separately because TimeSpan cannot directly
                 // parse a time string that is greater than 24 hours.
-                var totalDurationMatch = Regex.Match(line, @"Duration:\s(\d\d):(\d\d):(\d\d.\d+)");
+                var totalDurationMatch = Regex.Match(line, @"Duration:\s(\d+):(\d+):(\d+\.\d+)");
                 if (totalDurationMatch.Success)
                 {
                     var hours = int.Parse(totalDurationMatch.Groups[1].Value, CultureInfo.InvariantCulture);
@@ -103,7 +103,7 @@ internal partial class FFmpeg
                 return;
 
             // Extract processed stream duration
-            var processedDurationMatch = Regex.Match(line, @"time=(\d\d):(\d\d):(\d\d.\d+)");
+            var processedDurationMatch = Regex.Match(line, @"time=(\d+):(\d+):(\d+\.\d+)");
             if (processedDurationMatch.Success)
             {
                 var hours = int.Parse(processedDurationMatch.Groups[1].Value, CultureInfo.InvariantCulture);
