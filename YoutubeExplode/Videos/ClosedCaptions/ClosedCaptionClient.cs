@@ -132,6 +132,12 @@ public class ClosedCaptionClient
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        static string FormatTimestamp(TimeSpan value) =>
+            Math.Floor(value.TotalHours).ToString("00", CultureInfo.InvariantCulture) + ':' +
+            value.Minutes.ToString("00", CultureInfo.InvariantCulture) + ':' +
+            value.Seconds.ToString("00", CultureInfo.InvariantCulture) + ',' +
+            value.Milliseconds.ToString("000", CultureInfo.InvariantCulture);
+
         // Would be better to use GetClosedCaptionsAsync(...) instead for streaming,
         // but we need the total number of captions to report progress.
         var track = await GetAsync(trackInfo, cancellationToken);
@@ -143,11 +149,11 @@ public class ClosedCaptionClient
 
             buffer
                 // Line number
-                .AppendLine((i + 1).ToString())
+                .AppendLine((i + 1).ToString(CultureInfo.InvariantCulture))
                 // Time start --> time end
-                .Append(caption.Offset.ToLongString(CultureInfo.InvariantCulture))
+                .Append(FormatTimestamp(caption.Offset))
                 .Append(" --> ")
-                .Append((caption.Offset + caption.Duration).ToLongString(CultureInfo.InvariantCulture))
+                .Append(FormatTimestamp(caption.Offset + caption.Duration))
                 .AppendLine()
                 // Content
                 .AppendLine(caption.Text);
