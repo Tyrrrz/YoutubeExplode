@@ -37,7 +37,7 @@ public class YoutubeClient
     /// </summary>
     public YoutubeClient(HttpClient http)
     {
-        var youtubeHttp = new HttpClient(new YoutubeHttpMessageHandler(http), true);
+        var youtubeHttp = new HttpClient(new YoutubeHttpHandler(http), true);
 
         Videos = new VideoClient(youtubeHttp);
         Playlists = new PlaylistClient(youtubeHttp);

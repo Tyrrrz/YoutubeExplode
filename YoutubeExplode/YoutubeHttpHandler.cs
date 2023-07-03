@@ -8,11 +8,12 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode;
 
-internal class YoutubeHttpMessageHandler : HttpMessageHandler
+internal class YoutubeHttpHandler : ClientWrappingHttpHandler
 {
-    private readonly HttpClient _http;
-
-    public YoutubeHttpMessageHandler(HttpClient http) => _http = http;
+    public YoutubeHttpHandler(HttpClient http, bool disposeClient = false)
+        : base(http, disposeClient)
+    {
+    }
 
     private async ValueTask<HttpResponseMessage> SendCoreAsync(
         HttpRequestMessage request,
@@ -57,11 +58,7 @@ internal class YoutubeHttpMessageHandler : HttpMessageHandler
         // Set required cookies
         request.Headers.Add("Cookie", "CONSENT=YES+cb; YSC=DwKYllHNwuw");
 
-        var response = await _http.SendAsync(
-            request,
-            HttpCompletionOption.ResponseHeadersRead,
-            cancellationToken
-        );
+        var response = await base.SendAsync(request, cancellationToken);
 
         // Special case check for rate limiting errors
         if ((int)response.StatusCode == 429)
