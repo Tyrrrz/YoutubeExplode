@@ -8,6 +8,9 @@ namespace YoutubeExplode.Tests;
 public class PlaylistIdSpecs
 {
     [Theory]
+    [InlineData("WL")]
+    [InlineData("LL")]
+    [InlineData("RDMM")]
     [InlineData("PL601B2E69B03FAB9D")]
     [InlineData("PLI5YfMzCfRtZ8eV576YoY3vIYrHjyVm_e")]
     [InlineData("PLWwAypAcFRgKFlxtLbn_u14zddtDJj3mk")]
@@ -48,7 +51,6 @@ public class PlaylistIdSpecs
     [InlineData("PLm_3vnTS-pvmZFuF L1Pyhqf8kTTYVKjW")]
     [InlineData("PLm_3vnTS-pvmZFuF3L=Pyhqf8kTTYVKjW")]
     [InlineData("youtube.com/playlist?lisp=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H")]
-    [InlineData("youtube.com/playlist?list=asd")]
     [InlineData("youtube.com/")]
     public void I_cannot_parse_a_playlist_ID_from_an_invalid_string(string playlistIdOrUrl)
     {

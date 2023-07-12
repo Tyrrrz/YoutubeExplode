@@ -25,9 +25,8 @@ public readonly partial struct PlaylistId
 public partial struct PlaylistId
 {
     private static bool IsValid(string playlistId) =>
-        // "Watch later" and "My mix" playlists are special
-        playlistId is "WL" or "RDMM" ||
-        playlistId.Length >= 13 &&
+        // Playlist IDs vary greatly in length, but they are at least 2 characters long
+        playlistId.Length >= 2 &&
         playlistId.All(c => char.IsLetterOrDigit(c) || c is '_' or '-');
 
     private static string? TryNormalize(string? playlistIdOrUrl)
