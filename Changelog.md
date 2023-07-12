@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.2.17 (12-Jul-2023)
+
+- Changed the implementation of the `HttpMessageHandler` used by default in `YoutubeClient` from `HttpClientHandler` to `SocketsHttpHandler` on platforms that support it.
+- Fixed an issue where certain system playlist IDs were considered invalid, such as `LL`.
+
 ## v6.2.16 (28-Jun-2023)
 
 - Fixed an issue where `ClosedCaptionClient.WriteToAsync(...)` and `ClosedCaptionClient.DownloadAsync(...)` produced invalid SRT timestamps for caption tracks that exceeded 24 hours in length.
