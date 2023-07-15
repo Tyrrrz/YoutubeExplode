@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Playlists;
@@ -35,9 +38,12 @@ public class YoutubeClient
     /// <summary>
     /// Initializes an instance of <see cref="YoutubeClient" />.
     /// </summary>
-    public YoutubeClient(HttpClient http)
+    public YoutubeClient(HttpClient http, IReadOnlyList<Cookie> initialCookies)
     {
-        var youtubeHttp = new HttpClient(new YoutubeHttpHandler(http), true);
+        var youtubeHttp = new HttpClient(
+            new YoutubeHttpHandler(http, initialCookies),
+            true
+        );
 
         Videos = new VideoClient(youtubeHttp);
         Playlists = new PlaylistClient(youtubeHttp);
@@ -48,7 +54,24 @@ public class YoutubeClient
     /// <summary>
     /// Initializes an instance of <see cref="YoutubeClient" />.
     /// </summary>
-    public YoutubeClient() : this(Http.Client)
+    public YoutubeClient(HttpClient http)
+        : this(http, Array.Empty<Cookie>())
+    {
+    }
+
+    /// <summary>
+    /// Initializes an instance of <see cref="YoutubeClient" />.
+    /// </summary>
+    public YoutubeClient(IReadOnlyList<Cookie> initialCookies)
+        : this(Http.Client, initialCookies)
+    {
+    }
+
+    /// <summary>
+    /// Initializes an instance of <see cref="YoutubeClient" />.
+    /// </summary>
+    public YoutubeClient()
+        : this(Http.Client)
     {
     }
 }
