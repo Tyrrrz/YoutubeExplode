@@ -127,8 +127,8 @@ internal class YoutubeHttpHandler : ClientWrappingHttpHandler
         // Set cookies
         if (response.Headers.TryGetValues("Set-Cookie", out var setCookieValues))
         {
-            foreach (var setCookieHeader in setCookieValues)
-                _cookieContainer.SetCookies(response.RequestMessage.RequestUri, setCookieHeader);
+            foreach (var setCookieValue in setCookieValues)
+                _cookieContainer.SetCookies(response.RequestMessage.RequestUri, setCookieValue);
         }
 
         return response;
@@ -145,7 +145,10 @@ internal class YoutubeHttpHandler : ClientWrappingHttpHandler
                 using var clonedRequest = request.Clone();
 
                 var response = HandleResponse(
-                    await base.SendAsync(HandleRequest(clonedRequest), cancellationToken)
+                    await base.SendAsync(
+                        HandleRequest(clonedRequest),
+                        cancellationToken
+                    )
                 );
 
                 // Retry on 5XX errors
