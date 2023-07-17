@@ -13,7 +13,7 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode;
 
-internal class YoutubeHttpHandler : ClientWrappingHttpHandler
+internal class YoutubeHttpHandler : ClientDelegatingHandler
 {
     private readonly CookieContainer _cookieContainer = new();
 
