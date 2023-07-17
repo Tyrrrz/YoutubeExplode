@@ -93,8 +93,7 @@ internal class YoutubeHttpHandler : ClientWrappingHttpHandler
         }
 
         // Set cookies
-        if (!request.Headers.Contains("Cookie") &&
-            _cookieContainer.Count > 0)
+        if (!request.Headers.Contains("Cookie") && _cookieContainer.Count > 0)
         {
             request.Headers.Add("Cookie", _cookieContainer.GetCookieHeader(request.RequestUri));
         }
@@ -125,10 +124,10 @@ internal class YoutubeHttpHandler : ClientWrappingHttpHandler
         }
 
         // Set cookies
-        if (response.Headers.TryGetValues("Set-Cookie", out var setCookieValues))
+        if (response.Headers.TryGetValues("Set-Cookie", out var cookieHeaderValues))
         {
-            foreach (var setCookieValue in setCookieValues)
-                _cookieContainer.SetCookies(response.RequestMessage.RequestUri, setCookieValue);
+            foreach (var cookieHeaderValue in cookieHeaderValues)
+                _cookieContainer.SetCookies(response.RequestMessage.RequestUri, cookieHeaderValue);
         }
 
         return response;

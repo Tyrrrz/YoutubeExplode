@@ -6,9 +6,9 @@ namespace YoutubeExplode.Converter.Tests.Utils.Extensions;
 
 internal static class HttpExtensions
 {
-    public static async Task DownloadAsync(this HttpClient httpClient, string url, string filePath)
+    public static async Task DownloadAsync(this HttpClient http, string url, string filePath)
     {
-        using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
 
         await using var source = await response.Content.ReadAsStreamAsync();

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 namespace YoutubeExplode.Utils;
 
 // Used to extend an externally provided HttpClient with additional behavior
-internal class ClientWrappingHttpHandler : HttpMessageHandler
+internal abstract class ClientWrappingHttpHandler : HttpMessageHandler
 {
     private readonly HttpClient _http;
     private readonly bool _disposeClient;
 
-    public ClientWrappingHttpHandler(HttpClient http, bool disposeClient = false)
+    protected ClientWrappingHttpHandler(HttpClient http, bool disposeClient = false)
     {
         _http = http;
         _disposeClient = disposeClient;
