@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3.1 (23-Jul-2023)
+
+- Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed on some videos with an error saying `The format of value is invalid`.
+
 ## v6.3 (21-Jul-2023)
 
 - Added support for providing cookies directly to `YoutubeClient` with the help of two new constructor overloads: `new YoutubeClient(IReadOnlyList<Cookie> initialCookies)` and `new YoutubeClient(HttpClient http, IReadOnlyList<Cookie> initialCookies)`. You will still need to obtain the cookies yourself (see the [readme](https://github.com/Tyrrrz/YoutubeExplode/blob/6.3/Readme.md#authentication) for some guidance), but YoutubeExplode will take care of generating the required headers and sending them with every request.
