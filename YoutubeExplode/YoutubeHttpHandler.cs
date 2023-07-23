@@ -95,7 +95,9 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // Set cookies
         if (!request.Headers.Contains("Cookie") && _cookieContainer.Count > 0)
         {
-            request.Headers.Add("Cookie", _cookieContainer.GetCookieHeader(request.RequestUri));
+            var cookieHeaderValue = _cookieContainer.GetCookieHeader(request.RequestUri);
+            if (!string.IsNullOrWhiteSpace(cookieHeaderValue))
+                request.Headers.Add("Cookie", cookieHeaderValue);
         }
 
         // Set authorization
