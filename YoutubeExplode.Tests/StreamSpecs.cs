@@ -141,7 +141,7 @@ public class StreamSpecs
 
         foreach (var streamInfo in manifest.Streams)
         {
-            await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+            using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
             var bytesRead = await stream.ReadAsync(buffer.Memory);
 
             // Assert
@@ -219,14 +219,14 @@ public class StreamSpecs
     public async Task I_can_seek_to_a_specific_position_on_a_stream_from_a_video()
     {
         // Arrange
-        await using var buffer = new MemoryStream();
+        using var buffer = new MemoryStream();
         var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.GetAudioStreams().OrderBy(s => s.Size).First();
 
-        await using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+        using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
         stream.Seek(1000, SeekOrigin.Begin);
         await stream.CopyToAsync(buffer);
 
