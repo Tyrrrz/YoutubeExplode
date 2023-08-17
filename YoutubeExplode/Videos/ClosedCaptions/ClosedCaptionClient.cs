@@ -76,7 +76,7 @@ public class ClosedCaptionClient
             if (string.IsNullOrEmpty(text))
                 continue;
 
-            // Auto-generated captions may be missing offset or duration.
+            // Auto-generated captions may be missing offset or duration
             // https://github.com/Tyrrrz/YoutubeExplode/discussions/619
             if (captionData.Offset is not { } offset ||
                 captionData.Duration is not { } duration)
