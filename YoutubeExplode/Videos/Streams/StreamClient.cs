@@ -201,13 +201,26 @@ public class StreamClient
         // Extract streams from the DASH manifest
         if (!string.IsNullOrWhiteSpace(playerResponse.DashManifestUrl))
         {
-            var dashManifest = await _controller.GetDashManifestAsync(
-                playerResponse.DashManifestUrl,
-                cancellationToken
-            );
+            var dashManifest = default(DashManifest?);
 
-            await foreach (var streamInfo in GetStreamInfosAsync(dashManifest.Streams, cancellationToken))
-                yield return streamInfo;
+            try
+            {
+                dashManifest = await _controller.GetDashManifestAsync(
+                    playerResponse.DashManifestUrl,
+                    cancellationToken
+                );
+            }
+            // Some DASH manifest URLs return 404 for whatever reason
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/728
+            catch (HttpRequestException)
+            {
+            }
+
+            if (dashManifest is not null)
+            {
+                await foreach (var streamInfo in GetStreamInfosAsync(dashManifest.Streams, cancellationToken))
+                    yield return streamInfo;
+            }
         }
     }
 

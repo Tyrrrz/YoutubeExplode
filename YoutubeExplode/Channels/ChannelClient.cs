@@ -65,8 +65,26 @@ public class ChannelClient
     /// </summary>
     public async ValueTask<Channel> GetAsync(
         ChannelId channelId,
-        CancellationToken cancellationToken = default) =>
-        Get(await _controller.GetChannelPageAsync(channelId, cancellationToken));
+        CancellationToken cancellationToken = default)
+    {
+        // Special case for the "Movies & TV" channel, which has a custom page
+        if (channelId == "UCuVPpxrm2VAgpH3Ktln4HXg")
+        {
+            return new Channel(
+                "UCuVPpxrm2VAgpH3Ktln4HXg",
+                "Movies & TV",
+                new[]
+                {
+                    new Thumbnail(
+                        "https://www.gstatic.com/youtube/img/tvfilm/clapperboard_profile.png",
+                        new Resolution(1024, 1024)
+                    )
+                }
+            );
+        }
+
+        return Get(await _controller.GetChannelPageAsync(channelId, cancellationToken));
+    }
 
     /// <summary>
     /// Gets the metadata associated with the channel of the specified user.

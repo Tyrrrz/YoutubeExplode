@@ -73,6 +73,24 @@ public class ChannelSpecs
         channel.Thumbnails.Should().NotBeEmpty();
     }
 
+    [Theory]
+    [InlineData(ChannelIds.Normal)]
+    [InlineData(ChannelIds.Movies)]
+    public async Task I_can_get_the_metadata_of_any_available_channel(string channelId)
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var channel = await youtube.Channels.GetAsync(channelId);
+
+        // Assert
+        channel.Id.Value.Should().Be(channelId);
+        channel.Url.Should().NotBeNullOrWhiteSpace();
+        channel.Title.Should().NotBeNullOrWhiteSpace();
+        channel.Thumbnails.Should().NotBeEmpty();
+    }
+
     [Fact]
     public async Task I_can_get_videos_uploaded_by_a_channel()
     {
