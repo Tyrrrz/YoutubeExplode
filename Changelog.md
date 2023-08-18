@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.3.2 (18-Aug-2023)
+
+- Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed on videos from the "YouTube Movies & TV" system channel.
+- Fixed an issue where calling `ChannelClient.GetAsync(...)` failed on the "YouTube Movies & TV" system channel.
+
 ## v6.3.1 (23-Jul-2023)
 
 - Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed on some videos with an error saying `The format of value is invalid`.
