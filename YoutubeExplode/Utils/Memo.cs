@@ -9,10 +9,10 @@ internal static class Memo
 {
     private static class For<T>
     {
-        private static readonly ConditionalWeakTable<object, Dictionary<int, T>> CacheManifest = new();
+        private static readonly ConditionalWeakTable<object, Dictionary<int, T>> CachesByOwner = new();
 
         public static Dictionary<int, T> GetCache(object owner) =>
-            CacheManifest.GetOrCreateValue(owner);
+            CachesByOwner.GetOrCreateValue(owner);
     }
 
     public static T Cache<T>(object owner, Func<T> getValue)
