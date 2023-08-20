@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Lazy;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -13,105 +14,72 @@ internal partial class PlayerResponse
 {
     private readonly JsonElement _content;
 
-    private JsonElement? Playability => Memo.Cache(this, () =>
-        _content.GetPropertyOrNull("playabilityStatus")
-    );
+    [Lazy]
+    private JsonElement? Playability => _content.GetPropertyOrNull("playabilityStatus");
 
-    private string? PlayabilityStatus => Memo.Cache(this, () =>
-        Playability?
-            .GetPropertyOrNull("status")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    private string? PlayabilityStatus => Playability?.GetPropertyOrNull("status")?.GetStringOrNull();
 
-    public string? PlayabilityError => Memo.Cache(this, () =>
-        Playability?
-            .GetPropertyOrNull("reason")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? PlayabilityError => Playability?.GetPropertyOrNull("reason")?.GetStringOrNull();
 
-    public bool IsAvailable => Memo.Cache(this, () =>
+    [Lazy]
+    public bool IsAvailable =>
         !string.Equals(PlayabilityStatus, "error", StringComparison.OrdinalIgnoreCase) &&
-        Details is not null
-    );
+        Details is not null;
 
-    public bool IsPlayable => Memo.Cache(this, () =>
-        string.Equals(PlayabilityStatus, "ok", StringComparison.OrdinalIgnoreCase)
-    );
+    [Lazy]
+    public bool IsPlayable => string.Equals(PlayabilityStatus, "ok", StringComparison.OrdinalIgnoreCase);
 
-    private JsonElement? Details => Memo.Cache(this, () =>
-        _content.GetPropertyOrNull("videoDetails")
-    );
+    [Lazy]
+    private JsonElement? Details => _content.GetPropertyOrNull("videoDetails");
 
-    public string? Title => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("title")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? Title => Details?.GetPropertyOrNull("title")?.GetStringOrNull();
 
-    public string? ChannelId => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("channelId")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? ChannelId => Details?.GetPropertyOrNull("channelId")?.GetStringOrNull();
 
-    public string? Author => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("author")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? Author => Details?.GetPropertyOrNull("author")?.GetStringOrNull();
 
-    public DateTimeOffset? UploadDate => Memo.Cache(this, () =>
-        _content
-            .GetPropertyOrNull("microformat")?
-            .GetPropertyOrNull("playerMicroformatRenderer")?
-            .GetPropertyOrNull("uploadDate")?
-            .GetDateTimeOffset()
-    );
+    [Lazy]
+    public DateTimeOffset? UploadDate => _content
+        .GetPropertyOrNull("microformat")?
+        .GetPropertyOrNull("playerMicroformatRenderer")?
+        .GetPropertyOrNull("uploadDate")?
+        .GetDateTimeOffset();
 
-    public TimeSpan? Duration => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("lengthSeconds")?
-            .GetStringOrNull()?
-            .ParseDoubleOrNull()?
-            .Pipe(TimeSpan.FromSeconds)
-    );
+    [Lazy]
+    public TimeSpan? Duration => Details?
+        .GetPropertyOrNull("lengthSeconds")?
+        .GetStringOrNull()?
+        .ParseDoubleOrNull()?
+        .Pipe(TimeSpan.FromSeconds);
 
-    public IReadOnlyList<ThumbnailData> Thumbnails => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("thumbnail")?
-            .GetPropertyOrNull("thumbnails")?
-            .EnumerateArrayOrNull()?
-            .Select(j => new ThumbnailData(j))
-            .ToArray() ??
+    [Lazy]
+    public IReadOnlyList<ThumbnailData> Thumbnails => Details?
+        .GetPropertyOrNull("thumbnail")?
+        .GetPropertyOrNull("thumbnails")?
+        .EnumerateArrayOrNull()?
+        .Select(j => new ThumbnailData(j))
+        .ToArray() ?? Array.Empty<ThumbnailData>();
 
-        Array.Empty<ThumbnailData>()
-    );
+    public IReadOnlyList<string> Keywords => Details?
+        .GetPropertyOrNull("keywords")?
+        .EnumerateArrayOrNull()?
+        .Select(j => j.GetStringOrNull())
+        .WhereNotNull()
+        .ToArray() ?? Array.Empty<string>();
 
-    public IReadOnlyList<string> Keywords => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("keywords")?
-            .EnumerateArrayOrNull()?
-            .Select(j => j.GetStringOrNull())
-            .WhereNotNull()
-            .ToArray() ??
+    [Lazy]
+    public string? Description => Details?.GetPropertyOrNull("shortDescription")?.GetStringOrNull();
 
-        Array.Empty<string>()
-    );
+    [Lazy]
+    public long? ViewCount => Details?.GetPropertyOrNull("viewCount")?.GetStringOrNull()?.ParseLongOrNull();
 
-    public string? Description => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("shortDescription")?
-            .GetStringOrNull()
-    );
-
-    public long? ViewCount => Memo.Cache(this, () =>
-        Details?
-            .GetPropertyOrNull("viewCount")?
-            .GetStringOrNull()?
-            .ParseLongOrNull()
-    );
-
-    public string? PreviewVideoId => Memo.Cache(this, () =>
+    [Lazy]
+    public string? PreviewVideoId =>
         Playability?
             .GetPropertyOrNull("errorScreen")?
             .GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")?
@@ -140,59 +108,52 @@ internal partial class PlayerResponse
             .Pipe(Convert.FromBase64String)
             .Pipe(Encoding.UTF8.GetString)
             .Pipe(s => Regex.Match(s, @"video_id=(.{11})").Groups[1].Value)
-            .NullIfWhiteSpace()
-    );
+            .NullIfWhiteSpace();
 
-    private JsonElement? StreamingData => Memo.Cache(this, () =>
-        _content.GetPropertyOrNull("streamingData")
-    );
+    [Lazy]
+    private JsonElement? StreamingData => _content.GetPropertyOrNull("streamingData");
 
-    public string? DashManifestUrl => Memo.Cache(this, () =>
-        StreamingData?
-            .GetPropertyOrNull("dashManifestUrl")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? DashManifestUrl => StreamingData?.GetPropertyOrNull("dashManifestUrl")?.GetStringOrNull();
 
-    public string? HlsManifestUrl => Memo.Cache(this, () =>
-        StreamingData?
-            .GetPropertyOrNull("hlsManifestUrl")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? HlsManifestUrl => StreamingData?.GetPropertyOrNull("hlsManifestUrl")?.GetStringOrNull();
 
-    public IReadOnlyList<IStreamData> Streams => Memo.Cache(this, () =>
+    [Lazy]
+    public IReadOnlyList<IStreamData> Streams
     {
-        var result = new List<IStreamData>();
+        get
+        {
+            var result = new List<IStreamData>();
 
-        var muxedStreams = StreamingData?
-            .GetPropertyOrNull("formats")?
-            .EnumerateArrayOrNull()?
-            .Select(j => new StreamData(j));
+            var muxedStreams = StreamingData?
+                .GetPropertyOrNull("formats")?
+                .EnumerateArrayOrNull()?
+                .Select(j => new StreamData(j));
 
-        if (muxedStreams is not null)
-            result.AddRange(muxedStreams);
+            if (muxedStreams is not null)
+                result.AddRange(muxedStreams);
 
-        var adaptiveStreams = StreamingData?
-            .GetPropertyOrNull("adaptiveFormats")?
-            .EnumerateArrayOrNull()?
-            .Select(j => new StreamData(j));
+            var adaptiveStreams = StreamingData?
+                .GetPropertyOrNull("adaptiveFormats")?
+                .EnumerateArrayOrNull()?
+                .Select(j => new StreamData(j));
 
-        if (adaptiveStreams is not null)
-            result.AddRange(adaptiveStreams);
+            if (adaptiveStreams is not null)
+                result.AddRange(adaptiveStreams);
 
-        return result;
-    });
+            return result;
+        }
+    }
 
-    public IReadOnlyList<ClosedCaptionTrackData> ClosedCaptionTracks => Memo.Cache(this, () =>
-        _content
-            .GetPropertyOrNull("captions")?
-            .GetPropertyOrNull("playerCaptionsTracklistRenderer")?
-            .GetPropertyOrNull("captionTracks")?
-            .EnumerateArrayOrNull()?
-            .Select(j => new ClosedCaptionTrackData(j))
-            .ToArray() ??
-
-        Array.Empty<ClosedCaptionTrackData>()
-    );
+    [Lazy]
+    public IReadOnlyList<ClosedCaptionTrackData> ClosedCaptionTracks => _content
+        .GetPropertyOrNull("captions")?
+        .GetPropertyOrNull("playerCaptionsTracklistRenderer")?
+        .GetPropertyOrNull("captionTracks")?
+        .EnumerateArrayOrNull()?
+        .Select(j => new ClosedCaptionTrackData(j))
+        .ToArray() ?? Array.Empty<ClosedCaptionTrackData>();
 
     public PlayerResponse(JsonElement content) => _content = content;
 }
@@ -203,19 +164,14 @@ internal partial class PlayerResponse
     {
         private readonly JsonElement _content;
 
-        public string? Url => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("baseUrl")?
-                .GetStringOrNull()
-        );
+        [Lazy]
+        public string? Url => _content.GetPropertyOrNull("baseUrl")?.GetStringOrNull();
 
-        public string? LanguageCode => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("languageCode")?
-                .GetStringOrNull()
-        );
+        [Lazy]
+        public string? LanguageCode => _content.GetPropertyOrNull("languageCode")?.GetStringOrNull();
 
-        public string? LanguageName => Memo.Cache(this, () =>
+        [Lazy]
+        public string? LanguageName =>
             _content
                 .GetPropertyOrNull("name")?
                 .GetPropertyOrNull("simpleText")?
@@ -227,15 +183,13 @@ internal partial class PlayerResponse
                 .EnumerateArrayOrNull()?
                 .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
-                .ConcatToString()
-        );
+                .ConcatToString();
 
-        public bool IsAutoGenerated => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("vssId")?
-                .GetStringOrNull()?
-                .StartsWith("a.", StringComparison.OrdinalIgnoreCase) ?? false
-        );
+        [Lazy]
+        public bool IsAutoGenerated => _content
+            .GetPropertyOrNull("vssId")?
+            .GetStringOrNull()?
+            .StartsWith("a.", StringComparison.OrdinalIgnoreCase) ?? false;
 
         public ClosedCaptionTrackData(JsonElement content) => _content = content;
     }
@@ -247,13 +201,11 @@ internal partial class PlayerResponse
     {
         private readonly JsonElement _content;
 
-        public int? Itag => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("itag")?
-                .GetInt32OrNull()
-        );
+        [Lazy]
+        public int? Itag => _content.GetPropertyOrNull("itag")?.GetInt32OrNull();
 
-        private IReadOnlyDictionary<string, string>? CipherData => Memo.Cache(this, () =>
+        [Lazy]
+        private IReadOnlyDictionary<string, string>? CipherData =>
             _content
                 .GetPropertyOrNull("cipher")?
                 .GetStringOrNull()?
@@ -262,26 +214,21 @@ internal partial class PlayerResponse
             _content
                 .GetPropertyOrNull("signatureCipher")?
                 .GetStringOrNull()?
-                .Pipe(UrlEx.GetQueryParameters)
-        );
+                .Pipe(UrlEx.GetQueryParameters);
 
-        public string? Url => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("url")?
-                .GetStringOrNull() ??
+        [Lazy]
+        public string? Url =>
+            _content.GetPropertyOrNull("url")?.GetStringOrNull() ??
+            CipherData?.GetValueOrDefault("url");
 
-            CipherData?.GetValueOrDefault("url")
-        );
+        [Lazy]
+        public string? Signature => CipherData?.GetValueOrDefault("s");
 
-        public string? Signature => Memo.Cache(this, () =>
-            CipherData?.GetValueOrDefault("s")
-        );
+        [Lazy]
+        public string? SignatureParameter => CipherData?.GetValueOrDefault("sp");
 
-        public string? SignatureParameter => Memo.Cache(this, () =>
-            CipherData?.GetValueOrDefault("sp")
-        );
-
-        public long? ContentLength => Memo.Cache(this, () =>
+        [Lazy]
+        public long? ContentLength =>
             _content
                 .GetPropertyOrNull("contentLength")?
                 .GetStringOrNull()?
@@ -290,79 +237,56 @@ internal partial class PlayerResponse
             Url?
                 .Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))?
                 .NullIfWhiteSpace()?
-                .ParseLongOrNull()
-        );
+                .ParseLongOrNull();
 
-        public long? Bitrate => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("bitrate")?
-                .GetInt64OrNull()
-        );
+        [Lazy]
+        public long? Bitrate => _content.GetPropertyOrNull("bitrate")?.GetInt64OrNull();
 
-        private string? MimeType => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("mimeType")?
-                .GetStringOrNull()
-        );
+        [Lazy]
+        private string? MimeType => _content.GetPropertyOrNull("mimeType")?.GetStringOrNull();
 
-        public string? Container => Memo.Cache(this, () =>
-            MimeType?
-                .SubstringUntil(";")
-                .SubstringAfter("/")
-        );
+        [Lazy]
+        public string? Container => MimeType?.SubstringUntil(";").SubstringAfter("/");
 
-        private bool IsAudioOnly => Memo.Cache(this, () =>
-            MimeType?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false
-        );
+        [Lazy]
+        private bool IsAudioOnly => MimeType?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false;
 
-        public string? Codecs => Memo.Cache(this, () =>
-            MimeType?
-                .SubstringAfter("codecs=\"")
-                .SubstringUntil("\"")
-        );
+        [Lazy]
+        public string? Codecs => MimeType?.SubstringAfter("codecs=\"").SubstringUntil("\"");
 
-        public string? AudioCodec => Memo.Cache(this, () =>
-            IsAudioOnly
-                ? Codecs
-                : Codecs?.SubstringAfter(", ").NullIfWhiteSpace()
-        );
+        [Lazy]
+        public string? AudioCodec => IsAudioOnly
+            ? Codecs
+            : Codecs?.SubstringAfter(", ").NullIfWhiteSpace();
 
-        public string? VideoCodec => Memo.Cache(this, () =>
+        [Lazy]
+        public string? VideoCodec
         {
-            var codec = IsAudioOnly
-                ? null
-                : Codecs?.SubstringUntil(", ").NullIfWhiteSpace();
+            get
+            {
+                var codec = IsAudioOnly
+                    ? null
+                    : Codecs?.SubstringUntil(", ").NullIfWhiteSpace();
 
-            // "unknown" value indicates av01 codec
-            if (string.Equals(codec, "unknown", StringComparison.OrdinalIgnoreCase))
-                return "av01.0.05M.08";
+                // "unknown" value indicates av01 codec
+                if (string.Equals(codec, "unknown", StringComparison.OrdinalIgnoreCase))
+                    return "av01.0.05M.08";
 
-            return codec;
-        });
+                return codec;
+            }
+        }
 
-        public string? VideoQualityLabel => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("qualityLabel")?
-                .GetStringOrNull()
-        );
+        [Lazy]
+        public string? VideoQualityLabel => _content.GetPropertyOrNull("qualityLabel")?.GetStringOrNull();
 
-        public int? VideoWidth => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("width")?
-                .GetInt32OrNull()
-        );
+        [Lazy]
+        public int? VideoWidth => _content.GetPropertyOrNull("width")?.GetInt32OrNull();
 
-        public int? VideoHeight => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("height")?
-                .GetInt32OrNull()
-        );
+        [Lazy]
+        public int? VideoHeight => _content.GetPropertyOrNull("height")?.GetInt32OrNull();
 
-        public int? VideoFramerate => Memo.Cache(this, () =>
-            _content
-                .GetPropertyOrNull("fps")?
-                .GetInt32OrNull()
-        );
+        [Lazy]
+        public int? VideoFramerate => _content.GetPropertyOrNull("fps")?.GetInt32OrNull();
 
         public StreamData(JsonElement content) => _content = content;
     }

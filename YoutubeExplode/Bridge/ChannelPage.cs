@@ -1,5 +1,6 @@
 using System;
 using AngleSharp.Html.Dom;
+using Lazy;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -9,27 +10,21 @@ internal partial class ChannelPage
 {
     private readonly IHtmlDocument _content;
 
-    public string? Url => Memo.Cache(this, () =>
-        _content
-            .QuerySelector("meta[property=\"og:url\"]")?
-            .GetAttribute("content")
-    );
+    [Lazy]
+    public string? Url => _content.QuerySelector("meta[property=\"og:url\"]")?.GetAttribute("content");
 
-    public string? Id => Memo.Cache(this, () =>
-        Url?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase)
-    );
+    [Lazy]
+    public string? Id => Url?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase);
 
-    public string? Title => Memo.Cache(this, () =>
-        _content
-            .QuerySelector("meta[property=\"og:title\"]")?
-            .GetAttribute("content")
-    );
+    [Lazy]
+    public string? Title => _content
+        .QuerySelector("meta[property=\"og:title\"]")?
+        .GetAttribute("content");
 
-    public string? LogoUrl => Memo.Cache(this, () =>
-        _content
-            .QuerySelector("meta[property=\"og:image\"]")?
-            .GetAttribute("content")
-    );
+    [Lazy]
+    public string? LogoUrl => _content
+        .QuerySelector("meta[property=\"og:image\"]")?
+        .GetAttribute("content");
 
     public ChannelPage(IHtmlDocument content) => _content = content;
 }

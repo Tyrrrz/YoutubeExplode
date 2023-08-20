@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Lazy;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -11,32 +12,29 @@ internal partial class PlaylistBrowseResponse : IPlaylistData
 {
     private readonly JsonElement _content;
 
-    private JsonElement? Sidebar => Memo.Cache(this, () =>
-        _content
-            .GetPropertyOrNull("sidebar")?
-            .GetPropertyOrNull("playlistSidebarRenderer")?
-            .GetPropertyOrNull("items")
-    );
+    [Lazy]
+    private JsonElement? Sidebar => _content
+        .GetPropertyOrNull("sidebar")?
+        .GetPropertyOrNull("playlistSidebarRenderer")?
+        .GetPropertyOrNull("items");
 
-    private JsonElement? SidebarPrimary => Memo.Cache(this, () =>
-        Sidebar?
-            .EnumerateArrayOrNull()?
-            .ElementAtOrNull(0)?
-            .GetPropertyOrNull("playlistSidebarPrimaryInfoRenderer")
-    );
+    [Lazy]
+    private JsonElement? SidebarPrimary => Sidebar?
+        .EnumerateArrayOrNull()?
+        .ElementAtOrNull(0)?
+        .GetPropertyOrNull("playlistSidebarPrimaryInfoRenderer");
 
-    private JsonElement? SidebarSecondary => Memo.Cache(this, () =>
-        Sidebar?
-            .EnumerateArrayOrNull()?
-            .ElementAtOrNull(1)?
-            .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer")
-    );
+    [Lazy]
+    private JsonElement? SidebarSecondary => Sidebar?
+        .EnumerateArrayOrNull()?
+        .ElementAtOrNull(1)?
+        .GetPropertyOrNull("playlistSidebarSecondaryInfoRenderer");
 
-    public bool IsAvailable => Memo.Cache(this, () =>
-        Sidebar is not null
-    );
+    [Lazy]
+    public bool IsAvailable => Sidebar is not null;
 
-    public string? Title => Memo.Cache(this, () =>
+    [Lazy]
+    public string? Title =>
         SidebarPrimary?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -48,16 +46,15 @@ internal partial class PlaylistBrowseResponse : IPlaylistData
             .EnumerateArrayOrNull()?
             .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
-            .ConcatToString()
-    );
+            .ConcatToString();
 
-    private JsonElement? AuthorDetails => Memo.Cache(this, () =>
-        SidebarSecondary?
-            .GetPropertyOrNull("videoOwner")?
-            .GetPropertyOrNull("videoOwnerRenderer")
-    );
+    [Lazy]
+    private JsonElement? AuthorDetails => SidebarSecondary?
+        .GetPropertyOrNull("videoOwner")?
+        .GetPropertyOrNull("videoOwnerRenderer");
 
-    public string? Author => Memo.Cache(this, () =>
+    [Lazy]
+    public string? Author =>
         AuthorDetails?
             .GetPropertyOrNull("title")?
             .GetPropertyOrNull("simpleText")?
@@ -69,18 +66,17 @@ internal partial class PlaylistBrowseResponse : IPlaylistData
             .EnumerateArrayOrNull()?
             .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
-            .ConcatToString()
-    );
+            .ConcatToString();
 
-    public string? ChannelId => Memo.Cache(this, () =>
-        AuthorDetails?
-            .GetPropertyOrNull("navigationEndpoint")?
-            .GetPropertyOrNull("browseEndpoint")?
-            .GetPropertyOrNull("browseId")?
-            .GetStringOrNull()
-    );
+    [Lazy]
+    public string? ChannelId => AuthorDetails?
+        .GetPropertyOrNull("navigationEndpoint")?
+        .GetPropertyOrNull("browseEndpoint")?
+        .GetPropertyOrNull("browseId")?
+        .GetStringOrNull();
 
-    public string? Description => Memo.Cache(this, () =>
+    [Lazy]
+    public string? Description =>
         SidebarPrimary?
             .GetPropertyOrNull("description")?
             .GetPropertyOrNull("simpleText")?
@@ -92,10 +88,10 @@ internal partial class PlaylistBrowseResponse : IPlaylistData
             .EnumerateArrayOrNull()?
             .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
-            .ConcatToString()
-    );
+            .ConcatToString();
 
-    public IReadOnlyList<ThumbnailData> Thumbnails => Memo.Cache(this, () =>
+    [Lazy]
+    public IReadOnlyList<ThumbnailData> Thumbnails =>
         SidebarPrimary?
             .GetPropertyOrNull("thumbnailRenderer")?
             .GetPropertyOrNull("playlistVideoThumbnailRenderer")?
@@ -114,8 +110,7 @@ internal partial class PlaylistBrowseResponse : IPlaylistData
             .Select(j => new ThumbnailData(j))
             .ToArray() ??
 
-        Array.Empty<ThumbnailData>()
-    );
+        Array.Empty<ThumbnailData>();
 
     public PlaylistBrowseResponse(JsonElement content) => _content = content;
 }
