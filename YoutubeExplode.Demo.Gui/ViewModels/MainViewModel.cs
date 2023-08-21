@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
@@ -160,17 +161,17 @@ public class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         PullDataCommand = new RelayCommand(
-            PullData,
+            () => _ = PullDataAsync(),
             () => !IsBusy && !string.IsNullOrWhiteSpace(Query)
         );
 
         DownloadStreamCommand = new RelayCommand<IStreamInfo>(
-            DownloadStream,
+            s => _ = DownloadStreamAsync(s),
             _ => !IsBusy
         );
 
         DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(
-            DownloadClosedCaptionTrack,
+            c => _ = DownloadClosedCaptionTrackAsync(c),
             _ => !IsBusy
         );
     }
@@ -196,7 +197,7 @@ public class MainViewModel : ViewModelBase
         return dialog.ShowDialog() == true ? dialog.FileName : null;
     }
 
-    private async void PullData()
+    private async Task PullDataAsync()
     {
         if (IsBusy || string.IsNullOrWhiteSpace(Query))
             return;
@@ -258,7 +259,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private async void DownloadStream(IStreamInfo streamInfo)
+    private async Task DownloadStreamAsync(IStreamInfo streamInfo)
     {
         if (IsBusy || Video is null)
             return;
@@ -295,7 +296,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private async void DownloadClosedCaptionTrack(ClosedCaptionTrackInfo trackInfo)
+    private async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo trackInfo)
     {
         if (IsBusy || Video is null)
             return;
