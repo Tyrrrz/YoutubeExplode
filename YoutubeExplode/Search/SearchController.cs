@@ -24,7 +24,6 @@ internal class SearchController
         )
         {
             Content = new StringContent(
-                // lang=json
                 $$"""
                 {
                     "query": "{{searchQuery}}",
