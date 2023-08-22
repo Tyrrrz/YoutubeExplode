@@ -160,18 +160,18 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        PullDataCommand = new RelayCommand(
-            () => _ = PullDataAsync(),
+        PullDataCommand = new AsyncRelayCommand(
+            PullDataAsync,
             () => !IsBusy && !string.IsNullOrWhiteSpace(Query)
         );
 
-        DownloadStreamCommand = new RelayCommand<IStreamInfo>(
-            s => _ = DownloadStreamAsync(s),
+        DownloadStreamCommand = new AsyncRelayCommand<IStreamInfo>(
+            DownloadStreamAsync,
             _ => !IsBusy
         );
 
-        DownloadClosedCaptionTrackCommand = new RelayCommand<ClosedCaptionTrackInfo>(
-            c => _ = DownloadClosedCaptionTrackAsync(c),
+        DownloadClosedCaptionTrackCommand = new AsyncRelayCommand<ClosedCaptionTrackInfo>(
+            DownloadClosedCaptionTrackAsync,
             _ => !IsBusy
         );
     }
