@@ -16,9 +16,13 @@ internal class PlaylistController
     // Works only with user-made playlists
     public async ValueTask<PlaylistBrowseResponse> GetPlaylistBrowseResponseAsync(
         PlaylistId playlistId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/browse")
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/browse"
+        )
         {
             Content = new StringContent(
                 // lang=json
@@ -58,11 +62,15 @@ internal class PlaylistController
         VideoId? videoId = null,
         int index = 0,
         string? visitorData = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        for (var retriesRemaining = 5;; retriesRemaining--)
+        for (var retriesRemaining = 5; ; retriesRemaining--)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/next")
+            using var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                "https://www.youtube.com/youtubei/v1/next"
+            )
             {
                 Content = new StringContent(
                     // lang=json
@@ -100,7 +108,9 @@ internal class PlaylistController
                 if (index > 0 && !string.IsNullOrWhiteSpace(visitorData) && retriesRemaining > 0)
                     continue;
 
-                throw new PlaylistUnavailableException($"Playlist '{playlistId}' is not available.");
+                throw new PlaylistUnavailableException(
+                    $"Playlist '{playlistId}' is not available."
+                );
             }
 
             return playlistResponse;
@@ -109,7 +119,8 @@ internal class PlaylistController
 
     public async ValueTask<IPlaylistData> GetPlaylistResponseAsync(
         PlaylistId playlistId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         try
         {

@@ -22,8 +22,14 @@ public class ChannelSlugSpecs
     [Theory]
     [InlineData("youtube.com/c/Tyrrrz", "Tyrrrz")]
     [InlineData("youtube.com/c/BlenderFoundation", "BlenderFoundation")]
-    [InlineData("youtube.com/c/%D0%9C%D0%B5%D0%BB%D0%B0%D0%BD%D1%96%D1%8F%D0%9F%D0%BE%D0%B4%D0%BE%D0%BB%D1%8F%D0%BA", "МеланіяПодоляк")]
-    public void I_can_parse_a_channel_slug_from_a_URL_string(string channelUrl, string expectedChannelSlug)
+    [InlineData(
+        "youtube.com/c/%D0%9C%D0%B5%D0%BB%D0%B0%D0%BD%D1%96%D1%8F%D0%9F%D0%BE%D0%B4%D0%BE%D0%BB%D1%8F%D0%BA",
+        "МеланіяПодоляк"
+    )]
+    public void I_can_parse_a_channel_slug_from_a_URL_string(
+        string channelUrl,
+        string expectedChannelSlug
+    )
     {
         // Act
         var parsed = ChannelSlug.Parse(channelUrl);

@@ -32,7 +32,8 @@ internal partial class Converter
         IReadOnlyList<StreamInput> streamInputs,
         IReadOnlyList<SubtitleInput> subtitleInputs,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var arguments = new ArgumentsBuilder();
 
@@ -50,9 +51,7 @@ internal partial class Converter
             arguments.Add("-map").Add(i);
 
         // Output format and encoding preset
-        arguments
-            .Add("-f").Add(container.Name)
-            .Add("-preset").Add(_preset);
+        arguments.Add("-f").Add(container.Name).Add("-preset").Add(_preset);
 
         // Avoid transcoding inputs that have the same container as the output
         {
@@ -66,9 +65,7 @@ internal partial class Converter
                 {
                     if (audioStreamInfo.Container == container)
                     {
-                        arguments
-                            .Add($"-c:a:{lastAudioStreamIndex}")
-                            .Add("copy");
+                        arguments.Add($"-c:a:{lastAudioStreamIndex}").Add("copy");
                     }
 
                     lastAudioStreamIndex++;
@@ -78,9 +75,7 @@ internal partial class Converter
                 {
                     if (videoStreamInfo.Container == container)
                     {
-                        arguments
-                            .Add($"-c:v:{lastVideoStreamIndex}")
-                            .Add("copy");
+                        arguments.Add($"-c:v:{lastVideoStreamIndex}").Add("copy");
                     }
 
                     lastVideoStreamIndex++;
@@ -128,7 +123,9 @@ internal partial class Converter
                 {
                     arguments
                         .Add($"-metadata:s:v:{lastVideoStreamIndex++}")
-                        .Add($"title={videoStreamInfo.VideoQuality.Label} | {videoStreamInfo.Bitrate}");
+                        .Add(
+                            $"title={videoStreamInfo.VideoQuality.Label} | {videoStreamInfo.Bitrate}"
+                        );
                 }
             }
         }
@@ -146,13 +143,15 @@ internal partial class Converter
         // Enable progress reporting
         arguments
             // Info log level is required to extract total stream duration
-            .Add("-loglevel").Add("info")
+            .Add("-loglevel")
+            .Add("info")
             .Add("-stats");
 
         // Misc settings
         arguments
             .Add("-hide_banner")
-            .Add("-threads").Add(Environment.ProcessorCount)
+            .Add("-threads")
+            .Add(Environment.ProcessorCount)
             .Add("-nostdin")
             .Add("-y");
 
@@ -167,10 +166,13 @@ internal partial class Converter
         IReadOnlyList<IStreamInfo> streamInfos,
         ICollection<StreamInput> streamInputs,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var progressMuxer = progress?.Pipe(p => new ProgressMuxer(p));
-        var progresses = streamInfos.Select(s => progressMuxer?.CreateInput(s.Size.MegaBytes)).ToArray();
+        var progresses = streamInfos
+            .Select(s => progressMuxer?.CreateInput(s.Size.MegaBytes))
+            .ToArray();
 
         var lastIndex = 0;
 
@@ -199,10 +201,13 @@ internal partial class Converter
         IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos,
         ICollection<SubtitleInput> subtitleInputs,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var progressMuxer = progress?.Pipe(p => new ProgressMuxer(p));
-        var progresses = closedCaptionTrackInfos.Select(_ => progressMuxer?.CreateInput()).ToArray();
+        var progresses = closedCaptionTrackInfos
+            .Select(_ => progressMuxer?.CreateInput())
+            .ToArray();
 
         var lastIndex = 0;
 
@@ -232,7 +237,8 @@ internal partial class Converter
         IReadOnlyList<IStreamInfo> streamInfos,
         IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (!streamInfos.Any())
             throw new InvalidOperationException("No streams provided.");
@@ -242,9 +248,10 @@ internal partial class Converter
         var streamDownloadProgress = progressMuxer?.CreateInput();
         var subtitleDownloadProgress = progressMuxer?.CreateInput(0.01);
         var conversionProgress = progressMuxer?.CreateInput(
-            0.05 +
-            // Increase weight for each stream that needs to be transcoded
-            5 * streamInfos.Count(s => s.Container != container)
+            0.05
+                +
+                // Increase weight for each stream that needs to be transcoded
+                5 * streamInfos.Count(s => s.Container != container)
         );
 
         // Populate inputs

@@ -11,8 +11,7 @@ internal class ProgressMuxer
     private readonly Dictionary<int, double> _splitWeights = new();
     private readonly Dictionary<int, double> _splitValues = new();
 
-    public ProgressMuxer(IProgress<double> target) =>
-        _target = target;
+    public ProgressMuxer(IProgress<double> target) => _target = target;
 
     public IProgress<double> CreateInput(double weight = 1)
     {

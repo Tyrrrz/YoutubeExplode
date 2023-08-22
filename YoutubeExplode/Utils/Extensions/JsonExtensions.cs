@@ -13,9 +13,11 @@ internal static class JsonExtensions
             return null;
         }
 
-        if (element.TryGetProperty(propertyName, out var result) &&
-            result.ValueKind != JsonValueKind.Null &&
-            result.ValueKind != JsonValueKind.Undefined)
+        if (
+            element.TryGetProperty(propertyName, out var result)
+            && result.ValueKind != JsonValueKind.Null
+            && result.ValueKind != JsonValueKind.Undefined
+        )
         {
             return result;
         }
@@ -24,9 +26,7 @@ internal static class JsonExtensions
     }
 
     public static string? GetStringOrNull(this JsonElement element) =>
-        element.ValueKind == JsonValueKind.String
-            ? element.GetString()
-            : null;
+        element.ValueKind == JsonValueKind.String ? element.GetString() : null;
 
     public static int? GetInt32OrNull(this JsonElement element) =>
         element.ValueKind == JsonValueKind.Number && element.TryGetInt32(out var result)
@@ -39,24 +39,21 @@ internal static class JsonExtensions
             : null;
 
     public static JsonElement.ArrayEnumerator? EnumerateArrayOrNull(this JsonElement element) =>
-        element.ValueKind == JsonValueKind.Array
-            ? element.EnumerateArray()
-            : null;
+        element.ValueKind == JsonValueKind.Array ? element.EnumerateArray() : null;
 
     public static JsonElement.ArrayEnumerator EnumerateArrayOrEmpty(this JsonElement element) =>
         element.EnumerateArrayOrNull() ?? default;
 
     public static JsonElement.ObjectEnumerator? EnumerateObjectOrNull(this JsonElement element) =>
-        element.ValueKind == JsonValueKind.Object
-            ? element.EnumerateObject()
-            : null;
+        element.ValueKind == JsonValueKind.Object ? element.EnumerateObject() : null;
 
     public static JsonElement.ObjectEnumerator EnumerateObjectOrEmpty(this JsonElement element) =>
         element.EnumerateObjectOrNull() ?? default;
 
     public static IEnumerable<JsonElement> EnumerateDescendantProperties(
         this JsonElement element,
-        string propertyName)
+        string propertyName
+    )
     {
         // Check if this property exists on the current object
         var property = element.GetPropertyOrNull(propertyName);

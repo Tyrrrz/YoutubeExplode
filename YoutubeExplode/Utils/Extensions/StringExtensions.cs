@@ -9,26 +9,24 @@ namespace YoutubeExplode.Utils.Extensions;
 internal static class StringExtensions
 {
     public static string? NullIfWhiteSpace(this string str) =>
-        !string.IsNullOrWhiteSpace(str)
-            ? str
-            : null;
+        !string.IsNullOrWhiteSpace(str) ? str : null;
 
     public static string SubstringUntil(
         this string str,
         string sub,
-        StringComparison comparison = StringComparison.Ordinal)
+        StringComparison comparison = StringComparison.Ordinal
+    )
     {
         var index = str.IndexOf(sub, comparison);
 
-        return index < 0
-            ? str
-            : str[..index];
+        return index < 0 ? str : str[..index];
     }
 
     public static string SubstringAfter(
         this string str,
         string sub,
-        StringComparison comparison = StringComparison.Ordinal)
+        StringComparison comparison = StringComparison.Ordinal
+    )
     {
         var index = str.IndexOf(sub, comparison);
 
@@ -70,8 +68,8 @@ internal static class StringExtensions
             : null;
 
     public static int ParseInt(this string str) =>
-        ParseIntOrNull(str) ??
-        throw new FormatException($"Cannot parse integer number from string '{str}'.");
+        ParseIntOrNull(str)
+        ?? throw new FormatException($"Cannot parse integer number from string '{str}'.");
 
     public static long? ParseLongOrNull(this string str) =>
         long.TryParse(str, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
@@ -79,8 +77,12 @@ internal static class StringExtensions
             : null;
 
     public static double? ParseDoubleOrNull(this string str) =>
-        double.TryParse(str, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo,
-            out var result)
+        double.TryParse(
+            str,
+            NumberStyles.Float | NumberStyles.AllowThousands,
+            NumberFormatInfo.InvariantInfo,
+            out var result
+        )
             ? result
             : null;
 
@@ -95,7 +97,8 @@ internal static class StringExtensions
             formats,
             DateTimeFormatInfo.InvariantInfo,
             DateTimeStyles.None,
-            out var result)
+            out var result
+        )
             ? result
             : null;
 

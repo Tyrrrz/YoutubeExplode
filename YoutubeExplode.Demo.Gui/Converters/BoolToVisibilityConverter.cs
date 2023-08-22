@@ -16,11 +16,13 @@ public class BoolToVisibilityConverter : IValueConverter
             ? visibilityParameter
             : Visibility.Hidden;
 
-        return value is true
-            ? Visibility.Visible
-            : falseVisibility;
+        return value is true ? Visibility.Visible : falseVisibility;
     }
 
-    public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>
-        throw new NotSupportedException();
+    public object ConvertBack(
+        object? value,
+        Type targetType,
+        object parameter,
+        CultureInfo culture
+    ) => throw new NotSupportedException();
 }

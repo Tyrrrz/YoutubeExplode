@@ -61,7 +61,8 @@ public readonly partial struct Bitrate
     }
 
     /// <inheritdoc />
-    public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+    public override string ToString() =>
+        $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
 }
 
 public partial struct Bitrate : IComparable<Bitrate>, IEquatable<Bitrate>

@@ -11,20 +11,19 @@ internal partial class ChannelPage
     private readonly IHtmlDocument _content;
 
     [Lazy]
-    public string? Url => _content.QuerySelector("meta[property=\"og:url\"]")?.GetAttribute("content");
+    public string? Url =>
+        _content.QuerySelector("meta[property=\"og:url\"]")?.GetAttribute("content");
 
     [Lazy]
     public string? Id => Url?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase);
 
     [Lazy]
-    public string? Title => _content
-        .QuerySelector("meta[property=\"og:title\"]")?
-        .GetAttribute("content");
+    public string? Title =>
+        _content.QuerySelector("meta[property=\"og:title\"]")?.GetAttribute("content");
 
     [Lazy]
-    public string? LogoUrl => _content
-        .QuerySelector("meta[property=\"og:image\"]")?
-        .GetAttribute("content");
+    public string? LogoUrl =>
+        _content.QuerySelector("meta[property=\"og:image\"]")?.GetAttribute("content");
 
     public ChannelPage(IHtmlDocument content) => _content = content;
 }

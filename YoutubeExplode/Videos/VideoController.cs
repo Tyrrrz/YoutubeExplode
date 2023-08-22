@@ -14,9 +14,10 @@ internal class VideoController
 
     public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
         VideoId videoId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        for (var retriesRemaining = 5;; retriesRemaining--)
+        for (var retriesRemaining = 5; ; retriesRemaining--)
         {
             var watchPage = VideoWatchPage.TryParse(
                 await Http.GetStringAsync(
@@ -31,8 +32,7 @@ internal class VideoController
                     continue;
 
                 throw new YoutubeExplodeException(
-                    "Video watch page is broken. " +
-                    "Please try again in a few minutes."
+                    "Video watch page is broken. " + "Please try again in a few minutes."
                 );
             }
 
@@ -45,7 +45,8 @@ internal class VideoController
 
     public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
         VideoId videoId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         // The most optimal client to impersonate is the Android client, because
         // it doesn't require signature deciphering (for both normal and n-parameter signatures).
@@ -54,7 +55,10 @@ internal class VideoController
         // As a workaround, we're using ANDROID_TESTSUITE which appears to offer the same
         // functionality, but doesn't impose the aforementioned limitation.
         // https://github.com/Tyrrrz/YoutubeExplode/issues/705
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/player"
+        )
         {
             Content = new StringContent(
                 // lang=json
@@ -99,12 +103,16 @@ internal class VideoController
     public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
         VideoId videoId,
         string? signatureTimestamp,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         // The only client that can handle age-restricted videos without authentication is the
         // TVHTML5_SIMPLY_EMBEDDED_PLAYER client.
         // This client does require signature deciphering, so we only use it as a fallback.
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/player")
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/player"
+        )
         {
             Content = new StringContent(
                 // lang=json

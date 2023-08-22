@@ -35,13 +35,16 @@ public static class VideoStreamInfoExtensions
     /// Gets the video stream with the highest video quality (including framerate).
     /// Returns null if the sequence is empty.
     /// </summary>
-    public static IVideoStreamInfo? TryGetWithHighestVideoQuality(this IEnumerable<IVideoStreamInfo> streamInfos) =>
-        streamInfos.MaxBy(s => s.VideoQuality);
+    public static IVideoStreamInfo? TryGetWithHighestVideoQuality(
+        this IEnumerable<IVideoStreamInfo> streamInfos
+    ) => streamInfos.MaxBy(s => s.VideoQuality);
 
     /// <summary>
     /// Gets the video stream with the highest video quality (including framerate).
     /// </summary>
-    public static IVideoStreamInfo GetWithHighestVideoQuality(this IEnumerable<IVideoStreamInfo> streamInfos) =>
-        streamInfos.TryGetWithHighestVideoQuality() ??
-        throw new InvalidOperationException("Input stream collection is empty.");
+    public static IVideoStreamInfo GetWithHighestVideoQuality(
+        this IEnumerable<IVideoStreamInfo> streamInfos
+    ) =>
+        streamInfos.TryGetWithHighestVideoQuality()
+        ?? throw new InvalidOperationException("Input stream collection is empty.");
 }

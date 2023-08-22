@@ -23,7 +23,10 @@ public class ChannelIdSpecs
     [InlineData("youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ", "UC3xnGqlcL3y-GXz5N3wiTJQ")]
     [InlineData("youtube.com/channel/UCkQO3QsgTpNTsOw6ujimT5Q", "UCkQO3QsgTpNTsOw6ujimT5Q")]
     [InlineData("youtube.com/channel/UCQtjJDOYluum87LA4sI6xcg", "UCQtjJDOYluum87LA4sI6xcg")]
-    public void I_can_parse_a_channel_ID_from_a_URL_string(string channelUrl, string expectedChannelId)
+    public void I_can_parse_a_channel_ID_from_a_URL_string(
+        string channelUrl,
+        string expectedChannelId
+    )
     {
         // Act
         var parsed = ChannelId.Parse(channelUrl);

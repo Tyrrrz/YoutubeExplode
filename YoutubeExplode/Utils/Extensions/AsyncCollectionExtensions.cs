@@ -23,7 +23,8 @@ internal static class AsyncCollectionExtensions
 
     public static async IAsyncEnumerable<T> SelectManyAsync<TSource, T>(
         this IAsyncEnumerable<TSource> source,
-        Func<TSource, IEnumerable<T>> transform)
+        Func<TSource, IEnumerable<T>> transform
+    )
     {
         await foreach (var i in source)
         {

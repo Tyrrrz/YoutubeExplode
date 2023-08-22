@@ -32,7 +32,8 @@ public class PlaylistSearchResult : ISearchResult, IPlaylist
         PlaylistId id,
         string title,
         Author? author,
-        IReadOnlyList<Thumbnail> thumbnails)
+        IReadOnlyList<Thumbnail> thumbnails
+    )
     {
         Id = id;
         Title = title;

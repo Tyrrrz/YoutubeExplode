@@ -19,14 +19,14 @@ public static class FFmpeg
     public static Version Version { get; } = new(4, 4, 1);
 
     private static string FileName { get; } =
-        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? "ffmpeg.exe"
-            : "ffmpeg";
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ffmpeg.exe" : "ffmpeg";
 
-    public static string FilePath { get; } = Path.Combine(
-        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Directory.GetCurrentDirectory(),
-        FileName
-    );
+    public static string FilePath { get; } =
+        Path.Combine(
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                ?? Directory.GetCurrentDirectory(),
+            FileName
+        );
 
     private static string GetDownloadUrl()
     {
@@ -129,8 +129,10 @@ public static class FFmpeg
         using (var zip = ZipFile.OpenRead(archiveFile.Path))
         {
             var entry =
-                zip.GetEntry(FileName) ??
-                throw new FileNotFoundException("Downloaded archive doesn't contain the FFmpeg executable.");
+                zip.GetEntry(FileName)
+                ?? throw new FileNotFoundException(
+                    "Downloaded archive doesn't contain the FFmpeg executable."
+                );
 
             entry.ExtractToFile(FilePath, true);
         }

@@ -11,9 +11,15 @@ public class BoolToStringConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture) =>
         value is bool boolValue
-            ? boolValue ? "yes" : "no"
+            ? boolValue
+                ? "yes"
+                : "no"
             : default;
 
-    public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture) =>
-        throw new NotSupportedException();
+    public object ConvertBack(
+        object? value,
+        Type targetType,
+        object parameter,
+        CultureInfo culture
+    ) => throw new NotSupportedException();
 }

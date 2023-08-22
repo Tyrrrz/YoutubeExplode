@@ -27,11 +27,14 @@ public static class ConversionExtensions
         this VideoClient videoClient,
         VideoId videoId,
         Container container,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         var streamManifest = await videoClient.Streams.GetManifestAsync(videoId, cancellationToken);
 
-        if (streamManifest.GetAudioOnlyStreams().Any() && streamManifest.GetVideoOnlyStreams().Any())
+        if (
+            streamManifest.GetAudioOnlyStreams().Any() && streamManifest.GetVideoOnlyStreams().Any()
+        )
         {
             // Include audio stream
             // Priority: transcoding -> bitrate
@@ -73,7 +76,8 @@ public static class ConversionExtensions
         IReadOnlyList<ClosedCaptionTrackInfo> closedCaptionTrackInfos,
         ConversionRequest request,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var ffmpeg = new FFmpeg(request.FFmpegCliFilePath);
         var converter = new Converter(videoClient, ffmpeg, request.Preset);
@@ -96,7 +100,8 @@ public static class ConversionExtensions
         IReadOnlyList<IStreamInfo> streamInfos,
         ConversionRequest request,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default) =>
+        CancellationToken cancellationToken = default
+    ) =>
         await videoClient.DownloadAsync(
             streamInfos,
             Array.Empty<ClosedCaptionTrackInfo>(),
@@ -114,9 +119,14 @@ public static class ConversionExtensions
         VideoId videoId,
         ConversionRequest request,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default) =>
+        CancellationToken cancellationToken = default
+    ) =>
         await videoClient.DownloadAsync(
-            await videoClient.GetOptimalStreamInfosAsync(videoId, request.Container, cancellationToken),
+            await videoClient.GetOptimalStreamInfosAsync(
+                videoId,
+                request.Container,
+                cancellationToken
+            ),
             request,
             progress,
             cancellationToken
@@ -135,7 +145,8 @@ public static class ConversionExtensions
         string outputFilePath,
         Action<ConversionRequestBuilder> configure,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var requestBuilder = new ConversionRequestBuilder(outputFilePath);
         configure(requestBuilder);
@@ -157,6 +168,13 @@ public static class ConversionExtensions
         VideoId videoId,
         string outputFilePath,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default) =>
-        await videoClient.DownloadAsync(videoId, outputFilePath, _ => { }, progress, cancellationToken);
+        CancellationToken cancellationToken = default
+    ) =>
+        await videoClient.DownloadAsync(
+            videoId,
+            outputFilePath,
+            _ => { },
+            progress,
+            cancellationToken
+        );
 }

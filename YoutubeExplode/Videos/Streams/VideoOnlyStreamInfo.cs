@@ -39,7 +39,8 @@ public class VideoOnlyStreamInfo : IVideoStreamInfo
         Bitrate bitrate,
         string videoCodec,
         VideoQuality videoQuality,
-        Resolution videoResolution)
+        Resolution videoResolution
+    )
     {
         Url = url;
         Container = container;

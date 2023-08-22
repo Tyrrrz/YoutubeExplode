@@ -17,23 +17,25 @@ public class ClosedCaptionManifest
     /// <summary>
     /// Initializes an instance of <see cref="ClosedCaptionManifest" />.
     /// </summary>
-    public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks) =>
-        Tracks = tracks;
+    public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks) => Tracks = tracks;
 
     /// <summary>
     /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).
     /// Returns null if not found.
     /// </summary>
     public ClosedCaptionTrackInfo? TryGetByLanguage(string language) =>
-        Tracks.FirstOrDefault(t =>
-            string.Equals(t.Language.Code, language, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase)
+        Tracks.FirstOrDefault(
+            t =>
+                string.Equals(t.Language.Code, language, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase)
         );
 
     /// <summary>
     /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).
     /// </summary>
     public ClosedCaptionTrackInfo GetByLanguage(string language) =>
-        TryGetByLanguage(language) ??
-        throw new InvalidOperationException($"No closed caption track available for language '{language}'.");
+        TryGetByLanguage(language)
+        ?? throw new InvalidOperationException(
+            $"No closed caption track available for language '{language}'."
+        );
 }

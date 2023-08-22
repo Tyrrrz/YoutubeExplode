@@ -37,7 +37,8 @@ public class Playlist : IPlaylist
         string title,
         Author? author,
         string description,
-        IReadOnlyList<Thumbnail> thumbnails)
+        IReadOnlyList<Thumbnail> thumbnails
+    )
     {
         Id = id;
         Title = title;

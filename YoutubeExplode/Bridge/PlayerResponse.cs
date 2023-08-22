@@ -18,18 +18,20 @@ internal partial class PlayerResponse
     private JsonElement? Playability => _content.GetPropertyOrNull("playabilityStatus");
 
     [Lazy]
-    private string? PlayabilityStatus => Playability?.GetPropertyOrNull("status")?.GetStringOrNull();
+    private string? PlayabilityStatus =>
+        Playability?.GetPropertyOrNull("status")?.GetStringOrNull();
 
     [Lazy]
     public string? PlayabilityError => Playability?.GetPropertyOrNull("reason")?.GetStringOrNull();
 
     [Lazy]
     public bool IsAvailable =>
-        !string.Equals(PlayabilityStatus, "error", StringComparison.OrdinalIgnoreCase) &&
-        Details is not null;
+        !string.Equals(PlayabilityStatus, "error", StringComparison.OrdinalIgnoreCase)
+        && Details is not null;
 
     [Lazy]
-    public bool IsPlayable => string.Equals(PlayabilityStatus, "ok", StringComparison.OrdinalIgnoreCase);
+    public bool IsPlayable =>
+        string.Equals(PlayabilityStatus, "ok", StringComparison.OrdinalIgnoreCase);
 
     [Lazy]
     private JsonElement? Details => _content.GetPropertyOrNull("videoDetails");
@@ -44,61 +46,65 @@ internal partial class PlayerResponse
     public string? Author => Details?.GetPropertyOrNull("author")?.GetStringOrNull();
 
     [Lazy]
-    public DateTimeOffset? UploadDate => _content
-        .GetPropertyOrNull("microformat")?
-        .GetPropertyOrNull("playerMicroformatRenderer")?
-        .GetPropertyOrNull("uploadDate")?
-        .GetDateTimeOffset();
+    public DateTimeOffset? UploadDate =>
+        _content
+            .GetPropertyOrNull("microformat")
+            ?.GetPropertyOrNull("playerMicroformatRenderer")
+            ?.GetPropertyOrNull("uploadDate")
+            ?.GetDateTimeOffset();
 
     [Lazy]
-    public TimeSpan? Duration => Details?
-        .GetPropertyOrNull("lengthSeconds")?
-        .GetStringOrNull()?
-        .ParseDoubleOrNull()?
-        .Pipe(TimeSpan.FromSeconds);
+    public TimeSpan? Duration =>
+        Details
+            ?.GetPropertyOrNull("lengthSeconds")
+            ?.GetStringOrNull()
+            ?.ParseDoubleOrNull()
+            ?.Pipe(TimeSpan.FromSeconds);
 
     [Lazy]
-    public IReadOnlyList<ThumbnailData> Thumbnails => Details?
-        .GetPropertyOrNull("thumbnail")?
-        .GetPropertyOrNull("thumbnails")?
-        .EnumerateArrayOrNull()?
-        .Select(j => new ThumbnailData(j))
-        .ToArray() ?? Array.Empty<ThumbnailData>();
+    public IReadOnlyList<ThumbnailData> Thumbnails =>
+        Details
+            ?.GetPropertyOrNull("thumbnail")
+            ?.GetPropertyOrNull("thumbnails")
+            ?.EnumerateArrayOrNull()
+            ?.Select(j => new ThumbnailData(j))
+            .ToArray() ?? Array.Empty<ThumbnailData>();
 
-    public IReadOnlyList<string> Keywords => Details?
-        .GetPropertyOrNull("keywords")?
-        .EnumerateArrayOrNull()?
-        .Select(j => j.GetStringOrNull())
-        .WhereNotNull()
-        .ToArray() ?? Array.Empty<string>();
+    public IReadOnlyList<string> Keywords =>
+        Details
+            ?.GetPropertyOrNull("keywords")
+            ?.EnumerateArrayOrNull()
+            ?.Select(j => j.GetStringOrNull())
+            .WhereNotNull()
+            .ToArray() ?? Array.Empty<string>();
 
     [Lazy]
     public string? Description => Details?.GetPropertyOrNull("shortDescription")?.GetStringOrNull();
 
     [Lazy]
-    public long? ViewCount => Details?.GetPropertyOrNull("viewCount")?.GetStringOrNull()?.ParseLongOrNull();
+    public long? ViewCount =>
+        Details?.GetPropertyOrNull("viewCount")?.GetStringOrNull()?.ParseLongOrNull();
 
     [Lazy]
     public string? PreviewVideoId =>
-        Playability?
-            .GetPropertyOrNull("errorScreen")?
-            .GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")?
-            .GetPropertyOrNull("trailerVideoId")?
-            .GetStringOrNull() ??
-
-        Playability?
-            .GetPropertyOrNull("errorScreen")?
-            .GetPropertyOrNull("ypcTrailerRenderer")?
-            .GetPropertyOrNull("playerVars")?
-            .GetStringOrNull()?
-            .Pipe(UrlEx.GetQueryParameters)
-            .GetValueOrDefault("video_id") ??
-
-        Playability?
-            .GetPropertyOrNull("errorScreen")?
-            .GetPropertyOrNull("ypcTrailerRenderer")?
-            .GetPropertyOrNull("playerResponse")?
-            .GetStringOrNull()?
+        Playability
+            ?.GetPropertyOrNull("errorScreen")
+            ?.GetPropertyOrNull("playerLegacyDesktopYpcTrailerRenderer")
+            ?.GetPropertyOrNull("trailerVideoId")
+            ?.GetStringOrNull()
+        ?? Playability
+            ?.GetPropertyOrNull("errorScreen")
+            ?.GetPropertyOrNull("ypcTrailerRenderer")
+            ?.GetPropertyOrNull("playerVars")
+            ?.GetStringOrNull()
+            ?.Pipe(UrlEx.GetQueryParameters)
+            .GetValueOrDefault("video_id")
+        ?? Playability
+            ?.GetPropertyOrNull("errorScreen")
+            ?.GetPropertyOrNull("ypcTrailerRenderer")
+            ?.GetPropertyOrNull("playerResponse")
+            ?.GetStringOrNull()
+            ?
             // YouTube uses weird base64-like encoding here that I don't know how to deal with.
             // It's supposed to have JSON inside, but if extracted as is, it contains garbage.
             // Luckily, some of the text gets decoded correctly, which is enough for us to
@@ -114,10 +120,12 @@ internal partial class PlayerResponse
     private JsonElement? StreamingData => _content.GetPropertyOrNull("streamingData");
 
     [Lazy]
-    public string? DashManifestUrl => StreamingData?.GetPropertyOrNull("dashManifestUrl")?.GetStringOrNull();
+    public string? DashManifestUrl =>
+        StreamingData?.GetPropertyOrNull("dashManifestUrl")?.GetStringOrNull();
 
     [Lazy]
-    public string? HlsManifestUrl => StreamingData?.GetPropertyOrNull("hlsManifestUrl")?.GetStringOrNull();
+    public string? HlsManifestUrl =>
+        StreamingData?.GetPropertyOrNull("hlsManifestUrl")?.GetStringOrNull();
 
     [Lazy]
     public IReadOnlyList<IStreamData> Streams
@@ -126,18 +134,18 @@ internal partial class PlayerResponse
         {
             var result = new List<IStreamData>();
 
-            var muxedStreams = StreamingData?
-                .GetPropertyOrNull("formats")?
-                .EnumerateArrayOrNull()?
-                .Select(j => new StreamData(j));
+            var muxedStreams = StreamingData
+                ?.GetPropertyOrNull("formats")
+                ?.EnumerateArrayOrNull()
+                ?.Select(j => new StreamData(j));
 
             if (muxedStreams is not null)
                 result.AddRange(muxedStreams);
 
-            var adaptiveStreams = StreamingData?
-                .GetPropertyOrNull("adaptiveFormats")?
-                .EnumerateArrayOrNull()?
-                .Select(j => new StreamData(j));
+            var adaptiveStreams = StreamingData
+                ?.GetPropertyOrNull("adaptiveFormats")
+                ?.EnumerateArrayOrNull()
+                ?.Select(j => new StreamData(j));
 
             if (adaptiveStreams is not null)
                 result.AddRange(adaptiveStreams);
@@ -147,13 +155,14 @@ internal partial class PlayerResponse
     }
 
     [Lazy]
-    public IReadOnlyList<ClosedCaptionTrackData> ClosedCaptionTracks => _content
-        .GetPropertyOrNull("captions")?
-        .GetPropertyOrNull("playerCaptionsTracklistRenderer")?
-        .GetPropertyOrNull("captionTracks")?
-        .EnumerateArrayOrNull()?
-        .Select(j => new ClosedCaptionTrackData(j))
-        .ToArray() ?? Array.Empty<ClosedCaptionTrackData>();
+    public IReadOnlyList<ClosedCaptionTrackData> ClosedCaptionTracks =>
+        _content
+            .GetPropertyOrNull("captions")
+            ?.GetPropertyOrNull("playerCaptionsTracklistRenderer")
+            ?.GetPropertyOrNull("captionTracks")
+            ?.EnumerateArrayOrNull()
+            ?.Select(j => new ClosedCaptionTrackData(j))
+            .ToArray() ?? Array.Empty<ClosedCaptionTrackData>();
 
     public PlayerResponse(JsonElement content) => _content = content;
 }
@@ -168,28 +177,26 @@ internal partial class PlayerResponse
         public string? Url => _content.GetPropertyOrNull("baseUrl")?.GetStringOrNull();
 
         [Lazy]
-        public string? LanguageCode => _content.GetPropertyOrNull("languageCode")?.GetStringOrNull();
+        public string? LanguageCode =>
+            _content.GetPropertyOrNull("languageCode")?.GetStringOrNull();
 
         [Lazy]
         public string? LanguageName =>
-            _content
-                .GetPropertyOrNull("name")?
-                .GetPropertyOrNull("simpleText")?
-                .GetStringOrNull() ??
-
-            _content
-                .GetPropertyOrNull("name")?
-                .GetPropertyOrNull("runs")?
-                .EnumerateArrayOrNull()?
-                .Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+            _content.GetPropertyOrNull("name")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+            ?? _content
+                .GetPropertyOrNull("name")
+                ?.GetPropertyOrNull("runs")
+                ?.EnumerateArrayOrNull()
+                ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString();
 
         [Lazy]
-        public bool IsAutoGenerated => _content
-            .GetPropertyOrNull("vssId")?
-            .GetStringOrNull()?
-            .StartsWith("a.", StringComparison.OrdinalIgnoreCase) ?? false;
+        public bool IsAutoGenerated =>
+            _content
+                .GetPropertyOrNull("vssId")
+                ?.GetStringOrNull()
+                ?.StartsWith("a.", StringComparison.OrdinalIgnoreCase) ?? false;
 
         public ClosedCaptionTrackData(JsonElement content) => _content = content;
     }
@@ -206,20 +213,16 @@ internal partial class PlayerResponse
 
         [Lazy]
         private IReadOnlyDictionary<string, string>? CipherData =>
-            _content
-                .GetPropertyOrNull("cipher")?
-                .GetStringOrNull()?
-                .Pipe(UrlEx.GetQueryParameters) ??
-
-            _content
-                .GetPropertyOrNull("signatureCipher")?
-                .GetStringOrNull()?
-                .Pipe(UrlEx.GetQueryParameters);
+            _content.GetPropertyOrNull("cipher")?.GetStringOrNull()?.Pipe(UrlEx.GetQueryParameters)
+            ?? _content
+                .GetPropertyOrNull("signatureCipher")
+                ?.GetStringOrNull()
+                ?.Pipe(UrlEx.GetQueryParameters);
 
         [Lazy]
         public string? Url =>
-            _content.GetPropertyOrNull("url")?.GetStringOrNull() ??
-            CipherData?.GetValueOrDefault("url");
+            _content.GetPropertyOrNull("url")?.GetStringOrNull()
+            ?? CipherData?.GetValueOrDefault("url");
 
         [Lazy]
         public string? Signature => CipherData?.GetValueOrDefault("s");
@@ -229,15 +232,10 @@ internal partial class PlayerResponse
 
         [Lazy]
         public long? ContentLength =>
-            _content
-                .GetPropertyOrNull("contentLength")?
-                .GetStringOrNull()?
-                .ParseLongOrNull() ??
-
-            Url?
-                .Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))?
-                .NullIfWhiteSpace()?
-                .ParseLongOrNull();
+            _content.GetPropertyOrNull("contentLength")?.GetStringOrNull()?.ParseLongOrNull()
+            ?? Url?.Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))
+                ?.NullIfWhiteSpace()
+                ?.ParseLongOrNull();
 
         [Lazy]
         public long? Bitrate => _content.GetPropertyOrNull("bitrate")?.GetInt64OrNull();
@@ -249,24 +247,22 @@ internal partial class PlayerResponse
         public string? Container => MimeType?.SubstringUntil(";").SubstringAfter("/");
 
         [Lazy]
-        private bool IsAudioOnly => MimeType?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false;
+        private bool IsAudioOnly =>
+            MimeType?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false;
 
         [Lazy]
         public string? Codecs => MimeType?.SubstringAfter("codecs=\"").SubstringUntil("\"");
 
         [Lazy]
-        public string? AudioCodec => IsAudioOnly
-            ? Codecs
-            : Codecs?.SubstringAfter(", ").NullIfWhiteSpace();
+        public string? AudioCodec =>
+            IsAudioOnly ? Codecs : Codecs?.SubstringAfter(", ").NullIfWhiteSpace();
 
         [Lazy]
         public string? VideoCodec
         {
             get
             {
-                var codec = IsAudioOnly
-                    ? null
-                    : Codecs?.SubstringUntil(", ").NullIfWhiteSpace();
+                var codec = IsAudioOnly ? null : Codecs?.SubstringUntil(", ").NullIfWhiteSpace();
 
                 // "unknown" value indicates av01 codec
                 if (string.Equals(codec, "unknown", StringComparison.OrdinalIgnoreCase))
@@ -277,7 +273,8 @@ internal partial class PlayerResponse
         }
 
         [Lazy]
-        public string? VideoQualityLabel => _content.GetPropertyOrNull("qualityLabel")?.GetStringOrNull();
+        public string? VideoQualityLabel =>
+            _content.GetPropertyOrNull("qualityLabel")?.GetStringOrNull();
 
         [Lazy]
         public int? VideoWidth => _content.GetPropertyOrNull("width")?.GetInt32OrNull();

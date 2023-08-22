@@ -1,5 +1,3 @@
 ﻿namespace YoutubeExplode.Demo.Gui;
 
-public partial class App
-{
-}
+public partial class App { }

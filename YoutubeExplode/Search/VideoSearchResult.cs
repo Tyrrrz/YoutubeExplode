@@ -37,7 +37,8 @@ public class VideoSearchResult : ISearchResult, IVideo
         string title,
         Author author,
         TimeSpan? duration,
-        IReadOnlyList<Thumbnail> thumbnails)
+        IReadOnlyList<Thumbnail> thumbnails
+    )
     {
         Id = id;
         Title = title;

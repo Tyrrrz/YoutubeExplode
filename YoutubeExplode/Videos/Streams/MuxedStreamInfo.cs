@@ -43,7 +43,8 @@ public class MuxedStreamInfo : IAudioStreamInfo, IVideoStreamInfo
         string audioCodec,
         string videoCodec,
         VideoQuality videoQuality,
-        Resolution resolution)
+        Resolution resolution
+    )
     {
         Url = url;
         Container = container;

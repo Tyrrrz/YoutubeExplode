@@ -42,9 +42,7 @@ internal class MediaStream : Stream
         // we want to download the stream as fast as possible.
         // To solve this, we divide the logical stream up into multiple segments and download
         // them all separately.
-        _segmentLength = streamInfo.IsThrottled()
-            ? 9_898_989
-            : streamInfo.Size.Bytes;
+        _segmentLength = streamInfo.IsThrottled() ? 9_898_989 : streamInfo.Size.Bytes;
     }
 
     private void ResetSegment()
@@ -53,7 +51,9 @@ internal class MediaStream : Stream
         _segmentStream = null;
     }
 
-    private async ValueTask<Stream> ResolveSegmentAsync(CancellationToken cancellationToken = default)
+    private async ValueTask<Stream> ResolveSegmentAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         if (_segmentStream is not null)
             return _segmentStream;
@@ -74,9 +74,10 @@ internal class MediaStream : Stream
         byte[] buffer,
         int offset,
         int count,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        for (var retriesRemaining = 5;; retriesRemaining--)
+        for (var retriesRemaining = 5; ; retriesRemaining--)
         {
             try
             {
@@ -95,7 +96,8 @@ internal class MediaStream : Stream
         byte[] buffer,
         int offset,
         int count,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         while (true)
         {
@@ -130,21 +132,20 @@ internal class MediaStream : Stream
         throw new NotSupportedException();
 
     [ExcludeFromCodeCoverage]
-    public override void SetLength(long value) =>
-        throw new NotSupportedException();
+    public override void SetLength(long value) => throw new NotSupportedException();
 
     [ExcludeFromCodeCoverage]
-    public override long Seek(long offset, SeekOrigin origin) => Position = origin switch
-    {
-        SeekOrigin.Begin => offset,
-        SeekOrigin.Current => Position + offset,
-        SeekOrigin.End => Length + offset,
-        _ => throw new ArgumentOutOfRangeException(nameof(origin))
-    };
+    public override long Seek(long offset, SeekOrigin origin) =>
+        Position = origin switch
+        {
+            SeekOrigin.Begin => offset,
+            SeekOrigin.Current => Position + offset,
+            SeekOrigin.End => Length + offset,
+            _ => throw new ArgumentOutOfRangeException(nameof(origin))
+        };
 
     [ExcludeFromCodeCoverage]
-    public override void Flush() =>
-        throw new NotSupportedException();
+    public override void Flush() => throw new NotSupportedException();
 
     protected override void Dispose(bool disposing)
     {

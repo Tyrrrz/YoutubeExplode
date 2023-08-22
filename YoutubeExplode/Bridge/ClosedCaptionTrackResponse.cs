@@ -13,10 +13,8 @@ internal partial class ClosedCaptionTrackResponse
     private readonly XElement _content;
 
     [Lazy]
-    public IReadOnlyList<CaptionData> Captions => _content
-        .Descendants("p")
-        .Select(x => new CaptionData(x))
-        .ToArray();
+    public IReadOnlyList<CaptionData> Captions =>
+        _content.Descendants("p").Select(x => new CaptionData(x)).ToArray();
 
     public ClosedCaptionTrackResponse(XElement content) => _content = content;
 }
@@ -31,16 +29,16 @@ internal partial class ClosedCaptionTrackResponse
         public string? Text => (string?)_content;
 
         [Lazy]
-        public TimeSpan? Offset => ((double?)_content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds);
+        public TimeSpan? Offset =>
+            ((double?)_content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds);
 
         [Lazy]
-        public TimeSpan? Duration => ((double?)_content.Attribute("d"))?.Pipe(TimeSpan.FromMilliseconds);
+        public TimeSpan? Duration =>
+            ((double?)_content.Attribute("d"))?.Pipe(TimeSpan.FromMilliseconds);
 
         [Lazy]
-        public IReadOnlyList<PartData> Parts => _content
-            .Elements("s")
-            .Select(x => new PartData(x))
-            .ToArray();
+        public IReadOnlyList<PartData> Parts =>
+            _content.Elements("s").Select(x => new PartData(x)).ToArray();
 
         public CaptionData(XElement content) => _content = content;
     }
@@ -57,9 +55,9 @@ internal partial class ClosedCaptionTrackResponse
 
         [Lazy]
         public TimeSpan? Offset =>
-            ((double?)_content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds) ??
-            ((double?)_content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds) ??
-            TimeSpan.Zero;
+            ((double?)_content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds)
+            ?? ((double?)_content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds)
+            ?? TimeSpan.Zero;
 
         public PartData(XElement content) => _content = content;
     }

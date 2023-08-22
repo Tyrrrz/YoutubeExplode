@@ -43,7 +43,8 @@ public class PlaylistVideo : IVideo, IBatchItem
         string title,
         Author author,
         TimeSpan? duration,
-        IReadOnlyList<Thumbnail> thumbnails)
+        IReadOnlyList<Thumbnail> thumbnails
+    )
     {
         PlaylistId = playlistId;
         Id = id;
@@ -63,10 +64,9 @@ public class PlaylistVideo : IVideo, IBatchItem
         string title,
         Author author,
         TimeSpan? duration,
-        IReadOnlyList<Thumbnail> thumbnails)
-        : this(default, id, title, author, duration, thumbnails)
-    {
-    }
+        IReadOnlyList<Thumbnail> thumbnails
+    )
+        : this(default, id, title, author, duration, thumbnails) { }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

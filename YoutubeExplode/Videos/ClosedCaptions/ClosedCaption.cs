@@ -40,7 +40,8 @@ public class ClosedCaption
         string text,
         TimeSpan offset,
         TimeSpan duration,
-        IReadOnlyList<ClosedCaptionPart> parts)
+        IReadOnlyList<ClosedCaptionPart> parts
+    )
     {
         Text = text;
         Offset = offset;
@@ -59,8 +60,8 @@ public class ClosedCaption
     /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.
     /// </summary>
     public ClosedCaptionPart GetPartByTime(TimeSpan time) =>
-        TryGetPartByTime(time) ??
-        throw new InvalidOperationException($"No closed caption part found at {time}.");
+        TryGetPartByTime(time)
+        ?? throw new InvalidOperationException($"No closed caption part found at {time}.");
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

@@ -9,9 +9,7 @@ namespace YoutubeExplode.Common;
 /// Represents an item that can be included in <see cref="Batch{T}" />.
 /// This interface is used as a marker to enable extension methods.
 /// </summary>
-public interface IBatchItem
-{
-}
+public interface IBatchItem { }
 
 /// <summary>
 /// Extensions for <see cref="IBatchItem" />.
@@ -28,17 +26,19 @@ public static class BatchItemExtensions
     /// <summary>
     /// Enumerates all items in the sequence and buffers them in memory.
     /// </summary>
-    public static async ValueTask<IReadOnlyList<T>> CollectAsync<T>(
-        this IAsyncEnumerable<T> source) where T : IBatchItem => await source.ToListAsync();
+    public static async ValueTask<IReadOnlyList<T>> CollectAsync<T>(this IAsyncEnumerable<T> source)
+        where T : IBatchItem => await source.ToListAsync();
 
     /// <summary>
     /// Enumerates a subset of items in the sequence and buffers them in memory.
     /// </summary>
     public static async ValueTask<IReadOnlyList<T>> CollectAsync<T>(
         this IAsyncEnumerable<T> source,
-        int count) where T : IBatchItem => await source.TakeAsync(count).ToListAsync();
+        int count
+    )
+        where T : IBatchItem => await source.TakeAsync(count).ToListAsync();
 
     /// <inheritdoc cref="CollectAsync{T}(System.Collections.Generic.IAsyncEnumerable{T})" />
-    public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(
-        this IAsyncEnumerable<T> source) where T : IBatchItem => source.CollectAsync().GetAwaiter();
+    public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(this IAsyncEnumerable<T> source)
+        where T : IBatchItem => source.CollectAsync().GetAwaiter();
 }

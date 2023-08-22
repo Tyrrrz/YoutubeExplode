@@ -62,7 +62,8 @@ public readonly partial struct FileSize
     }
 
     /// <inheritdoc />
-    public override string ToString() => $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
+    public override string ToString() =>
+        $"{GetLargestWholeNumberValue():0.##} {GetLargestWholeNumberSymbol()}";
 }
 
 public partial struct FileSize : IComparable<FileSize>, IEquatable<FileSize>

@@ -32,12 +32,30 @@ public class PlaylistIdSpecs
     }
 
     [Theory]
-    [InlineData("youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H", "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H")]
-    [InlineData("youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
-    [InlineData("youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
-    [InlineData("youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr", "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr")]
-    [InlineData("youtube.com/watch?v=x2ZRoWQ0grU&list=RDEMNJhLy4rECJ_fG8NL-joqsg", "RDEMNJhLy4rECJ_fG8NL-joqsg")]
-    public void I_can_parse_a_playlist_ID_from_a_URL_string(string playlistUrl, string expectedPlaylistId)
+    [InlineData(
+        "youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H",
+        "PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H"
+    )]
+    [InlineData(
+        "youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr",
+        "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
+    )]
+    [InlineData(
+        "youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr",
+        "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
+    )]
+    [InlineData(
+        "youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr",
+        "PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr"
+    )]
+    [InlineData(
+        "youtube.com/watch?v=x2ZRoWQ0grU&list=RDEMNJhLy4rECJ_fG8NL-joqsg",
+        "RDEMNJhLy4rECJ_fG8NL-joqsg"
+    )]
+    public void I_can_parse_a_playlist_ID_from_a_URL_string(
+        string playlistUrl,
+        string expectedPlaylistId
+    )
     {
         // Act
         var parsed = PlaylistId.Parse(playlistUrl);

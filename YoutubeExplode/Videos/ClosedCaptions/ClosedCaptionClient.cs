@@ -26,24 +26,28 @@ public class ClosedCaptionClient
 
     private async IAsyncEnumerable<ClosedCaptionTrackInfo> GetClosedCaptionTrackInfosAsync(
         VideoId videoId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
         // Use the TVHTML5 client instead of ANDROID_TESTSUITE because the latter doesn't provide closed captions
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, null, cancellationToken);
+        var playerResponse = await _controller.GetPlayerResponseAsync(
+            videoId,
+            null,
+            cancellationToken
+        );
 
         foreach (var trackData in playerResponse.ClosedCaptionTracks)
         {
             var url =
-                trackData.Url ??
-                throw new YoutubeExplodeException("Could not extract track URL.");
+                trackData.Url ?? throw new YoutubeExplodeException("Could not extract track URL.");
 
             var languageCode =
-                trackData.LanguageCode ??
-                throw new YoutubeExplodeException("Could not extract track language code.");
+                trackData.LanguageCode
+                ?? throw new YoutubeExplodeException("Could not extract track language code.");
 
             var languageName =
-                trackData.LanguageName ??
-                throw new YoutubeExplodeException("Could not extract track language name.");
+                trackData.LanguageName
+                ?? throw new YoutubeExplodeException("Could not extract track language name.");
 
             yield return new ClosedCaptionTrackInfo(
                 url,
@@ -58,14 +62,18 @@ public class ClosedCaptionClient
     /// </summary>
     public async ValueTask<ClosedCaptionManifest> GetManifestAsync(
         VideoId videoId,
-        CancellationToken cancellationToken = default) =>
-        new(await GetClosedCaptionTrackInfosAsync(videoId, cancellationToken));
+        CancellationToken cancellationToken = default
+    ) => new(await GetClosedCaptionTrackInfosAsync(videoId, cancellationToken));
 
     private async IAsyncEnumerable<ClosedCaption> GetClosedCaptionsAsync(
         ClosedCaptionTrackInfo trackInfo,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default
+    )
     {
-        var response = await _controller.GetClosedCaptionTrackResponseAsync(trackInfo.Url, cancellationToken);
+        var response = await _controller.GetClosedCaptionTrackResponseAsync(
+            trackInfo.Url,
+            cancellationToken
+        );
 
         foreach (var captionData in response.Captions)
         {
@@ -78,8 +86,7 @@ public class ClosedCaptionClient
 
             // Auto-generated captions may be missing offset or duration
             // https://github.com/Tyrrrz/YoutubeExplode/discussions/619
-            if (captionData.Offset is not { } offset ||
-                captionData.Duration is not { } duration)
+            if (captionData.Offset is not { } offset || captionData.Duration is not { } duration)
             {
                 continue;
             }
@@ -95,20 +102,15 @@ public class ClosedCaptionClient
                     continue;
 
                 var partOffset =
-                    partData.Offset ??
-                    throw new YoutubeExplodeException("Could not extract caption part offset.");
+                    partData.Offset
+                    ?? throw new YoutubeExplodeException("Could not extract caption part offset.");
 
                 var part = new ClosedCaptionPart(partText, partOffset);
 
                 parts.Add(part);
             }
 
-            yield return new ClosedCaption(
-                text,
-                offset,
-                duration,
-                parts
-            );
+            yield return new ClosedCaption(text, offset, duration, parts);
         }
     }
 
@@ -117,8 +119,8 @@ public class ClosedCaptionClient
     /// </summary>
     public async ValueTask<ClosedCaptionTrack> GetAsync(
         ClosedCaptionTrackInfo trackInfo,
-        CancellationToken cancellationToken = default) =>
-        new(await GetClosedCaptionsAsync(trackInfo, cancellationToken));
+        CancellationToken cancellationToken = default
+    ) => new(await GetClosedCaptionsAsync(trackInfo, cancellationToken));
 
     /// <summary>
     /// Writes the closed caption track identified by the specified metadata to the specified writer.
@@ -130,13 +132,17 @@ public class ClosedCaptionClient
         ClosedCaptionTrackInfo trackInfo,
         TextWriter writer,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         static string FormatTimestamp(TimeSpan value) =>
-            Math.Floor(value.TotalHours).ToString("00", CultureInfo.InvariantCulture) + ':' +
-            value.Minutes.ToString("00", CultureInfo.InvariantCulture) + ':' +
-            value.Seconds.ToString("00", CultureInfo.InvariantCulture) + ',' +
-            value.Milliseconds.ToString("000", CultureInfo.InvariantCulture);
+            Math.Floor(value.TotalHours).ToString("00", CultureInfo.InvariantCulture)
+            + ':'
+            + value.Minutes.ToString("00", CultureInfo.InvariantCulture)
+            + ':'
+            + value.Seconds.ToString("00", CultureInfo.InvariantCulture)
+            + ','
+            + value.Milliseconds.ToString("000", CultureInfo.InvariantCulture);
 
         // Would be better to use GetClosedCaptionsAsync(...) instead for streaming,
         // but we need the total number of captions to report progress.
@@ -175,7 +181,8 @@ public class ClosedCaptionClient
         ClosedCaptionTrackInfo trackInfo,
         string filePath,
         IProgress<double>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         using var writer = File.CreateText(filePath);
         await WriteToAsync(trackInfo, writer, progress, cancellationToken);

@@ -42,7 +42,8 @@ public class ConversionRequest
         string ffmpegCliFilePath,
         string outputFilePath,
         Container container,
-        ConversionPreset preset)
+        ConversionPreset preset
+    )
     {
         FFmpegCliFilePath = ffmpegCliFilePath;
         OutputFilePath = outputFilePath;
@@ -58,8 +59,7 @@ public class ConversionRequest
         string ffmpegCliFilePath,
         string outputFilePath,
         ConversionFormat format,
-        ConversionPreset preset)
-        : this(ffmpegCliFilePath, outputFilePath, new Container(format.Name), preset)
-    {
-    }
+        ConversionPreset preset
+    )
+        : this(ffmpegCliFilePath, outputFilePath, new Container(format.Name), preset) { }
 }

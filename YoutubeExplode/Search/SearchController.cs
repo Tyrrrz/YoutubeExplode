@@ -15,9 +15,13 @@ internal class SearchController
         string searchQuery,
         SearchFilter searchFilter,
         string? continuationToken,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://www.youtube.com/youtubei/v1/search")
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/search"
+        )
         {
             Content = new StringContent(
                 // lang=json
@@ -49,8 +53,6 @@ internal class SearchController
         using var response = await _http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return SearchResponse.Parse(
-            await response.Content.ReadAsStringAsync(cancellationToken)
-        );
+        return SearchResponse.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
     }
 }

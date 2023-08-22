@@ -143,14 +143,14 @@ public class MainViewModel : ViewModelBase
     }
 
     public bool IsDataAvailable =>
-        Video is not null &&
-        VideoThumbnail is not null &&
-        Channel is not null &&
-        ChannelThumbnail is not null &&
-        MuxedStreamInfos is not null &&
-        AudioOnlyStreamInfos is not null &&
-        VideoOnlyStreamInfos is not null &&
-        ClosedCaptionTrackInfos is not null;
+        Video is not null
+        && VideoThumbnail is not null
+        && Channel is not null
+        && ChannelThumbnail is not null
+        && MuxedStreamInfos is not null
+        && AudioOnlyStreamInfos is not null
+        && VideoOnlyStreamInfos is not null
+        && ClosedCaptionTrackInfos is not null;
 
     public RelayCommand PullDataCommand { get; }
 
@@ -246,10 +246,7 @@ public class MainViewModel : ViewModelBase
 
             var trackManifest = await _youtube.Videos.ClosedCaptions.GetManifestAsync(videoIdOrUrl);
 
-            ClosedCaptionTrackInfos = trackManifest
-                .Tracks
-                .OrderBy(t => t.Language.Name)
-                .ToArray();
+            ClosedCaptionTrackInfos = trackManifest.Tracks.OrderBy(t => t.Language.Name).ToArray();
         }
         finally
         {
@@ -319,7 +316,11 @@ public class MainViewModel : ViewModelBase
             var progressHandler = new Progress<double>(p => Progress = p);
 
             // Download to file
-            await _youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, filePath, progressHandler);
+            await _youtube.Videos.ClosedCaptions.DownloadAsync(
+                trackInfo,
+                filePath,
+                progressHandler
+            );
         }
         finally
         {

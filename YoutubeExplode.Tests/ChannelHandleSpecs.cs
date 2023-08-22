@@ -22,7 +22,10 @@ public class ChannelHandleSpecs
     [Theory]
     [InlineData("youtube.com/@BeauMiles", "BeauMiles")]
     [InlineData("youtube.com/@a-z.0_9", "a-z.0_9")]
-    public void I_can_parse_a_channel_handle_from_a_URL_string(string channelUrl, string expectedChannelHandle)
+    public void I_can_parse_a_channel_handle_from_a_URL_string(
+        string channelUrl,
+        string expectedChannelHandle
+    )
     {
         // Act
         var parsed = ChannelHandle.Parse(channelUrl);

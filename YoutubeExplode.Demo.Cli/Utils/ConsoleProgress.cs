@@ -19,9 +19,7 @@ internal class ConsoleProgress : IProgress<double>, IDisposable
     }
 
     public ConsoleProgress()
-        : this(Console.Out)
-    {
-    }
+        : this(Console.Out) { }
 
     private void EraseLast()
     {

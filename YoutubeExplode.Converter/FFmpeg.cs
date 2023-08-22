@@ -23,7 +23,8 @@ internal partial class FFmpeg
     public async ValueTask ExecuteAsync(
         string arguments,
         IProgress<double>? progress,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var stdErrBuffer = new StringBuilder();
 
@@ -62,15 +63,18 @@ internal partial class FFmpeg
     public static string GetFilePath() =>
         // Try to find FFmpeg in the probe directory
         Directory
-            .EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory())
-            .FirstOrDefault(f =>
-                string.Equals(
-                    Path.GetFileNameWithoutExtension(f),
-                    "ffmpeg",
-                    StringComparison.OrdinalIgnoreCase
-                )
-            ) ??
-
+            .EnumerateFiles(
+                AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory()
+            )
+            .FirstOrDefault(
+                f =>
+                    string.Equals(
+                        Path.GetFileNameWithoutExtension(f),
+                        "ffmpeg",
+                        StringComparison.OrdinalIgnoreCase
+                    )
+            )
+        ??
         // Otherwise fallback to just "ffmpeg" and hope it's on the PATH
         "ffmpeg";
 
@@ -88,14 +92,23 @@ internal partial class FFmpeg
                 var totalDurationMatch = Regex.Match(line, @"Duration:\s(\d+):(\d+):(\d+\.\d+)");
                 if (totalDurationMatch.Success)
                 {
-                    var hours = int.Parse(totalDurationMatch.Groups[1].Value, CultureInfo.InvariantCulture);
-                    var minutes = int.Parse(totalDurationMatch.Groups[2].Value, CultureInfo.InvariantCulture);
-                    var seconds = double.Parse(totalDurationMatch.Groups[3].Value, CultureInfo.InvariantCulture);
+                    var hours = int.Parse(
+                        totalDurationMatch.Groups[1].Value,
+                        CultureInfo.InvariantCulture
+                    );
+                    var minutes = int.Parse(
+                        totalDurationMatch.Groups[2].Value,
+                        CultureInfo.InvariantCulture
+                    );
+                    var seconds = double.Parse(
+                        totalDurationMatch.Groups[3].Value,
+                        CultureInfo.InvariantCulture
+                    );
 
                     totalDuration =
-                        TimeSpan.FromHours(hours) +
-                        TimeSpan.FromMinutes(minutes) +
-                        TimeSpan.FromSeconds(seconds);
+                        TimeSpan.FromHours(hours)
+                        + TimeSpan.FromMinutes(minutes)
+                        + TimeSpan.FromSeconds(seconds);
                 }
             }
 
@@ -106,19 +119,29 @@ internal partial class FFmpeg
             var processedDurationMatch = Regex.Match(line, @"time=(\d+):(\d+):(\d+\.\d+)");
             if (processedDurationMatch.Success)
             {
-                var hours = int.Parse(processedDurationMatch.Groups[1].Value, CultureInfo.InvariantCulture);
-                var minutes = int.Parse(processedDurationMatch.Groups[2].Value, CultureInfo.InvariantCulture);
-                var seconds = double.Parse(processedDurationMatch.Groups[3].Value, CultureInfo.InvariantCulture);
+                var hours = int.Parse(
+                    processedDurationMatch.Groups[1].Value,
+                    CultureInfo.InvariantCulture
+                );
+                var minutes = int.Parse(
+                    processedDurationMatch.Groups[2].Value,
+                    CultureInfo.InvariantCulture
+                );
+                var seconds = double.Parse(
+                    processedDurationMatch.Groups[3].Value,
+                    CultureInfo.InvariantCulture
+                );
 
                 var processedDuration =
-                    TimeSpan.FromHours(hours) +
-                    TimeSpan.FromMinutes(minutes) +
-                    TimeSpan.FromSeconds(seconds);
+                    TimeSpan.FromHours(hours)
+                    + TimeSpan.FromMinutes(minutes)
+                    + TimeSpan.FromSeconds(seconds);
 
-                progress.Report((
-                    processedDuration.TotalMilliseconds /
-                    totalDuration.Value.TotalMilliseconds
-                ).Clamp(0, 1));
+                progress.Report(
+                    (
+                        processedDuration.TotalMilliseconds / totalDuration.Value.TotalMilliseconds
+                    ).Clamp(0, 1)
+                );
             }
         });
     }

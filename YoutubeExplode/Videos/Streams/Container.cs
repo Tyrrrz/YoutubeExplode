@@ -22,13 +22,13 @@ public readonly partial struct Container
     /// If the container IS NOT audio-only, it MAY contain video streams, but is not required to.
     /// </remarks>
     public bool IsAudioOnly =>
-        string.Equals(Name, "mp3", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(Name, "m4a", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(Name, "wav", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(Name, "wma", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(Name, "ogg", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(Name, "aac", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(Name, "opus", StringComparison.OrdinalIgnoreCase);
+        string.Equals(Name, "mp3", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Name, "m4a", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Name, "wav", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Name, "wma", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Name, "ogg", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Name, "aac", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Name, "opus", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Initializes an instance of <see cref="Container" />.
@@ -65,7 +65,8 @@ public partial struct Container
 public partial struct Container : IEquatable<Container>
 {
     /// <inheritdoc />
-    public bool Equals(Container other) => StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name);
+    public bool Equals(Container other) =>
+        StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Container other && Equals(other);

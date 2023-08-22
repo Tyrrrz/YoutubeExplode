@@ -30,7 +30,8 @@ public class AudioOnlyStreamInfo : IAudioStreamInfo
         Container container,
         FileSize size,
         Bitrate bitrate,
-        string audioCodec)
+        string audioCodec
+    )
     {
         Url = url;
         Container = container;

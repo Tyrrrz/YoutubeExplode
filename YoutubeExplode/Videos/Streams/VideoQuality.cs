@@ -45,25 +45,24 @@ public readonly partial struct VideoQuality
     /// Initializes an instance of <see cref="VideoQuality" />.
     /// </summary>
     public VideoQuality(int maxHeight, int framerate)
-        : this(FormatLabel(maxHeight, framerate), maxHeight, framerate)
-    {
-    }
+        : this(FormatLabel(maxHeight, framerate), maxHeight, framerate) { }
 
-    internal Resolution GetDefaultVideoResolution() => MaxHeight switch
-    {
-        144 => new Resolution(256, 144),
-        240 => new Resolution(426, 240),
-        360 => new Resolution(640, 360),
-        480 => new Resolution(854, 480),
-        720 => new Resolution(1280, 720),
-        1080 => new Resolution(1920, 1080),
-        1440 => new Resolution(2560, 1440),
-        2160 => new Resolution(3840, 2160),
-        2880 => new Resolution(5120, 2880),
-        3072 => new Resolution(4096, 3072),
-        4320 => new Resolution(7680, 4320),
-        _ => new Resolution(16 * MaxHeight / 9, MaxHeight)
-    };
+    internal Resolution GetDefaultVideoResolution() =>
+        MaxHeight switch
+        {
+            144 => new Resolution(256, 144),
+            240 => new Resolution(426, 240),
+            360 => new Resolution(640, 360),
+            480 => new Resolution(854, 480),
+            720 => new Resolution(1280, 720),
+            1080 => new Resolution(1920, 1080),
+            1440 => new Resolution(2560, 1440),
+            2160 => new Resolution(3840, 2160),
+            2880 => new Resolution(5120, 2880),
+            3072 => new Resolution(4096, 3072),
+            4320 => new Resolution(7680, 4320),
+            _ => new Resolution(16 * MaxHeight / 9, MaxHeight)
+        };
 
     /// <inheritdoc />
     public override string ToString() => Label;
@@ -78,7 +77,7 @@ public partial struct VideoQuality
             return $"{maxHeight}p";
 
         // YouTube rounds framerate to the next nearest decimal
-        var framerateRounded = (int) Math.Ceiling(framerate / 10.0) * 10;
+        var framerateRounded = (int)Math.Ceiling(framerate / 10.0) * 10;
         return $"{maxHeight}p{framerateRounded}";
     }
 
@@ -96,11 +95,7 @@ public partial struct VideoQuality
         var maxHeight = match.Groups[1].Value.ParseInt();
         var framerate = match.Groups[2].Value.NullIfWhiteSpace()?.ParseIntOrNull();
 
-        return new VideoQuality(
-            label,
-            maxHeight,
-            framerate ?? framerateFallback
-        );
+        return new VideoQuality(label, maxHeight, framerate ?? framerateFallback);
     }
 
     internal static VideoQuality FromItag(int itag, int framerate)
@@ -229,19 +224,16 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
 
     /// <inheritdoc />
     public bool Equals(VideoQuality other) =>
-        StringComparer.OrdinalIgnoreCase.Equals(Label, other.Label) &&
-        MaxHeight == other.MaxHeight &&
-        Framerate == other.Framerate;
+        StringComparer.OrdinalIgnoreCase.Equals(Label, other.Label)
+        && MaxHeight == other.MaxHeight
+        && Framerate == other.Framerate;
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is VideoQuality other && Equals(other);
 
     /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(
-        StringComparer.OrdinalIgnoreCase.GetHashCode(Label),
-        MaxHeight,
-        Framerate
-    );
+    public override int GetHashCode() =>
+        HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(Label), MaxHeight, Framerate);
 
     /// <summary>
     /// Equality check.
@@ -256,10 +248,12 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
     /// <summary>
     /// Comparison.
     /// </summary>
-    public static bool operator >(VideoQuality left, VideoQuality right) => left.CompareTo(right) > 0;
+    public static bool operator >(VideoQuality left, VideoQuality right) =>
+        left.CompareTo(right) > 0;
 
     /// <summary>
     /// Comparison.
     /// </summary>
-    public static bool operator <(VideoQuality left, VideoQuality right) => left.CompareTo(right) < 0;
+    public static bool operator <(VideoQuality left, VideoQuality right) =>
+        left.CompareTo(right) < 0;
 }

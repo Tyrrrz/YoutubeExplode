@@ -6,7 +6,8 @@ namespace YoutubeExplode.Common;
 /// <summary>
 /// Generic collection of items returned by a single request.
 /// </summary>
-public class Batch<T> where T : IBatchItem
+public class Batch<T>
+    where T : IBatchItem
 {
     /// <summary>
     /// Items included in the batch.
@@ -21,7 +22,8 @@ public class Batch<T> where T : IBatchItem
 
 internal static class Batch
 {
-    public static Batch<T> Create<T>(IReadOnlyList<T> items) where T : IBatchItem => new(items);
+    public static Batch<T> Create<T>(IReadOnlyList<T> items)
+        where T : IBatchItem => new(items);
 }
 
 internal static class BatchExtensions

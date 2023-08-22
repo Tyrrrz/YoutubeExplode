@@ -13,8 +13,7 @@ public class VideoSpecs
 {
     private readonly ITestOutputHelper _testOutput;
 
-    public VideoSpecs(ITestOutputHelper testOutput) =>
-        _testOutput = testOutput;
+    public VideoSpecs(ITestOutputHelper testOutput) => _testOutput = testOutput;
 
     [Fact]
     public async Task I_can_get_the_metadata_of_a_video()
@@ -36,11 +35,23 @@ public class VideoSpecs
         video.Description.Should().Contain("More about PSY@");
         video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(252), TimeSpan.FromSeconds(1));
         video.Thumbnails.Should().NotBeEmpty();
-        video.Keywords.Should().BeEquivalentTo(
-            "PSY", "싸이", "강남스타일", "뮤직비디오",
-            "Music Video", "Gangnam Style", "KOREAN SINGER", "KPOP", "KOERAN WAVE",
-            "PSY 6甲", "6th Studio Album", "싸이6집", "육갑"
-        );
+        video.Keywords
+            .Should()
+            .BeEquivalentTo(
+                "PSY",
+                "싸이",
+                "강남스타일",
+                "뮤직비디오",
+                "Music Video",
+                "Gangnam Style",
+                "KOREAN SINGER",
+                "KPOP",
+                "KOERAN WAVE",
+                "PSY 6甲",
+                "6th Studio Album",
+                "싸이6집",
+                "육갑"
+            );
         video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(4_650_000_000);
         video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(24_000_000);
         video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
@@ -54,8 +65,8 @@ public class VideoSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.GetAsync(VideoIds.Private)
+        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
+            async () => await youtube.Videos.GetAsync(VideoIds.Private)
         );
 
         _testOutput.WriteLine(ex.Message);
@@ -68,8 +79,8 @@ public class VideoSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.GetAsync(VideoIds.Deleted)
+        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
+            async () => await youtube.Videos.GetAsync(VideoIds.Deleted)
         );
 
         _testOutput.WriteLine(ex.Message);

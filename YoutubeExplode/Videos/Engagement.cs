@@ -31,9 +31,8 @@ public class Engagement
     /// <remarks>
     /// YouTube no longer shows dislikes, so this value is always 5.
     /// </remarks>
-    public double AverageRating => LikeCount + DislikeCount != 0
-        ? 1 + 4.0 * LikeCount / (LikeCount + DislikeCount)
-        : 0; // avoid division by 0
+    public double AverageRating =>
+        LikeCount + DislikeCount != 0 ? 1 + 4.0 * LikeCount / (LikeCount + DislikeCount) : 0; // avoid division by 0
 
     /// <summary>
     /// Initializes an instance of <see cref="Engagement" />.

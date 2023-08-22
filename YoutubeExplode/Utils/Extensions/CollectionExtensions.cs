@@ -12,7 +12,8 @@ internal static class CollectionExtensions
             yield return (o, i++);
     }
 
-    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+        where T : class
     {
         foreach (var i in source)
         {
@@ -21,7 +22,8 @@ internal static class CollectionExtensions
         }
     }
 
-    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : struct
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+        where T : struct
     {
         foreach (var i in source)
         {
@@ -30,15 +32,15 @@ internal static class CollectionExtensions
         }
     }
 
-    public static T? ElementAtOrNull<T>(this IEnumerable<T> source, int index) where T : struct
+    public static T? ElementAtOrNull<T>(this IEnumerable<T> source, int index)
+        where T : struct
     {
         var sourceAsList = source as IReadOnlyList<T> ?? source.ToArray();
-        return index < sourceAsList.Count
-            ? sourceAsList[index]
-            : null;
+        return index < sourceAsList.Count ? sourceAsList[index] : null;
     }
 
-    public static T? FirstOrNull<T>(this IEnumerable<T> source) where T : struct
+    public static T? FirstOrNull<T>(this IEnumerable<T> source)
+        where T : struct
     {
         foreach (var i in source)
             return i;

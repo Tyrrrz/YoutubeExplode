@@ -24,8 +24,7 @@ public readonly partial struct ChannelSlug
 
 public readonly partial struct ChannelSlug
 {
-    private static bool IsValid(string channelSlug) =>
-        channelSlug.All(char.IsLetterOrDigit);
+    private static bool IsValid(string channelSlug) => channelSlug.All(char.IsLetterOrDigit);
 
     private static string? TryNormalize(string? channelSlugOrUrl)
     {
@@ -41,9 +40,7 @@ public readonly partial struct ChannelSlug
         // https://www.youtube.com/c/Tyrrrz
         var regularMatch = Regex
             .Match(channelSlugOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)")
-            .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Groups[1].Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
@@ -63,8 +60,10 @@ public readonly partial struct ChannelSlug
     /// Parses the specified string as a YouTube channel slug or legacy custom url.
     /// </summary>
     public static ChannelSlug Parse(string channelSlugOrUrl) =>
-        TryParse(channelSlugOrUrl) ??
-        throw new ArgumentException($"Invalid YouTube channel slug or legacy custom URL '{channelSlugOrUrl}'.");
+        TryParse(channelSlugOrUrl)
+        ?? throw new ArgumentException(
+            $"Invalid YouTube channel slug or legacy custom URL '{channelSlugOrUrl}'."
+        );
 
     /// <summary>
     /// Converts string to channel slug.

@@ -14,28 +14,25 @@ internal partial class DashManifest
     private readonly XElement _content;
 
     [Lazy]
-    public IReadOnlyList<IStreamData> Streams => _content
-        .Descendants("Representation")
-        // Skip non-media representations (like "rawcc")
-        // https://github.com/Tyrrrz/YoutubeExplode/issues/546
-        .Where(x => x
-            .Attribute("id")?
-            .Value
-            .All(char.IsDigit) == true
-        )
-        // Skip segmented streams
-        // https://github.com/Tyrrrz/YoutubeExplode/issues/159
-        .Where(x => x
-            .Descendants("Initialization")
-            .FirstOrDefault()?
-            .Attribute("sourceURL")?
-            .Value
-            .Contains("sq/") != true
-        )
-        // Skip streams without codecs
-        .Where(x => !string.IsNullOrWhiteSpace(x.Attribute("codecs")?.Value))
-        .Select(x => new StreamData(x))
-        .ToArray();
+    public IReadOnlyList<IStreamData> Streams =>
+        _content
+            .Descendants("Representation")
+            // Skip non-media representations (like "rawcc")
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/546
+            .Where(x => x.Attribute("id")?.Value.All(char.IsDigit) == true)
+            // Skip segmented streams
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/159
+            .Where(
+                x =>
+                    x.Descendants("Initialization")
+                        .FirstOrDefault()
+                        ?.Attribute("sourceURL")
+                        ?.Value.Contains("sq/") != true
+            )
+            // Skip streams without codecs
+            .Where(x => !string.IsNullOrWhiteSpace(x.Attribute("codecs")?.Value))
+            .Select(x => new StreamData(x))
+            .ToArray();
 
     public DashManifest(XElement content) => _content = content;
 }
@@ -60,33 +57,27 @@ internal partial class DashManifest
 
         [Lazy]
         public long? ContentLength =>
-            (long?)_content.Attribute("contentLength") ??
-
-            Url?
-                .Pipe(s => Regex.Match(s, @"[/\?]clen[/=](\d+)").Groups[1].Value)
-                .NullIfWhiteSpace()?
-                .ParseLongOrNull();
+            (long?)_content.Attribute("contentLength")
+            ?? Url?.Pipe(s => Regex.Match(s, @"[/\?]clen[/=](\d+)").Groups[1].Value)
+                .NullIfWhiteSpace()
+                ?.ParseLongOrNull();
 
         [Lazy]
         public long? Bitrate => (long?)_content.Attribute("bandwidth");
 
         [Lazy]
-        public string? Container => Url?
-            .Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
-            .Pipe(WebUtility.UrlDecode);
+        public string? Container =>
+            Url?.Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
+                .Pipe(WebUtility.UrlDecode);
 
         [Lazy]
         private bool IsAudioOnly => _content.Element("AudioChannelConfiguration") is not null;
 
         [Lazy]
-        public string? AudioCodec => IsAudioOnly
-            ? (string?)_content.Attribute("codecs")
-            : null;
+        public string? AudioCodec => IsAudioOnly ? (string?)_content.Attribute("codecs") : null;
 
         [Lazy]
-        public string? VideoCodec => IsAudioOnly
-            ? null
-            : (string?)_content.Attribute("codecs");
+        public string? VideoCodec => IsAudioOnly ? null : (string?)_content.Attribute("codecs");
 
         public string? VideoQualityLabel => null;
 

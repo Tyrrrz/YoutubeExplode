@@ -16,8 +16,7 @@ public class StreamSpecs
 {
     private readonly ITestOutputHelper _testOutput;
 
-    public StreamSpecs(ITestOutputHelper testOutput) =>
-        _testOutput = testOutput;
+    public StreamSpecs(ITestOutputHelper testOutput) => _testOutput = testOutput;
 
     [Fact]
     public async Task I_can_get_the_list_of_available_streams_on_a_video()
@@ -26,7 +25,9 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.WithHighQualityStreams);
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(
+            VideoIds.WithHighQualityStreams
+        );
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
@@ -34,27 +35,35 @@ public class StreamSpecs
         manifest.GetAudioStreams().Should().NotBeEmpty();
         manifest.GetVideoStreams().Should().NotBeEmpty();
 
-        manifest.GetVideoStreams().Should().Contain(s =>
-            s.VideoQuality.MaxHeight == 2160 &&
-            s.VideoQuality.Framerate == 60 &&
-            s.VideoQuality.IsHighDefinition
-        );
+        manifest
+            .GetVideoStreams()
+            .Should()
+            .Contain(
+                s =>
+                    s.VideoQuality.MaxHeight == 2160
+                    && s.VideoQuality.Framerate == 60
+                    && s.VideoQuality.IsHighDefinition
+            );
 
-        manifest.GetVideoStreams().Should().Contain(s =>
-            s.VideoQuality.MaxHeight == 1080 &&
-            s.VideoQuality.Framerate == 60 &&
-            s.VideoQuality.IsHighDefinition
-        );
+        manifest
+            .GetVideoStreams()
+            .Should()
+            .Contain(
+                s =>
+                    s.VideoQuality.MaxHeight == 1080
+                    && s.VideoQuality.Framerate == 60
+                    && s.VideoQuality.IsHighDefinition
+            );
 
-        manifest.GetVideoStreams().Should().Contain(s =>
-            s.VideoQuality.MaxHeight == 720 &&
-            !s.VideoQuality.IsHighDefinition
-        );
+        manifest
+            .GetVideoStreams()
+            .Should()
+            .Contain(s => s.VideoQuality.MaxHeight == 720 && !s.VideoQuality.IsHighDefinition);
 
-        manifest.GetVideoStreams().Should().Contain(s =>
-            s.VideoQuality.MaxHeight == 144 &&
-            !s.VideoQuality.IsHighDefinition
-        );
+        manifest
+            .GetVideoStreams()
+            .Should()
+            .Contain(s => s.VideoQuality.MaxHeight == 144 && !s.VideoQuality.IsHighDefinition);
     }
 
     [Theory]
@@ -87,8 +96,8 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
+        var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(
+            async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
         );
 
         ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
@@ -103,8 +112,8 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
+        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
+            async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
         );
 
         _testOutput.WriteLine(ex.Message);
@@ -117,8 +126,8 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
+        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
+            async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
         );
 
         _testOutput.WriteLine(ex.Message);
@@ -254,8 +263,9 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
-            await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
+        var ex = await Assert.ThrowsAsync<VideoUnplayableException>(
+            async () =>
+                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
         );
 
         _testOutput.WriteLine(ex.Message);
@@ -268,8 +278,8 @@ public class StreamSpecs
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>
-            await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
+        var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(
+            async () => await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
         );
 
         _testOutput.WriteLine(ex.Message);

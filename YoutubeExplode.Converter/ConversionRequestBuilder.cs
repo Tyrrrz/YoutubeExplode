@@ -20,13 +20,10 @@ public class ConversionRequestBuilder
     /// <summary>
     /// Initializes an instance of <see cref="ConversionRequestBuilder" />.
     /// </summary>
-    public ConversionRequestBuilder(string outputFilePath) =>
-        _outputFilePath = outputFilePath;
+    public ConversionRequestBuilder(string outputFilePath) => _outputFilePath = outputFilePath;
 
-    private Container GetDefaultContainer() => new(
-        Path.GetExtension(_outputFilePath).TrimStart('.').NullIfWhiteSpace() ??
-        "mp4"
-    );
+    private Container GetDefaultContainer() =>
+        new(Path.GetExtension(_outputFilePath).TrimStart('.').NullIfWhiteSpace() ?? "mp4");
 
     /// <summary>
     /// Sets the path to the FFmpeg CLI.
@@ -63,8 +60,7 @@ public class ConversionRequestBuilder
     /// Sets the conversion format.
     /// </summary>
     [Obsolete("Use SetContainer instead."), ExcludeFromCodeCoverage]
-    public ConversionRequestBuilder SetFormat(string format) =>
-        SetContainer(format);
+    public ConversionRequestBuilder SetFormat(string format) => SetContainer(format);
 
     /// <summary>
     /// Sets the conversion preset.
@@ -78,10 +74,11 @@ public class ConversionRequestBuilder
     /// <summary>
     /// Builds the resulting request.
     /// </summary>
-    public ConversionRequest Build() => new(
-        _ffmpegCliFilePath ?? FFmpeg.GetFilePath(),
-        _outputFilePath,
-        _container ?? GetDefaultContainer(),
-        _preset
-    );
+    public ConversionRequest Build() =>
+        new(
+            _ffmpegCliFilePath ?? FFmpeg.GetFilePath(),
+            _outputFilePath,
+            _container ?? GetDefaultContainer(),
+            _preset
+        );
 }

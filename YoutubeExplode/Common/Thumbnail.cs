@@ -37,12 +37,22 @@ public partial class Thumbnail
 
 public partial class Thumbnail
 {
-    internal static IReadOnlyList<Thumbnail> GetDefaultSet(VideoId videoId) => new[]
-    {
-        new Thumbnail($"https://img.youtube.com/vi/{videoId}/default.jpg", new Resolution(120, 90)),
-        new Thumbnail($"https://img.youtube.com/vi/{videoId}/mqdefault.jpg", new Resolution(320, 180)),
-        new Thumbnail($"https://img.youtube.com/vi/{videoId}/hqdefault.jpg", new Resolution(480, 360))
-    };
+    internal static IReadOnlyList<Thumbnail> GetDefaultSet(VideoId videoId) =>
+        new[]
+        {
+            new Thumbnail(
+                $"https://img.youtube.com/vi/{videoId}/default.jpg",
+                new Resolution(120, 90)
+            ),
+            new Thumbnail(
+                $"https://img.youtube.com/vi/{videoId}/mqdefault.jpg",
+                new Resolution(320, 180)
+            ),
+            new Thumbnail(
+                $"https://img.youtube.com/vi/{videoId}/hqdefault.jpg",
+                new Resolution(480, 360)
+            )
+        };
 }
 
 /// <summary>
@@ -61,6 +71,6 @@ public static class ThumbnailExtensions
     /// Gets the thumbnail with the highest resolution (by area).
     /// </summary>
     public static Thumbnail GetWithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
-        thumbnails.TryGetWithHighestResolution() ??
-        throw new InvalidOperationException("Input thumbnail collection is empty.");
+        thumbnails.TryGetWithHighestResolution()
+        ?? throw new InvalidOperationException("Input thumbnail collection is empty.");
 }

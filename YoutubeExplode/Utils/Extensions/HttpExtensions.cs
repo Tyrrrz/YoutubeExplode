@@ -22,7 +22,8 @@ internal static class HttpExtensions
     public static async ValueTask<HttpResponseMessage> HeadAsync(
         this HttpClient http,
         string requestUri,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
         return await http.SendAsync(
@@ -36,7 +37,8 @@ internal static class HttpExtensions
         this HttpClient http,
         string requestUri,
         bool ensureSuccess = true,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         using var response = await http.HeadAsync(requestUri, cancellationToken);
 

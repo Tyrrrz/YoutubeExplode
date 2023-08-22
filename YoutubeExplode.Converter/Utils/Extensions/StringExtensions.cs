@@ -3,7 +3,5 @@
 internal static class StringExtensions
 {
     public static string? NullIfWhiteSpace(this string s) =>
-        !string.IsNullOrWhiteSpace(s)
-            ? s
-            : null;
+        !string.IsNullOrWhiteSpace(s) ? s : null;
 }

@@ -11,7 +11,6 @@ public class YoutubeExplodeException : Exception
     /// Initializes an instance of <see cref="YoutubeExplodeException" />.
     /// </summary>
     /// <param name="message"></param>
-    public YoutubeExplodeException(string message) : base(message)
-    {
-    }
+    public YoutubeExplodeException(string message)
+        : base(message) { }
 }

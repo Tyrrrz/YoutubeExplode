@@ -18,7 +18,8 @@ internal abstract class ClientDelegatingHandler : HttpMessageHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
-        CancellationToken cancellationToken) =>
+        CancellationToken cancellationToken
+    ) =>
         await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
     protected override void Dispose(bool disposing)

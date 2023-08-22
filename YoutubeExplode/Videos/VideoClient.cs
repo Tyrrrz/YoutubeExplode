@@ -42,51 +42,55 @@ public class VideoClient
     /// </summary>
     public async ValueTask<Video> GetAsync(
         VideoId videoId,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         var watchPage = await _controller.GetVideoWatchPageAsync(videoId, cancellationToken);
 
         var playerResponse =
-            watchPage.PlayerResponse ??
-            await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+            watchPage.PlayerResponse
+            ?? await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
 
         var title =
-            playerResponse.Title ??
+            playerResponse.Title
+            ??
             // Videos without title are legal
             // https://github.com/Tyrrrz/YoutubeExplode/issues/700
             "";
 
         var channelTitle =
-            playerResponse.Author ??
-            throw new YoutubeExplodeException("Could not extract video author.");
+            playerResponse.Author
+            ?? throw new YoutubeExplodeException("Could not extract video author.");
 
         var channelId =
-            playerResponse.ChannelId ??
-            throw new YoutubeExplodeException("Could not extract video channel ID.");
+            playerResponse.ChannelId
+            ?? throw new YoutubeExplodeException("Could not extract video channel ID.");
 
         var uploadDate =
-            playerResponse.UploadDate ??
-            watchPage.UploadDate ??
-            throw new YoutubeExplodeException("Could not extract video upload date.");
+            playerResponse.UploadDate
+            ?? watchPage.UploadDate
+            ?? throw new YoutubeExplodeException("Could not extract video upload date.");
 
-        var thumbnails = playerResponse.Thumbnails.Select(t =>
-        {
-            var thumbnailUrl =
-                t.Url ??
-                throw new YoutubeExplodeException("Could not extract thumbnail URL.");
+        var thumbnails = playerResponse.Thumbnails
+            .Select(t =>
+            {
+                var thumbnailUrl =
+                    t.Url ?? throw new YoutubeExplodeException("Could not extract thumbnail URL.");
 
-            var thumbnailWidth =
-                t.Width ??
-                throw new YoutubeExplodeException("Could not extract thumbnail width.");
+                var thumbnailWidth =
+                    t.Width
+                    ?? throw new YoutubeExplodeException("Could not extract thumbnail width.");
 
-            var thumbnailHeight =
-                t.Height ??
-                throw new YoutubeExplodeException("Could not extract thumbnail height.");
+                var thumbnailHeight =
+                    t.Height
+                    ?? throw new YoutubeExplodeException("Could not extract thumbnail height.");
 
-            var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
+                var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
 
-            return new Thumbnail(thumbnailUrl, thumbnailResolution);
-        }).Concat(Thumbnail.GetDefaultSet(videoId)).ToArray();
+                return new Thumbnail(thumbnailUrl, thumbnailResolution);
+            })
+            .Concat(Thumbnail.GetDefaultSet(videoId))
+            .ToArray();
 
         return new Video(
             videoId,

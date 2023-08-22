@@ -60,7 +60,8 @@ public class Video : IVideo
         TimeSpan? duration,
         IReadOnlyList<Thumbnail> thumbnails,
         IReadOnlyList<string> keywords,
-        Engagement engagement)
+        Engagement engagement
+    )
     {
         Id = id;
         Title = title;
