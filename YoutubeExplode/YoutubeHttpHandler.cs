@@ -30,7 +30,12 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
 
         // Required consent cookie
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
-        _cookieContainer.Add(new Cookie("SOCS", "CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg") { Domain = "youtube.com" });
+        _cookieContainer.Add(
+            new Cookie("SOCS", "CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg")
+            {
+                Domain = "youtube.com"
+            }
+        );
     }
 
     private string? TryGenerateAuthHeaderValue(Uri uri)
