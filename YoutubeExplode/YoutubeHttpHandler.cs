@@ -25,12 +25,12 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         : base(http, disposeClient)
     {
         // Pre-fill cookies
-        //required cookies
-        _cookieContainer.Add(new Cookie("SOCS", "CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg") { Domain = "youtube.com" }); //cookie consent request bypass
-        
-        //user cookies
         foreach (var cookie in initialCookies)
             _cookieContainer.Add(cookie);
+
+        // Required consent cookie
+        // https://github.com/Tyrrrz/YoutubeExplode/issues/730
+        _cookieContainer.Add(new Cookie("SOCS", "CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg") { Domain = "youtube.com" });
     }
 
     private string? TryGenerateAuthHeaderValue(Uri uri)
