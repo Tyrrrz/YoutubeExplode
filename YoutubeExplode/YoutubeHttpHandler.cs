@@ -28,10 +28,15 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         foreach (var cookie in initialCookies)
             _cookieContainer.Add(cookie);
 
-        // Required consent cookie
+        // Consent to the use of cookies on YouTube.
+        // This is required to access some personalized content, such as mix playlists.
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
+        // https://github.com/Tyrrrz/YoutubeExplode/issues/732
         _cookieContainer.Add(
-            new Cookie("SOCS", "CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg")
+            new Cookie(
+                "SOCS",
+                "CAISNQgDEitib3FfaWRlbnRpdHlmcm9udGVuZHVpc2VydmVyXzIwMjMwODI5LjA3X3AxGgJlbiACGgYIgLC_pwY"
+            )
             {
                 Domain = "youtube.com"
             }
