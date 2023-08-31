@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3.3 (31-Aug-2023)
+
+- Fixed an issue where calling `ChannelClient.GetAsync(...)` and `PlaylistClient.GetAsync(...)` failed on some channels and playlists due to recent YouTube changes. (Thanks [@tmm360](https://github.com/tmm360))
+
 ## v6.3.2 (18-Aug-2023)
 
 - Fixed an issue where calling `StreamClient.GetManifestAsync(...)` failed on videos from the "YouTube Movies & TV" system channel.
