@@ -168,7 +168,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         {
             try
             {
-                using var clonedRequest = request.Clone();
+                using var clonedRequest = await request.CloneAsync();
 
                 var response = HandleResponse(
                     await base.SendAsync(HandleRequest(clonedRequest), cancellationToken)
