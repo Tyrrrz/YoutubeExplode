@@ -50,7 +50,8 @@ public class VideoSpecs
                 "PSY 6甲",
                 "6th Studio Album",
                 "싸이6집",
-                "육갑"
+                "육갑",
+                "Psy Gangnam Style"
             );
         video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(4_650_000_000);
         video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(24_000_000);
