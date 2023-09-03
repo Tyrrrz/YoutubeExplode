@@ -74,9 +74,8 @@ internal partial class FFmpeg
                         StringComparison.OrdinalIgnoreCase
                     )
             )
-        ??
         // Otherwise fallback to just "ffmpeg" and hope it's on the PATH
-        "ffmpeg";
+        ?? "ffmpeg";
 
     private static PipeTarget CreateProgressRouter(IProgress<double> progress)
     {
