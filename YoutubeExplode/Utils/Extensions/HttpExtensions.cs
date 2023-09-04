@@ -12,13 +12,7 @@ internal static class HttpExtensions
     {
         private readonly HttpContent _content;
 
-        public NonDisposableHttpContent(HttpContent content)
-        {
-            _content = content;
-
-            foreach (var (key, value) in _content.Headers)
-                Headers.TryAddWithoutValidation(key, value);
-        }
+        public NonDisposableHttpContent(HttpContent content) => _content = content;
 
         protected override async Task SerializeToStreamAsync(
             Stream stream,
@@ -45,6 +39,12 @@ internal static class HttpExtensions
 
         foreach (var (key, value) in request.Headers)
             clonedRequest.Headers.TryAddWithoutValidation(key, value);
+
+        if (request.Content is not null && clonedRequest.Content is not null)
+        {
+            foreach (var (key, value) in request.Content.Headers)
+                clonedRequest.Content.Headers.TryAddWithoutValidation(key, value);
+        }
 
         return clonedRequest;
     }
