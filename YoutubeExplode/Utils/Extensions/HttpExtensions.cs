@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -6,14 +8,38 @@ namespace YoutubeExplode.Utils.Extensions;
 
 internal static class HttpExtensions
 {
-    public static async ValueTask<HttpRequestMessage> CloneAsync(this HttpRequestMessage request)
+    private class NonDisposableHttpContent : HttpContent
+    {
+        private readonly HttpContent _content;
+
+        public NonDisposableHttpContent(HttpContent content)
+        {
+            _content = content;
+
+            foreach (var (key, value) in _content.Headers)
+                Headers.TryAddWithoutValidation(key, value);
+        }
+
+        protected override async Task SerializeToStreamAsync(
+            Stream stream,
+            TransportContext? context
+        ) => await _content.CopyToAsync(stream);
+
+        protected override bool TryComputeLength(out long length)
+        {
+            length = default;
+            return false;
+        }
+    }
+
+    public static HttpRequestMessage Clone(this HttpRequestMessage request)
     {
         var clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri)
         {
             Version = request.Version,
             // Don't dispose the original request's content
             Content = request.Content is not null
-                ? new StringContent(await request.Content.ReadAsStringAsync())
+                ? new NonDisposableHttpContent(request.Content)
                 : null
         };
 
