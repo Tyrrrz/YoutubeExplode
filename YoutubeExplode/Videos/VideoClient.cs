@@ -53,10 +53,9 @@ public class VideoClient
 
         var title =
             playerResponse.Title
-            ??
             // Videos without title are legal
             // https://github.com/Tyrrrz/YoutubeExplode/issues/700
-            "";
+            ?? "";
 
         var channelTitle =
             playerResponse.Author
