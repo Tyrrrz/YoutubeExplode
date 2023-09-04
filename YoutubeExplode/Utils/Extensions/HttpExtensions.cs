@@ -12,7 +12,13 @@ internal static class HttpExtensions
     {
         private readonly HttpContent _content;
 
-        public NonDisposableHttpContent(HttpContent content) => _content = content;
+        public NonDisposableHttpContent(HttpContent content)
+        {
+            _content = content;
+
+            foreach (var (key, value) in _content.Headers)
+                Headers.TryAddWithoutValidation(key, value);
+        }
 
         protected override async Task SerializeToStreamAsync(
             Stream stream,
