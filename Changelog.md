@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3.4 (06-Sep-2023)
+
+- Fixed an issue where calling any method on `SearchClient` resulted in an exception on mobile devices. (Thanks [@jerry08](https://github.com/jerry08))
+
 ## v6.3.3 (31-Aug-2023)
 
 - Fixed an issue where calling `ChannelClient.GetAsync(...)` and `PlaylistClient.GetAsync(...)` failed on some channels and playlists due to recent YouTube changes. (Thanks [@tmm360](https://github.com/tmm360))
