@@ -73,6 +73,15 @@ public partial struct VideoId
         if (!string.IsNullOrWhiteSpace(shortsMatch) && IsValid(shortsMatch))
             return shortsMatch;
 
+        // Live Share URL
+        // https://www.youtube.com/live/jfKfPfyJRdk?si=7ufTjXNKtfXCc1Gq
+        var liveShareMatch = Regex
+            .Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)")
+            .Groups[1].Value.Pipe(WebUtility.UrlDecode);
+
+        if (!string.IsNullOrWhiteSpace(liveShareMatch) && IsValid(liveShareMatch))
+            return liveShareMatch;
+
         // Invalid input
         return null;
     }
