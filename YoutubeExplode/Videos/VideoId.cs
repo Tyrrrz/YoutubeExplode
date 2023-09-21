@@ -74,7 +74,7 @@ public partial struct VideoId
             return shortsMatch;
 
         // Live Share URL
-        // https://www.youtube.com/live/jfKfPfyJRdk?si=7ufTjXNKtfXCc1Gq
+        // https://www.youtube.com/live/jfKfPfyJRdk
         var liveShareMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)")
             .Groups[1].Value.Pipe(WebUtility.UrlDecode);
