@@ -25,6 +25,7 @@ public class VideoIdSpecs
     [InlineData("youtu.be/yIVRs6YSbOM", "yIVRs6YSbOM")]
     [InlineData("youtube.com/embed/yIVRs6YSbOM", "yIVRs6YSbOM")]
     [InlineData("youtube.com/shorts/sKL1vjP0tIo", "sKL1vjP0tIo")]
+    [InlineData("youtube.com/live/jfKfPfyJRdk", "jfKfPfyJRdk")]
     public void I_can_parse_a_video_ID_from_a_URL_string(string videoUrl, string expectedVideoId)
     {
         // Act
@@ -41,6 +42,7 @@ public class VideoIdSpecs
     [InlineData("youtube.com/xxx?v=pI2I2zqzeKg")]
     [InlineData("youtu.be/watch?v=xxx")]
     [InlineData("youtube.com/embed/")]
+    [InlineData("youtube.com/live/")]
     public void I_cannot_parse_a_video_ID_from_an_invalid_string(string videoId)
     {
         // Act & assert
