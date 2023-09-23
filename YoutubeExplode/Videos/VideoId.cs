@@ -75,9 +75,9 @@ public partial struct VideoId
 
         // Live URL
         // https://www.youtube.com/live/jfKfPfyJRdk
-        var liveMatch = Regex
-            .Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)")
-            .Groups[1].Value.Pipe(WebUtility.UrlDecode);
+        var liveMatch = Regex.Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)").Groups[
+            1
+        ].Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(liveMatch) && IsValid(liveMatch))
             return liveMatch;
