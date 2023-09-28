@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3.5 (28-Sep-2023)
+
+- Added support for parsing live video URLs (i.e. `youtube.com/live/...`). (Thanks [@eimigueloliveir](https://github.com/eimigueloliveir))
+
 ## v6.3.4 (06-Sep-2023)
 
 - Fixed an issue where calling any method on `SearchClient` resulted in an exception on mobile devices. (Thanks [@jerry08](https://github.com/jerry08))
