@@ -14,9 +14,11 @@ public interface IStreamInfo
     /// Stream URL.
     /// </summary>
     /// <remarks>
-    /// While this URL can be used to access the underlying stream, you need a series of carefully crafted
-    /// HTTP requests to properly resolve it. It's recommended to use <see cref="StreamClient.GetAsync" />
-    /// or <see cref="StreamClient.DownloadAsync"/> instead, as they do all the heavy lifting for you.
+    /// While this URL can be used to access the underlying stream, you need a series
+    /// of carefully crafted HTTP requests in order to do so.
+    /// It's highly recommended to use
+    /// <see cref="StreamClient.GetAsync" /> or <see cref="StreamClient.DownloadAsync" />
+    /// instead, as they will all the heavy lifting for you.
     /// </remarks>
     string Url { get; }
 

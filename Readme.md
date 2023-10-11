@@ -127,6 +127,10 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
+> **Warning**:
+> While the `Url` property in the stream metadata can be used to access the underlying content, you need a series of carefully crafted HTTP requests in order to do so.
+> It's highly recommended to use `Videos.Streams.GetAsync(...)` or `Videos.Streams.DownloadAsync(...)` instead, as they will all the heavy lifting for you.
+
 #### Downloading closed captions
 
 Closed captions can be downloaded in a similar way to media streams.
