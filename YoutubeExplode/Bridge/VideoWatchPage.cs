@@ -20,10 +20,15 @@ internal partial class VideoWatchPage
     [Lazy]
     public DateTimeOffset? UploadDate =>
         _content
+            .QuerySelector("meta[itemprop=\"uploadDate\"]")
+            ?.GetAttribute("content")
+            ?.NullIfWhiteSpace()
+            ?.ParseDateTimeOffsetOrNull()
+        ?? _content
             .QuerySelector("meta[itemprop=\"datePublished\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
-            ?.ParseDateTimeOffsetOrNull(new[] { @"yyyy-MM-dd" });
+            ?.ParseDateTimeOffsetOrNull();
 
     [Lazy]
     public long? LikeCount =>
@@ -34,8 +39,8 @@ internal partial class VideoWatchPage
                         .Match(
                             s,
                             """
-            "label"\s*:\s*"([\d,\.]+) likes"
-            """
+                            "label"\s*:\s*"([\d,\.]+) likes"
+                            """
                         )
                         .Groups[1].Value
             )
@@ -52,8 +57,8 @@ internal partial class VideoWatchPage
                         .Match(
                             s,
                             """
-            "label"\s*:\s*"([\d,\.]+) dislikes"
-            """
+                            "label"\s*:\s*"([\d,\.]+) dislikes"
+                            """
                         )
                         .Groups[1].Value
             )

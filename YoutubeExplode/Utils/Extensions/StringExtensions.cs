@@ -91,10 +91,9 @@ internal static class StringExtensions
             ? result
             : null;
 
-    public static DateTimeOffset? ParseDateTimeOffsetOrNull(this string str, string[] formats) =>
-        DateTimeOffset.TryParseExact(
+    public static DateTimeOffset? ParseDateTimeOffsetOrNull(this string str) =>
+        DateTimeOffset.TryParse(
             str,
-            formats,
             DateTimeFormatInfo.InvariantInfo,
             DateTimeStyles.None,
             out var result
