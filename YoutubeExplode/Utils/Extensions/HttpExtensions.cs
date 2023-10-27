@@ -56,6 +56,7 @@ internal static class HttpExtensions
     )
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
+
         return await http.SendAsync(
             request,
             HttpCompletionOption.ResponseHeadersRead,
