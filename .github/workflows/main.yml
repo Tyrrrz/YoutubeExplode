@@ -1,10 +1,21 @@
 name: main
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
+    inputs:
+      package-version:
+        type: string
+        description: Package version
+        required: false
+      deploy:
+        type: boolean
+        description: Deploy package
+        required: false
+        default: false
   schedule:
     - cron: "0 0 * * *"
+  push:
+  pull_request:
 
 jobs:
   main:
@@ -12,6 +23,9 @@ jobs:
     with:
       windows-only: true
       dotnet-version: 7.0.x
+      package-version: ${{ inputs.package-version }}
+      # Deploy only on tags by default, unless deploy is explicitly requested
+      deploy-on-tags-only: ${{ !(github.event_name == 'workflow_dispatch' && inputs.deploy) }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
