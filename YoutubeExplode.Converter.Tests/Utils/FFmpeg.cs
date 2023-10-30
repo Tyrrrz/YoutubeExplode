@@ -71,28 +71,28 @@ public static class FFmpeg
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "01cb055038df8a1b8b0c729dd016a1f490c426eff381b1ac986c2744b145cff2";
+                    return "29289b1008a8fadbb012e7dc0e325fea9eebbe87ac2019a4fa7df7fc15af02d0";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-                    return "519cdc8fc115b46c94d7c51f59f15ef39fe58acd59acb49a8faec686aa8b02f3";
+                    return "edc8c9bda8a10e138386cd9b6953127906bde0f89d2b872cf8e9046d3c559b28";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    return "09fa319448dd132ac81e940f19437b615b7eb0e86e5d2f6ce57980f75d8ccec1";
+                    return "dfd42f47c47559ccb594965f897530bb9daa62d4ce6883c3f4082b7d037832d1";
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "9d820929fec7f55839e8184e164fe44079980a2b61b257c91c997ad22604f8e4";
+                    return "0b7808c8f93a3235efc2448c33086e8ce10295999bd93a40b060fbe7f2e92338";
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "ece0b4b8dbd457d8f3d4b187406997c8c9d66ec7620505ce1d0617cfee7ccae6";
+                    return "7898153f5785a739b1314ef3fb9c511be26bc7879d972c301a170e6ab8027652";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    return "e39483c79ac02b9dc055f5ccc95e24cb0c718edb9c9ff270fc96c9444c71d02c";
+                    return "a26adea0b56376df8c46118c15ae478ba02e9ac57097f569a32100760cea1cd2";
             }
 
             throw new NotSupportedException("Unsupported architecture.");
