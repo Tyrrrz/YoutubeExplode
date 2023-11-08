@@ -41,25 +41,31 @@ public partial struct VideoId
         // https://www.youtube.com/watch?v=yIVRs6YSbOM
         var regularMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)")
-            .Groups[1].Value.Pipe(WebUtility.UrlDecode);
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
 
         // Short URL
         // https://youtu.be/yIVRs6YSbOM
-        var shortMatch = Regex.Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)").Groups[
-            1
-        ].Value.Pipe(WebUtility.UrlDecode);
+        var shortMatch = Regex
+            .Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)")
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(shortMatch) && IsValid(shortMatch))
             return shortMatch;
 
         // Embed URL
         // https://www.youtube.com/embed/yIVRs6YSbOM
-        var embedMatch = Regex.Match(videoIdOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)").Groups[
-            1
-        ].Value.Pipe(WebUtility.UrlDecode);
+        var embedMatch = Regex
+            .Match(videoIdOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)")
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(embedMatch) && IsValid(embedMatch))
             return embedMatch;
@@ -68,16 +74,20 @@ public partial struct VideoId
         // https://www.youtube.com/shorts/sKL1vjP0tIo
         var shortsMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/shorts/(.*?)(?:\?|&|/|$)")
-            .Groups[1].Value.Pipe(WebUtility.UrlDecode);
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(shortsMatch) && IsValid(shortsMatch))
             return shortsMatch;
 
         // Live URL
         // https://www.youtube.com/live/jfKfPfyJRdk
-        var liveMatch = Regex.Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)").Groups[
-            1
-        ].Value.Pipe(WebUtility.UrlDecode);
+        var liveMatch = Regex
+            .Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)")
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(liveMatch) && IsValid(liveMatch))
             return liveMatch;

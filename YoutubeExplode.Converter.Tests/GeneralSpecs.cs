@@ -113,10 +113,12 @@ public class GeneralSpecs : IAsyncLifetime
             .Take(3)
             .ToArray();
 
-        await youtube.Videos.DownloadAsync(
-            videoStreamInfos.Concat<IStreamInfo>(audioStreamInfos).ToArray(),
-            new ConversionRequestBuilder(filePath).Build()
-        );
+        await youtube
+            .Videos
+            .DownloadAsync(
+                videoStreamInfos.Concat<IStreamInfo>(audioStreamInfos).ToArray(),
+                new ConversionRequestBuilder(filePath).Build()
+            );
 
         // Assert
         MediaFormat.IsMp4File(filePath).Should().BeTrue();
@@ -157,10 +159,12 @@ public class GeneralSpecs : IAsyncLifetime
             .Take(3)
             .ToArray();
 
-        await youtube.Videos.DownloadAsync(
-            videoStreamInfos.Concat<IStreamInfo>(audioStreamInfos).ToArray(),
-            new ConversionRequestBuilder(filePath).Build()
-        );
+        await youtube
+            .Videos
+            .DownloadAsync(
+                videoStreamInfos.Concat<IStreamInfo>(audioStreamInfos).ToArray(),
+                new ConversionRequestBuilder(filePath).Build()
+            );
 
         // Assert
         MediaFormat.IsWebMFile(filePath).Should().BeTrue();
@@ -184,14 +188,16 @@ public class GeneralSpecs : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.mp3");
 
         // Act
-        await youtube.Videos.DownloadAsync(
-            "9bZkp7q19f0",
-            filePath,
-            o =>
-                o.SetFFmpegPath(FFmpeg.FilePath)
-                    .SetContainer("mp4")
-                    .SetPreset(ConversionPreset.UltraFast)
-        );
+        await youtube
+            .Videos
+            .DownloadAsync(
+                "9bZkp7q19f0",
+                filePath,
+                o =>
+                    o.SetFFmpegPath(FFmpeg.FilePath)
+                        .SetContainer("mp4")
+                        .SetPreset(ConversionPreset.UltraFast)
+            );
 
         // Assert
         MediaFormat.IsMp4File(filePath).Should().BeTrue();

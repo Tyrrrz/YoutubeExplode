@@ -43,7 +43,9 @@ public partial struct ChannelId
         // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
         var regularMatch = Regex
             .Match(channelIdOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)")
-            .Groups[1].Value.Pipe(WebUtility.UrlDecode);
+            .Groups[1]
+            .Value
+            .Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;

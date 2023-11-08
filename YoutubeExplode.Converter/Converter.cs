@@ -185,12 +185,9 @@ internal partial class Converter
 
             streamInputs.Add(streamInput);
 
-            await _videoClient.Streams.DownloadAsync(
-                streamInfo,
-                streamInput.FilePath,
-                streamProgress,
-                cancellationToken
-            );
+            await _videoClient
+                .Streams
+                .DownloadAsync(streamInfo, streamInput.FilePath, streamProgress, cancellationToken);
         }
 
         progress?.Report(1);
@@ -220,12 +217,9 @@ internal partial class Converter
 
             subtitleInputs.Add(subtitleInput);
 
-            await _videoClient.ClosedCaptions.DownloadAsync(
-                trackInfo,
-                subtitleInput.FilePath,
-                trackProgress,
-                cancellationToken
-            );
+            await _videoClient
+                .ClosedCaptions
+                .DownloadAsync(trackInfo, subtitleInput.FilePath, trackProgress, cancellationToken);
         }
 
         progress?.Report(1);

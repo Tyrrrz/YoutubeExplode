@@ -27,7 +27,8 @@ internal partial class DashManifest
                     x.Descendants("Initialization")
                         .FirstOrDefault()
                         ?.Attribute("sourceURL")
-                        ?.Value.Contains("sq/") != true
+                        ?.Value
+                        .Contains("sq/") != true
             )
             // Skip streams without codecs
             .Where(x => !string.IsNullOrWhiteSpace(x.Attribute("codecs")?.Value))

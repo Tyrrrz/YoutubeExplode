@@ -47,7 +47,9 @@ public class ChannelClient
                 .Matches(logoUrl, @"\bs(\d+)\b")
                 .ToArray()
                 .LastOrDefault()
-                ?.Groups[1].Value.NullIfWhiteSpace()
+                ?.Groups[1]
+                .Value
+                .NullIfWhiteSpace()
                 ?.ParseIntOrNull() ?? 100;
 
         var thumbnails = new[] { new Thumbnail(logoUrl, new Resolution(logoSize, logoSize)) };

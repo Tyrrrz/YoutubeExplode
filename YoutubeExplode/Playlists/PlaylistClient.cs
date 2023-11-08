@@ -47,7 +47,8 @@ public class PlaylistClient
         // System playlists have no description
         var description = response.Description ?? "";
 
-        var thumbnails = response.Thumbnails
+        var thumbnails = response
+            .Thumbnails
             .Select(t =>
             {
                 var thumbnailUrl =
@@ -125,7 +126,8 @@ public class PlaylistClient
                     videoData.ChannelId
                     ?? throw new YoutubeExplodeException("Could not extract video channel ID.");
 
-                var videoThumbnails = videoData.Thumbnails
+                var videoThumbnails = videoData
+                    .Thumbnails
                     .Select(t =>
                     {
                         var thumbnailUrl =

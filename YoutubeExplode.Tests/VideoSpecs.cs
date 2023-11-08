@@ -35,7 +35,8 @@ public class VideoSpecs
         video.Description.Should().Contain("More about PSY@");
         video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(252), TimeSpan.FromSeconds(1));
         video.Thumbnails.Should().NotBeEmpty();
-        video.Keywords
+        video
+            .Keywords
             .Should()
             .BeEquivalentTo(
                 "PSY",

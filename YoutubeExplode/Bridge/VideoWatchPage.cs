@@ -32,7 +32,9 @@ internal partial class VideoWatchPage
 
     [Lazy]
     public long? LikeCount =>
-        _content.Source.Text
+        _content
+            .Source
+            .Text
             .Pipe(
                 s =>
                     Regex
@@ -42,7 +44,8 @@ internal partial class VideoWatchPage
                             "label"\s*:\s*"([\d,\.]+) likes"
                             """
                         )
-                        .Groups[1].Value
+                        .Groups[1]
+                        .Value
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
@@ -50,7 +53,9 @@ internal partial class VideoWatchPage
 
     [Lazy]
     public long? DislikeCount =>
-        _content.Source.Text
+        _content
+            .Source
+            .Text
             .Pipe(
                 s =>
                     Regex
@@ -60,7 +65,8 @@ internal partial class VideoWatchPage
                             "label"\s*:\s*"([\d,\.]+) dislikes"
                             """
                         )
-                        .Groups[1].Value
+                        .Groups[1]
+                        .Value
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()

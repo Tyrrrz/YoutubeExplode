@@ -36,11 +36,9 @@ public class SubtitleSpecs : IAsyncLifetime
         var trackInfos = trackManifest.Tracks;
 
         // Act
-        await youtube.Videos.DownloadAsync(
-            streamInfos,
-            trackInfos,
-            new ConversionRequestBuilder(filePath).Build()
-        );
+        await youtube
+            .Videos
+            .DownloadAsync(streamInfos, trackInfos, new ConversionRequestBuilder(filePath).Build());
 
         // Assert
         MediaFormat.IsMp4File(filePath).Should().BeTrue();
@@ -75,11 +73,9 @@ public class SubtitleSpecs : IAsyncLifetime
         var trackInfos = trackManifest.Tracks;
 
         // Act
-        await youtube.Videos.DownloadAsync(
-            streamInfos,
-            trackInfos,
-            new ConversionRequestBuilder(filePath).Build()
-        );
+        await youtube
+            .Videos
+            .DownloadAsync(streamInfos, trackInfos, new ConversionRequestBuilder(filePath).Build());
 
         // Assert
         MediaFormat.IsWebMFile(filePath).Should().BeTrue();
