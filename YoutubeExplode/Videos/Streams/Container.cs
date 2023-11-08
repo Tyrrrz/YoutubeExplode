@@ -44,6 +44,9 @@ public partial struct Container
     /// <summary>
     /// MPEG-2 Audio Layer III (mp3).
     /// </summary>
+    /// <remarks>
+    /// YouTube does not natively provide streams in this container.
+    /// </remarks>
     public static Container Mp3 { get; } = new("mp3");
 
     /// <summary>

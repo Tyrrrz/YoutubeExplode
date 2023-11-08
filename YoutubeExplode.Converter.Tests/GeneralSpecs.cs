@@ -122,10 +122,12 @@ public class GeneralSpecs : IAsyncLifetime
         MediaFormat.IsMp4File(filePath).Should().BeTrue();
 
         foreach (var streamInfo in videoStreamInfos)
+        {
             FileEx
                 .ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
                 .Should()
                 .BeTrue();
+        }
     }
 
     [Fact]
@@ -164,10 +166,12 @@ public class GeneralSpecs : IAsyncLifetime
         MediaFormat.IsWebMFile(filePath).Should().BeTrue();
 
         foreach (var streamInfo in videoStreamInfos)
+        {
             FileEx
                 .ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
                 .Should()
                 .BeTrue();
+        }
     }
 
     [Fact]

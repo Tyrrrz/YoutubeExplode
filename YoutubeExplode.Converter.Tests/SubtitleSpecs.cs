@@ -46,10 +46,12 @@ public class SubtitleSpecs : IAsyncLifetime
         MediaFormat.IsMp4File(filePath).Should().BeTrue();
 
         foreach (var trackInfo in trackInfos)
+        {
             FileEx
                 .ContainsBytes(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name))
                 .Should()
                 .BeTrue();
+        }
     }
 
     [Fact]
@@ -83,9 +85,11 @@ public class SubtitleSpecs : IAsyncLifetime
         MediaFormat.IsWebMFile(filePath).Should().BeTrue();
 
         foreach (var trackInfo in trackInfos)
+        {
             FileEx
                 .ContainsBytes(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name))
                 .Should()
                 .BeTrue();
+        }
     }
 }
