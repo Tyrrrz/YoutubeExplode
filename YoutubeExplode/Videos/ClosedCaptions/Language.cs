@@ -9,7 +9,7 @@ namespace YoutubeExplode.Videos.ClosedCaptions;
 public readonly partial struct Language
 {
     /// <summary>
-    /// ISO 639-1 code of the language, possibly with a regional identifier (e.g. 'en' or 'en-US').
+    /// Two-letter (ISO 639-1) language code, possibly with a regional identifier (e.g. 'en' or 'en-US').
     /// </summary>
     public string Code { get; }
 
