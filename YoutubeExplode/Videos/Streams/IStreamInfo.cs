@@ -18,7 +18,7 @@ public interface IStreamInfo
     /// of carefully crafted HTTP requests in order to do so.
     /// It's highly recommended to use
     /// <see cref="StreamClient.GetAsync" /> or <see cref="StreamClient.DownloadAsync" />
-    /// instead, as they will all the heavy lifting for you.
+    /// instead, as they will perform all the heavy lifting for you.
     /// </remarks>
     string Url { get; }
 
