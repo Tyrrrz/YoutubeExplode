@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
+using CliWrap.Exceptions;
 using YoutubeExplode.Converter.Utils.Extensions;
 
 namespace YoutubeExplode.Converter;
@@ -35,20 +36,21 @@ internal partial class FFmpeg
             progress?.Pipe(CreateProgressRouter) ?? PipeTarget.Null
         );
 
-        var result = await Cli.Wrap(_filePath)
-            .WithArguments(arguments)
-            .WithStandardErrorPipe(stdErrPipe)
-            .WithValidation(CommandResultValidation.None)
-            .ExecuteAsync(cancellationToken);
-
-        if (result.ExitCode != 0)
+        try
+        {
+            await Cli.Wrap(_filePath)
+                .WithArguments(arguments)
+                .WithStandardErrorPipe(stdErrPipe)
+                .ExecuteAsync(cancellationToken);
+        }
+        catch (CommandExecutionException ex)
         {
             throw new InvalidOperationException(
                 $"""
-                FFmpeg exited with a non-zero exit code ({result.ExitCode}).
+                FFmpeg exited with a non-zero exit code ({ex.ExitCode}).
 
                 Arguments:
-                {arguments}
+                {ex.Command.Arguments}
 
                 Standard error:
                 {stdErrBuffer}
