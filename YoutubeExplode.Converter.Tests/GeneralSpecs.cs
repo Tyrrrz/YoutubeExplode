@@ -204,6 +204,35 @@ public class GeneralSpecs : IAsyncLifetime
     }
 
     [Fact]
+    public async Task I_can_try_to_download_a_video_using_invalid_conversion_settings_and_get_an_error()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        using var dir = TempDir.Create();
+        var filePath = Path.Combine(dir.Path, "video.mp4");
+
+        // Act & assert
+        var ex = await Assert.ThrowsAnyAsync<Exception>(
+            async () =>
+                await youtube
+                    .Videos
+                    .DownloadAsync(
+                        "9bZkp7q19f0",
+                        filePath,
+                        o =>
+                            o.SetFFmpegPath(FFmpeg.FilePath)
+                                .SetContainer("invalid_format")
+                                .SetPreset(ConversionPreset.UltraFast)
+                    )
+        );
+
+        Directory.EnumerateFiles(dir.Path, "*", SearchOption.AllDirectories).Should().BeEmpty();
+
+        _testOutput.WriteLine(ex.ToString());
+    }
+
+    [Fact]
     public async Task I_can_download_a_video_while_tracking_progress()
     {
         // Arrange

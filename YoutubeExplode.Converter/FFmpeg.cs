@@ -47,14 +47,12 @@ internal partial class FFmpeg
         {
             throw new InvalidOperationException(
                 $"""
-                FFmpeg exited with a non-zero exit code ({ex.ExitCode}).
-
-                Arguments:
-                {ex.Command.Arguments}
+                FFmpeg command-line tool failed with an error.
 
                 Standard error:
                 {stdErrBuffer}
-                """
+                """,
+                ex
             );
         }
     }
