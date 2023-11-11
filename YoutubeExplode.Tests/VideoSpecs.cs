@@ -71,7 +71,7 @@ public class VideoSpecs
             async () => await youtube.Videos.GetAsync(VideoIds.Private)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class VideoSpecs
             async () => await youtube.Videos.GetAsync(VideoIds.Deleted)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Theory]

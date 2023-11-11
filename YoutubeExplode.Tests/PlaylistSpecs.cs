@@ -50,7 +50,7 @@ public class PlaylistSpecs
             async () => await youtube.Playlists.GetAsync(PlaylistIds.Private)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class PlaylistSpecs
             async () => await youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Theory]

@@ -103,7 +103,7 @@ public class StreamSpecs
 
         ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class StreamSpecs
             async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class StreamSpecs
             async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Theory]
@@ -269,7 +269,7 @@ public class StreamSpecs
                 await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -283,6 +283,6 @@ public class StreamSpecs
             async () => await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
         );
 
-        _testOutput.WriteLine(ex.Message);
+        _testOutput.WriteLine(ex.ToString());
     }
 }
