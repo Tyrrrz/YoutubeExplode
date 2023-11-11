@@ -40,7 +40,9 @@ public class UserNameSpecs
     [InlineData("=0123456789ABCDEF")]
     [InlineData("youtube.com/user/P_roZD")]
     [InlineData("example.com/user/ProZD")]
-    public void I_cannot_parse_a_user_name_from_an_invalid_string(string userName)
+    public void I_can_try_to_parse_a_user_name_and_get_an_error_if_the_input_string_is_invalid(
+        string userName
+    )
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => UserName.Parse(userName));

@@ -44,7 +44,9 @@ public class ChannelSlugSpecs
     [InlineData("youtube.com/?c=Tyrrrz")]
     [InlineData("youtube.com/channel/Tyrrrz")]
     [InlineData("youtube.com/")]
-    public void I_cannot_parse_a_channel_slug_from_an_invalid_string(string channelSlugOrUrl)
+    public void I_can_try_to_parse_a_channel_slug_and_get_an_error_if_the_input_string_is_invalid(
+        string channelSlugOrUrl
+    )
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => ChannelSlug.Parse(channelSlugOrUrl));

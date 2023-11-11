@@ -43,7 +43,9 @@ public class VideoIdSpecs
     [InlineData("youtu.be/watch?v=xxx")]
     [InlineData("youtube.com/embed/")]
     [InlineData("youtube.com/live/")]
-    public void I_cannot_parse_a_video_ID_from_an_invalid_string(string videoId)
+    public void I_can_try_to_parse_a_video_ID_and_get_an_error_if_the_input_string_is_invalid(
+        string videoId
+    )
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => VideoId.Parse(videoId));

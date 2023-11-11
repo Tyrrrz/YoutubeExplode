@@ -43,7 +43,9 @@ public class ChannelHandleSpecs
     [InlineData("youtube.com/@BeauMile$")]
     [InlineData("youtube.com/@Beau+Miles")]
     [InlineData("youtube.com/?@BeauMiles")]
-    public void I_cannot_parse_a_channel_handle_from_an_invalid_string(string channelHandleOrUrl)
+    public void I_can_try_to_parse_a_channel_handle_and_get_an_error_if_the_input_string_is_invalid(
+        string channelHandleOrUrl
+    )
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => ChannelHandle.Parse(channelHandleOrUrl));

@@ -70,7 +70,9 @@ public class PlaylistIdSpecs
     [InlineData("PLm_3vnTS-pvmZFuF3L=Pyhqf8kTTYVKjW")]
     [InlineData("youtube.com/playlist?lisp=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H")]
     [InlineData("youtube.com/")]
-    public void I_cannot_parse_a_playlist_ID_from_an_invalid_string(string playlistIdOrUrl)
+    public void I_can_try_to_parse_a_playlist_ID_and_get_an_error_if_the_input_string_is_invalid(
+        string playlistIdOrUrl
+    )
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => PlaylistId.Parse(playlistIdOrUrl));

@@ -204,7 +204,7 @@ public class GeneralSpecs : IAsyncLifetime
     }
 
     [Fact]
-    public async Task I_can_try_to_download_a_video_using_invalid_conversion_settings_and_get_an_error()
+    public async Task I_can_try_to_download_a_video_and_get_an_error_if_the_conversion_settings_are_invalid()
     {
         // Arrange
         var youtube = new YoutubeClient();

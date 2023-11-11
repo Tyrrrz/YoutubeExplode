@@ -42,7 +42,9 @@ public class ChannelIdSpecs
     [InlineData("youtube.com/?channel=UCUC3xnGqlcL3y-GXz5N3wiTJQ")]
     [InlineData("youtube.com/channel/asd")]
     [InlineData("youtube.com/")]
-    public void I_cannot_parse_a_channel_ID_from_an_invalid_string(string channelIdOrUrl)
+    public void I_can_try_to_parse_a_channel_ID_and_get_an_error_if_the_input_string_is_invalid(
+        string channelIdOrUrl
+    )
     {
         // Act & assert
         Assert.Throws<ArgumentException>(() => ChannelId.Parse(channelIdOrUrl));

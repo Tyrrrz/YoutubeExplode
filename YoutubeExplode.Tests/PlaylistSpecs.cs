@@ -40,7 +40,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_the_metadata_of_a_private_playlist()
+    public async Task I_can_try_to_get_the_metadata_of_a_playlist_and_get_an_error_if_it_is_private()
     {
         // Arrange
         var youtube = new YoutubeClient();
@@ -54,7 +54,7 @@ public class PlaylistSpecs
     }
 
     [Fact]
-    public async Task I_cannot_get_the_metadata_of_a_non_existing_playlist()
+    public async Task I_can_try_to_get_the_metadata_of_a_playlist_and_get_an_error_if_it_does_not_exist()
     {
         // Arrange
         var youtube = new YoutubeClient();
