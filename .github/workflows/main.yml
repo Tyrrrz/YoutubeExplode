@@ -22,7 +22,7 @@ jobs:
     uses: Tyrrrz/.github/.github/workflows/nuget.yml@master
     with:
       windows-only: true
-      dotnet-version: 7.0.x
+      dotnet-version: 8.0.x
       package-version: ${{ inputs.package-version }}
       # Deploy only on tags by default, unless deploy is explicitly requested
       deploy-on-tags-only: ${{ !(github.event_name == 'workflow_dispatch' && inputs.deploy) }}
