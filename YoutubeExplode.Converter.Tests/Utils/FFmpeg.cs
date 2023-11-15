@@ -16,7 +16,7 @@ public static class FFmpeg
 {
     private static readonly SemaphoreSlim Lock = new(1, 1);
 
-    public static Version Version { get; } = new(6, 0);
+    public static Version Version { get; } = new(6, 1);
 
     private static string FileName { get; } =
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ffmpeg.exe" : "ffmpeg";
@@ -71,28 +71,28 @@ public static class FFmpeg
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "29289b1008a8fadbb012e7dc0e325fea9eebbe87ac2019a4fa7df7fc15af02d0";
+                    return "48130a80aebffb61d06913350c3ad3187efd85096f898045fd65001bf89d7d7f";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-                    return "edc8c9bda8a10e138386cd9b6953127906bde0f89d2b872cf8e9046d3c559b28";
+                    return "71e83e4d5b4ed8e9e5b13a8bc118b73affef2ff12f9e14c388bfb17db7008f8d";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    return "dfd42f47c47559ccb594965f897530bb9daa62d4ce6883c3f4082b7d037832d1";
+                    return "cd2d765565d1cc36e3fc0653d8ad6444c1736b883144de885c1f178a404c977c";
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "0b7808c8f93a3235efc2448c33086e8ce10295999bd93a40b060fbe7f2e92338";
+                    return "856b4f0e5cd9de45c98b703f7258d578bbdc0ac818073a645315241f9e7d5780";
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "7898153f5785a739b1314ef3fb9c511be26bc7879d972c301a170e6ab8027652";
+                    return "1671abe5dcc0b4adfaea6f2e531e377a3ccd8ea21aa2b5a0589b0e5ae7d85a37";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    return "a26adea0b56376df8c46118c15ae478ba02e9ac57097f569a32100760cea1cd2";
+                    return "bcbc7de089f68c3565dd40e8fe462df28a181af8df756621fc4004a747b845cf";
             }
 
             throw new NotSupportedException("Unsupported architecture.");
