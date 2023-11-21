@@ -6,9 +6,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>
-      Abstraction layer over YouTube's internal API. Note: this package has limited availability in Russia and Belarus.
-    </Description>
     <PackageIcon>favicon.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
