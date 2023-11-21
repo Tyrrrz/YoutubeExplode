@@ -22,8 +22,8 @@
 **YoutubeExplode** is a library that provides an interface to query metadata of YouTube videos, playlists and channels, as well as to resolve and download video streams and closed caption tracks.
 Behind a layer of abstraction, this library works by scraping raw page data and exploiting reverse-engineered internal endpoints.
 
-> 📝 Want to learn more about how YouTube works under the hood?
-> [Read this article](https://tyrrrz.me/blog/reverse-engineering-youtube-revisited).
+> 📝 Interested how this library works?
+> See the [Reverse-Engineering YouTube](https://tyrrrz.me/blog/reverse-engineering-youtube-revisited) article.
 
 ## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/why-so-political.md)</sup>
 
@@ -39,6 +39,10 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 ## Install
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode): `dotnet add package YoutubeExplode`
+
+Extension packages:
+
+- 📦 [NuGet](https://nuget.org/packages/YoutubeExplode.Converter): `dotnet add package YoutubeExplode.Converter` ([learn more](YoutubeExplode.Converter))
 
 ## Screenshots
 
@@ -416,8 +420,3 @@ In order to actually perform the authentication, you can use an embedded browser
 ## Etymology
 
 The "Explode" in **YoutubeExplode** comes from the name of a PHP function that splits up strings, [`explode(...)`](https://php.net/manual/en/function.explode.php). When I was starting the development of this library, most of the reference source code I read was written in PHP, hence the inspiration for the name.
-
-## Related projects
-
-- [**YoutubeExplode.Converter**](YoutubeExplode.Converter) — provides capabilities for downloading YouTube videos with conversion to other formats, using FFmpeg.
-- [**YoutubeDownloader**](https://github.com/Tyrrrz/YoutubeDownloader) — desktop application for downloading YouTube videos, based on **YoutubeExplode**.
