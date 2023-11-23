@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3.8 (23-Nov-2023)
+
+- [Converter] Fixed an issue where downloading subtitled videos with `VideoClient.DownloadAsync(...)` crashed with an exception for certain language codes.
+
 ## v6.3.7 (09-Nov-2023)
 
 - [Converter] Fixed an issue where subtitles embedded via `VideoClient.DownloadAsync(...)` had their languages specified using ISO 639-1 codes instead of ISO 639-2 codes.
