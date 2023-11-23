@@ -135,7 +135,7 @@ internal partial class Converter
         {
             arguments
                 .Add($"-metadata:s:s:{i}")
-                .Add($"language={subtitleInput.Info.Language.GetThreeLetterCode()}")
+                .Add($"language={subtitleInput.Info.Language.TryGetThreeLetterCode() ?? subtitleInput.Info.Language.GetTwoLetterCode()}")
                 .Add($"-metadata:s:s:{i}")
                 .Add($"title={subtitleInput.Info.Language.Name}");
         }

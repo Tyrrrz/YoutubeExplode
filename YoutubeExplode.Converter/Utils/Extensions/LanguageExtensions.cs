@@ -1,5 +1,4 @@
-﻿using System;
-using YoutubeExplode.Videos.ClosedCaptions;
+﻿using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Converter.Utils.Extensions;
 
@@ -11,7 +10,7 @@ internal static class LanguageExtensions
         return dashIndex >= 0 ? language.Code[..dashIndex] : language.Code;
     }
 
-    public static string GetThreeLetterCode(this Language language) =>
+    public static string? TryGetThreeLetterCode(this Language language) =>
         language.GetTwoLetterCode().ToLowerInvariant() switch
         {
             "aa" => "aar",
@@ -204,6 +203,6 @@ internal static class LanguageExtensions
             "za" => "zha",
             "zh" => "zho",
             "zu" => "zul",
-            var code => throw new InvalidOperationException($"Unrecognized language code '{code}'.")
+            _ => null
         };
 }
