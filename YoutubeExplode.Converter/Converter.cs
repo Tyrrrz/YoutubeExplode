@@ -133,9 +133,15 @@ internal partial class Converter
         // Metadata for subtitles
         foreach (var (subtitleInput, i) in subtitleInputs.WithIndex())
         {
+            // Language codes can be stored in any format, but most players expect
+            // three-letter codes, so we'll try to convert to that first.
+            var languageCode =
+                subtitleInput.Info.Language.TryGetThreeLetterCode()
+                ?? subtitleInput.Info.Language.GetTwoLetterCode();
+
             arguments
                 .Add($"-metadata:s:s:{i}")
-                .Add($"language={subtitleInput.Info.Language.TryGetThreeLetterCode() ?? subtitleInput.Info.Language.GetTwoLetterCode()}")
+                .Add($"language={languageCode}")
                 .Add($"-metadata:s:s:{i}")
                 .Add($"title={subtitleInput.Info.Language.Name}");
         }
