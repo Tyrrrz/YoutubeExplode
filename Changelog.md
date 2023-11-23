@@ -1,5 +1,9 @@
 # Changelog
 
+> **Important**:
+> This changelog is no longer maintained and will be removed in the future.
+> Going forward, new versions of this package will have the corresponding release notes published on [GitHub Releases](https://githu.com/Tyrrrz/YoutubeExplode/releases).
+
 ## v6.3.8 (23-Nov-2023)
 
 - [Converter] Fixed an issue where downloading subtitled videos with `VideoClient.DownloadAsync(...)` crashed with an exception for certain language codes.
