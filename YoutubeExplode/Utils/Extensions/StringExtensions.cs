@@ -18,7 +18,6 @@ internal static class StringExtensions
     )
     {
         var index = str.IndexOf(sub, comparison);
-
         return index < 0 ? str : str[..index];
     }
 

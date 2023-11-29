@@ -137,7 +137,7 @@ internal partial class Converter
             // three-letter codes, so we'll try to convert to that first.
             var languageCode =
                 subtitleInput.Info.Language.TryGetThreeLetterCode()
-                ?? subtitleInput.Info.Language.GetTwoLetterCode();
+                ?? subtitleInput.Info.Language.Code;
 
             arguments
                 .Add($"-metadata:s:s:{i}")

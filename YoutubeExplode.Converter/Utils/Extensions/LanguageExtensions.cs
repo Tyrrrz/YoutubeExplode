@@ -1,17 +1,23 @@
-﻿using YoutubeExplode.Videos.ClosedCaptions;
+﻿using System;
+using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Converter.Utils.Extensions;
 
 internal static class LanguageExtensions
 {
-    public static string GetTwoLetterCode(this Language language)
+    public static string? TryGetThreeLetterCode(this Language language)
     {
-        var dashIndex = language.Code.IndexOf('-');
-        return dashIndex >= 0 ? language.Code[..dashIndex] : language.Code;
-    }
+        // YouTube provides either a two-letter or a three-letter language code,
+        // which may or may not also contain a region identifier.
+        var regionNeutralLanguageCode = language
+            .Code
+            .SubstringUntil("-", StringComparison.OrdinalIgnoreCase);
 
-    public static string? TryGetThreeLetterCode(this Language language) =>
-        language.GetTwoLetterCode().ToLowerInvariant() switch
+        // Already a three-letter code
+        if (regionNeutralLanguageCode.Length == 3)
+            return regionNeutralLanguageCode;
+
+        return regionNeutralLanguageCode.ToLowerInvariant() switch
         {
             "aa" => "aar",
             "ab" => "abk",
@@ -205,4 +211,5 @@ internal static class LanguageExtensions
             "zu" => "zul",
             _ => null
         };
+    }
 }
