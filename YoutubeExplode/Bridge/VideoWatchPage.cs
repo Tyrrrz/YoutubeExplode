@@ -41,7 +41,25 @@ internal partial class VideoWatchPage
                         .Match(
                             s,
                             """
-                            "label"\s*:\s*"([\d,\.]+) likes"
+                            "\s*:\s*"([\d,\.]+) likes"
+                            """
+                        )
+                        .Groups[1]
+                        .Value
+            )
+            .NullIfWhiteSpace()
+            ?.StripNonDigit()
+            .ParseLongOrNull()
+        ?? _content
+            .Source
+            .Text
+            .Pipe(
+                s =>
+                    Regex
+                        .Match(
+                            s,
+                            """
+                            along with ([\d,\.]+) other people"
                             """
                         )
                         .Groups[1]
@@ -62,7 +80,7 @@ internal partial class VideoWatchPage
                         .Match(
                             s,
                             """
-                            "label"\s*:\s*"([\d,\.]+) dislikes"
+                            "\s*:\s*"([\d,\.]+) dislikes"
                             """
                         )
                         .Groups[1]
