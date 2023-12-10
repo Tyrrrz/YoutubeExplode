@@ -5,12 +5,8 @@ using YoutubeExplode.Bridge;
 
 namespace YoutubeExplode.Search;
 
-internal class SearchController
+internal class SearchController(HttpClient http)
 {
-    private readonly HttpClient _http;
-
-    public SearchController(HttpClient http) => _http = http;
-
     public async ValueTask<SearchResponse> GetSearchResponseAsync(
         string searchQuery,
         SearchFilter searchFilter,
@@ -50,7 +46,7 @@ internal class SearchController
             )
         };
 
-        using var response = await _http.SendAsync(request, cancellationToken);
+        using var response = await http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         return SearchResponse.Parse(await response.Content.ReadAsStringAsync(cancellationToken));

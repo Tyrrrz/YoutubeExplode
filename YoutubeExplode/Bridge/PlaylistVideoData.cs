@@ -7,25 +7,23 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal class PlaylistVideoData
+internal class PlaylistVideoData(JsonElement content)
 {
-    private readonly JsonElement _content;
-
     [Lazy]
     public int? Index =>
-        _content
+        content
             .GetPropertyOrNull("navigationEndpoint")
             ?.GetPropertyOrNull("watchEndpoint")
             ?.GetPropertyOrNull("index")
             ?.GetInt32OrNull();
 
     [Lazy]
-    public string? Id => _content.GetPropertyOrNull("videoId")?.GetStringOrNull();
+    public string? Id => content.GetPropertyOrNull("videoId")?.GetStringOrNull();
 
     [Lazy]
     public string? Title =>
-        _content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
-        ?? _content
+        content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+        ?? content
             .GetPropertyOrNull("title")
             ?.GetPropertyOrNull("runs")
             ?.EnumerateArrayOrNull()
@@ -35,12 +33,12 @@ internal class PlaylistVideoData
 
     [Lazy]
     private JsonElement? AuthorDetails =>
-        _content
+        content
             .GetPropertyOrNull("longBylineText")
             ?.GetPropertyOrNull("runs")
             ?.EnumerateArrayOrNull()
             ?.ElementAtOrNull(0)
-        ?? _content
+        ?? content
             .GetPropertyOrNull("shortBylineText")
             ?.GetPropertyOrNull("runs")
             ?.EnumerateArrayOrNull()
@@ -59,17 +57,17 @@ internal class PlaylistVideoData
 
     [Lazy]
     public TimeSpan? Duration =>
-        _content
+        content
             .GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
             ?.ParseDoubleOrNull()
             ?.Pipe(TimeSpan.FromSeconds)
-        ?? _content
+        ?? content
             .GetPropertyOrNull("lengthText")
             ?.GetPropertyOrNull("simpleText")
             ?.GetStringOrNull()
             ?.ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" })
-        ?? _content
+        ?? content
             .GetPropertyOrNull("lengthText")
             ?.GetPropertyOrNull("runs")
             ?.EnumerateArrayOrNull()
@@ -80,12 +78,10 @@ internal class PlaylistVideoData
 
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails =>
-        _content
+        content
             .GetPropertyOrNull("thumbnail")
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
             .ToArray() ?? Array.Empty<ThumbnailData>();
-
-    public PlaylistVideoData(JsonElement content) => _content = content;
 }

@@ -3,14 +3,10 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge.Cipher;
 
-internal class SwapCipherOperation : ICipherOperation
+internal class SwapCipherOperation(int index) : ICipherOperation
 {
-    private readonly int _index;
-
-    public SwapCipherOperation(int index) => _index = index;
-
-    public string Decipher(string input) => input.SwapChars(0, _index);
+    public string Decipher(string input) => input.SwapChars(0, index);
 
     [ExcludeFromCodeCoverage]
-    public override string ToString() => $"Swap ({_index})";
+    public override string ToString() => $"Swap ({index})";
 }

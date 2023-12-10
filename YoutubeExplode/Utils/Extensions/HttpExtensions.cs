@@ -8,16 +8,12 @@ namespace YoutubeExplode.Utils.Extensions;
 
 internal static class HttpExtensions
 {
-    private class NonDisposableHttpContent : HttpContent
+    private class NonDisposableHttpContent(HttpContent content) : HttpContent
     {
-        private readonly HttpContent _content;
-
-        public NonDisposableHttpContent(HttpContent content) => _content = content;
-
         protected override async Task SerializeToStreamAsync(
             Stream stream,
             TransportContext? context
-        ) => await _content.CopyToAsync(stream);
+        ) => await content.CopyToAsync(stream);
 
         protected override bool TryComputeLength(out long length)
         {

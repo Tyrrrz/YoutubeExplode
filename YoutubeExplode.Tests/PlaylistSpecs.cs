@@ -9,12 +9,8 @@ using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests;
 
-public class PlaylistSpecs
+public class PlaylistSpecs(ITestOutputHelper testOutput)
 {
-    private readonly ITestOutputHelper _testOutput;
-
-    public PlaylistSpecs(ITestOutputHelper testOutput) => _testOutput = testOutput;
-
     [Fact]
     public async Task I_can_get_the_metadata_of_a_playlist()
     {
@@ -50,7 +46,7 @@ public class PlaylistSpecs
             async () => await youtube.Playlists.GetAsync(PlaylistIds.Private)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -64,7 +60,7 @@ public class PlaylistSpecs
             async () => await youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Theory]

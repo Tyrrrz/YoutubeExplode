@@ -12,12 +12,8 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests;
 
-public class StreamSpecs
+public class StreamSpecs(ITestOutputHelper testOutput)
 {
-    private readonly ITestOutputHelper _testOutput;
-
-    public StreamSpecs(ITestOutputHelper testOutput) => _testOutput = testOutput;
-
     [Fact]
     public async Task I_can_get_the_list_of_available_streams_of_a_video()
     {
@@ -103,7 +99,7 @@ public class StreamSpecs
 
         ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -117,7 +113,7 @@ public class StreamSpecs
             async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -131,7 +127,7 @@ public class StreamSpecs
             async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Theory]
@@ -269,7 +265,7 @@ public class StreamSpecs
                 await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -283,6 +279,6 @@ public class StreamSpecs
             async () => await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 }

@@ -10,21 +10,19 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class VideoWatchPage
+internal partial class VideoWatchPage(IHtmlDocument content)
 {
-    private readonly IHtmlDocument _content;
-
     [Lazy]
-    public bool IsAvailable => _content.QuerySelector("meta[property=\"og:url\"]") is not null;
+    public bool IsAvailable => content.QuerySelector("meta[property=\"og:url\"]") is not null;
 
     [Lazy]
     public DateTimeOffset? UploadDate =>
-        _content
+        content
             .QuerySelector("meta[itemprop=\"uploadDate\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.ParseDateTimeOffsetOrNull()
-        ?? _content
+        ?? content
             .QuerySelector("meta[itemprop=\"datePublished\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
@@ -32,7 +30,7 @@ internal partial class VideoWatchPage
 
     [Lazy]
     public long? LikeCount =>
-        _content
+        content
             .Source
             .Text
             .Pipe(
@@ -50,7 +48,7 @@ internal partial class VideoWatchPage
             .NullIfWhiteSpace()
             ?.StripNonDigit()
             .ParseLongOrNull()
-        ?? _content
+        ?? content
             .Source
             .Text
             .Pipe(
@@ -71,7 +69,7 @@ internal partial class VideoWatchPage
 
     [Lazy]
     public long? DislikeCount =>
-        _content
+        content
             .Source
             .Text
             .Pipe(
@@ -92,7 +90,7 @@ internal partial class VideoWatchPage
 
     [Lazy]
     private JsonElement? PlayerConfig =>
-        _content
+        content
             .GetElementsByTagName("script")
             .Select(e => e.Text())
             .Select(s => Regex.Match(s, @"ytplayer\.config\s*=\s*(\{.*\})").Groups[1].Value)
@@ -103,7 +101,7 @@ internal partial class VideoWatchPage
 
     [Lazy]
     public PlayerResponse? PlayerResponse =>
-        _content
+        content
             .GetElementsByTagName("script")
             .Select(e => e.Text())
             .Select(
@@ -120,8 +118,6 @@ internal partial class VideoWatchPage
             ?.GetStringOrNull()
             ?.Pipe(Json.TryParse)
             ?.Pipe(j => new PlayerResponse(j));
-
-    public VideoWatchPage(IHtmlDocument content) => _content = content;
 }
 
 internal partial class VideoWatchPage

@@ -13,19 +13,8 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter;
 
-internal partial class Converter
+internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, ConversionPreset preset)
 {
-    private readonly VideoClient _videoClient;
-    private readonly FFmpeg _ffmpeg;
-    private readonly ConversionPreset _preset;
-
-    public Converter(VideoClient videoClient, FFmpeg ffmpeg, ConversionPreset preset)
-    {
-        _videoClient = videoClient;
-        _ffmpeg = ffmpeg;
-        _preset = preset;
-    }
-
     private async ValueTask ProcessAsync(
         string filePath,
         Container container,
@@ -51,7 +40,7 @@ internal partial class Converter
             arguments.Add("-map").Add(i);
 
         // Output format and encoding preset
-        arguments.Add("-f").Add(container.Name).Add("-preset").Add(_preset);
+        arguments.Add("-f").Add(container.Name).Add("-preset").Add(preset);
 
         // Avoid transcoding inputs that have the same container as the output
         {
@@ -164,7 +153,7 @@ internal partial class Converter
         // Output
         arguments.Add(filePath);
 
-        await _ffmpeg.ExecuteAsync(arguments.Build(), progress, cancellationToken);
+        await ffmpeg.ExecuteAsync(arguments.Build(), progress, cancellationToken);
     }
 
     private async ValueTask PopulateStreamInputsAsync(
@@ -191,7 +180,7 @@ internal partial class Converter
 
             streamInputs.Add(streamInput);
 
-            await _videoClient
+            await videoClient
                 .Streams
                 .DownloadAsync(streamInfo, streamInput.FilePath, streamProgress, cancellationToken);
         }
@@ -223,7 +212,7 @@ internal partial class Converter
 
             subtitleInputs.Add(subtitleInput);
 
-            await _videoClient
+            await videoClient
                 .ClosedCaptions
                 .DownloadAsync(trackInfo, subtitleInput.FilePath, trackProgress, cancellationToken);
         }
@@ -298,17 +287,11 @@ internal partial class Converter
 
 internal partial class Converter
 {
-    private class StreamInput : IDisposable
+    private class StreamInput(IStreamInfo info, string filePath) : IDisposable
     {
-        public IStreamInfo Info { get; }
+        public IStreamInfo Info { get; } = info;
 
-        public string FilePath { get; }
-
-        public StreamInput(IStreamInfo info, string filePath)
-        {
-            Info = info;
-            FilePath = filePath;
-        }
+        public string FilePath { get; } = filePath;
 
         public void Dispose()
         {
@@ -323,17 +306,11 @@ internal partial class Converter
         }
     }
 
-    private class SubtitleInput : IDisposable
+    private class SubtitleInput(ClosedCaptionTrackInfo info, string filePath) : IDisposable
     {
-        public ClosedCaptionTrackInfo Info { get; }
+        public ClosedCaptionTrackInfo Info { get; } = info;
 
-        public string FilePath { get; }
-
-        public SubtitleInput(ClosedCaptionTrackInfo info, string filePath)
-        {
-            Info = info;
-            FilePath = filePath;
-        }
+        public string FilePath { get; } = filePath;
 
         public void Dispose()
         {

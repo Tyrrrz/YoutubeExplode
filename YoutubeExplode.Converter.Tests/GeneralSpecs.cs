@@ -12,12 +12,8 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter.Tests;
 
-public class GeneralSpecs : IAsyncLifetime
+public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 {
-    private readonly ITestOutputHelper _testOutput;
-
-    public GeneralSpecs(ITestOutputHelper testOutput) => _testOutput = testOutput;
-
     public async Task InitializeAsync() => await FFmpeg.InitializeAsync();
 
     public Task DisposeAsync() => Task.CompletedTask;
@@ -229,7 +225,7 @@ public class GeneralSpecs : IAsyncLifetime
 
         Directory.EnumerateFiles(dir.Path, "*", SearchOption.AllDirectories).Should().BeEmpty();
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -253,6 +249,6 @@ public class GeneralSpecs : IAsyncLifetime
         progressValues.Should().NotContain(p => p < 0 || p > 1);
 
         foreach (var value in progressValues)
-            _testOutput.WriteLine($"Progress: {value:P2}");
+            testOutput.WriteLine($"Progress: {value:P2}");
     }
 }

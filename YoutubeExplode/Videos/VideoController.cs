@@ -6,11 +6,9 @@ using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Videos;
 
-internal class VideoController
+internal class VideoController(HttpClient http)
 {
-    protected HttpClient Http { get; }
-
-    public VideoController(HttpClient http) => Http = http;
+    protected HttpClient Http { get; } = http;
 
     public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
         VideoId videoId,

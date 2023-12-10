@@ -9,12 +9,8 @@ using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests;
 
-public class VideoSpecs
+public class VideoSpecs(ITestOutputHelper testOutput)
 {
-    private readonly ITestOutputHelper _testOutput;
-
-    public VideoSpecs(ITestOutputHelper testOutput) => _testOutput = testOutput;
-
     [Fact]
     public async Task I_can_get_the_metadata_of_a_video()
     {
@@ -71,7 +67,7 @@ public class VideoSpecs
             async () => await youtube.Videos.GetAsync(VideoIds.Private)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Fact]
@@ -85,7 +81,7 @@ public class VideoSpecs
             async () => await youtube.Videos.GetAsync(VideoIds.Deleted)
         );
 
-        _testOutput.WriteLine(ex.ToString());
+        testOutput.WriteLine(ex.ToString());
     }
 
     [Theory]

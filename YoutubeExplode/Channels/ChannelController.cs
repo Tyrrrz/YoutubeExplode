@@ -6,12 +6,8 @@ using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Channels;
 
-internal class ChannelController
+internal class ChannelController(HttpClient http)
 {
-    private readonly HttpClient _http;
-
-    public ChannelController(HttpClient http) => _http = http;
-
     private async ValueTask<ChannelPage> GetChannelPageAsync(
         string channelRoute,
         CancellationToken cancellationToken = default
@@ -20,7 +16,7 @@ internal class ChannelController
         for (var retriesRemaining = 5; ; retriesRemaining--)
         {
             var channelPage = ChannelPage.TryParse(
-                await _http.GetStringAsync(
+                await http.GetStringAsync(
                     "https://www.youtube.com/" + channelRoute,
                     cancellationToken
                 )

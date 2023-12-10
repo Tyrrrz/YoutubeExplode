@@ -7,12 +7,8 @@ using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists;
 
-internal class PlaylistController
+internal class PlaylistController(HttpClient http)
 {
-    private readonly HttpClient _http;
-
-    public PlaylistController(HttpClient http) => _http = http;
-
     // Works only with user-made playlists
     public async ValueTask<PlaylistBrowseResponse> GetPlaylistBrowseResponseAsync(
         PlaylistId playlistId,
@@ -43,7 +39,7 @@ internal class PlaylistController
             )
         };
 
-        using var response = await _http.SendAsync(request, cancellationToken);
+        using var response = await http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         var playlistResponse = PlaylistBrowseResponse.Parse(
@@ -94,7 +90,7 @@ internal class PlaylistController
                 )
             };
 
-            using var response = await _http.SendAsync(request, cancellationToken);
+            using var response = await http.SendAsync(request, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var playlistResponse = PlaylistNextResponse.Parse(

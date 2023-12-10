@@ -7,10 +7,8 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class PlayerSource
+internal partial class PlayerSource(string content)
 {
-    private readonly string _content;
-
     [Lazy]
     public CipherManifest? CipherManifest
     {
@@ -18,7 +16,7 @@ internal partial class PlayerSource
         {
             // Extract the signature timestamp
             var signatureTimestamp = Regex
-                .Match(_content, @"(?:signatureTimestamp|sts):(\d{5})")
+                .Match(content, @"(?:signatureTimestamp|sts):(\d{5})")
                 .Groups[1]
                 .Value
                 .NullIfWhiteSpace();
@@ -29,10 +27,10 @@ internal partial class PlayerSource
             // Find where the player calls the cipher functions
             var cipherCallsite = Regex
                 .Match(
-                    _content,
+                    content,
                     """
-                [$_\w]+=function\([$_\w]+\){([$_\w]+)=\1\.split\(['"]{2}\);.*?return \1\.join\(['"]{2}\)}
-                """,
+                    [$_\w]+=function\([$_\w]+\){([$_\w]+)=\1\.split\(['"]{2}\);.*?return \1\.join\(['"]{2}\)}
+                    """,
                     RegexOptions.Singleline
                 )
                 .Groups[0]
@@ -54,7 +52,7 @@ internal partial class PlayerSource
             // Find the definition of the cipher functions
             var cipherDefinition = Regex
                 .Match(
-                    _content,
+                    content,
                     // lang=js
                     $$"""
                     var {{Regex.Escape(cipherContainerName)}}={.*?};
@@ -139,8 +137,6 @@ internal partial class PlayerSource
             return new CipherManifest(signatureTimestamp, operations);
         }
     }
-
-    public PlayerSource(string content) => _content = content;
 }
 
 internal partial class PlayerSource

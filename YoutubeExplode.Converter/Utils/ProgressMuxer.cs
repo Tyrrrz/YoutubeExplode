@@ -3,15 +3,11 @@ using System.Collections.Generic;
 
 namespace YoutubeExplode.Converter.Utils;
 
-internal class ProgressMuxer
+internal class ProgressMuxer(IProgress<double> target)
 {
-    private readonly IProgress<double> _target;
-
     private readonly object _lock = new();
     private readonly Dictionary<int, double> _splitWeights = new();
     private readonly Dictionary<int, double> _splitValues = new();
-
-    public ProgressMuxer(IProgress<double> target) => _target = target;
 
     public IProgress<double> CreateInput(double weight = 1)
     {
@@ -37,7 +33,7 @@ internal class ProgressMuxer
                         weightedMax += _splitWeights[i];
                     }
 
-                    _target.Report(weightedSum / weightedMax);
+                    target.Report(weightedSum / weightedMax);
                 }
             });
         }

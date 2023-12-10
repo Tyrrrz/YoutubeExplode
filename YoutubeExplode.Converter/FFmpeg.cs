@@ -15,12 +15,8 @@ namespace YoutubeExplode.Converter;
 // Ideally this should use named pipes and stream through stdout.
 // However, named pipes aren't well supported on non-Windows OS and
 // stdout streaming only works with some specific formats.
-internal partial class FFmpeg
+internal partial class FFmpeg(string filePath)
 {
-    private readonly string _filePath;
-
-    public FFmpeg(string filePath) => _filePath = filePath;
-
     public async ValueTask ExecuteAsync(
         string arguments,
         IProgress<double>? progress,
@@ -38,7 +34,7 @@ internal partial class FFmpeg
 
         try
         {
-            await Cli.Wrap(_filePath)
+            await Cli.Wrap(filePath)
                 .WithArguments(arguments)
                 .WithStandardErrorPipe(stdErrPipe)
                 .ExecuteAsync(cancellationToken);

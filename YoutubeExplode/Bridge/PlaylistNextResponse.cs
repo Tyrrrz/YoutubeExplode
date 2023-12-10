@@ -8,13 +8,11 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class PlaylistNextResponse : IPlaylistData
+internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
 {
-    private readonly JsonElement _content;
-
     [Lazy]
     private JsonElement? ContentRoot =>
-        _content
+        content
             .GetPropertyOrNull("contents")
             ?.GetPropertyOrNull("twoColumnWatchNextResults")
             ?.GetPropertyOrNull("playlist")
@@ -53,12 +51,10 @@ internal partial class PlaylistNextResponse : IPlaylistData
 
     [Lazy]
     public string? VisitorData =>
-        _content
+        content
             .GetPropertyOrNull("responseContext")
             ?.GetPropertyOrNull("visitorData")
             ?.GetStringOrNull();
-
-    public PlaylistNextResponse(JsonElement content) => _content = content;
 }
 
 internal partial class PlaylistNextResponse

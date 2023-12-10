@@ -8,17 +8,15 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class SearchResponse
+internal partial class SearchResponse(JsonElement content)
 {
-    private readonly JsonElement _content;
-
     // Search response is incredibly inconsistent (with at least 5 variations),
     // so we employ descendant searching, which is inefficient but resilient.
 
     [Lazy]
     private JsonElement? ContentRoot =>
-        _content.GetPropertyOrNull("contents")
-        ?? _content.GetPropertyOrNull("onResponseReceivedCommands");
+        content.GetPropertyOrNull("contents")
+        ?? content.GetPropertyOrNull("onResponseReceivedCommands");
 
     [Lazy]
     public IReadOnlyList<VideoData> Videos =>
@@ -48,23 +46,19 @@ internal partial class SearchResponse
             .FirstOrNull()
             ?.GetPropertyOrNull("token")
             ?.GetStringOrNull();
-
-    public SearchResponse(JsonElement content) => _content = content;
 }
 
 internal partial class SearchResponse
 {
-    internal class VideoData
+    internal class VideoData(JsonElement content)
     {
-        private readonly JsonElement _content;
-
         [Lazy]
-        public string? Id => _content.GetPropertyOrNull("videoId")?.GetStringOrNull();
+        public string? Id => content.GetPropertyOrNull("videoId")?.GetStringOrNull();
 
         [Lazy]
         public string? Title =>
-            _content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
-            ?? _content
+            content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+            ?? content
                 .GetPropertyOrNull("title")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
@@ -74,12 +68,12 @@ internal partial class SearchResponse
 
         [Lazy]
         private JsonElement? AuthorDetails =>
-            _content
+            content
                 .GetPropertyOrNull("longBylineText")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
                 ?.ElementAtOrNull(0)
-            ?? _content
+            ?? content
                 .GetPropertyOrNull("shortBylineText")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
@@ -98,12 +92,12 @@ internal partial class SearchResponse
 
         [Lazy]
         public TimeSpan? Duration =>
-            _content
+            content
                 .GetPropertyOrNull("lengthText")
                 ?.GetPropertyOrNull("simpleText")
                 ?.GetStringOrNull()
                 ?.ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" })
-            ?? _content
+            ?? content
                 .GetPropertyOrNull("lengthText")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
@@ -114,30 +108,26 @@ internal partial class SearchResponse
 
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
-            _content
+            content
                 .GetPropertyOrNull("thumbnail")
                 ?.GetPropertyOrNull("thumbnails")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => new ThumbnailData(j))
                 .ToArray() ?? Array.Empty<ThumbnailData>();
-
-        public VideoData(JsonElement content) => _content = content;
     }
 }
 
 internal partial class SearchResponse
 {
-    public class PlaylistData
+    public class PlaylistData(JsonElement content)
     {
-        private readonly JsonElement _content;
-
         [Lazy]
-        public string? Id => _content.GetPropertyOrNull("playlistId")?.GetStringOrNull();
+        public string? Id => content.GetPropertyOrNull("playlistId")?.GetStringOrNull();
 
         [Lazy]
         public string? Title =>
-            _content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
-            ?? _content
+            content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+            ?? content
                 .GetPropertyOrNull("title")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
@@ -147,7 +137,7 @@ internal partial class SearchResponse
 
         [Lazy]
         private JsonElement? AuthorDetails =>
-            _content
+            content
                 .GetPropertyOrNull("longBylineText")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
@@ -166,30 +156,26 @@ internal partial class SearchResponse
 
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
-            _content
+            content
                 .GetPropertyOrNull("thumbnails")
                 ?.EnumerateDescendantProperties("thumbnails")
                 .SelectMany(j => j.EnumerateArrayOrEmpty())
                 .Select(j => new ThumbnailData(j))
                 .ToArray() ?? Array.Empty<ThumbnailData>();
-
-        public PlaylistData(JsonElement content) => _content = content;
     }
 }
 
 internal partial class SearchResponse
 {
-    public class ChannelData
+    public class ChannelData(JsonElement content)
     {
-        private readonly JsonElement _content;
-
         [Lazy]
-        public string? Id => _content.GetPropertyOrNull("channelId")?.GetStringOrNull();
+        public string? Id => content.GetPropertyOrNull("channelId")?.GetStringOrNull();
 
         [Lazy]
         public string? Title =>
-            _content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
-            ?? _content
+            content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+            ?? content
                 .GetPropertyOrNull("title")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
@@ -199,14 +185,12 @@ internal partial class SearchResponse
 
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
-            _content
+            content
                 .GetPropertyOrNull("thumbnail")
                 ?.GetPropertyOrNull("thumbnails")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => new ThumbnailData(j))
                 .ToArray() ?? Array.Empty<ThumbnailData>();
-
-        public ChannelData(JsonElement content) => _content = content;
     }
 }
 

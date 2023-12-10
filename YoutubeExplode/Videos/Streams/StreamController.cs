@@ -7,11 +7,8 @@ using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Videos.Streams;
 
-internal class StreamController : VideoController
+internal class StreamController(HttpClient http) : VideoController(http)
 {
-    public StreamController(HttpClient http)
-        : base(http) { }
-
     public async ValueTask<PlayerSource> GetPlayerSourceAsync(
         CancellationToken cancellationToken = default
     )

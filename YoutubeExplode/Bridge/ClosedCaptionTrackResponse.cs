@@ -8,58 +8,46 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class ClosedCaptionTrackResponse
+internal partial class ClosedCaptionTrackResponse(XElement content)
 {
-    private readonly XElement _content;
-
     [Lazy]
     public IReadOnlyList<CaptionData> Captions =>
-        _content.Descendants("p").Select(x => new CaptionData(x)).ToArray();
-
-    public ClosedCaptionTrackResponse(XElement content) => _content = content;
+        content.Descendants("p").Select(x => new CaptionData(x)).ToArray();
 }
 
 internal partial class ClosedCaptionTrackResponse
 {
-    public class CaptionData
+    public class CaptionData(XElement content)
     {
-        private readonly XElement _content;
-
         [Lazy]
-        public string? Text => (string?)_content;
+        public string? Text => (string?)content;
 
         [Lazy]
         public TimeSpan? Offset =>
-            ((double?)_content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds);
+            ((double?)content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds);
 
         [Lazy]
         public TimeSpan? Duration =>
-            ((double?)_content.Attribute("d"))?.Pipe(TimeSpan.FromMilliseconds);
+            ((double?)content.Attribute("d"))?.Pipe(TimeSpan.FromMilliseconds);
 
         [Lazy]
         public IReadOnlyList<PartData> Parts =>
-            _content.Elements("s").Select(x => new PartData(x)).ToArray();
-
-        public CaptionData(XElement content) => _content = content;
+            content.Elements("s").Select(x => new PartData(x)).ToArray();
     }
 }
 
 internal partial class ClosedCaptionTrackResponse
 {
-    public class PartData
+    public class PartData(XElement content)
     {
-        private readonly XElement _content;
-
         [Lazy]
-        public string? Text => (string?)_content;
+        public string? Text => (string?)content;
 
         [Lazy]
         public TimeSpan? Offset =>
-            ((double?)_content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds)
-            ?? ((double?)_content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds)
+            ((double?)content.Attribute("t"))?.Pipe(TimeSpan.FromMilliseconds)
+            ?? ((double?)content.Attribute("ac"))?.Pipe(TimeSpan.FromMilliseconds)
             ?? TimeSpan.Zero;
-
-        public PartData(XElement content) => _content = content;
     }
 }
 

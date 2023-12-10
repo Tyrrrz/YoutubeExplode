@@ -3,50 +3,32 @@ using System.Windows.Input;
 
 namespace YoutubeExplode.Demo.Gui.ViewModels.Framework;
 
-public class RelayCommand<T> : ICommand
+public class RelayCommand<T>(Action<T> execute, Func<T, bool> canExecute) : ICommand
 {
-    private readonly Action<T> _execute;
-    private readonly Func<T, bool> _canExecute;
-
     public event EventHandler? CanExecuteChanged;
-
-    public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
-    {
-        _execute = execute;
-        _canExecute = canExecute;
-    }
 
     public RelayCommand(Action<T> execute)
         : this(execute, _ => true) { }
 
     public bool CanExecute(object? parameter) =>
-        _canExecute(parameter is not null ? (T)parameter : default!);
+        canExecute(parameter is not null ? (T)parameter : default!);
 
     public void Execute(object? parameter) =>
-        _execute(parameter is not null ? (T)parameter : default!);
+        execute(parameter is not null ? (T)parameter : default!);
 
     public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }
 
-public class RelayCommand : ICommand
+public class RelayCommand(Action execute, Func<bool> canExecute) : ICommand
 {
-    private readonly Action _execute;
-    private readonly Func<bool> _canExecute;
-
     public event EventHandler? CanExecuteChanged;
-
-    public RelayCommand(Action execute, Func<bool> canExecute)
-    {
-        _execute = execute;
-        _canExecute = canExecute;
-    }
 
     public RelayCommand(Action execute)
         : this(execute, () => true) { }
 
-    public bool CanExecute(object? parameter) => _canExecute();
+    public bool CanExecute(object? parameter) => canExecute();
 
-    public void Execute(object? parameter) => _execute();
+    public void Execute(object? parameter) => execute();
 
     public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }

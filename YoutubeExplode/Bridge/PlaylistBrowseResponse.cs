@@ -8,13 +8,11 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class PlaylistBrowseResponse : IPlaylistData
+internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistData
 {
-    private readonly JsonElement _content;
-
     [Lazy]
     private JsonElement? Sidebar =>
-        _content
+        content
             .GetPropertyOrNull("sidebar")
             ?.GetPropertyOrNull("playlistSidebarRenderer")
             ?.GetPropertyOrNull("items");
@@ -109,8 +107,6 @@ internal partial class PlaylistBrowseResponse : IPlaylistData
             ?.Select(j => new ThumbnailData(j))
             .ToArray()
         ?? Array.Empty<ThumbnailData>();
-
-    public PlaylistBrowseResponse(JsonElement content) => _content = content;
 }
 
 internal partial class PlaylistBrowseResponse

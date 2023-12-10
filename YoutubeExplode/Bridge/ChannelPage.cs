@@ -6,26 +6,22 @@ using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
-internal partial class ChannelPage
+internal partial class ChannelPage(IHtmlDocument content)
 {
-    private readonly IHtmlDocument _content;
-
     [Lazy]
     public string? Url =>
-        _content.QuerySelector("meta[property=\"og:url\"]")?.GetAttribute("content");
+        content.QuerySelector("meta[property=\"og:url\"]")?.GetAttribute("content");
 
     [Lazy]
     public string? Id => Url?.SubstringAfter("channel/", StringComparison.OrdinalIgnoreCase);
 
     [Lazy]
     public string? Title =>
-        _content.QuerySelector("meta[property=\"og:title\"]")?.GetAttribute("content");
+        content.QuerySelector("meta[property=\"og:title\"]")?.GetAttribute("content");
 
     [Lazy]
     public string? LogoUrl =>
-        _content.QuerySelector("meta[property=\"og:image\"]")?.GetAttribute("content");
-
-    public ChannelPage(IHtmlDocument content) => _content = content;
+        content.QuerySelector("meta[property=\"og:image\"]")?.GetAttribute("content");
 }
 
 internal partial class ChannelPage
