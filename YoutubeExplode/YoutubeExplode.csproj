@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.7" />
-    <PackageReference Include="CSharpier.MsBuild" Version="0.26.2" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.26.5" PrivateAssets="all" />
     <PackageReference Include="Deorcify" Version="1.0.2" PrivateAssets="all" />
     <PackageReference Include="Lazy.Fody" Version="1.11.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
