@@ -39,15 +39,16 @@ public class ClosedCaptionClient
         foreach (var trackData in playerResponse.ClosedCaptionTracks)
         {
             var url =
-                trackData.Url ?? throw new YoutubeExplodeException("Could not extract track URL.");
+                trackData.Url
+                ?? throw new YoutubeExplodeException("Failed to extract the track URL.");
 
             var languageCode =
                 trackData.LanguageCode
-                ?? throw new YoutubeExplodeException("Could not extract track language code.");
+                ?? throw new YoutubeExplodeException("Failed to extract the track language code.");
 
             var languageName =
                 trackData.LanguageName
-                ?? throw new YoutubeExplodeException("Could not extract track language name.");
+                ?? throw new YoutubeExplodeException("Failed to extract the track language name.");
 
             yield return new ClosedCaptionTrackInfo(
                 url,
@@ -103,7 +104,9 @@ public class ClosedCaptionClient
 
                 var partOffset =
                     partData.Offset
-                    ?? throw new YoutubeExplodeException("Could not extract caption part offset.");
+                    ?? throw new YoutubeExplodeException(
+                        "Failed to extract the caption part offset."
+                    );
 
                 var part = new ClosedCaptionPart(partText, partOffset);
 

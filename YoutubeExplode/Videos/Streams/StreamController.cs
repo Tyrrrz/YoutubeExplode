@@ -20,7 +20,7 @@ internal class StreamController(HttpClient http) : VideoController(http)
 
         var version = Regex.Match(iframe, @"player\\?/([0-9a-fA-F]{8})\\?/").Groups[1].Value;
         if (string.IsNullOrWhiteSpace(version))
-            throw new YoutubeExplodeException("Could not extract player version.");
+            throw new YoutubeExplodeException("Failed to extract the player version.");
 
         return PlayerSource.Parse(
             await Http.GetStringAsync(

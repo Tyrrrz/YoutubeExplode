@@ -57,7 +57,7 @@ public class SearchClient
 
                 var videoId =
                     videoData.Id
-                    ?? throw new YoutubeExplodeException("Could not extract video ID.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the video ID.");
 
                 // Don't yield the same result twice
                 if (!encounteredIds.Add(videoId))
@@ -65,15 +65,15 @@ public class SearchClient
 
                 var videoTitle =
                     videoData.Title
-                    ?? throw new YoutubeExplodeException("Could not extract video title.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the video title.");
 
                 var videoChannelTitle =
                     videoData.Author
-                    ?? throw new YoutubeExplodeException("Could not extract video author.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the video author.");
 
                 var videoChannelId =
                     videoData.ChannelId
-                    ?? throw new YoutubeExplodeException("Could not extract video channel ID.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the video channel ID.");
 
                 var videoThumbnails = videoData
                     .Thumbnails
@@ -82,19 +82,19 @@ public class SearchClient
                         var thumbnailUrl =
                             t.Url
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract video thumbnail URL."
+                                "Failed to extract the video thumbnail URL."
                             );
 
                         var thumbnailWidth =
                             t.Width
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract video thumbnail width."
+                                "Failed to extract the video thumbnail width."
                             );
 
                         var thumbnailHeight =
                             t.Height
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract video thumbnail height."
+                                "Failed to extract the video thumbnail height."
                             );
 
                         var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
@@ -126,7 +126,7 @@ public class SearchClient
 
                 var playlistId =
                     playlistData.Id
-                    ?? throw new YoutubeExplodeException("Could not extract playlist ID.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the playlist ID.");
 
                 // Don't yield the same result twice
                 if (!encounteredIds.Add(playlistId))
@@ -134,7 +134,7 @@ public class SearchClient
 
                 var playlistTitle =
                     playlistData.Title
-                    ?? throw new YoutubeExplodeException("Could not extract playlist title.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the playlist title.");
 
                 // System playlists have no author
                 var playlistAuthor =
@@ -150,19 +150,19 @@ public class SearchClient
                         var thumbnailUrl =
                             t.Url
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract playlist thumbnail URL."
+                                "Failed to extract the playlist thumbnail URL."
                             );
 
                         var thumbnailWidth =
                             t.Width
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract playlist thumbnail width."
+                                "Failed to extract the playlist thumbnail width."
                             );
 
                         var thumbnailHeight =
                             t.Height
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract playlist thumbnail height."
+                                "Failed to extract the playlist thumbnail height."
                             );
 
                         var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
@@ -192,11 +192,11 @@ public class SearchClient
 
                 var channelId =
                     channelData.Id
-                    ?? throw new YoutubeExplodeException("Could not extract channel ID.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the channel ID.");
 
                 var channelTitle =
                     channelData.Title
-                    ?? throw new YoutubeExplodeException("Could not extract channel title.");
+                    ?? throw new YoutubeExplodeException("Failed to extract the channel title.");
 
                 var channelThumbnails = channelData
                     .Thumbnails
@@ -205,19 +205,19 @@ public class SearchClient
                         var thumbnailUrl =
                             t.Url
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract channel thumbnail URL."
+                                "Failed to extract the channel thumbnail URL."
                             );
 
                         var thumbnailWidth =
                             t.Width
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract channel thumbnail width."
+                                "Failed to extract the channel thumbnail width."
                             );
 
                         var thumbnailHeight =
                             t.Height
                             ?? throw new YoutubeExplodeException(
-                                "Could not extract channel thumbnail height."
+                                "Failed to extract the channel thumbnail height."
                             );
 
                         var thumbnailResolution = new Resolution(thumbnailWidth, thumbnailHeight);
