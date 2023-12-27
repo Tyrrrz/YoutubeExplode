@@ -48,8 +48,7 @@ public class PlaylistClient
         var description = response.Description ?? "";
 
         var thumbnails = response
-            .Thumbnails
-            .Select(t =>
+            .Thumbnails.Select(t =>
             {
                 var thumbnailUrl =
                     t.Url
@@ -128,8 +127,7 @@ public class PlaylistClient
                     ?? throw new YoutubeExplodeException("Failed to extract the video channel ID.");
 
                 var videoThumbnails = videoData
-                    .Thumbnails
-                    .Select(t =>
+                    .Thumbnails.Select(t =>
                     {
                         var thumbnailUrl =
                             t.Url

@@ -42,8 +42,7 @@ public readonly partial struct ChannelHandle
         var regularMatch = Regex
             .Match(channelHandleOrUrl, @"youtube\..+?/@(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;

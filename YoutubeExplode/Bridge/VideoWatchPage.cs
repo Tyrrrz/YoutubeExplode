@@ -31,9 +31,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
     [Lazy]
     public long? LikeCount =>
         content
-            .Source
-            .Text
-            .Pipe(
+            .Source.Text.Pipe(
                 s =>
                     Regex
                         .Match(
@@ -49,9 +47,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.StripNonDigit()
             .ParseLongOrNull()
         ?? content
-            .Source
-            .Text
-            .Pipe(
+            .Source.Text.Pipe(
                 s =>
                     Regex
                         .Match(
@@ -70,9 +66,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
     [Lazy]
     public long? DislikeCount =>
         content
-            .Source
-            .Text
-            .Pipe(
+            .Source.Text.Pipe(
                 s =>
                     Regex
                         .Match(

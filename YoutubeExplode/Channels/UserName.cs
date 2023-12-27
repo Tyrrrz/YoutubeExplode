@@ -42,8 +42,7 @@ public partial struct UserName
         var regularMatch = Regex
             .Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;

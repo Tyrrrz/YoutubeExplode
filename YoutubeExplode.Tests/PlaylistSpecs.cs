@@ -29,8 +29,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         playlist.Author?.ChannelUrl.Should().NotBeNullOrWhiteSpace();
         playlist.Author?.ChannelTitle.Should().Be("Google Analytics");
         playlist
-            .Description
-            .Should()
+            .Description.Should()
             .Contain("Digital Analytics Fundamentals course on Analytics Academy");
         playlist.Thumbnails.Should().NotBeEmpty();
     }

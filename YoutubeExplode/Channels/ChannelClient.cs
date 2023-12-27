@@ -49,8 +49,7 @@ public class ChannelClient
                 .ToArray()
                 .LastOrDefault()
                 ?.Groups[1]
-                .Value
-                .NullIfWhiteSpace()
+                .Value.NullIfWhiteSpace()
                 ?.ParseIntOrNull() ?? 100;
 
         var thumbnails = new[] { new Thumbnail(logoUrl, new Resolution(logoSize, logoSize)) };

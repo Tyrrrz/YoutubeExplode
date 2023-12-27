@@ -41,8 +41,7 @@ public readonly partial struct ChannelSlug
         var regularMatch = Regex
             .Match(channelSlugOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;

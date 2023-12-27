@@ -44,8 +44,7 @@ public partial struct PlaylistId
         var regularMatch = Regex
             .Match(playlistIdOrUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
@@ -55,8 +54,7 @@ public partial struct PlaylistId
         var compositeMatch = Regex
             .Match(playlistIdOrUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(compositeMatch) && IsValid(compositeMatch))
             return compositeMatch;
@@ -66,8 +64,7 @@ public partial struct PlaylistId
         var shortCompositeMatch = Regex
             .Match(playlistIdOrUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(shortCompositeMatch) && IsValid(shortCompositeMatch))
             return shortCompositeMatch;
@@ -77,8 +74,7 @@ public partial struct PlaylistId
         var embedCompositeMatch = Regex
             .Match(playlistIdOrUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(embedCompositeMatch) && IsValid(embedCompositeMatch))
             return embedCompositeMatch;

@@ -316,10 +316,11 @@ public class MainViewModel : ViewModelBase
             var progressHandler = new Progress<double>(p => Progress = p);
 
             // Download to file
-            await _youtube
-                .Videos
-                .ClosedCaptions
-                .DownloadAsync(trackInfo, filePath, progressHandler);
+            await _youtube.Videos.ClosedCaptions.DownloadAsync(
+                trackInfo,
+                filePath,
+                progressHandler
+            );
         }
         finally
         {

@@ -9,9 +9,10 @@ internal static class LanguageExtensions
     {
         // YouTube provides either a two-letter or a three-letter language code,
         // which may or may not also contain a region identifier.
-        var regionNeutralLanguageCode = language
-            .Code
-            .SubstringUntil("-", StringComparison.OrdinalIgnoreCase);
+        var regionNeutralLanguageCode = language.Code.SubstringUntil(
+            "-",
+            StringComparison.OrdinalIgnoreCase
+        );
 
         // Already a three-letter code
         if (regionNeutralLanguageCode.Length == 3)

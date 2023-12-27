@@ -80,12 +80,10 @@ internal class VideoController(HttpClient http)
 
         // User agent appears to be sometimes required when impersonating Android
         // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
-        request
-            .Headers
-            .Add(
-                "User-Agent",
-                "com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip"
-            );
+        request.Headers.Add(
+            "User-Agent",
+            "com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip"
+        );
 
         using var response = await Http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();

@@ -42,8 +42,7 @@ public partial struct VideoId
         var regularMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
             return regularMatch;
@@ -53,8 +52,7 @@ public partial struct VideoId
         var shortMatch = Regex
             .Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(shortMatch) && IsValid(shortMatch))
             return shortMatch;
@@ -64,8 +62,7 @@ public partial struct VideoId
         var embedMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(embedMatch) && IsValid(embedMatch))
             return embedMatch;
@@ -75,8 +72,7 @@ public partial struct VideoId
         var shortsMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/shorts/(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(shortsMatch) && IsValid(shortsMatch))
             return shortsMatch;
@@ -86,8 +82,7 @@ public partial struct VideoId
         var liveMatch = Regex
             .Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)")
             .Groups[1]
-            .Value
-            .Pipe(WebUtility.UrlDecode);
+            .Value.Pipe(WebUtility.UrlDecode);
 
         if (!string.IsNullOrWhiteSpace(liveMatch) && IsValid(liveMatch))
             return liveMatch;

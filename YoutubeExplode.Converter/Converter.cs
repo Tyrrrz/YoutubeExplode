@@ -193,9 +193,12 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
             streamInputs.Add(streamInput);
 
-            await videoClient
-                .Streams
-                .DownloadAsync(streamInfo, streamInput.FilePath, streamProgress, cancellationToken);
+            await videoClient.Streams.DownloadAsync(
+                streamInfo,
+                streamInput.FilePath,
+                streamProgress,
+                cancellationToken
+            );
         }
 
         progress?.Report(1);
@@ -225,9 +228,12 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
             subtitleInputs.Add(subtitleInput);
 
-            await videoClient
-                .ClosedCaptions
-                .DownloadAsync(trackInfo, subtitleInput.FilePath, trackProgress, cancellationToken);
+            await videoClient.ClosedCaptions.DownloadAsync(
+                trackInfo,
+                subtitleInput.FilePath,
+                trackProgress,
+                cancellationToken
+            );
         }
 
         progress?.Report(1);

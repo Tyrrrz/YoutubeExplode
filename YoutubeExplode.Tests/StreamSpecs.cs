@@ -21,10 +21,9 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube
-            .Videos
-            .Streams
-            .GetManifestAsync(VideoIds.WithHighQualityStreams);
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(
+            VideoIds.WithHighQualityStreams
+        );
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();

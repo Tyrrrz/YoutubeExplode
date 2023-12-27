@@ -76,8 +76,7 @@ public class SearchClient
                     ?? throw new YoutubeExplodeException("Failed to extract the video channel ID.");
 
                 var videoThumbnails = videoData
-                    .Thumbnails
-                    .Select(t =>
+                    .Thumbnails.Select(t =>
                     {
                         var thumbnailUrl =
                             t.Url
@@ -144,8 +143,7 @@ public class SearchClient
                         : null;
 
                 var playlistThumbnails = playlistData
-                    .Thumbnails
-                    .Select(t =>
+                    .Thumbnails.Select(t =>
                     {
                         var thumbnailUrl =
                             t.Url
@@ -199,8 +197,7 @@ public class SearchClient
                     ?? throw new YoutubeExplodeException("Failed to extract the channel title.");
 
                 var channelThumbnails = channelData
-                    .Thumbnails
-                    .Select(t =>
+                    .Thumbnails.Select(t =>
                     {
                         var thumbnailUrl =
                             t.Url

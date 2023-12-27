@@ -32,8 +32,7 @@ public class VideoSpecs(ITestOutputHelper testOutput)
         video.Duration.Should().BeCloseTo(TimeSpan.FromSeconds(252), TimeSpan.FromSeconds(1));
         video.Thumbnails.Should().NotBeEmpty();
         video
-            .Keywords
-            .Should()
+            .Keywords.Should()
             .BeEquivalentTo(
                 "PSY",
                 "싸이",
