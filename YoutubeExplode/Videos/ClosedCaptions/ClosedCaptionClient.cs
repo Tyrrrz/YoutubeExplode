@@ -165,7 +165,20 @@ public class ClosedCaptionClient
                 .Append(FormatTimestamp(caption.Offset + caption.Duration))
                 .AppendLine()
                 // Content
-                .AppendLine(caption.Text);
+                .AppendLine(
+                    caption
+                        .Text
+                        // Caption text may contain valid SRT-formatted data in itself.
+                        // This can happen, for example, if the subtitles for a YouTube video
+                        // were imported from an SRT file, but something went wrong in the
+                        // process, resulting in parts of the file being read as captions
+                        // rather than control sequences.
+                        // SRT file format does not provide any means of escaping special
+                        // characters, so as a workaround we just replace the dashes in the
+                        // arrow sequence with en-dashes, which look similar enough.
+                        // https://github.com/Tyrrrz/YoutubeExplode/issues/755
+                        .Replace("-->", "––>")
+                );
 
             await writer.WriteLineAsync(buffer.ToString());
             buffer.Clear();
