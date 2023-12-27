@@ -28,16 +28,27 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
         // Stream inputs
         foreach (var streamInput in streamInputs)
+        {
             arguments.Add("-i").Add(streamInput.FilePath);
+        }
 
         // Subtitle inputs
         foreach (var subtitleInput in subtitleInputs)
-            arguments.Add("-i").Add(subtitleInput.FilePath);
+        {
+            arguments
+                // Fix invalid subtitle durations for each input
+                // https://github.com/Tyrrrz/YoutubeExplode/issues/756
+                .Add("-fix_sub_duration")
+                .Add("-i")
+                .Add(subtitleInput.FilePath);
+        }
 
         // Explicitly specify that all inputs should be used, because by default
         // FFmpeg only picks one input per stream type (audio, video, subtitle).
         for (var i = 0; i < streamInputs.Count + subtitleInputs.Count; i++)
+        {
             arguments.Add("-map").Add(i);
+        }
 
         // Output format and encoding preset
         arguments.Add("-f").Add(container.Name).Add("-preset").Add(preset);
@@ -74,7 +85,9 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
         // MP4: explicitly specify the codec for subtitles, otherwise they won't get embedded
         if (container == Container.Mp4 && subtitleInputs.Any())
+        {
             arguments.Add("-c:s").Add("mov_text");
+        }
 
         // MP3: explicitly specify the bitrate for audio streams, otherwise their metadata
         // might contain invalid total duration.
