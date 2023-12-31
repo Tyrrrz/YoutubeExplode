@@ -176,7 +176,7 @@ public class ClosedCaptionClient
                     // characters, so as a workaround we just replace the dashes in the
                     // arrow sequence with en-dashes, which look similar enough.
                     // https://github.com/Tyrrrz/YoutubeExplode/issues/755
-                    .Replace("-->", "––>")
+                    .Replace("-->", "––>", StringComparison.Ordinal)
                 );
 
             await writer.WriteLineAsync(buffer.ToString());

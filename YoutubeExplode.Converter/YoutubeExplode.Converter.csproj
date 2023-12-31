@@ -20,7 +20,7 @@
     <PackageReference Include="CliWrap" Version="3.6.4" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.26.7" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
-    <PackageReference Include="PolyShim" Version="1.8.0" PrivateAssets="all" />
+    <PackageReference Include="PolyShim" Version="1.9.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
