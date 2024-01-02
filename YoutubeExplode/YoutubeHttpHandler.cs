@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -167,28 +166,22 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
     {
         for (var retriesRemaining = 5; ; retriesRemaining--)
         {
-            try
+            var response = HandleResponse(
+                await base.SendAsync(
+                    // Request will be cloned by the base handler
+                    HandleRequest(request),
+                    cancellationToken
+                )
+            );
+
+            // Retry on 5XX errors
+            if ((int)response.StatusCode >= 500 && retriesRemaining > 0)
             {
-                var response = HandleResponse(
-                    await base.SendAsync(
-                        // Request will be cloned by the base handler
-                        HandleRequest(request),
-                        cancellationToken
-                    )
-                );
-
-                // Retry on 5XX errors
-                if ((int)response.StatusCode >= 500 && retriesRemaining > 0)
-                {
-                    response.Dispose();
-                    continue;
-                }
-
-                return response;
+                response.Dispose();
+                continue;
             }
-            // Retry on connectivity issues
-            catch (Exception ex)
-                when (ex is HttpRequestException or IOException && retriesRemaining > 0) { }
+
+            return response;
         }
     }
 }
