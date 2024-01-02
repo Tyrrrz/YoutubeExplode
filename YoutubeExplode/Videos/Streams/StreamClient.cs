@@ -83,7 +83,7 @@ public class StreamClient
                 cancellationToken
             );
 
-            // 404 error indicates that the stream has mismatched content length
+            // 404 error indicates that the stream has mismatched content length or is not available
             if (response.StatusCode == HttpStatusCode.NotFound)
                 return null;
 
@@ -327,16 +327,14 @@ public class StreamClient
         if (!playerResponse.IsPlayable)
         {
             throw new VideoUnplayableException(
-                $"Video '{videoId}' is unplayable. "
-                    + $"Reason: '{playerResponse.PlayabilityError}'."
+                $"Video '{videoId}' is unplayable. Reason: '{playerResponse.PlayabilityError}'."
             );
         }
 
         if (string.IsNullOrWhiteSpace(playerResponse.HlsManifestUrl))
         {
             throw new YoutubeExplodeException(
-                "Failed to extract the HTTP Live Stream manifest URL. "
-                    + $"Video '{videoId}' is likely not a live stream."
+                $"Failed to extract the HTTP Live Stream manifest URL. Video '{videoId}' is likely not a live stream."
             );
         }
 

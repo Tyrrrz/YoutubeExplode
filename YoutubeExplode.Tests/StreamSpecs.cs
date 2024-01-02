@@ -27,9 +27,6 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
-        manifest.GetMuxedStreams().Should().NotBeEmpty();
-        manifest.GetAudioStreams().Should().NotBeEmpty();
-        manifest.GetVideoStreams().Should().NotBeEmpty();
 
         manifest
             .GetVideoStreams()

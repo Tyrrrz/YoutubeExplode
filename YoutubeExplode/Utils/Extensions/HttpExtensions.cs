@@ -59,19 +59,4 @@ internal static class HttpExtensions
             cancellationToken
         );
     }
-
-    public static async ValueTask<long?> TryGetContentLengthAsync(
-        this HttpClient http,
-        string requestUri,
-        bool ensureSuccess = true,
-        CancellationToken cancellationToken = default
-    )
-    {
-        using var response = await http.HeadAsync(requestUri, cancellationToken);
-
-        if (ensureSuccess)
-            response.EnsureSuccessStatusCode();
-
-        return response.Content.Headers.ContentLength;
-    }
 }
