@@ -86,6 +86,7 @@ public class StreamClient
             if (contentLength <= 0)
                 continue;
 
+            /*
             // Some streams have mismatched content length, so we need to make sure the value we
             // obtained is correct, otherwise we may get a 404 error while trying to read the stream.
             // https://github.com/Tyrrrz/YoutubeExplode/issues/759
@@ -101,6 +102,7 @@ public class StreamClient
                 if (!response.IsSuccessStatusCode)
                     continue;
             }
+            */
 
             var container =
                 streamData.Container?.Pipe(s => new Container(s))
