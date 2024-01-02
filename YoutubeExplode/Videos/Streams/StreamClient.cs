@@ -176,14 +176,13 @@ public class StreamClient
         }
     }
 
-    private async IAsyncEnumerable<IStreamInfo> GetStreamInfosAsync(
+    private async ValueTask<IReadOnlyList<IStreamInfo>> GetStreamInfosAsync(
         VideoId videoId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default
+        PlayerResponse playerResponse,
+        CancellationToken cancellationToken = default
     )
     {
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
-
-        // If the video is pay-to-play, error out
+        // Video is pay-to-play
         if (!string.IsNullOrWhiteSpace(playerResponse.PreviewVideoId))
         {
             throw new VideoRequiresPurchaseException(
@@ -192,60 +191,85 @@ public class StreamClient
             );
         }
 
-        // If the video is unplayable, try one more time by fetching the player response
-        // with signature deciphering. This is (only) required for age-restricted videos.
-        if (!playerResponse.IsPlayable)
-        {
-            var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
-            playerResponse = await _controller.GetPlayerResponseAsync(
-                videoId,
-                cipherManifest.SignatureTimestamp,
-                cancellationToken
-            );
-        }
-
-        // If the video is still unplayable, error out
+        // Video is unplayable
         if (!playerResponse.IsPlayable)
         {
             throw new VideoUnplayableException(
-                $"Video '{videoId}' is unplayable. "
-                    + $"Reason: '{playerResponse.PlayabilityError}'."
+                $"Video '{videoId}' is unplayable. Reason: '{playerResponse.PlayabilityError}'."
             );
         }
+
+        var streamInfos = new List<IStreamInfo>();
 
         // Extract streams from the player response
         await foreach (
             var streamInfo in GetStreamInfosAsync(playerResponse.Streams, cancellationToken)
         )
         {
-            yield return streamInfo;
+            streamInfos.Add(streamInfo);
         }
 
         // Extract streams from the DASH manifest
         if (!string.IsNullOrWhiteSpace(playerResponse.DashManifestUrl))
         {
-            var dashManifest = default(DashManifest?);
-
             try
             {
-                dashManifest = await _controller.GetDashManifestAsync(
+                var dashManifest = await _controller.GetDashManifestAsync(
                     playerResponse.DashManifestUrl,
                     cancellationToken
                 );
-            }
-            // Some DASH manifest URLs return 404 for whatever reason
-            // https://github.com/Tyrrrz/YoutubeExplode/issues/728
-            catch (HttpRequestException) { }
 
-            if (dashManifest is not null)
-            {
                 await foreach (
                     var streamInfo in GetStreamInfosAsync(dashManifest.Streams, cancellationToken)
                 )
                 {
-                    yield return streamInfo;
+                    streamInfos.Add(streamInfo);
                 }
             }
+            // Some DASH manifest URLs return 404 for whatever reason
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/728
+            catch (HttpRequestException) { }
+        }
+
+        // Error if no streams were found
+        if (!streamInfos.Any())
+        {
+            throw new VideoUnplayableException(
+                $"Video '{videoId}' does not contain any playable streams."
+            );
+        }
+
+        return streamInfos;
+    }
+
+    private async ValueTask<IReadOnlyList<IStreamInfo>> GetStreamInfosAsync(
+        VideoId videoId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // Try to get player response from a cipher-less client
+        try
+        {
+            var playerResponse = await _controller.GetPlayerResponseAsync(
+                videoId,
+                cancellationToken
+            );
+
+            return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
+        }
+        catch (VideoUnplayableException) { }
+
+        // Try to get player response from a client with cipher
+        {
+            var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
+
+            var playerResponse = await _controller.GetPlayerResponseAsync(
+                videoId,
+                cipherManifest.SignatureTimestamp,
+                cancellationToken
+            );
+
+            return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
         }
     }
 
@@ -260,13 +284,6 @@ public class StreamClient
         for (var retriesRemaining = 5; ; retriesRemaining--)
         {
             var streamInfos = await GetStreamInfosAsync(videoId, cancellationToken);
-
-            if (!streamInfos.Any())
-            {
-                throw new VideoUnplayableException(
-                    $"Video '{videoId}' does not contain any playable streams."
-                );
-            }
 
             // YouTube sometimes returns stream URLs that produce 403 Forbidden errors when accessed.
             // This happens for both protected and non-protected streams, so the cause is unclear.
