@@ -64,6 +64,7 @@ public class StreamClient
         if (contentLength is null)
         {
             using var response = await _http.HeadAsync(url, cancellationToken);
+            contentLength = response.Content.Headers.ContentLength;
 
             // 404 error indicates that the stream is not available
             if (response.StatusCode == HttpStatusCode.NotFound)
