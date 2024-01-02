@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -86,9 +87,7 @@ public class StreamClient
             if (contentLength <= 0)
                 continue;
 
-            /*
-            // Some streams have mismatched content length, so we need to make sure the value we
-            // obtained is correct, otherwise we may get a 404 error while trying to read the stream.
+            // Streams may have mismatched content length, so ensure that the obtained value is correct
             // https://github.com/Tyrrrz/YoutubeExplode/issues/759
             using (
                 var response = await _http.GetAsync(
@@ -99,10 +98,11 @@ public class StreamClient
                 )
             )
             {
-                if (!response.IsSuccessStatusCode)
+                // Only check for the 404 status here, as other errors (e.g. 401/403) may indicate
+                // at issues with the extraction process, not with the stream itself.
+                if (response.StatusCode == HttpStatusCode.NotFound)
                     continue;
             }
-            */
 
             var container =
                 streamData.Container?.Pipe(s => new Container(s))
