@@ -51,6 +51,48 @@ public class StreamClient
             ?? throw new YoutubeExplodeException("Failed to extract the cipher manifest.");
     }
 
+    private async ValueTask<long?> TryGetContentLengthAsync(
+        IStreamData streamData,
+        string url,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var contentLength = streamData.ContentLength;
+
+        // If content length is not available in the metadata, get it by
+        // sending a HEAD request and parsing the Content-Length header.
+        if (contentLength is null)
+        {
+            using var response = await _http.HeadAsync(url, cancellationToken);
+
+            // 404 error indicates that the stream is not available
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return null;
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        if (contentLength is not null)
+        {
+            // Streams may have mismatched content length, so ensure that the obtained value is correct
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/759
+            using var response = await _http.GetAsync(
+                // Try to access the last byte of the stream
+                MediaStream.GetSegmentUrl(url, contentLength.Value - 2, contentLength.Value - 1),
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken
+            );
+
+            // 404 error indicates that the stream has mismatched content length
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return null;
+
+            response.EnsureSuccessStatusCode();
+        }
+
+        return contentLength;
+    }
+
     private async IAsyncEnumerable<IStreamInfo> GetStreamInfosAsync(
         IEnumerable<IStreamData> streamDatas,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
@@ -78,31 +120,9 @@ public class StreamClient
                 );
             }
 
-            var contentLength =
-                streamData.ContentLength
-                ?? await _http.TryGetContentLengthAsync(url, false, cancellationToken)
-                ?? 0;
-
-            // Stream is empty or cannot be accessed
-            if (contentLength <= 0)
+            var contentLength = await TryGetContentLengthAsync(streamData, url, cancellationToken);
+            if (contentLength is null)
                 continue;
-
-            // Streams may have mismatched content length, so ensure that the obtained value is correct
-            // https://github.com/Tyrrrz/YoutubeExplode/issues/759
-            using (
-                var response = await _http.GetAsync(
-                    // Try to access the last byte of the stream
-                    MediaStream.GetSegmentUrl(url, contentLength - 2, contentLength - 1),
-                    HttpCompletionOption.ResponseHeadersRead,
-                    cancellationToken
-                )
-            )
-            {
-                // Only check for the 404 status here, as other errors (e.g. 401/403) may indicate
-                // at issues with the extraction process, not with the stream itself.
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                    continue;
-            }
 
             var container =
                 streamData.Container?.Pipe(s => new Container(s))
@@ -132,7 +152,7 @@ public class StreamClient
                     var streamInfo = new MuxedStreamInfo(
                         url,
                         container,
-                        new FileSize(contentLength),
+                        new FileSize(contentLength.Value),
                         bitrate,
                         streamData.AudioCodec,
                         streamData.VideoCodec,
@@ -148,7 +168,7 @@ public class StreamClient
                     var streamInfo = new VideoOnlyStreamInfo(
                         url,
                         container,
-                        new FileSize(contentLength),
+                        new FileSize(contentLength.Value),
                         bitrate,
                         streamData.VideoCodec,
                         videoQuality,
@@ -164,7 +184,7 @@ public class StreamClient
                 var streamInfo = new AudioOnlyStreamInfo(
                     url,
                     container,
-                    new FileSize(contentLength),
+                    new FileSize(contentLength.Value),
                     bitrate,
                     streamData.AudioCodec
                 );
@@ -285,18 +305,13 @@ public class StreamClient
     {
         for (var retriesRemaining = 5; ; retriesRemaining--)
         {
-            var streamInfos = await GetStreamInfosAsync(videoId, cancellationToken);
-
-            // YouTube sometimes returns stream URLs that produce 403 Forbidden errors when accessed.
-            // This happens for both protected and non-protected streams, so the cause is unclear.
-            // As a workaround, we can access one of the stream URLs and retry if it fails.
-            using var response = await _http.HeadAsync(streamInfos.First().Url, cancellationToken);
-            if ((int)response.StatusCode == 403 && retriesRemaining > 0)
-                continue;
-
-            response.EnsureSuccessStatusCode();
-
-            return new StreamManifest(streamInfos);
+            try
+            {
+                return new StreamManifest(await GetStreamInfosAsync(videoId, cancellationToken));
+            }
+            // Retry on connectivity issues
+            catch (Exception ex)
+                when (ex is HttpRequestException or IOException && retriesRemaining > 0) { }
         }
     }
 

@@ -74,7 +74,8 @@ internal partial class MediaStream(HttpClient http, IStreamInfo streamInfo) : St
                 return await stream.ReadAsync(buffer, offset, count, cancellationToken);
             }
             // Retry on connectivity issues
-            catch (IOException) when (retriesRemaining > 0)
+            catch (Exception ex)
+                when (ex is HttpRequestException or IOException && retriesRemaining > 0)
             {
                 ResetSegment();
             }
