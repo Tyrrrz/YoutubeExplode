@@ -82,9 +82,25 @@ public class StreamClient
                 ?? await _http.TryGetContentLengthAsync(url, false, cancellationToken)
                 ?? 0;
 
-            // Stream cannot be accessed
+            // Stream is empty or cannot be accessed
             if (contentLength <= 0)
                 continue;
+
+            // Some streams have mismatched content length, so we need to make sure the value we
+            // obtained is correct, otherwise we may get a 404 error while trying to read the stream.
+            // https://github.com/Tyrrrz/YoutubeExplode/issues/759
+            using (
+                var response = await _http.GetAsync(
+                    // Try to access the last byte of the stream
+                    MediaStream.GetSegmentUrl(url, contentLength - 2, contentLength - 1),
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellationToken
+                )
+            )
+            {
+                if (!response.IsSuccessStatusCode)
+                    continue;
+            }
 
             var container =
                 streamData.Container?.Pipe(s => new Container(s))
@@ -201,7 +217,9 @@ public class StreamClient
         await foreach (
             var streamInfo in GetStreamInfosAsync(playerResponse.Streams, cancellationToken)
         )
+        {
             yield return streamInfo;
+        }
 
         // Extract streams from the DASH manifest
         if (!string.IsNullOrWhiteSpace(playerResponse.DashManifestUrl))
@@ -224,7 +242,9 @@ public class StreamClient
                 await foreach (
                     var streamInfo in GetStreamInfosAsync(dashManifest.Streams, cancellationToken)
                 )
+                {
                     yield return streamInfo;
+                }
             }
         }
     }

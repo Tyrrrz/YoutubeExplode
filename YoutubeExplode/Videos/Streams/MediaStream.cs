@@ -9,8 +9,14 @@ using YoutubeExplode.Utils;
 namespace YoutubeExplode.Videos.Streams;
 
 // Works around YouTube's rate throttling, provides seeking support, and some resiliency
-internal class MediaStream(HttpClient http, IStreamInfo streamInfo) : Stream
+internal partial class MediaStream(HttpClient http, IStreamInfo streamInfo) : Stream
 {
+    // For most streams, YouTube limits transfer speed to match the video playback rate.
+    // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
+    // we want to download the stream as fast as possible.
+    // To solve this, we divide the logical stream up into multiple segments and download
+    // them all separately.
+
     private readonly long _segmentLength = streamInfo.IsThrottled()
         ? 9_898_989
         : streamInfo.Size.Bytes;
@@ -31,12 +37,6 @@ internal class MediaStream(HttpClient http, IStreamInfo streamInfo) : Stream
 
     public override long Position { get; set; }
 
-    // For most streams, YouTube limits transfer speed to match the video playback rate.
-    // This helps them avoid unnecessary bandwidth, but for us it's a hindrance because
-    // we want to download the stream as fast as possible.
-    // To solve this, we divide the logical stream up into multiple segments and download
-    // them all separately.
-
     private void ResetSegment()
     {
         _segmentStream?.Dispose();
@@ -50,10 +50,7 @@ internal class MediaStream(HttpClient http, IStreamInfo streamInfo) : Stream
         if (_segmentStream is not null)
             return _segmentStream;
 
-        var from = Position;
-        var to = Position + _segmentLength - 1;
-        var url = UrlEx.SetQueryParameter(streamInfo.Url, "range", $"{from}-{to}");
-
+        var url = GetSegmentUrl(streamInfo.Url, Position, Position + _segmentLength - 1);
         var stream = await http.GetStreamAsync(url, cancellationToken);
 
         return _segmentStream = stream;
@@ -146,4 +143,10 @@ internal class MediaStream(HttpClient http, IStreamInfo streamInfo) : Stream
 
         base.Dispose(disposing);
     }
+}
+
+internal partial class MediaStream
+{
+    public static string GetSegmentUrl(string streamUrl, long from, long to) =>
+        UrlEx.SetQueryParameter(streamUrl, "range", $"{from}-{to}");
 }
