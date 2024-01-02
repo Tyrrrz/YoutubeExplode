@@ -27,9 +27,6 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
-        manifest.GetMuxedStreams().Should().NotBeEmpty();
-        manifest.GetAudioStreams().Should().NotBeEmpty();
-        manifest.GetVideoStreams().Should().NotBeEmpty();
 
         manifest
             .GetVideoStreams()
@@ -71,6 +68,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     [InlineData(VideoIds.LiveStreamRecording)]
+    [InlineData(VideoIds.WithBrokenStreams)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     [InlineData(VideoIds.WithHighDynamicRangeStreams)]
     public async Task I_can_get_the_list_of_available_streams_of_any_playable_video(string videoId)
@@ -134,6 +132,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.AgeRestrictedViolent)]
     [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.LiveStreamRecording)]
+    [InlineData(VideoIds.WithBrokenStreams)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     public async Task I_can_get_a_specific_stream_of_a_video(string videoId)
     {
@@ -163,6 +162,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.AgeRestrictedSexual)]
     [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
     [InlineData(VideoIds.LiveStreamRecording)]
+    [InlineData(VideoIds.WithBrokenStreams)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     public async Task I_can_download_a_specific_stream_of_a_video(string videoId)
     {

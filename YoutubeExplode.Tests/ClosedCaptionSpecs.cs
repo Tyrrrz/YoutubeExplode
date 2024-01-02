@@ -62,8 +62,8 @@ public class ClosedCaptionSpecs
         var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
             VideoIds.WithClosedCaptions
         );
-        var trackInfo = manifest.GetByLanguage("en-US");
 
+        var trackInfo = manifest.GetByLanguage("en-US");
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
         // Assert
@@ -80,8 +80,8 @@ public class ClosedCaptionSpecs
         var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
             VideoIds.WithBrokenClosedCaptions
         );
-        var trackInfo = manifest.GetByLanguage("en");
 
+        var trackInfo = manifest.GetByLanguage("en");
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
         // Assert
@@ -98,8 +98,8 @@ public class ClosedCaptionSpecs
         var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
             VideoIds.WithClosedCaptions
         );
-        var trackInfo = manifest.GetByLanguage("en-US");
 
+        var trackInfo = manifest.GetByLanguage("en-US");
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
         var caption = track.GetByTime(TimeSpan.FromSeconds(641));
@@ -118,8 +118,8 @@ public class ClosedCaptionSpecs
         var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
             VideoIds.WithClosedCaptions
         );
-        var trackInfo = manifest.GetByLanguage("en");
 
+        var trackInfo = manifest.GetByLanguage("en");
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
         var captionPart = track
@@ -141,8 +141,8 @@ public class ClosedCaptionSpecs
         var manifest = await youtube.Videos.ClosedCaptions.GetManifestAsync(
             VideoIds.WithClosedCaptions
         );
-        var trackInfo = manifest.GetByLanguage("en-US");
 
+        var trackInfo = manifest.GetByLanguage("en-US");
         await youtube.Videos.ClosedCaptions.DownloadAsync(trackInfo, file.Path);
 
         // Assert

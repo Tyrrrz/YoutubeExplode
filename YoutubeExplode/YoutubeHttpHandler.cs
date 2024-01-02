@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -186,7 +187,8 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
                 return response;
             }
             // Retry on connectivity issues
-            catch (HttpRequestException) when (retriesRemaining > 0) { }
+            catch (Exception ex)
+                when (ex is HttpRequestException or IOException && retriesRemaining > 0) { }
         }
     }
 }

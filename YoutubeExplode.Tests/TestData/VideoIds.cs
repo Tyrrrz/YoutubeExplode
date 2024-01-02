@@ -15,6 +15,7 @@ internal static class VideoIds
     public const string LiveStream = "jfKfPfyJRdk";
     public const string LiveStreamRecording = "rsAAeyAr-9Y";
     public const string WithBrokenTitle = "4ZJWv6t-PfY";
+    public const string WithBrokenStreams = "JQgKhZZyBYg";
     public const string WithHighQualityStreams = "V5Fsj_sCKdg";
     public const string WithOmnidirectionalStreams = "-xNN-bJQ4vI";
     public const string WithHighDynamicRangeStreams = "vX2vsvdq8nw";
