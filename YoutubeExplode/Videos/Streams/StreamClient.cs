@@ -205,6 +205,8 @@ public class StreamClient
         CancellationToken cancellationToken = default
     )
     {
+        var streamInfos = new List<IStreamInfo>();
+
         // Video is pay-to-play
         if (!string.IsNullOrWhiteSpace(playerResponse.PreviewVideoId))
         {
@@ -222,15 +224,8 @@ public class StreamClient
             );
         }
 
-        var streamInfos = new List<IStreamInfo>();
-
         // Extract streams from the player response
-        await foreach (
-            var streamInfo in GetStreamInfosAsync(playerResponse.Streams, cancellationToken)
-        )
-        {
-            streamInfos.Add(streamInfo);
-        }
+        streamInfos.AddRange(await GetStreamInfosAsync(playerResponse.Streams, cancellationToken));
 
         // Extract streams from the DASH manifest
         if (!string.IsNullOrWhiteSpace(playerResponse.DashManifestUrl))
@@ -242,12 +237,9 @@ public class StreamClient
                     cancellationToken
                 );
 
-                await foreach (
-                    var streamInfo in GetStreamInfosAsync(dashManifest.Streams, cancellationToken)
-                )
-                {
-                    streamInfos.Add(streamInfo);
-                }
+                streamInfos.AddRange(
+                    await GetStreamInfosAsync(dashManifest.Streams, cancellationToken)
+                );
             }
             // Some DASH manifest URLs return 404 for whatever reason
             // https://github.com/Tyrrrz/YoutubeExplode/issues/728
@@ -270,9 +262,9 @@ public class StreamClient
         CancellationToken cancellationToken = default
     )
     {
-        // Try to get player response from a cipher-less client
         try
         {
+            // Try to get player response from a cipher-less client
             var playerResponse = await _controller.GetPlayerResponseAsync(
                 videoId,
                 cancellationToken
@@ -280,10 +272,9 @@ public class StreamClient
 
             return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
         }
-        catch (VideoUnplayableException) { }
-
-        // Try to get player response from a client with cipher
+        catch (VideoUnplayableException)
         {
+            // Try to get player response from a client with cipher
             var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
 
             var playerResponse = await _controller.GetPlayerResponseAsync(
