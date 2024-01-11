@@ -5,17 +5,17 @@ namespace YoutubeExplode.Videos;
 /// <summary>
 /// Engagement statistics.
 /// </summary>
-public class Engagement
+public class Engagement(long viewCount, long likeCount, long dislikeCount)
 {
     /// <summary>
     /// View count.
     /// </summary>
-    public long ViewCount { get; }
+    public long ViewCount { get; } = viewCount;
 
     /// <summary>
     /// Like count.
     /// </summary>
-    public long LikeCount { get; }
+    public long LikeCount { get; } = likeCount;
 
     /// <summary>
     /// Dislike count.
@@ -23,7 +23,7 @@ public class Engagement
     /// <remarks>
     /// YouTube no longer shows dislikes, so this value is always 0.
     /// </remarks>
-    public long DislikeCount { get; }
+    public long DislikeCount { get; } = dislikeCount;
 
     /// <summary>
     /// Average rating.
@@ -33,16 +33,6 @@ public class Engagement
     /// </remarks>
     public double AverageRating =>
         LikeCount + DislikeCount != 0 ? 1 + 4.0 * LikeCount / (LikeCount + DislikeCount) : 0; // avoid division by 0
-
-    /// <summary>
-    /// Initializes an instance of <see cref="Engagement" />.
-    /// </summary>
-    public Engagement(long viewCount, long likeCount, long dislikeCount)
-    {
-        ViewCount = viewCount;
-        LikeCount = likeCount;
-        DislikeCount = dislikeCount;
-    }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

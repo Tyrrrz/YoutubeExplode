@@ -6,50 +6,36 @@ namespace YoutubeExplode.Videos.Streams;
 /// <summary>
 /// Metadata associated with a video-only media stream.
 /// </summary>
-public class VideoOnlyStreamInfo : IVideoStreamInfo
+public class VideoOnlyStreamInfo(
+    string url,
+    Container container,
+    FileSize size,
+    Bitrate bitrate,
+    string videoCodec,
+    VideoQuality videoQuality,
+    Resolution videoResolution
+) : IVideoStreamInfo
 {
     /// <inheritdoc />
-    public string Url { get; }
+    public string Url { get; } = url;
 
     /// <inheritdoc />
-    public Container Container { get; }
+    public Container Container { get; } = container;
 
     /// <inheritdoc />
-    public FileSize Size { get; }
+    public FileSize Size { get; } = size;
 
     /// <inheritdoc />
-    public Bitrate Bitrate { get; }
+    public Bitrate Bitrate { get; } = bitrate;
 
     /// <inheritdoc />
-    public string VideoCodec { get; }
+    public string VideoCodec { get; } = videoCodec;
 
     /// <inheritdoc />
-    public VideoQuality VideoQuality { get; }
+    public VideoQuality VideoQuality { get; } = videoQuality;
 
     /// <inheritdoc />
-    public Resolution VideoResolution { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="VideoOnlyStreamInfo" />.
-    /// </summary>
-    public VideoOnlyStreamInfo(
-        string url,
-        Container container,
-        FileSize size,
-        Bitrate bitrate,
-        string videoCodec,
-        VideoQuality videoQuality,
-        Resolution videoResolution
-    )
-    {
-        Url = url;
-        Container = container;
-        Size = size;
-        Bitrate = bitrate;
-        VideoCodec = videoCodec;
-        VideoQuality = videoQuality;
-        VideoResolution = videoResolution;
-    }
+    public Resolution VideoResolution { get; } = videoResolution;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

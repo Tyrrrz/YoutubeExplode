@@ -1,31 +1,23 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using AngleSharp.Media.Dom;
 
 namespace YoutubeExplode.Videos.ClosedCaptions;
 
 /// <summary>
 /// Individual closed caption part contained within a track.
 /// </summary>
-public class ClosedCaptionPart
+public class ClosedCaptionPart(string text, TimeSpan offset)
 {
     /// <summary>
     /// Text displayed by the caption part.
     /// </summary>
-    public string Text { get; }
+    public string Text { get; } = text;
 
     /// <summary>
     /// Time at which the caption part starts displaying, relative to the caption's own offset.
     /// </summary>
-    public TimeSpan Offset { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionPart" />.
-    /// </summary>
-    public ClosedCaptionPart(string text, TimeSpan offset)
-    {
-        Text = text;
-        Offset = offset;
-    }
+    public TimeSpan Offset { get; } = offset;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

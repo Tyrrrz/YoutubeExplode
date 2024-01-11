@@ -6,20 +6,12 @@ namespace YoutubeExplode.Videos.Streams;
 /// <summary>
 /// Describes media streams available for a YouTube video.
 /// </summary>
-public class StreamManifest
+public class StreamManifest(IReadOnlyList<IStreamInfo> streams)
 {
     /// <summary>
     /// Available streams.
     /// </summary>
-    public IReadOnlyList<IStreamInfo> Streams { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="StreamManifest" />.
-    /// </summary>
-    public StreamManifest(IReadOnlyList<IStreamInfo> streams)
-    {
-        Streams = streams;
-    }
+    public IReadOnlyList<IStreamInfo> Streams { get; } = streams;
 
     /// <summary>
     /// Gets streams that contain audio (i.e. muxed and audio-only streams).

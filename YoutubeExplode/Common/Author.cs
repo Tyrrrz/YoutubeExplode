@@ -7,12 +7,12 @@ namespace YoutubeExplode.Common;
 /// <summary>
 /// Reference to a channel that owns a specific YouTube video or playlist.
 /// </summary>
-public class Author
+public class Author(ChannelId channelId, string channelTitle)
 {
     /// <summary>
     /// Channel ID.
     /// </summary>
-    public ChannelId ChannelId { get; }
+    public ChannelId ChannelId { get; } = channelId;
 
     /// <summary>
     /// Channel URL.
@@ -22,20 +22,11 @@ public class Author
     /// <summary>
     /// Channel title.
     /// </summary>
-    public string ChannelTitle { get; }
+    public string ChannelTitle { get; } = channelTitle;
 
     /// <inheritdoc cref="ChannelTitle" />
     [Obsolete("Use ChannelTitle instead."), ExcludeFromCodeCoverage]
     public string Title => ChannelTitle;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="Author" />.
-    /// </summary>
-    public Author(ChannelId channelId, string channelTitle)
-    {
-        ChannelId = channelId;
-        ChannelTitle = channelTitle;
-    }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

@@ -5,12 +5,12 @@ namespace YoutubeExplode.Videos.Streams;
 /// <summary>
 /// Bitrate.
 /// </summary>
-public readonly partial struct Bitrate
+public readonly partial struct Bitrate(long bitsPerSecond)
 {
     /// <summary>
     /// Bitrate in bits per second.
     /// </summary>
-    public long BitsPerSecond { get; }
+    public long BitsPerSecond { get; } = bitsPerSecond;
 
     /// <summary>
     /// Bitrate in kilobits per second.
@@ -26,11 +26,6 @@ public readonly partial struct Bitrate
     /// Bitrate in gigabits per second
     /// </summary>
     public double GigaBitsPerSecond => MegaBitsPerSecond / 1024.0;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="Bitrate" />.
-    /// </summary>
-    public Bitrate(long bitsPerSecond) => BitsPerSecond = bitsPerSecond;
 
     private string GetLargestWholeNumberSymbol()
     {

@@ -6,31 +6,22 @@ namespace YoutubeExplode.Common;
 /// <summary>
 /// Resolution of an image or a video.
 /// </summary>
-public readonly partial struct Resolution
+public readonly partial struct Resolution(int width, int height)
 {
     /// <summary>
     /// Viewport width, measured in pixels.
     /// </summary>
-    public int Width { get; }
+    public int Width { get; } = width;
 
     /// <summary>
     /// Viewport height, measured in pixels.
     /// </summary>
-    public int Height { get; }
+    public int Height { get; } = height;
 
     /// <summary>
     /// Viewport area (i.e. width multiplied by height).
     /// </summary>
     public int Area => Width * Height;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="Resolution" />.
-    /// </summary>
-    public Resolution(int width, int height)
-    {
-        Width = width;
-        Height = height;
-    }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

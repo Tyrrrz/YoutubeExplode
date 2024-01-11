@@ -7,17 +7,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions;
 /// <summary>
 /// Describes closed caption tracks available for a YouTube video.
 /// </summary>
-public class ClosedCaptionManifest
+public class ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
 {
     /// <summary>
     /// Available closed caption tracks.
     /// </summary>
-    public IReadOnlyList<ClosedCaptionTrackInfo> Tracks { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionManifest" />.
-    /// </summary>
-    public ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks) => Tracks = tracks;
+    public IReadOnlyList<ClosedCaptionTrackInfo> Tracks { get; } = tracks;
 
     /// <summary>
     /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).

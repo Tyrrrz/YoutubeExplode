@@ -7,20 +7,12 @@ namespace YoutubeExplode.Videos.ClosedCaptions;
 /// <summary>
 /// Contains closed captions in a specific language.
 /// </summary>
-public class ClosedCaptionTrack
+public class ClosedCaptionTrack(IReadOnlyList<ClosedCaption> captions)
 {
     /// <summary>
     /// Closed captions included in the track.
     /// </summary>
-    public IReadOnlyList<ClosedCaption> Captions { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionTrack" />.
-    /// </summary>
-    public ClosedCaptionTrack(IReadOnlyList<ClosedCaption> captions)
-    {
-        Captions = captions;
-    }
+    public IReadOnlyList<ClosedCaption> Captions { get; } = captions;
 
     /// <summary>
     /// Gets the caption displayed at the specified point in time.

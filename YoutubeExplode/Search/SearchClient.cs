@@ -14,14 +14,9 @@ namespace YoutubeExplode.Search;
 /// <summary>
 /// Operations related to YouTube search.
 /// </summary>
-public class SearchClient
+public class SearchClient(HttpClient http)
 {
-    private readonly SearchController _controller;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="SearchClient" />.
-    /// </summary>
-    public SearchClient(HttpClient http) => _controller = new SearchController(http);
+    private readonly SearchController _controller = new(http);
 
     /// <summary>
     /// Enumerates batches of search results returned by the specified query.

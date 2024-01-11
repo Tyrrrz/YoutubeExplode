@@ -5,40 +5,28 @@ namespace YoutubeExplode.Videos.Streams;
 /// <summary>
 /// Metadata associated with an audio-only YouTube media stream.
 /// </summary>
-public class AudioOnlyStreamInfo : IAudioStreamInfo
+public class AudioOnlyStreamInfo(
+    string url,
+    Container container,
+    FileSize size,
+    Bitrate bitrate,
+    string audioCodec
+) : IAudioStreamInfo
 {
     /// <inheritdoc />
-    public string Url { get; }
+    public string Url { get; } = url;
 
     /// <inheritdoc />
-    public Container Container { get; }
+    public Container Container { get; } = container;
 
     /// <inheritdoc />
-    public FileSize Size { get; }
+    public FileSize Size { get; } = size;
 
     /// <inheritdoc />
-    public Bitrate Bitrate { get; }
+    public Bitrate Bitrate { get; } = bitrate;
 
     /// <inheritdoc />
-    public string AudioCodec { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="AudioOnlyStreamInfo" />.
-    /// </summary>
-    public AudioOnlyStreamInfo(
-        string url,
-        Container container,
-        FileSize size,
-        Bitrate bitrate,
-        string audioCodec
-    )
-    {
-        Url = url;
-        Container = container;
-        Size = size;
-        Bitrate = bitrate;
-        AudioCodec = audioCodec;
-    }
+    public string AudioCodec { get; } = audioCodec;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

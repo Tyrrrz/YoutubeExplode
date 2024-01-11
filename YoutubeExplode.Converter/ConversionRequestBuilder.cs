@@ -9,21 +9,14 @@ namespace YoutubeExplode.Converter;
 /// <summary>
 /// Builder for <see cref="ConversionRequest" />.
 /// </summary>
-public class ConversionRequestBuilder
+public class ConversionRequestBuilder(string outputFilePath)
 {
-    private readonly string _outputFilePath;
-
     private string? _ffmpegCliFilePath;
     private Container? _container;
     private ConversionPreset _preset;
 
-    /// <summary>
-    /// Initializes an instance of <see cref="ConversionRequestBuilder" />.
-    /// </summary>
-    public ConversionRequestBuilder(string outputFilePath) => _outputFilePath = outputFilePath;
-
     private Container GetDefaultContainer() =>
-        new(Path.GetExtension(_outputFilePath).TrimStart('.').NullIfWhiteSpace() ?? "mp4");
+        new(Path.GetExtension(outputFilePath).TrimStart('.').NullIfWhiteSpace() ?? "mp4");
 
     /// <summary>
     /// Sets the path to the FFmpeg CLI.
@@ -77,7 +70,7 @@ public class ConversionRequestBuilder
     public ConversionRequest Build() =>
         new(
             _ffmpegCliFilePath ?? FFmpeg.GetFilePath(),
-            _outputFilePath,
+            outputFilePath,
             _container ?? GetDefaultContainer(),
             _preset
         );

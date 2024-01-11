@@ -19,23 +19,13 @@ namespace YoutubeExplode.Videos.Streams;
 /// <summary>
 /// Operations related to media streams of YouTube videos.
 /// </summary>
-public class StreamClient
+public class StreamClient(HttpClient http)
 {
-    private readonly HttpClient _http;
-    private readonly StreamController _controller;
+    private readonly StreamController _controller = new(http);
 
     // Because we determine the player version ourselves, it's safe to cache the cipher manifest
     // for the entire lifetime of the client.
     private CipherManifest? _cipherManifest;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="StreamClient" />.
-    /// </summary>
-    public StreamClient(HttpClient http)
-    {
-        _http = http;
-        _controller = new StreamController(http);
-    }
 
     private async ValueTask<CipherManifest> ResolveCipherManifestAsync(
         CancellationToken cancellationToken
@@ -63,7 +53,7 @@ public class StreamClient
         // sending a HEAD request and parsing the Content-Length header.
         if (contentLength is null)
         {
-            using var response = await _http.HeadAsync(url, cancellationToken);
+            using var response = await http.HeadAsync(url, cancellationToken);
             contentLength = response.Content.Headers.ContentLength;
 
             // 404 error indicates that the stream is not available
@@ -77,7 +67,7 @@ public class StreamClient
         {
             // Streams may have mismatched content length, so ensure that the obtained value is correct
             // https://github.com/Tyrrrz/YoutubeExplode/issues/759
-            using var response = await _http.GetAsync(
+            using var response = await http.GetAsync(
                 // Try to access the last byte of the stream
                 MediaStream.GetSegmentUrl(url, contentLength.Value - 2, contentLength.Value - 1),
                 HttpCompletionOption.ResponseHeadersRead,
@@ -341,7 +331,7 @@ public class StreamClient
         CancellationToken cancellationToken = default
     )
     {
-        var stream = new MediaStream(_http, streamInfo);
+        var stream = new MediaStream(http, streamInfo);
         await stream.InitializeAsync(cancellationToken);
 
         return stream;

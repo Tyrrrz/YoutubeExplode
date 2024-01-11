@@ -15,14 +15,9 @@ namespace YoutubeExplode.Videos.ClosedCaptions;
 /// <summary>
 /// Operations related to closed captions of YouTube videos.
 /// </summary>
-public class ClosedCaptionClient
+public class ClosedCaptionClient(HttpClient http)
 {
-    private readonly ClosedCaptionController _controller;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaptionClient" />.
-    /// </summary>
-    public ClosedCaptionClient(HttpClient http) => _controller = new ClosedCaptionController(http);
+    private readonly ClosedCaptionController _controller = new(http);
 
     private async IAsyncEnumerable<ClosedCaptionTrackInfo> GetClosedCaptionTrackInfosAsync(
         VideoId videoId,

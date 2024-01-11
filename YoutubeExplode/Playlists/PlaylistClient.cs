@@ -13,14 +13,9 @@ namespace YoutubeExplode.Playlists;
 /// <summary>
 /// Operations related to YouTube playlists.
 /// </summary>
-public class PlaylistClient
+public class PlaylistClient(HttpClient http)
 {
-    private readonly PlaylistController _controller;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="PlaylistClient" />.
-    /// </summary>
-    public PlaylistClient(HttpClient http) => _controller = new PlaylistController(http);
+    private readonly PlaylistController _controller = new(http);
 
     /// <summary>
     /// Gets the metadata associated with the specified playlist.

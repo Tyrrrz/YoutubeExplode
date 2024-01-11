@@ -8,22 +8,27 @@ namespace YoutubeExplode.Videos.ClosedCaptions;
 /// <summary>
 /// Individual closed caption contained within a track.
 /// </summary>
-public class ClosedCaption
+public class ClosedCaption(
+    string text,
+    TimeSpan offset,
+    TimeSpan duration,
+    IReadOnlyList<ClosedCaptionPart> parts
+)
 {
     /// <summary>
     /// Text displayed by the caption.
     /// </summary>
-    public string Text { get; }
+    public string Text { get; } = text;
 
     /// <summary>
     /// Time at which the caption starts displaying.
     /// </summary>
-    public TimeSpan Offset { get; }
+    public TimeSpan Offset { get; } = offset;
 
     /// <summary>
     /// Duration of time for which the caption is displayed.
     /// </summary>
-    public TimeSpan Duration { get; }
+    public TimeSpan Duration { get; } = duration;
 
     /// <summary>
     /// Caption parts, usually representing individual words.
@@ -31,23 +36,7 @@ public class ClosedCaption
     /// <remarks>
     /// May be empty because not all captions have parts.
     /// </remarks>
-    public IReadOnlyList<ClosedCaptionPart> Parts { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="ClosedCaption" />.
-    /// </summary>
-    public ClosedCaption(
-        string text,
-        TimeSpan offset,
-        TimeSpan duration,
-        IReadOnlyList<ClosedCaptionPart> parts
-    )
-    {
-        Text = text;
-        Offset = offset;
-        Duration = duration;
-        Parts = parts;
-    }
+    public IReadOnlyList<ClosedCaptionPart> Parts { get; } = parts;
 
     /// <summary>
     /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.

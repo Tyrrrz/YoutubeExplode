@@ -15,19 +15,9 @@ namespace YoutubeExplode.Channels;
 /// <summary>
 /// Operations related to YouTube channels.
 /// </summary>
-public class ChannelClient
+public class ChannelClient(HttpClient http)
 {
-    private readonly HttpClient _http;
-    private readonly ChannelController _controller;
-
-    /// <summary>
-    /// Initializes an instance of <see cref="ChannelClient" />.
-    /// </summary>
-    public ChannelClient(HttpClient http)
-    {
-        _http = http;
-        _controller = new ChannelController(http);
-    }
+    private readonly ChannelController _controller = new(http);
 
     private Channel Get(ChannelPage channelPage)
     {
@@ -118,6 +108,6 @@ public class ChannelClient
     {
         // Replace 'UC' in the channel ID with 'UU'
         var playlistId = "UU" + channelId.Value[2..];
-        return new PlaylistClient(_http).GetVideosAsync(playlistId, cancellationToken);
+        return new PlaylistClient(http).GetVideosAsync(playlistId, cancellationToken);
     }
 }

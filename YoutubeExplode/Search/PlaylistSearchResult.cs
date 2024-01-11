@@ -8,38 +8,27 @@ namespace YoutubeExplode.Search;
 /// <summary>
 /// Metadata associated with a YouTube playlist returned by a search query.
 /// </summary>
-public class PlaylistSearchResult : ISearchResult, IPlaylist
+public class PlaylistSearchResult(
+    PlaylistId id,
+    string title,
+    Author? author,
+    IReadOnlyList<Thumbnail> thumbnails
+) : ISearchResult, IPlaylist
 {
     /// <inheritdoc />
-    public PlaylistId Id { get; }
+    public PlaylistId Id { get; } = id;
 
     /// <inheritdoc cref="IPlaylist.Url" />
     public string Url => $"https://www.youtube.com/playlist?list={Id}";
 
     /// <inheritdoc cref="IPlaylist.Title" />
-    public string Title { get; }
+    public string Title { get; } = title;
 
     /// <inheritdoc />
-    public Author? Author { get; }
+    public Author? Author { get; } = author;
 
     /// <inheritdoc />
-    public IReadOnlyList<Thumbnail> Thumbnails { get; }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="PlaylistSearchResult" />.
-    /// </summary>
-    public PlaylistSearchResult(
-        PlaylistId id,
-        string title,
-        Author? author,
-        IReadOnlyList<Thumbnail> thumbnails
-    )
-    {
-        Id = id;
-        Title = title;
-        Author = author;
-        Thumbnails = thumbnails;
-    }
+    public IReadOnlyList<Thumbnail> Thumbnails { get; } = thumbnails;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
