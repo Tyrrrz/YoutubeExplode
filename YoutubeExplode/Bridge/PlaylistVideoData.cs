@@ -66,7 +66,7 @@ internal class PlaylistVideoData(JsonElement content)
             .GetPropertyOrNull("lengthText")
             ?.GetPropertyOrNull("simpleText")
             ?.GetStringOrNull()
-            ?.ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" })
+            ?.ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"])
         ?? content
             .GetPropertyOrNull("lengthText")
             ?.GetPropertyOrNull("runs")
@@ -74,7 +74,7 @@ internal class PlaylistVideoData(JsonElement content)
             ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
             .ConcatToString()
-            .ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" });
+            .ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"]);
 
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails =>

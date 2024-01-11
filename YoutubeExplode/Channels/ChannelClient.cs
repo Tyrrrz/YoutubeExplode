@@ -71,13 +71,12 @@ public class ChannelClient
             return new Channel(
                 "UCuVPpxrm2VAgpH3Ktln4HXg",
                 "Movies & TV",
-                new[]
-                {
+                [
                     new Thumbnail(
                         "https://www.gstatic.com/youtube/img/tvfilm/clapperboard_profile.png",
                         new Resolution(1024, 1024)
                     )
-                }
+                ]
             );
         }
 

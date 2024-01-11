@@ -100,8 +100,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
             .Select(v => v.Id.Value)
             .Should()
             .Contain(
-                new[]
-                {
+                [
                     "uPZSSdkGQhM",
                     "fi0w57kr_jY",
                     "xLJt5A-NeQI",
@@ -123,7 +122,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
                     "8Kg-8ZjgLAQ",
                     "E9zfpKsw6f8",
                     "eBCw9sC5D40"
-                }
+                ]
             );
     }
 
@@ -142,8 +141,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
             .Select(v => v.Id.Value)
             .Should()
             .Contain(
-                new[]
-                {
+                [
                     "RBumgq5yVrA",
                     "kN0iD0pI3o0",
                     "YqB8Dm65X18",
@@ -153,7 +151,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
                     "x-IR7PtA7RA",
                     "N-8E9mHxDy0",
                     "5ly88Ju1N6A"
-                }
+                ]
             );
     }
 

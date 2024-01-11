@@ -38,8 +38,7 @@ public partial class Thumbnail
 public partial class Thumbnail
 {
     internal static IReadOnlyList<Thumbnail> GetDefaultSet(VideoId videoId) =>
-        new[]
-        {
+        [
             new Thumbnail(
                 $"https://img.youtube.com/vi/{videoId}/default.jpg",
                 new Resolution(120, 90)
@@ -52,7 +51,7 @@ public partial class Thumbnail
                 $"https://img.youtube.com/vi/{videoId}/hqdefault.jpg",
                 new Resolution(480, 360)
             )
-        };
+        ];
 }
 
 /// <summary>

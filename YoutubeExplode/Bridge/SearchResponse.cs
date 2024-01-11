@@ -96,7 +96,7 @@ internal partial class SearchResponse
                 .GetPropertyOrNull("lengthText")
                 ?.GetPropertyOrNull("simpleText")
                 ?.GetStringOrNull()
-                ?.ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" })
+                ?.ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"])
             ?? content
                 .GetPropertyOrNull("lengthText")
                 ?.GetPropertyOrNull("runs")
@@ -104,7 +104,7 @@ internal partial class SearchResponse
                 ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
                 .ConcatToString()
-                .ParseTimeSpanOrNull(new[] { @"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss" });
+                .ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"]);
 
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
