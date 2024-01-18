@@ -156,7 +156,12 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
             foreach (var item in SetCookieHeaderValue.ParseList(cookieHeaderValues.ToList()))
             {
                 _cookieContainer.Add(
-                    new Cookie(item.Name.Value, item.Value.Value, item.Path.Value, item.Domain.Value)
+                    new Cookie(
+                        item.Name.Value,
+                        item.Value.Value,
+                        item.Path.Value,
+                        item.Domain.Value
+                    )
                 );
             }
         }
