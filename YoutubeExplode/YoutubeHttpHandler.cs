@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Net.Http.Headers;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
@@ -152,8 +153,12 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // Set cookies
         if (response.Headers.TryGetValues("Set-Cookie", out var cookieHeaderValues))
         {
-            foreach (var cookieHeaderValue in cookieHeaderValues)
-                _cookieContainer.SetCookies(response.RequestMessage.RequestUri, cookieHeaderValue);
+            foreach (var item in SetCookieHeaderValue.ParseList(cookieHeaderValues.ToList()))
+            {
+                _cookieContainer.Add(
+                    new Cookie(item.Name.Value, item.Value.Value, item.Path.Value, item.Domain.Value)
+                );
+            }
         }
 
         return response;
