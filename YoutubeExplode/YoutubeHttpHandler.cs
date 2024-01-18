@@ -153,7 +153,20 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         if (response.Headers.TryGetValues("Set-Cookie", out var cookieHeaderValues))
         {
             foreach (var cookieHeaderValue in cookieHeaderValues)
-                _cookieContainer.SetCookies(response.RequestMessage.RequestUri, cookieHeaderValue);
+            {
+                try
+                {
+                    _cookieContainer.SetCookies(
+                        response.RequestMessage.RequestUri,
+                        cookieHeaderValue
+                    );
+                }
+                catch (CookieException)
+                {
+                    // YouTube may send cookies for other domains, ignore them
+                    // https://github.com/Tyrrrz/YoutubeExplode/issues/762
+                }
+            }
         }
 
         return response;
