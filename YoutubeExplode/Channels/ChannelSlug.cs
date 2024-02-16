@@ -31,20 +31,20 @@ public readonly partial struct ChannelSlug
         if (string.IsNullOrWhiteSpace(channelSlugOrUrl))
             return null;
 
-        // Slug
+        // Check if already passed a slug
         // Tyrrrz
         if (IsValid(channelSlugOrUrl))
             return channelSlugOrUrl;
 
-        // URL
+        // Try to extract the slug from the URL
         // https://www.youtube.com/c/Tyrrrz
-        var regularMatch = Regex
+        var slug = Regex
             .Match(channelSlugOrUrl, @"youtube\..+?/c/(.*?)(?:\?|&|/|$)")
             .Groups[1]
             .Value.Pipe(WebUtility.UrlDecode);
 
-        if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            return regularMatch;
+        if (!string.IsNullOrWhiteSpace(slug) && IsValid(slug))
+            return slug;
 
         // Invalid input
         return null;

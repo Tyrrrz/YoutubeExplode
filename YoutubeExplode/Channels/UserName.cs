@@ -32,20 +32,20 @@ public partial struct UserName
         if (string.IsNullOrWhiteSpace(userNameOrUrl))
             return null;
 
-        // Name
+        // Check if already passed a user name
         // TheTyrrr
         if (IsValid(userNameOrUrl))
             return userNameOrUrl;
 
-        // URL
+        // Try to extract the user name from the URL
         // https://www.youtube.com/user/TheTyrrr
-        var regularMatch = Regex
+        var userName = Regex
             .Match(userNameOrUrl, @"youtube\..+?/user/(.*?)(?:\?|&|/|$)")
             .Groups[1]
             .Value.Pipe(WebUtility.UrlDecode);
 
-        if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            return regularMatch;
+        if (!string.IsNullOrWhiteSpace(userName) && IsValid(userName))
+            return userName;
 
         // Invalid input
         return null;

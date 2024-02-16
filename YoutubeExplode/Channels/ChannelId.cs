@@ -34,20 +34,20 @@ public partial struct ChannelId
         if (string.IsNullOrWhiteSpace(channelIdOrUrl))
             return null;
 
-        // Id
+        // Check if already passed an ID
         // UC3xnGqlcL3y-GXz5N3wiTJQ
         if (IsValid(channelIdOrUrl))
             return channelIdOrUrl;
 
-        // URL
+        // Try to extract the ID from the URL
         // https://www.youtube.com/channel/UC3xnGqlcL3y-GXz5N3wiTJQ
-        var regularMatch = Regex
+        var id = Regex
             .Match(channelIdOrUrl, @"youtube\..+?/channel/(.*?)(?:\?|&|/|$)")
             .Groups[1]
             .Value.Pipe(WebUtility.UrlDecode);
 
-        if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            return regularMatch;
+        if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
+            return id;
 
         // Invalid input
         return null;

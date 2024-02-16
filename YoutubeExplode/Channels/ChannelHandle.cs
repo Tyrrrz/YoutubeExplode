@@ -32,20 +32,20 @@ public readonly partial struct ChannelHandle
         if (string.IsNullOrWhiteSpace(channelHandleOrUrl))
             return null;
 
-        // Handle
+        // Check if already passed a handle
         // Tyrrrz
         if (IsValid(channelHandleOrUrl))
             return channelHandleOrUrl;
 
-        // URL
+        // Try to extract the handle from the URL
         // https://www.youtube.com/@Tyrrrz
-        var regularMatch = Regex
+        var handle = Regex
             .Match(channelHandleOrUrl, @"youtube\..+?/@(.*?)(?:\?|&|/|$)")
             .Groups[1]
             .Value.Pipe(WebUtility.UrlDecode);
 
-        if (!string.IsNullOrWhiteSpace(regularMatch) && IsValid(regularMatch))
-            return regularMatch;
+        if (!string.IsNullOrWhiteSpace(handle) && IsValid(handle))
+            return handle;
 
         // Invalid input
         return null;
