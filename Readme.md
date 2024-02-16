@@ -248,6 +248,10 @@ await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(playlistUrl))
 }
 ```
 
+> **Note**:
+> You can craft playlist IDs to fetch special auto-generated playlists, such as music mixes, popular channel uploads, liked videos, and more.
+> See [this reference](https://wiki.archiveteam.org/index.php/YouTube/Technical_details#Playlists) for more information.
+
 ### Channels
 
 #### Retrieving channel metadata
