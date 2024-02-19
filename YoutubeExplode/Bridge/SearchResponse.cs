@@ -88,6 +88,13 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("navigationEndpoint")
                 ?.GetPropertyOrNull("browseEndpoint")
                 ?.GetPropertyOrNull("browseId")
+                ?.GetStringOrNull()
+            ?? content
+                .GetPropertyOrNull("channelThumbnailSupportedRenderers")
+                ?.GetPropertyOrNull("channelThumbnailWithLinkRenderer")
+                ?.GetPropertyOrNull("navigationEndpoint")
+                ?.GetPropertyOrNull("browseEndpoint")
+                ?.GetPropertyOrNull("browseId")
                 ?.GetStringOrNull();
 
         [Lazy]
