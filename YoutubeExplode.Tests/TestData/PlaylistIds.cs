@@ -12,5 +12,5 @@ internal static class PlaylistIds
     public const string UserUploads = "UUTMt7iMWa7jy0fNXIktwyLA";
     public const string Weird = "PL601B2E69B03FAB9D";
     public const string ContainsLongVideos = "PLkk2FsMngwGi9FNkWIoNZlfqglcldj_Zs";
-    public const string PaidVideo = "H4UDZ3MYBJM";
+    public const string ContainsPaidVideos = "H4UDZ3MYBJM";
 }
