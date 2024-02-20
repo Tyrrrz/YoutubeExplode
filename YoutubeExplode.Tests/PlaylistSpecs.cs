@@ -163,6 +163,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [InlineData(PlaylistIds.UserUploads)]
     [InlineData(PlaylistIds.ContainsLongVideos)]
     [InlineData(PlaylistIds.Weird)]
+    [InlineData(PlaylistIds.PaidVideo)]
     public async Task I_can_get_videos_included_in_any_available_playlist(string playlistId)
     {
         // Arrange
