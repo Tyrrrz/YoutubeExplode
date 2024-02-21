@@ -86,6 +86,7 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [Theory]
     [InlineData(VideoIds.Normal)]
     [InlineData(VideoIds.Unlisted)]
+    [InlineData(VideoIds.RequiresPurchaseDistributed)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.AgeRestrictedViolent)]
