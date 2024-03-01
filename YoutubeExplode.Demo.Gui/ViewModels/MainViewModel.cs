@@ -219,7 +219,7 @@ public class MainViewModel : ViewModelBase
             ClosedCaptionTrackInfos = null;
 
             // Get data
-            var videoIdOrUrl = Query;
+            var videoIdOrUrl = Query.Trim();
 
             Video = await _youtube.Videos.GetAsync(videoIdOrUrl);
             VideoThumbnail = Video.Thumbnails.GetWithHighestResolution();
