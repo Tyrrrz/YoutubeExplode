@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace YoutubeExplode.Demo.Gui.Converters;
 
-[ValueConversion(typeof(bool), typeof(string))]
-public class BoolToStringConverter : IValueConverter
+public class BoolToYesNoStringConverter : IValueConverter
 {
-    public static BoolToStringConverter Instance { get; } = new();
+    public static BoolToYesNoStringConverter Instance { get; } = new();
 
-    public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture) =>
+    public object? Convert(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    ) =>
         value is bool boolValue
             ? boolValue
                 ? "yes"
@@ -19,7 +23,7 @@ public class BoolToStringConverter : IValueConverter
     public object ConvertBack(
         object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) => throw new NotSupportedException();
 }

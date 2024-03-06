@@ -1,0 +1,412 @@
+﻿<Window
+    x:Class="YoutubeExplode.Demo.Gui.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:converters="using:YoutubeExplode.Demo.Gui.Converters"
+    xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:viewModels="using:YoutubeExplode.Demo.Gui.ViewModels"
+    x:Name="Root"
+    Title="YoutubeExplode Demo"
+    Width="720"
+    Height="620"
+    Icon="/favicon.ico"
+    Loaded="Root_OnLoaded"
+    WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <viewModels:MainViewModel />
+    </Window.DataContext>
+    <DockPanel>
+        <!--  Header  -->
+        <StackPanel
+            Background="{DynamicResource MaterialDarkBackgroundBrush}"
+            DockPanel.Dock="Top"
+            Orientation="Vertical">
+            <!--  Query  -->
+            <materialControls:Card Margin="12">
+                <TextBox
+                    x:Name="QueryTextBox"
+                    FontSize="16"
+                    Text="{Binding Query}"
+                    Theme="{DynamicResource SoloTextBox}"
+                    Watermark="YouTube video URL or ID">
+                    <TextBox.InnerRightContent>
+                        <Button
+                            Padding="4"
+                            Command="{Binding PullMetadataCommand}"
+                            IsDefault="True"
+                            Theme="{DynamicResource MaterialFlatButton}">
+                            <materialIcons:MaterialIcon
+                                Width="24"
+                                Height="24"
+                                Kind="ArrowRight" />
+                        </Button>
+                    </TextBox.InnerRightContent>
+                </TextBox>
+            </materialControls:Card>
+
+            <!--  Progress  -->
+            <ProgressBar
+                Height="1"
+                Background="Transparent"
+                IsIndeterminate="{Binding IsProgressIndeterminate}"
+                Value="{Binding Progress}" />
+        </StackPanel>
+
+        <!--  Video info  -->
+        <ScrollViewer
+            DockPanel.Dock="Bottom"
+            HorizontalScrollBarVisibility="Disabled"
+            IsVisible="{Binding IsDataAvailable}"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+                <Panel HorizontalAlignment="Stretch" Background="Black">
+                    <!--  Thumbnail  -->
+                    <Image Height="180" asyncImageLoader:ImageLoader.Source="{Binding VideoThumbnail.Url}" />
+
+                    <!--  Duration  -->
+                    <TextBlock
+                        Margin="0,0,8,6"
+                        Padding="2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Background="Black"
+                        Foreground="{DynamicResource MaterialDarkForegroundBrush}"
+                        Text="{Binding Video.Duration, TargetNullValue=Live}" />
+                </Panel>
+
+                <!--  Basic metadata  -->
+                <materialControls:Card Margin="8">
+                    <StackPanel Orientation="Vertical">
+                        <!--  Title  -->
+                        <TextBlock
+                            Margin="4"
+                            FontSize="18"
+                            FontWeight="SemiBold"
+                            Text="{Binding Video.Title}"
+                            TextTrimming="CharacterEllipsis" />
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <!--  Author image  -->
+                            <Image
+                                Grid.Row="0"
+                                Grid.RowSpan="3"
+                                Grid.Column="0"
+                                Width="50"
+                                Height="50"
+                                Margin="6,6,0,6"
+                                VerticalAlignment="Top"
+                                asyncImageLoader:ImageLoader.Source="{Binding ChannelThumbnail.Url}"
+                                DockPanel.Dock="Left" />
+
+                            <!--  Author name  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="6,6,6,4"
+                                VerticalAlignment="Bottom"
+                                FontSize="14"
+                                Text="{Binding Channel.Title}" />
+
+                            <!--  Views  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="6,6,6,4"
+                                HorizontalAlignment="Right"
+                                FontSize="16"
+                                FontWeight="SemiLight">
+                                <Run Text="{Binding Video.Engagement.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                <Run Text="views" />
+                            </TextBlock>
+
+                            <!--  Divider  -->
+                            <Border
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Height="2"
+                                Margin="6,0,0,1"
+                                HorizontalAlignment="Stretch"
+                                Background="{DynamicResource MaterialDividerBrush}" />
+
+                            <!--  Rating bar  -->
+                            <ProgressBar
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Height="1"
+                                MinWidth="150"
+                                Margin="0,0,6,0"
+                                HorizontalAlignment="Stretch"
+                                Maximum="5"
+                                Minimum="1"
+                                Value="{Binding Video.Engagement.AverageRating}" />
+
+                            <!--  Upload date  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="6,4,6,6"
+                                FontWeight="SemiLight"
+                                Text="{Binding Video.UploadDate, StringFormat=\{0:MMM d\, yyyy\}}" />
+
+                            <!--  Likes and dislikes  -->
+                            <StackPanel
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="6"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                                <materialIcons:MaterialIcon VerticalAlignment="Center" Kind="ThumbUp" />
+                                <TextBlock
+                                    Margin="3,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiLight"
+                                    Text="{Binding Video.Engagement.LikeCount, StringFormat=\{0:N0\}}" />
+                                <materialIcons:MaterialIcon
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Kind="ThumbDown" />
+                                <TextBlock
+                                    Margin="3,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiLight"
+                                    Text="{Binding Video.Engagement.DislikeCount, StringFormat=\{0:N0\}}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </materialControls:Card>
+
+                <!--  Description  -->
+                <Expander Margin="8,0,8,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon
+                                Width="18"
+                                Height="18"
+                                VerticalAlignment="Center"
+                                Kind="CommentTextOutline" />
+                            <TextBlock
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Text="Description" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <TextBlock
+                        Margin="16"
+                        Text="{Binding Video.Description}"
+                        TextWrapping="Wrap" />
+                </Expander>
+
+                <!--  Keywords  -->
+                <Expander Margin="8,0,8,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon
+                                Width="18"
+                                Height="18"
+                                VerticalAlignment="Center"
+                                Kind="Magnify" />
+                            <TextBlock
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Text="Keywords" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <TextBlock
+                        Margin="16"
+                        Text="{Binding Video.Keywords, Converter={x:Static converters:EnumerableToJoinedStringConverter.Instance}}"
+                        TextWrapping="Wrap" />
+                </Expander>
+
+                <!--  Media streams  -->
+                <Expander Margin="8,0,8,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon
+                                Width="18"
+                                Height="18"
+                                VerticalAlignment="Center"
+                                Kind="PlayCircleOutline" />
+                            <TextBlock
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Text="Media streams" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel Orientation="Vertical">
+                        <!--  Muxed  -->
+                        <TextBlock
+                            Margin="16,16,16,8"
+                            FontSize="14"
+                            Text="Muxed streams:" />
+                        <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding MuxedStreamInfos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!--  Download button  -->
+                                        <Button
+                                            Padding="4"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}"
+                                            Theme="{DynamicResource MaterialFlatButton}">
+                                            <materialIcons:MaterialIcon
+                                                Width="24"
+                                                Height="24"
+                                                Kind="Download" />
+                                        </Button>
+
+                                        <!--  Stream info  -->
+                                        <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
+                                            <Run Text="Quality:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding VideoQuality.Label, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Container:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding Container, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Codecs:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding VideoCodec, Mode=OneWay}" /><Run Text=", " /><Run FontWeight="SemiBold" Text="{Binding AudioCodec, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Size:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding Size, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!--  Video-only  -->
+                        <TextBlock
+                            Margin="16,8,16,8"
+                            FontSize="14"
+                            Text="Video-only streams:" />
+                        <ItemsControl Margin="16,0,6,0" ItemsSource="{Binding VideoOnlyStreamInfos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!--  Download button  -->
+                                        <Button
+                                            Padding="4"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}"
+                                            Theme="{DynamicResource MaterialFlatButton}">
+                                            <materialIcons:MaterialIcon
+                                                Width="24"
+                                                Height="24"
+                                                Kind="Download" />
+                                        </Button>
+
+                                        <!--  Stream info  -->
+                                        <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
+                                            <Run Text="Quality:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding VideoQuality.Label, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Container:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding Container, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Codec:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding VideoCodec, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Size:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding Size, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!--  Audio-only  -->
+                        <TextBlock
+                            Margin="16,8,16,8"
+                            FontSize="14"
+                            Text="Audio-only streams:" />
+                        <ItemsControl Margin="16,0,6,16" ItemsSource="{Binding AudioOnlyStreamInfos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!--  Download button  -->
+                                        <Button
+                                            Padding="4"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
+                                            CommandParameter="{Binding}"
+                                            Theme="{DynamicResource MaterialFlatButton}">
+                                            <materialIcons:MaterialIcon
+                                                Width="24"
+                                                Height="24"
+                                                Kind="Download" />
+                                        </Button>
+
+                                        <!--  Stream info  -->
+                                        <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
+                                            <Run Text="Container:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding Container, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Codec:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding AudioCodec, Mode=OneWay}" />
+                                            <Run />
+                                            <Run Text="Size:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding Size, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+
+                <!--  Closed captions  -->
+                <Expander Margin="8,0,8,8">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialIcons:MaterialIcon
+                                Width="18"
+                                Height="18"
+                                VerticalAlignment="Center"
+                                Kind="ClosedCaption" />
+                            <TextBlock
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="15"
+                                Text="Closed captions" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <ItemsControl Margin="16" ItemsSource="{Binding ClosedCaptionTrackInfos}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <!--  Download button  -->
+                                    <Button
+                                        Padding="4"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.DownloadClosedCaptionTrackCommand, ElementName=Root}"
+                                        CommandParameter="{Binding}"
+                                        Theme="{DynamicResource MaterialFlatButton}">
+                                        <materialIcons:MaterialIcon
+                                            Width="24"
+                                            Height="24"
+                                            Kind="Download" />
+                                    </Button>
+
+                                    <!--  Closed caption track info  -->
+                                    <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
+                                        <Run Text="Language:" />
+                                        <Run FontWeight="SemiBold" Text="{Binding Language.Name, Mode=OneWay}" />
+                                        <Run />
+                                        <Run Text="Auto-generated:" />
+                                        <Run FontWeight="SemiBold" Text="{Binding IsAutoGenerated, Converter={x:Static converters:BoolToYesNoStringConverter.Instance}, Mode=OneWay}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

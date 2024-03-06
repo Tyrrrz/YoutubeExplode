@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
-using Microsoft.Win32;
+using Avalonia;
+using Avalonia.Platform.Storage;
+using ReactiveUI;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
-using YoutubeExplode.Demo.Gui.ViewModels.Framework;
+using YoutubeExplode.Demo.Gui.Utils;
+using YoutubeExplode.Demo.Gui.Utils.Extensions;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.ClosedCaptions;
 using YoutubeExplode.Videos.Streams;
@@ -21,37 +25,28 @@ public class MainViewModel : ViewModelBase
     public bool IsBusy
     {
         get => _isBusy;
-        private set
-        {
-            Set(ref _isBusy, value);
-            PullDataCommand.RaiseCanExecuteChanged();
-            DownloadStreamCommand.RaiseCanExecuteChanged();
-        }
+        private set => this.RaiseAndSetIfChanged(ref _isBusy, value);
     }
 
     private double _progress;
     public double Progress
     {
         get => _progress;
-        private set => Set(ref _progress, value);
+        private set => this.RaiseAndSetIfChanged(ref _progress, value);
     }
 
     private bool _isProgressIndeterminate;
     public bool IsProgressIndeterminate
     {
         get => _isProgressIndeterminate;
-        private set => Set(ref _isProgressIndeterminate, value);
+        private set => this.RaiseAndSetIfChanged(ref _isProgressIndeterminate, value);
     }
 
     private string? _query;
     public string? Query
     {
         get => _query;
-        set
-        {
-            Set(ref _query, value);
-            PullDataCommand.RaiseCanExecuteChanged();
-        }
+        set => this.RaiseAndSetIfChanged(ref _query, value);
     }
 
     private Video? _video;
@@ -60,8 +55,8 @@ public class MainViewModel : ViewModelBase
         get => _video;
         private set
         {
-            Set(ref _video, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _video, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -71,8 +66,8 @@ public class MainViewModel : ViewModelBase
         get => _videoThumbnail;
         private set
         {
-            Set(ref _videoThumbnail, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _videoThumbnail, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -82,8 +77,8 @@ public class MainViewModel : ViewModelBase
         get => _channel;
         private set
         {
-            Set(ref _channel, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _channel, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -93,8 +88,8 @@ public class MainViewModel : ViewModelBase
         get => _channelThumbnail;
         private set
         {
-            Set(ref _channelThumbnail, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _channelThumbnail, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -104,8 +99,8 @@ public class MainViewModel : ViewModelBase
         get => _muxedStreamInfos;
         private set
         {
-            Set(ref _muxedStreamInfos, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _muxedStreamInfos, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -115,8 +110,8 @@ public class MainViewModel : ViewModelBase
         get => _audioOnlyStreamInfos;
         private set
         {
-            Set(ref _audioOnlyStreamInfos, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _audioOnlyStreamInfos, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -126,8 +121,8 @@ public class MainViewModel : ViewModelBase
         get => _videoOnlyStreamInfos;
         private set
         {
-            Set(ref _videoOnlyStreamInfos, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _videoOnlyStreamInfos, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -137,8 +132,8 @@ public class MainViewModel : ViewModelBase
         get => _closedCaptionTrackInfos;
         private set
         {
-            Set(ref _closedCaptionTrackInfos, value);
-            RaisePropertyChanged(nameof(IsDataAvailable));
+            this.RaiseAndSetIfChanged(ref _closedCaptionTrackInfos, value);
+            this.RaisePropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -152,52 +147,35 @@ public class MainViewModel : ViewModelBase
         && VideoOnlyStreamInfos is not null
         && ClosedCaptionTrackInfos is not null;
 
-    public RelayCommand PullDataCommand { get; }
+    public ReactiveCommand<Unit, Unit> PullMetadataCommand { get; }
 
-    public RelayCommand<IStreamInfo> DownloadStreamCommand { get; }
+    public ReactiveCommand<IStreamInfo, Unit> DownloadStreamCommand { get; }
 
-    public RelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
+    public ReactiveCommand<ClosedCaptionTrackInfo, Unit> DownloadClosedCaptionTrackCommand { get; }
 
     public MainViewModel()
     {
-        PullDataCommand = new AsyncRelayCommand(
-            PullDataAsync,
-            () => !IsBusy && !string.IsNullOrWhiteSpace(Query)
+        PullMetadataCommand = ReactiveCommand.CreateFromTask(
+            PullMetadataAsync,
+            this.WhenAnyValue(
+                x => x.IsBusy,
+                x => x.Query,
+                (busy, query) => !busy && !string.IsNullOrWhiteSpace(query)
+            )
         );
 
-        DownloadStreamCommand = new AsyncRelayCommand<IStreamInfo>(
+        DownloadStreamCommand = ReactiveCommand.CreateFromTask<IStreamInfo>(
             DownloadStreamAsync,
-            _ => !IsBusy
+            this.WhenAnyValue(x => x.IsBusy, busy => !busy)
         );
 
-        DownloadClosedCaptionTrackCommand = new AsyncRelayCommand<ClosedCaptionTrackInfo>(
+        DownloadClosedCaptionTrackCommand = ReactiveCommand.CreateFromTask<ClosedCaptionTrackInfo>(
             DownloadClosedCaptionTrackAsync,
-            _ => !IsBusy
+            this.WhenAnyValue(x => x.IsBusy, busy => !busy)
         );
     }
 
-    private static string SanitizeFileName(string fileName)
-    {
-        foreach (var invalidChar in Path.GetInvalidFileNameChars())
-            fileName = fileName.Replace(invalidChar, '_');
-
-        return fileName;
-    }
-
-    private static string? PromptSaveFilePath(string defaultFileName, string filter)
-    {
-        var dialog = new SaveFileDialog
-        {
-            FileName = defaultFileName,
-            Filter = filter,
-            AddExtension = true,
-            DefaultExt = Path.GetExtension(defaultFileName)
-        };
-
-        return dialog.ShowDialog() == true ? dialog.FileName : null;
-    }
-
-    private async Task PullDataAsync()
+    private async Task PullMetadataAsync()
     {
         if (IsBusy || string.IsNullOrWhiteSpace(Query))
             return;
@@ -256,6 +234,29 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    private async Task<string?> PromptSaveFilePathAsync(
+        string defaultFileName,
+        IReadOnlyList<string>? fileTypes
+    )
+    {
+        var topLevel =
+            Application.Current?.ApplicationLifetime?.TryGetTopLevel()
+            ?? throw new ApplicationException("Could not find the top-level visual element.");
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(
+            new FilePickerSaveOptions
+            {
+                SuggestedFileName = defaultFileName,
+                FileTypeChoices = fileTypes
+                    ?.Select(t => new FilePickerFileType($"{t} file") { Patterns = [$"*.{t}"] })
+                    .ToArray(),
+                DefaultExtension = Path.GetExtension(defaultFileName)
+            }
+        );
+
+        return file?.Path.LocalPath;
+    }
+
     private async Task DownloadStreamAsync(IStreamInfo streamInfo)
     {
         if (IsBusy || Video is null)
@@ -267,22 +268,24 @@ public class MainViewModel : ViewModelBase
             IsBusy = true;
             Progress = 0;
 
-            // Generate default file name
-            var defaultFileName = SanitizeFileName($"{Video.Title}.{streamInfo.Container.Name}");
+            // Generate a default file name
+            var defaultFileName = PathEx.SanitizeFileName(
+                $"{Video.Title}.{streamInfo.Container.Name}"
+            );
 
-            // Prompt file path
-            var filePath = PromptSaveFilePath(
+            // Prompt for file path
+            var filePath = await PromptSaveFilePathAsync(
                 defaultFileName,
-                $"{streamInfo.Container.Name} files|*.{streamInfo.Container.Name}|All Files|*.*"
+                [streamInfo.Container.Name]
             );
 
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
 
             // Set up progress reporting
-            var progressHandler = new Progress<double>(p => Progress = p);
+            var progressHandler = new DelegateProgress<double>(p => Progress = p);
 
-            // Download to file
+            // Download to the file
             await _youtube.Videos.Streams.DownloadAsync(streamInfo, filePath, progressHandler);
         }
         finally
@@ -304,18 +307,20 @@ public class MainViewModel : ViewModelBase
             IsBusy = true;
             Progress = 0;
 
-            // Generate default file name
-            var defaultFileName = SanitizeFileName($"{Video.Title}.{trackInfo.Language.Name}.srt");
+            // Generate a default file name
+            var defaultFileName = PathEx.SanitizeFileName(
+                $"{Video.Title}.{trackInfo.Language.Name}.srt"
+            );
 
-            // Prompt file path
-            var filePath = PromptSaveFilePath(defaultFileName, "SRT Files|*.srt|All Files|*.*");
+            // Prompt for file path
+            var filePath = await PromptSaveFilePathAsync(defaultFileName, ["srt"]);
             if (string.IsNullOrWhiteSpace(filePath))
                 return;
 
             // Set up progress reporting
-            var progressHandler = new Progress<double>(p => Progress = p);
+            var progressHandler = new DelegateProgress<double>(p => Progress = p);
 
-            // Download to file
+            // Download to the file
             await _youtube.Videos.ClosedCaptions.DownloadAsync(
                 trackInfo,
                 filePath,

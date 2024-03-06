@@ -1,0 +1,34 @@
+﻿<Application
+    x:Class="YoutubeExplode.Demo.Gui.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+    xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
+    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:materialStyles="clr-namespace:Material.Styles.Themes;assembly=Material.Styles">
+    <Application.Styles>
+        <materialStyles:MaterialTheme />
+        <materialIcons:MaterialIconStyles />
+
+        <!--  Card  -->
+        <Style Selector="materialControls|Card">
+            <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
+        </Style>
+
+        <!--  ProgressBar  -->
+        <Style Selector="ProgressBar">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialSecondaryMidBrush}" />
+            <Setter Property="materialAssists:TransitionAssist.DisableTransitions" Value="True" />
+        </Style>
+
+        <!--  Expander  -->
+        <Style Selector="Expander">
+            <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
+        </Style>
+        <Style Selector="Expander LayoutTransformControl#PART_ToggleTransform">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+    </Application.Styles>
+</Application>

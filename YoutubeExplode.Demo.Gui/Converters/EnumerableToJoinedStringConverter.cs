@@ -2,16 +2,20 @@
 using System.Collections;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace YoutubeExplode.Demo.Gui.Converters;
 
-[ValueConversion(typeof(IEnumerable), typeof(string))]
-public class ArrayToStringConverter : IValueConverter
+public class EnumerableToJoinedStringConverter : IValueConverter
 {
-    public static ArrayToStringConverter Instance { get; } = new();
+    public static EnumerableToJoinedStringConverter Instance { get; } = new();
 
-    public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture) =>
+    public object? Convert(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    ) =>
         value is IEnumerable enumerableValue
             ? string.Join(parameter as string ?? ", ", enumerableValue.Cast<object>())
             : default;
@@ -19,7 +23,7 @@ public class ArrayToStringConverter : IValueConverter
     public object ConvertBack(
         object? value,
         Type targetType,
-        object parameter,
+        object? parameter,
         CultureInfo culture
     ) => throw new NotSupportedException();
 }
