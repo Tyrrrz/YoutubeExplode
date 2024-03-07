@@ -14,13 +14,11 @@
 
   <ItemGroup>
     <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.2.1" />
-    <PackageReference Include="Avalonia" Version="11.0.9" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.6" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.6" Condition="'$(Configuration)' == 'Debug'" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6" />
-    <PackageReference Include="CSharpier.MsBuild" Version="0.26.7" PrivateAssets="all" />
+    <PackageReference Include="Avalonia" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.10" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10" />
+    <PackageReference Include="CSharpier.MsBuild" Version="0.27.3" PrivateAssets="all" />
     <PackageReference Include="Material.Avalonia" Version="3.4.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.0" />
   </ItemGroup>

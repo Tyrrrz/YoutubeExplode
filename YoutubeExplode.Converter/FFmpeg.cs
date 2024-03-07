@@ -62,13 +62,12 @@ internal partial class FFmpeg
             .EnumerateFiles(
                 AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory()
             )
-            .FirstOrDefault(
-                f =>
-                    string.Equals(
-                        Path.GetFileNameWithoutExtension(f),
-                        "ffmpeg",
-                        StringComparison.OrdinalIgnoreCase
-                    )
+            .FirstOrDefault(f =>
+                string.Equals(
+                    Path.GetFileNameWithoutExtension(f),
+                    "ffmpeg",
+                    StringComparison.OrdinalIgnoreCase
+                )
             )
         // Otherwise fallback to just "ffmpeg" and hope it's on the PATH
         ?? "ffmpeg";

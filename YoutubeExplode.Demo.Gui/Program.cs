@@ -7,12 +7,7 @@ namespace YoutubeExplode.Demo.Gui;
 public static class Program
 {
     public static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder
-            .Configure<App>()
-            .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace()
-            .UseReactiveUI();
+        AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
 
     [STAThread]
     public static void Main(string[] args) =>

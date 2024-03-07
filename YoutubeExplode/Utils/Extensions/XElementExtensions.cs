@@ -19,10 +19,8 @@ internal static class XElementExtensions
                 descendantElement
                     .Attributes()
                     .Where(a => !a.IsNamespaceDeclaration)
-                    .Where(
-                        a =>
-                            a.Name.Namespace != XNamespace.Xml
-                            && a.Name.Namespace != XNamespace.Xmlns
+                    .Where(a =>
+                        a.Name.Namespace != XNamespace.Xml && a.Name.Namespace != XNamespace.Xmlns
                     )
                     .Select(a => new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value))
             );

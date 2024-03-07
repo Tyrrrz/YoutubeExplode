@@ -31,33 +31,31 @@ internal partial class VideoWatchPage(IHtmlDocument content)
     [Lazy]
     public long? LikeCount =>
         content
-            .Source.Text.Pipe(
-                s =>
-                    Regex
-                        .Match(
-                            s,
-                            """
-                            "\s*:\s*"([\d,\.]+) likes"
-                            """
-                        )
-                        .Groups[1]
-                        .Value
+            .Source.Text.Pipe(s =>
+                Regex
+                    .Match(
+                        s,
+                        """
+                        "\s*:\s*"([\d,\.]+) likes"
+                        """
+                    )
+                    .Groups[1]
+                    .Value
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
             .ParseLongOrNull()
         ?? content
-            .Source.Text.Pipe(
-                s =>
-                    Regex
-                        .Match(
-                            s,
-                            """
-                            along with ([\d,\.]+) other people"
-                            """
-                        )
-                        .Groups[1]
-                        .Value
+            .Source.Text.Pipe(s =>
+                Regex
+                    .Match(
+                        s,
+                        """
+                        along with ([\d,\.]+) other people"
+                        """
+                    )
+                    .Groups[1]
+                    .Value
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
@@ -66,17 +64,16 @@ internal partial class VideoWatchPage(IHtmlDocument content)
     [Lazy]
     public long? DislikeCount =>
         content
-            .Source.Text.Pipe(
-                s =>
-                    Regex
-                        .Match(
-                            s,
-                            """
-                            "\s*:\s*"([\d,\.]+) dislikes"
-                            """
-                        )
-                        .Groups[1]
-                        .Value
+            .Source.Text.Pipe(s =>
+                Regex
+                    .Match(
+                        s,
+                        """
+                        "\s*:\s*"([\d,\.]+) dislikes"
+                        """
+                    )
+                    .Groups[1]
+                    .Value
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
@@ -98,8 +95,8 @@ internal partial class VideoWatchPage(IHtmlDocument content)
         content
             .GetElementsByTagName("script")
             .Select(e => e.Text())
-            .Select(
-                s => Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value
+            .Select(s =>
+                Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value
             )
             .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))
             ?.NullIfWhiteSpace()

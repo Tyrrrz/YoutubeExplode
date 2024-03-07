@@ -20,13 +20,11 @@ internal partial class DashManifest(XElement content)
             .Where(x => x.Attribute("id")?.Value.All(char.IsDigit) == true)
             // Skip segmented streams
             // https://github.com/Tyrrrz/YoutubeExplode/issues/159
-            .Where(
-                x =>
-                    x.Descendants("Initialization")
-                        .FirstOrDefault()
-                        ?.Attribute("sourceURL")
-                        ?.Value
-                        .Contains("sq/") != true
+            .Where(x =>
+                x.Descendants("Initialization")
+                    .FirstOrDefault()
+                    ?.Attribute("sourceURL")
+                    ?.Value.Contains("sq/") != true
             )
             // Skip streams without codecs
             .Where(x => !string.IsNullOrWhiteSpace(x.Attribute("codecs")?.Value))
@@ -62,7 +60,8 @@ internal partial class DashManifest
 
         [Lazy]
         public string? Container =>
-            Url?.Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
+            Url
+                ?.Pipe(s => Regex.Match(s, @"mime[/=]\w*%2F([\w\d]*)").Groups[1].Value)
                 .Pipe(WebUtility.UrlDecode);
 
         [Lazy]

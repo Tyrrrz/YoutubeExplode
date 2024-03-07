@@ -31,21 +31,19 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         manifest
             .GetVideoStreams()
             .Should()
-            .Contain(
-                s =>
-                    s.VideoQuality.MaxHeight == 2160
-                    && s.VideoQuality.Framerate == 60
-                    && s.VideoQuality.IsHighDefinition
+            .Contain(s =>
+                s.VideoQuality.MaxHeight == 2160
+                && s.VideoQuality.Framerate == 60
+                && s.VideoQuality.IsHighDefinition
             );
 
         manifest
             .GetVideoStreams()
             .Should()
-            .Contain(
-                s =>
-                    s.VideoQuality.MaxHeight == 1080
-                    && s.VideoQuality.Framerate == 60
-                    && s.VideoQuality.IsHighDefinition
+            .Contain(s =>
+                s.VideoQuality.MaxHeight == 1080
+                && s.VideoQuality.Framerate == 60
+                && s.VideoQuality.IsHighDefinition
             );
 
         manifest

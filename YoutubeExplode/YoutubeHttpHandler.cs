@@ -49,8 +49,8 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
 
         var sessionId =
             cookies
-                .FirstOrDefault(
-                    c => string.Equals(c.Name, "__Secure-3PAPISID", StringComparison.Ordinal)
+                .FirstOrDefault(c =>
+                    string.Equals(c.Name, "__Secure-3PAPISID", StringComparison.Ordinal)
                 )
                 ?.Value
             ?? cookies

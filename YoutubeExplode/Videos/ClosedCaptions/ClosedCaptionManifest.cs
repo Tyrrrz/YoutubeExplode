@@ -19,10 +19,9 @@ public class ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
     /// Returns null if not found.
     /// </summary>
     public ClosedCaptionTrackInfo? TryGetByLanguage(string language) =>
-        Tracks.FirstOrDefault(
-            t =>
-                string.Equals(t.Language.Code, language, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase)
+        Tracks.FirstOrDefault(t =>
+            string.Equals(t.Language.Code, language, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(t.Language.Name, language, StringComparison.OrdinalIgnoreCase)
         );
 
     /// <summary>
