@@ -10,6 +10,6 @@ public static class Program
         AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
 
     [STAThread]
-    public static void Main(string[] args) =>
+    public static int Main(string[] args) =>
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 }
