@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Platform.Storage;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 using YoutubeExplode.Demo.Gui.Utils;
@@ -17,7 +17,7 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Demo.Gui.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : ObservableObject
 {
     private readonly YoutubeClient _youtube = new();
 
@@ -25,28 +25,38 @@ public class MainViewModel : ViewModelBase
     public bool IsBusy
     {
         get => _isBusy;
-        private set => this.RaiseAndSetIfChanged(ref _isBusy, value);
+        private set
+        {
+            SetProperty(ref _isBusy, value);
+            PullMetadataCommand.NotifyCanExecuteChanged();
+            DownloadStreamCommand.NotifyCanExecuteChanged();
+            DownloadClosedCaptionTrackCommand.NotifyCanExecuteChanged();
+        }
     }
 
     private double _progress;
     public double Progress
     {
         get => _progress;
-        private set => this.RaiseAndSetIfChanged(ref _progress, value);
+        private set => SetProperty(ref _progress, value);
     }
 
     private bool _isProgressIndeterminate;
     public bool IsProgressIndeterminate
     {
         get => _isProgressIndeterminate;
-        private set => this.RaiseAndSetIfChanged(ref _isProgressIndeterminate, value);
+        private set => SetProperty(ref _isProgressIndeterminate, value);
     }
 
     private string? _query;
     public string? Query
     {
         get => _query;
-        set => this.RaiseAndSetIfChanged(ref _query, value);
+        set
+        {
+            SetProperty(ref _query, value);
+            PullMetadataCommand.NotifyCanExecuteChanged();
+        }
     }
 
     private Video? _video;
@@ -55,8 +65,10 @@ public class MainViewModel : ViewModelBase
         get => _video;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _video, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _video, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
+            DownloadStreamCommand.NotifyCanExecuteChanged();
+            DownloadClosedCaptionTrackCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -66,8 +78,8 @@ public class MainViewModel : ViewModelBase
         get => _videoThumbnail;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _videoThumbnail, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _videoThumbnail, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -77,8 +89,8 @@ public class MainViewModel : ViewModelBase
         get => _channel;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _channel, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _channel, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -88,8 +100,8 @@ public class MainViewModel : ViewModelBase
         get => _channelThumbnail;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _channelThumbnail, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _channelThumbnail, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -99,8 +111,8 @@ public class MainViewModel : ViewModelBase
         get => _muxedStreamInfos;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _muxedStreamInfos, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _muxedStreamInfos, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -110,8 +122,8 @@ public class MainViewModel : ViewModelBase
         get => _audioOnlyStreamInfos;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _audioOnlyStreamInfos, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _audioOnlyStreamInfos, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -121,8 +133,8 @@ public class MainViewModel : ViewModelBase
         get => _videoOnlyStreamInfos;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _videoOnlyStreamInfos, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _videoOnlyStreamInfos, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -132,8 +144,8 @@ public class MainViewModel : ViewModelBase
         get => _closedCaptionTrackInfos;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _closedCaptionTrackInfos, value);
-            this.RaisePropertyChanged(nameof(IsDataAvailable));
+            SetProperty(ref _closedCaptionTrackInfos, value);
+            OnPropertyChanged(nameof(IsDataAvailable));
         }
     }
 
@@ -147,31 +159,27 @@ public class MainViewModel : ViewModelBase
         && VideoOnlyStreamInfos is not null
         && ClosedCaptionTrackInfos is not null;
 
-    public ReactiveCommand<Unit, Unit> PullMetadataCommand { get; }
+    public AsyncRelayCommand PullMetadataCommand { get; }
 
-    public ReactiveCommand<IStreamInfo, Unit> DownloadStreamCommand { get; }
+    public AsyncRelayCommand<IStreamInfo> DownloadStreamCommand { get; }
 
-    public ReactiveCommand<ClosedCaptionTrackInfo, Unit> DownloadClosedCaptionTrackCommand { get; }
+    public AsyncRelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
 
     public MainViewModel()
     {
-        PullMetadataCommand = ReactiveCommand.CreateFromTask(
+        PullMetadataCommand = new AsyncRelayCommand(
             PullMetadataAsync,
-            this.WhenAnyValue(
-                x => x.IsBusy,
-                x => x.Query,
-                (busy, query) => !busy && !string.IsNullOrWhiteSpace(query)
-            )
+            () => !IsBusy && !string.IsNullOrWhiteSpace(Query)
         );
 
-        DownloadStreamCommand = ReactiveCommand.CreateFromTask<IStreamInfo>(
+        DownloadStreamCommand = new AsyncRelayCommand<IStreamInfo>(
             DownloadStreamAsync,
-            this.WhenAnyValue(x => x.IsBusy, busy => !busy)
+            s => s is not null && !IsBusy && Video is not null
         );
 
-        DownloadClosedCaptionTrackCommand = ReactiveCommand.CreateFromTask<ClosedCaptionTrackInfo>(
+        DownloadClosedCaptionTrackCommand = new AsyncRelayCommand<ClosedCaptionTrackInfo>(
             DownloadClosedCaptionTrackAsync,
-            this.WhenAnyValue(x => x.IsBusy, busy => !busy)
+            c => c is not null && !IsBusy && Video is not null
         );
     }
 
@@ -257,9 +265,9 @@ public class MainViewModel : ViewModelBase
         return file?.Path.LocalPath;
     }
 
-    private async Task DownloadStreamAsync(IStreamInfo streamInfo)
+    private async Task DownloadStreamAsync(IStreamInfo? streamInfo)
     {
-        if (IsBusy || Video is null)
+        if (streamInfo is null || IsBusy || Video is null)
             return;
 
         try
@@ -296,9 +304,9 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo trackInfo)
+    private async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo? trackInfo)
     {
-        if (IsBusy || Video is null)
+        if (trackInfo is null || IsBusy || Video is null)
             return;
 
         try
