@@ -17,7 +17,7 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Demo.Gui.ViewModels;
 
-public class MainViewModel : ObservableObject
+public partial class MainViewModel : ObservableObject
 {
     private readonly YoutubeClient _youtube = new();
 
@@ -159,30 +159,32 @@ public class MainViewModel : ObservableObject
         && VideoOnlyStreamInfos is not null
         && ClosedCaptionTrackInfos is not null;
 
-    public AsyncRelayCommand PullMetadataCommand { get; }
-
-    public AsyncRelayCommand<IStreamInfo> DownloadStreamCommand { get; }
-
-    public AsyncRelayCommand<ClosedCaptionTrackInfo> DownloadClosedCaptionTrackCommand { get; }
-
-    public MainViewModel()
+    private async Task<string?> PromptSaveFilePathAsync(
+        string defaultFileName,
+        IReadOnlyList<string>? fileTypes
+    )
     {
-        PullMetadataCommand = new AsyncRelayCommand(
-            PullMetadataAsync,
-            () => !IsBusy && !string.IsNullOrWhiteSpace(Query)
+        var topLevel =
+            Application.Current?.ApplicationLifetime?.TryGetTopLevel()
+            ?? throw new ApplicationException("Could not find the top-level visual element.");
+
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(
+            new FilePickerSaveOptions
+            {
+                SuggestedFileName = defaultFileName,
+                FileTypeChoices = fileTypes
+                    ?.Select(t => new FilePickerFileType($"{t} file") { Patterns = [$"*.{t}"] })
+                    .ToArray(),
+                DefaultExtension = Path.GetExtension(defaultFileName)
+            }
         );
 
-        DownloadStreamCommand = new AsyncRelayCommand<IStreamInfo>(
-            DownloadStreamAsync,
-            s => s is not null && !IsBusy && Video is not null
-        );
-
-        DownloadClosedCaptionTrackCommand = new AsyncRelayCommand<ClosedCaptionTrackInfo>(
-            DownloadClosedCaptionTrackAsync,
-            c => c is not null && !IsBusy && Video is not null
-        );
+        return file?.Path.LocalPath;
     }
 
+    private bool CanPullMetadata() => !IsBusy && !string.IsNullOrWhiteSpace(Query);
+
+    [RelayCommand(CanExecute = nameof(CanPullMetadata))]
     private async Task PullMetadataAsync()
     {
         if (IsBusy || string.IsNullOrWhiteSpace(Query))
@@ -242,32 +244,13 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    private async Task<string?> PromptSaveFilePathAsync(
-        string defaultFileName,
-        IReadOnlyList<string>? fileTypes
-    )
-    {
-        var topLevel =
-            Application.Current?.ApplicationLifetime?.TryGetTopLevel()
-            ?? throw new ApplicationException("Could not find the top-level visual element.");
+    private bool CanDownloadStream(IStreamInfo? streamInfo) =>
+        !IsBusy && Video is not null && streamInfo is not null;
 
-        var file = await topLevel.StorageProvider.SaveFilePickerAsync(
-            new FilePickerSaveOptions
-            {
-                SuggestedFileName = defaultFileName,
-                FileTypeChoices = fileTypes
-                    ?.Select(t => new FilePickerFileType($"{t} file") { Patterns = [$"*.{t}"] })
-                    .ToArray(),
-                DefaultExtension = Path.GetExtension(defaultFileName)
-            }
-        );
-
-        return file?.Path.LocalPath;
-    }
-
+    [RelayCommand(CanExecute = nameof(CanDownloadStream))]
     private async Task DownloadStreamAsync(IStreamInfo? streamInfo)
     {
-        if (streamInfo is null || IsBusy || Video is null)
+        if (IsBusy || Video is null || streamInfo is null)
             return;
 
         try
@@ -304,9 +287,13 @@ public class MainViewModel : ObservableObject
         }
     }
 
+    private bool CanDownloadClosedCaptionTrack(ClosedCaptionTrackInfo? trackInfo) =>
+        !IsBusy && Video is not null && trackInfo is not null;
+
+    [RelayCommand(CanExecute = nameof(CanDownloadClosedCaptionTrack))]
     private async Task DownloadClosedCaptionTrackAsync(ClosedCaptionTrackInfo? trackInfo)
     {
-        if (trackInfo is null || IsBusy || Video is null)
+        if (IsBusy || Video is null || trackInfo is null)
             return;
 
         try
