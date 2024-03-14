@@ -21,133 +21,55 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly YoutubeClient _youtube = new();
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PullMetadataCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DownloadStreamCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DownloadClosedCaptionTrackCommand))]
     private bool _isBusy;
-    public bool IsBusy
-    {
-        get => _isBusy;
-        private set
-        {
-            SetProperty(ref _isBusy, value);
-            PullMetadataCommand.NotifyCanExecuteChanged();
-            DownloadStreamCommand.NotifyCanExecuteChanged();
-            DownloadClosedCaptionTrackCommand.NotifyCanExecuteChanged();
-        }
-    }
 
+    [ObservableProperty]
     private double _progress;
-    public double Progress
-    {
-        get => _progress;
-        private set => SetProperty(ref _progress, value);
-    }
 
+    [ObservableProperty]
     private bool _isProgressIndeterminate;
-    public bool IsProgressIndeterminate
-    {
-        get => _isProgressIndeterminate;
-        private set => SetProperty(ref _isProgressIndeterminate, value);
-    }
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PullMetadataCommand))]
     private string? _query;
-    public string? Query
-    {
-        get => _query;
-        set
-        {
-            SetProperty(ref _query, value);
-            PullMetadataCommand.NotifyCanExecuteChanged();
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
+    [NotifyCanExecuteChangedFor(nameof(DownloadStreamCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DownloadClosedCaptionTrackCommand))]
     private Video? _video;
-    public Video? Video
-    {
-        get => _video;
-        private set
-        {
-            SetProperty(ref _video, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-            DownloadStreamCommand.NotifyCanExecuteChanged();
-            DownloadClosedCaptionTrackCommand.NotifyCanExecuteChanged();
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private Thumbnail? _videoThumbnail;
-    public Thumbnail? VideoThumbnail
-    {
-        get => _videoThumbnail;
-        private set
-        {
-            SetProperty(ref _videoThumbnail, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private Channel? _channel;
-    public Channel? Channel
-    {
-        get => _channel;
-        private set
-        {
-            SetProperty(ref _channel, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private Thumbnail? _channelThumbnail;
-    public Thumbnail? ChannelThumbnail
-    {
-        get => _channelThumbnail;
-        private set
-        {
-            SetProperty(ref _channelThumbnail, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private IReadOnlyList<MuxedStreamInfo>? _muxedStreamInfos;
-    public IReadOnlyList<MuxedStreamInfo>? MuxedStreamInfos
-    {
-        get => _muxedStreamInfos;
-        private set
-        {
-            SetProperty(ref _muxedStreamInfos, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private IReadOnlyList<AudioOnlyStreamInfo>? _audioOnlyStreamInfos;
-    public IReadOnlyList<AudioOnlyStreamInfo>? AudioOnlyStreamInfos
-    {
-        get => _audioOnlyStreamInfos;
-        private set
-        {
-            SetProperty(ref _audioOnlyStreamInfos, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private IReadOnlyList<VideoOnlyStreamInfo>? _videoOnlyStreamInfos;
-    public IReadOnlyList<VideoOnlyStreamInfo>? VideoOnlyStreamInfos
-    {
-        get => _videoOnlyStreamInfos;
-        private set
-        {
-            SetProperty(ref _videoOnlyStreamInfos, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDataAvailable))]
     private IReadOnlyList<ClosedCaptionTrackInfo>? _closedCaptionTrackInfos;
-    public IReadOnlyList<ClosedCaptionTrackInfo>? ClosedCaptionTrackInfos
-    {
-        get => _closedCaptionTrackInfos;
-        private set
-        {
-            SetProperty(ref _closedCaptionTrackInfos, value);
-            OnPropertyChanged(nameof(IsDataAvailable));
-        }
-    }
 
     public bool IsDataAvailable =>
         Video is not null
