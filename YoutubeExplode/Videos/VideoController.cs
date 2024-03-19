@@ -30,7 +30,7 @@ internal class VideoController(HttpClient http)
                     continue;
 
                 throw new YoutubeExplodeException(
-                    "Video watch page is broken. " + "Please try again in a few minutes."
+                    "Video watch page is broken. Please try again in a few minutes."
                 );
             }
 

@@ -28,7 +28,7 @@ internal class ChannelController(HttpClient http)
                     continue;
 
                 throw new YoutubeExplodeException(
-                    "Channel page is broken. " + "Please try again in a few minutes."
+                    "Channel page is broken. Please try again in a few minutes."
                 );
             }
 
