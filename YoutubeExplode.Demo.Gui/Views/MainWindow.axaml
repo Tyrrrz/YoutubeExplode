@@ -7,16 +7,16 @@
     xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:viewModels="clr-namespace:YoutubeExplode.Demo.Gui.ViewModels"
-    x:Name="Root"
     Title="YoutubeExplode Demo"
     Width="720"
     Height="620"
     Icon="/favicon.ico"
-    Loaded="Root_OnLoaded"
+    Loaded="Window_OnLoaded"
     WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <viewModels:MainViewModel />
     </Window.DataContext>
+
     <DockPanel>
         <!--  Header  -->
         <StackPanel
@@ -251,7 +251,7 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
-                                            Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
+                                            Command="{Binding $parent[Window].DataContext.DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
                                             Theme="{DynamicResource MaterialFlatButton}">
                                             <materialIcons:MaterialIcon
@@ -292,7 +292,7 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
-                                            Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
+                                            Command="{Binding $parent[Window].DataContext.DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
                                             Theme="{DynamicResource MaterialFlatButton}">
                                             <materialIcons:MaterialIcon
@@ -333,7 +333,7 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
-                                            Command="{Binding DataContext.DownloadStreamCommand, ElementName=Root}"
+                                            Command="{Binding $parent[Window].DataContext.DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
                                             Theme="{DynamicResource MaterialFlatButton}">
                                             <materialIcons:MaterialIcon
@@ -384,7 +384,7 @@
                                     <Button
                                         Padding="4"
                                         VerticalAlignment="Center"
-                                        Command="{Binding DataContext.DownloadClosedCaptionTrackCommand, ElementName=Root}"
+                                        Command="{Binding $parent[Window].DataContext.DownloadClosedCaptionTrackCommand}"
                                         CommandParameter="{Binding}"
                                         Theme="{DynamicResource MaterialFlatButton}">
                                         <materialIcons:MaterialIcon

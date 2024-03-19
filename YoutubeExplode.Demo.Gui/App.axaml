@@ -15,20 +15,21 @@
             <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
         </Style>
 
+        <!--  Expander  -->
+        <Style Selector="Expander">
+            <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
+
+            <Style Selector="^ LayoutTransformControl#PART_ToggleTransform">
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+        </Style>
+
         <!--  ProgressBar  -->
         <Style Selector="ProgressBar">
             <Setter Property="Minimum" Value="0" />
             <Setter Property="Maximum" Value="1" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialSecondaryMidBrush}" />
             <Setter Property="materialAssists:TransitionAssist.DisableTransitions" Value="True" />
-        </Style>
-
-        <!--  Expander  -->
-        <Style Selector="Expander">
-            <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
-        </Style>
-        <Style Selector="Expander LayoutTransformControl#PART_ToggleTransform">
-            <Setter Property="Cursor" Value="Hand" />
         </Style>
     </Application.Styles>
 </Application>
