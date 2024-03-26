@@ -48,7 +48,7 @@
 
             <!--  Progress  -->
             <ProgressBar
-                Height="1"
+                Height="2"
                 Background="Transparent"
                 IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Value="{Binding Progress}" />
@@ -134,7 +134,7 @@
                             <ProgressBar
                                 Grid.Row="1"
                                 Grid.Column="2"
-                                Height="1"
+                                Height="2"
                                 MinWidth="150"
                                 Margin="0,0,6,0"
                                 HorizontalAlignment="Stretch"

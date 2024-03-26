@@ -30,6 +30,10 @@
             <Setter Property="Maximum" Value="1" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialSecondaryMidBrush}" />
             <Setter Property="materialAssists:TransitionAssist.DisableTransitions" Value="True" />
+
+            <Style Selector="^:horizontal">
+                <Setter Property="MinHeight" Value="0" />
+            </Style>
         </Style>
     </Application.Styles>
 </Application>
