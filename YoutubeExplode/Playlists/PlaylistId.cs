@@ -9,14 +9,12 @@ namespace YoutubeExplode.Playlists;
 /// <summary>
 /// Represents a syntactically valid YouTube playlist ID.
 /// </summary>
-public readonly partial struct PlaylistId
+public readonly partial struct PlaylistId(string value)
 {
     /// <summary>
     /// Raw ID value.
     /// </summary>
-    public string Value { get; }
-
-    private PlaylistId(string value) => Value = value;
+    public string Value { get; } = value;
 
     /// <inheritdoc />
     public override string ToString() => Value;

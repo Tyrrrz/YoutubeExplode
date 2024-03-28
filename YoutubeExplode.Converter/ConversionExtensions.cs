@@ -101,14 +101,7 @@ public static class ConversionExtensions
         ConversionRequest request,
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default
-    ) =>
-        await videoClient.DownloadAsync(
-            streamInfos,
-            Array.Empty<ClosedCaptionTrackInfo>(),
-            request,
-            progress,
-            cancellationToken
-        );
+    ) => await videoClient.DownloadAsync(streamInfos, [], request, progress, cancellationToken);
 
     /// <summary>
     /// Resolves the most optimal media streams for the specified video, downloads them,

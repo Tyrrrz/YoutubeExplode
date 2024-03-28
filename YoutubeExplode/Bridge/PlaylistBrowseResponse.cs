@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -106,7 +105,7 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
             .ToArray()
-        ?? Array.Empty<ThumbnailData>();
+        ?? [];
 }
 
 internal partial class PlaylistBrowseResponse

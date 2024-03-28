@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using AngleSharp.Media.Dom;
 
 namespace YoutubeExplode.Videos.ClosedCaptions;
 

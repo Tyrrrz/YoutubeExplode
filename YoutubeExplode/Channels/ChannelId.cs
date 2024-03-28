@@ -9,14 +9,12 @@ namespace YoutubeExplode.Channels;
 /// <summary>
 /// Represents a syntactically valid YouTube channel ID.
 /// </summary>
-public readonly partial struct ChannelId
+public readonly partial struct ChannelId(string value)
 {
     /// <summary>
     /// Raw ID value.
     /// </summary>
-    public string Value { get; }
-
-    private ChannelId(string value) => Value = value;
+    public string Value { get; } = value;
 
     /// <inheritdoc />
     public override string ToString() => Value;

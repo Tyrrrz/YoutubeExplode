@@ -9,14 +9,12 @@ namespace YoutubeExplode.Channels;
 /// <summary>
 /// Represents a syntactically valid YouTube channel handle.
 /// </summary>
-public readonly partial struct ChannelHandle
+public readonly partial struct ChannelHandle(string value)
 {
     /// <summary>
     /// Raw handle value.
     /// </summary>
-    public string Value { get; }
-
-    private ChannelHandle(string value) => Value = value;
+    public string Value { get; } = value;
 
     /// <inheritdoc />
     public override string ToString() => Value;

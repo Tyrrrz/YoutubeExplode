@@ -23,21 +23,21 @@ internal partial class SearchResponse(JsonElement content)
         ContentRoot
             ?.EnumerateDescendantProperties("videoRenderer")
             .Select(j => new VideoData(j))
-            .ToArray() ?? Array.Empty<VideoData>();
+            .ToArray() ?? [];
 
     [Lazy]
     public IReadOnlyList<PlaylistData> Playlists =>
         ContentRoot
             ?.EnumerateDescendantProperties("playlistRenderer")
             .Select(j => new PlaylistData(j))
-            .ToArray() ?? Array.Empty<PlaylistData>();
+            .ToArray() ?? [];
 
     [Lazy]
     public IReadOnlyList<ChannelData> Channels =>
         ContentRoot
             ?.EnumerateDescendantProperties("channelRenderer")
             .Select(j => new ChannelData(j))
-            .ToArray() ?? Array.Empty<ChannelData>();
+            .ToArray() ?? [];
 
     [Lazy]
     public string? ContinuationToken =>
@@ -120,7 +120,7 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("thumbnails")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => new ThumbnailData(j))
-                .ToArray() ?? Array.Empty<ThumbnailData>();
+                .ToArray() ?? [];
     }
 }
 
@@ -168,7 +168,7 @@ internal partial class SearchResponse
                 ?.EnumerateDescendantProperties("thumbnails")
                 .SelectMany(j => j.EnumerateArrayOrEmpty())
                 .Select(j => new ThumbnailData(j))
-                .ToArray() ?? Array.Empty<ThumbnailData>();
+                .ToArray() ?? [];
     }
 }
 
@@ -197,7 +197,7 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("thumbnails")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => new ThumbnailData(j))
-                .ToArray() ?? Array.Empty<ThumbnailData>();
+                .ToArray() ?? [];
     }
 }
 

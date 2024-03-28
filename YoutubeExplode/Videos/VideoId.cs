@@ -9,14 +9,12 @@ namespace YoutubeExplode.Videos;
 /// <summary>
 /// Represents a syntactically valid YouTube video ID.
 /// </summary>
-public readonly partial struct VideoId
+public readonly partial struct VideoId(string value)
 {
     /// <summary>
     /// Raw ID value.
     /// </summary>
-    public string Value { get; }
-
-    private VideoId(string value) => Value = value;
+    public string Value { get; } = value;
 
     /// <inheritdoc />
     public override string ToString() => Value;

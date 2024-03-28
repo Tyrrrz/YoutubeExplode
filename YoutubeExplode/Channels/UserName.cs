@@ -9,14 +9,12 @@ namespace YoutubeExplode.Channels;
 /// <summary>
 /// Represents a syntactically valid YouTube user name.
 /// </summary>
-public readonly partial struct UserName
+public readonly partial struct UserName(string value)
 {
     /// <summary>
     /// Raw user name value.
     /// </summary>
-    public string Value { get; }
-
-    private UserName(string value) => Value = value;
+    public string Value { get; } = value;
 
     /// <inheritdoc />
     public override string ToString() => Value;

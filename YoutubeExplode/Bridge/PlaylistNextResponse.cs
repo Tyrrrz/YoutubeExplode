@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
@@ -36,8 +35,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
     public string? Description => null;
 
     [Lazy]
-    public IReadOnlyList<ThumbnailData> Thumbnails =>
-        Videos.FirstOrDefault()?.Thumbnails ?? Array.Empty<ThumbnailData>();
+    public IReadOnlyList<ThumbnailData> Thumbnails => Videos.FirstOrDefault()?.Thumbnails ?? [];
 
     [Lazy]
     public IReadOnlyList<PlaylistVideoData> Videos =>
@@ -47,7 +45,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
             .WhereNotNull()
             .Select(j => new PlaylistVideoData(j))
-            .ToArray() ?? Array.Empty<PlaylistVideoData>();
+            .ToArray() ?? [];
 
     [Lazy]
     public string? VisitorData =>

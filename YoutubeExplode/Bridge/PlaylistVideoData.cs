@@ -83,5 +83,5 @@ internal class PlaylistVideoData(JsonElement content)
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
-            .ToArray() ?? Array.Empty<ThumbnailData>();
+            .ToArray() ?? [];
 }

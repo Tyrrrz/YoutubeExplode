@@ -117,7 +117,7 @@
                                 HorizontalAlignment="Right"
                                 FontSize="16"
                                 FontWeight="SemiLight">
-                                <Run Text="{Binding Video.Engagement.ViewCount, StringFormat=\{0:N0\}, Mode=OneWay}" />
+                                <Run Text="{Binding Video.Engagement.ViewCount, StringFormat={}{0:N0}, Mode=OneWay}" />
                                 <Run Text="views" />
                             </TextBlock>
 
@@ -148,7 +148,7 @@
                                 Grid.Column="1"
                                 Margin="6,4,6,6"
                                 FontWeight="SemiLight"
-                                Text="{Binding Video.UploadDate, StringFormat=\{0:MMM d\, yyyy\}}" />
+                                Text="{Binding Video.UploadDate, StringFormat={}{0:MMM d\, yyyy}}" />
 
                             <!--  Likes and dislikes  -->
                             <StackPanel
@@ -162,7 +162,7 @@
                                     Margin="3,0,0,0"
                                     VerticalAlignment="Center"
                                     FontWeight="SemiLight"
-                                    Text="{Binding Video.Engagement.LikeCount, StringFormat=\{0:N0\}}" />
+                                    Text="{Binding Video.Engagement.LikeCount, StringFormat={}{0:N0}}" />
                                 <materialIcons:MaterialIcon
                                     Margin="8,0,0,0"
                                     VerticalAlignment="Center"
@@ -171,7 +171,7 @@
                                     Margin="3,0,0,0"
                                     VerticalAlignment="Center"
                                     FontWeight="SemiLight"
-                                    Text="{Binding Video.Engagement.DislikeCount, StringFormat=\{0:N0\}}" />
+                                    Text="{Binding Video.Engagement.DislikeCount, StringFormat={}{0:N0}}" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>

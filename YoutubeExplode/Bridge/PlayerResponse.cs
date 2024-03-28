@@ -66,7 +66,7 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
-            .ToArray() ?? Array.Empty<ThumbnailData>();
+            .ToArray() ?? [];
 
     public IReadOnlyList<string> Keywords =>
         Details
@@ -74,7 +74,7 @@ internal partial class PlayerResponse(JsonElement content)
             ?.EnumerateArrayOrNull()
             ?.Select(j => j.GetStringOrNull())
             .WhereNotNull()
-            .ToArray() ?? Array.Empty<string>();
+            .ToArray() ?? [];
 
     [Lazy]
     public string? Description => Details?.GetPropertyOrNull("shortDescription")?.GetStringOrNull();
@@ -160,7 +160,7 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("captionTracks")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ClosedCaptionTrackData(j))
-            .ToArray() ?? Array.Empty<ClosedCaptionTrackData>();
+            .ToArray() ?? [];
 }
 
 internal partial class PlayerResponse

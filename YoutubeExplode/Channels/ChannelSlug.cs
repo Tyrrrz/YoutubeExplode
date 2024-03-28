@@ -9,14 +9,12 @@ namespace YoutubeExplode.Channels;
 /// <summary>
 /// Represents a syntactically valid YouTube channel slug.
 /// </summary>
-public readonly partial struct ChannelSlug
+public readonly partial struct ChannelSlug(string value)
 {
     /// <summary>
     /// Raw slug value.
     /// </summary>
-    public string Value { get; }
-
-    private ChannelSlug(string value) => Value = value;
+    public string Value { get; } = value;
 
     /// <inheritdoc />
     public override string ToString() => Value;
