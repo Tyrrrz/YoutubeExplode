@@ -27,6 +27,7 @@ public class SearchClient(HttpClient http)
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
+        searchQuery = System.Net.WebUtility.UrlEncode(searchQuery);
         var encounteredIds = new HashSet<string>(StringComparer.Ordinal);
         var continuationToken = default(string?);
 
