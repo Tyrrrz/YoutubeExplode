@@ -19,7 +19,7 @@
         <Style Selector="Expander">
             <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
 
-            <Style Selector="^ LayoutTransformControl#PART_ToggleTransform">
+            <Style Selector="^ /template/ LayoutTransformControl#PART_ToggleTransform">
                 <Setter Property="Cursor" Value="Hand" />
             </Style>
         </Style>
