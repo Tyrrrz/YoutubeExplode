@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
@@ -23,7 +24,7 @@ internal class SearchController(HttpClient http)
                 // lang=json
                 $$"""
                 {
-                    "query": "{{searchQuery}}",
+                    "query": "{{WebUtility.UrlEncode(searchQuery)}}",
                     "params": "{{searchFilter switch
                     {
                         SearchFilter.Video => "EgIQAQ%3D%3D",
