@@ -21,6 +21,19 @@ public class SearchSpecs
     }
 
     [Fact]
+    public async Task I_can_get_results_from_a_search_query_that_contains_special_characters()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var results = await youtube.Search.GetResultsAsync("\"dune 2\" ending");
+
+        // Assert
+        results.Should().HaveCountGreaterOrEqualTo(50);
+    }
+
+    [Fact]
     public async Task I_can_get_video_results_from_a_search_query()
     {
         // Arrange
