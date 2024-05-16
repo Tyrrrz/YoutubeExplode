@@ -9,7 +9,12 @@ namespace YoutubeExplode.Demo.Gui;
 
 public class App : Application
 {
-    public override void Initialize() => AvaloniaXamlLoader.Load(this);
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        AvaloniaXamlLoader.Load(this);
+    }
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -18,7 +23,7 @@ public class App : Application
 
         base.OnFrameworkInitializationCompleted();
 
-        // Set custom theme colors
+        // Set up custom theme colors
         this.LocateMaterialTheme<MaterialThemeBase>().CurrentTheme = Theme.Create(
             Theme.Light,
             Color.Parse("#343838"),
