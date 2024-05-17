@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -31,6 +32,34 @@ public class SearchSpecs
 
         // Assert
         results.Should().HaveCountGreaterOrEqualTo(50);
+    }
+
+    [Fact]
+    public async Task I_can_get_results_from_a_search_query_that_contains_non_ascii_characters()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var results = await youtube.Search.GetResultsAsync("נועה קירל");
+
+        // Assert
+        results.Should().HaveCountGreaterOrEqualTo(50);
+        results.First().Title.Should().Contain("נועה קירל");
+    }
+
+    [Fact]
+    public async Task I_can_get_results_from_a_search_query_that_contains_non_ascii_characters_and_special_characters()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var results = await youtube.Search.GetResultsAsync("\"נועה קירל\"");
+
+        // Assert
+        results.Should().HaveCountGreaterOrEqualTo(50);
+        results.First().Title.Should().Contain("נועה קירל");
     }
 
     [Fact]
