@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Videos;
 
@@ -56,27 +57,26 @@ internal class VideoController(HttpClient http)
         using var request = new HttpRequestMessage(
             HttpMethod.Post,
             "https://www.youtube.com/youtubei/v1/player"
-        )
-        {
-            Content = new StringContent(
-                // lang=json
-                $$"""
-                {
-                    "videoId": "{{videoId}}",
-                    "context": {
-                        "client": {
-                            "clientName": "ANDROID_TESTSUITE",
-                            "clientVersion": "1.9",
-                            "androidSdkVersion": 30,
-                            "hl": "en",
-                            "gl": "US",
-                            "utcOffsetMinutes": 0
-                        }
-                    }
+        );
+
+        request.Content = new StringContent(
+            // lang=json
+            $$"""
+            {
+              "videoId": {{Json.Serialize(videoId)}},
+              "context": {
+                "client": {
+                  "clientName": "ANDROID_TESTSUITE",
+                  "clientVersion": "1.9",
+                  "androidSdkVersion": 30,
+                  "hl": "en",
+                  "gl": "US",
+                  "utcOffsetMinutes": 0
                 }
-                """
-            )
-        };
+              }
+            }
+            """
+        );
 
         // User agent appears to be sometimes required when impersonating Android
         // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
@@ -110,34 +110,33 @@ internal class VideoController(HttpClient http)
         using var request = new HttpRequestMessage(
             HttpMethod.Post,
             "https://www.youtube.com/youtubei/v1/player"
-        )
-        {
-            Content = new StringContent(
-                // lang=json
-                $$"""
-                {
-                    "videoId": "{{videoId}}",
-                    "context": {
-                        "client": {
-                            "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
-                            "clientVersion": "2.0",
-                            "hl": "en",
-                            "gl": "US",
-                            "utcOffsetMinutes": 0
-                        },
-                        "thirdParty": {
-                            "embedUrl": "https://www.youtube.com"
-                        }
-                    },
-                    "playbackContext": {
-                        "contentPlaybackContext": {
-                            "signatureTimestamp": "{{signatureTimestamp ?? "19369"}}"
-                        }
-                    }
+        );
+
+        request.Content = new StringContent(
+            // lang=json
+            $$"""
+            {
+              "videoId": {{Json.Serialize(videoId)}},
+              "context": {
+                "client": {
+                  "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                  "clientVersion": "2.0",
+                  "hl": "en",
+                  "gl": "US",
+                  "utcOffsetMinutes": 0
+                },
+                "thirdParty": {
+                  "embedUrl": "https://www.youtube.com"
                 }
-                """
-            )
-        };
+              },
+              "playbackContext": {
+                "contentPlaybackContext": {
+                  "signatureTimestamp": {{Json.Serialize(signatureTimestamp)}}
+                }
+              }
+            }
+            """
+        );
 
         using var response = await Http.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();

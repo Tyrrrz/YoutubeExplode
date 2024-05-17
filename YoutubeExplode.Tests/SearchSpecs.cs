@@ -1,4 +1,4 @@
-using System.Linq;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -19,6 +19,11 @@ public class SearchSpecs
 
         // Assert
         results.Should().HaveCountGreaterOrEqualTo(50);
+        results
+            .Should()
+            .Contain(r =>
+                r.Title.Contains("undead corporation", StringComparison.OrdinalIgnoreCase)
+            );
     }
 
     [Fact]
@@ -32,11 +37,14 @@ public class SearchSpecs
 
         // Assert
         results.Should().HaveCountGreaterOrEqualTo(50);
+        results.Should().Contain(r => r.Title.Contains("dune", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
     public async Task I_can_get_results_from_a_search_query_that_contains_non_ascii_characters()
     {
+        // https://github.com/Tyrrrz/YoutubeExplode/issues/787
+
         // Arrange
         var youtube = new YoutubeClient();
 
@@ -45,12 +53,16 @@ public class SearchSpecs
 
         // Assert
         results.Should().HaveCountGreaterOrEqualTo(50);
-        results.First().Title.Should().Contain("נועה קירל");
+        results
+            .Should()
+            .Contain(r => r.Title.Contains("נועה קירל", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
     public async Task I_can_get_results_from_a_search_query_that_contains_non_ascii_characters_and_special_characters()
     {
+        // https://github.com/Tyrrrz/YoutubeExplode/issues/787
+
         // Arrange
         var youtube = new YoutubeClient();
 
@@ -59,7 +71,9 @@ public class SearchSpecs
 
         // Assert
         results.Should().HaveCountGreaterOrEqualTo(50);
-        results.First().Title.Should().Contain("נועה קירל");
+        results
+            .Should()
+            .Contain(r => r.Title.Contains("נועה קירל", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

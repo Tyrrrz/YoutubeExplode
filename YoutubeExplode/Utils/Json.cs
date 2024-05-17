@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using YoutubeExplode.Utils.Extensions;
@@ -56,4 +57,35 @@ internal static class Json
             return null;
         }
     }
+
+    public static string Encode(string value)
+    {
+        var buffer = new StringBuilder(value.Length);
+
+        foreach (var c in value)
+        {
+            if (c == '\n')
+                buffer.Append("\\n");
+            else if (c == '\r')
+                buffer.Append("\\r");
+            else if (c == '\t')
+                buffer.Append("\\t");
+            else if (c == '\\')
+                buffer.Append("\\\\");
+            else if (c == '"')
+                buffer.Append("\\\"");
+            else
+                buffer.Append(c);
+        }
+
+        return buffer.ToString();
+    }
+
+    // AOT-compatible serialization
+    public static string Serialize(string? value) =>
+        value is not null ? '"' + Encode(value) + '"' : "null";
+
+    // AOT-compatible serialization
+    public static string Serialize(int value) =>
+        Serialize(value.ToString(CultureInfo.InvariantCulture));
 }
