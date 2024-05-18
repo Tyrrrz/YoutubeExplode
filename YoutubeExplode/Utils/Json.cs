@@ -86,6 +86,6 @@ internal static class Json
         value is not null ? '"' + Encode(value) + '"' : "null";
 
     // AOT-compatible serialization
-    public static string Serialize(int value) =>
-        Serialize(value.ToString(CultureInfo.InvariantCulture));
+    public static string Serialize(int? value) =>
+        value is not null ? value.Value.ToString(CultureInfo.InvariantCulture) : "null";
 }
