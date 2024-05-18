@@ -25,7 +25,7 @@ internal class PlaylistController(HttpClient http)
             // lang=json
             $$"""
             {
-              "browseId": {{Json.Serialize("VL" + playlistId)}}},
+              "browseId": {{Json.Serialize("VL" + playlistId)}},
               "context": {
                 "client": {
                   "clientName": "WEB",
