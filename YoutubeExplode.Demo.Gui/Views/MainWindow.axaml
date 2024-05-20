@@ -10,6 +10,7 @@
     Title="YoutubeExplode Demo"
     Width="720"
     Height="620"
+    x:DataType="viewModels:MainViewModel"
     Icon="/favicon.ico"
     Loaded="Window_OnLoaded"
     WindowStartupLocation="CenterScreen">
@@ -251,7 +252,7 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
-                                            Command="{Binding $parent[Window].DataContext.DownloadStreamCommand}"
+                                            Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
                                             Theme="{DynamicResource MaterialFlatButton}">
                                             <materialIcons:MaterialIcon
@@ -292,7 +293,7 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
-                                            Command="{Binding $parent[Window].DataContext.DownloadStreamCommand}"
+                                            Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
                                             Theme="{DynamicResource MaterialFlatButton}">
                                             <materialIcons:MaterialIcon
@@ -333,7 +334,7 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
-                                            Command="{Binding $parent[Window].DataContext.DownloadStreamCommand}"
+                                            Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
                                             Theme="{DynamicResource MaterialFlatButton}">
                                             <materialIcons:MaterialIcon
@@ -384,7 +385,7 @@
                                     <Button
                                         Padding="4"
                                         VerticalAlignment="Center"
-                                        Command="{Binding $parent[Window].DataContext.DownloadClosedCaptionTrackCommand}"
+                                        Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadClosedCaptionTrackCommand}"
                                         CommandParameter="{Binding}"
                                         Theme="{DynamicResource MaterialFlatButton}">
                                         <materialIcons:MaterialIcon
