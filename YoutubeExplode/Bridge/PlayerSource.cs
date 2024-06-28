@@ -109,6 +109,7 @@ internal partial class PlayerSource(string content)
                         .Match(statement, @"\([$_\w]+,(\d+)\)")
                         .Groups[1]
                         .Value.ParseInt();
+
                     operations.Add(new SwapCipherOperation(index));
                 }
                 else if (string.Equals(calledFuncName, spliceFuncName, StringComparison.Ordinal))
@@ -117,6 +118,7 @@ internal partial class PlayerSource(string content)
                         .Match(statement, @"\([$_\w]+,(\d+)\)")
                         .Groups[1]
                         .Value.ParseInt();
+
                     operations.Add(new SpliceCipherOperation(index));
                 }
                 else if (string.Equals(calledFuncName, reverseFuncName, StringComparison.Ordinal))
