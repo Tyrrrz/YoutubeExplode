@@ -51,7 +51,6 @@ internal partial class PlayerSource(string content)
             var cipherDefinition = Regex
                 .Match(
                     content,
-                    // lang=js
                     $$"""
                     var {{Regex.Escape(cipherContainerName)}}={.*?};
                     """,
@@ -94,13 +93,13 @@ internal partial class PlayerSource(string content)
                 .Value.NullIfWhiteSpace();
 
             var operations = new List<ICipherOperation>();
-
             foreach (var statement in cipherCallsite.Split(';'))
             {
                 var calledFuncName = Regex
                     .Match(statement, @"[$_\w]+\.([$_\w]+)\([$_\w]+,\d+\)")
                     .Groups[1]
                     .Value;
+
                 if (string.IsNullOrWhiteSpace(calledFuncName))
                     continue;
 
