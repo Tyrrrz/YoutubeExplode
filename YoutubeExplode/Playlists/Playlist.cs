@@ -12,6 +12,7 @@ public class Playlist(
     string title,
     Author? author,
     string description,
+    int videosCount,
     IReadOnlyList<Thumbnail> thumbnails
 ) : IPlaylist
 {
@@ -31,6 +32,11 @@ public class Playlist(
     /// Playlist description.
     /// </summary>
     public string Description { get; } = description;
+
+    /// <summary>
+    /// Count of total videos.
+    /// </summary>
+    public int VideosCount { get; } = videosCount;
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; } = thumbnails;

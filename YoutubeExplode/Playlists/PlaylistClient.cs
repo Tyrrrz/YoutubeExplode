@@ -42,6 +42,8 @@ public class PlaylistClient(HttpClient http)
         // System playlists have no description
         var description = response.Description ?? "";
 
+        var videosCount = response.VideosCount ?? 0;
+
         var thumbnails = response
             .Thumbnails.Select(t =>
             {
@@ -63,7 +65,7 @@ public class PlaylistClient(HttpClient http)
             })
             .ToArray();
 
-        return new Playlist(playlistId, title, author, description, thumbnails);
+        return new Playlist(playlistId, title, author, description, videosCount, thumbnails);
     }
 
     /// <summary>

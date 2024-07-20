@@ -31,6 +31,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         playlist
             .Description.Should()
             .Contain("Digital Analytics Fundamentals course on Analytics Academy");
+        playlist.VideosCount.Should().Be(22);
         playlist.Thumbnails.Should().NotBeEmpty();
     }
 
@@ -82,6 +83,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         playlist.Url.Should().NotBeNullOrWhiteSpace();
         playlist.Title.Should().NotBeNullOrWhiteSpace();
         playlist.Description.Should().NotBeNull();
+        playlist.VideosCount.Should().NotBe(null);
         playlist.Thumbnails.Should().NotBeEmpty();
     }
 

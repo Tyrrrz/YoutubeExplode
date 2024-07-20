@@ -34,6 +34,8 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
 
     public string? Description => null;
 
+    public int? VideosCount => null;
+
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails => Videos.FirstOrDefault()?.Thumbnails ?? [];
 

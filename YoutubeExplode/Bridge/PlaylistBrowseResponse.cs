@@ -102,6 +102,27 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.GetStringOrNull();
 
     [Lazy]
+    public int? VideosCount =>
+        SidebarPrimary
+            ?.GetPropertyOrNull("stats")
+            ?.EnumerateArrayOrNull()
+            ?.FirstOrNull()
+            ?.GetPropertyOrNull("runs")
+            ?.EnumerateArrayOrNull()
+            ?.FirstOrNull()
+            ?.GetPropertyOrNull("text")
+            ?.GetStringOrNull()
+            ?.ParseIntOrNull()
+        ?? SidebarPrimary
+            ?.GetPropertyOrNull("stats")
+            ?.EnumerateArrayOrNull()
+            ?.FirstOrNull()
+            ?.GetPropertyOrNull("simpleText")
+            ?.GetStringOrNull()
+            ?.Split(' ').FirstOrDefault()
+            ?.ParseIntOrNull();
+
+    [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails =>
         SidebarPrimary
             ?.GetPropertyOrNull("thumbnailRenderer")
