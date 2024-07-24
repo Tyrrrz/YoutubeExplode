@@ -119,7 +119,8 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.FirstOrNull()
             ?.GetPropertyOrNull("simpleText")
             ?.GetStringOrNull()
-            ?.Split(' ').FirstOrDefault()
+            ?.Split(' ')
+            ?.FirstOrDefault()
             ?.ParseIntOrNull();
 
     [Lazy]
