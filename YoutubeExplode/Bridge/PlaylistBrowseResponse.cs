@@ -102,7 +102,7 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.GetStringOrNull();
 
     [Lazy]
-    public int? VideosCount =>
+    public int? Count =>
         SidebarPrimary
             ?.GetPropertyOrNull("stats")
             ?.EnumerateArrayOrNull()

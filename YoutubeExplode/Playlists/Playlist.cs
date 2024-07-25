@@ -12,7 +12,7 @@ public class Playlist(
     string title,
     Author? author,
     string description,
-    int? videosCount,
+    int? count,
     IReadOnlyList<Thumbnail> thumbnails
 ) : IPlaylist
 {
@@ -34,12 +34,12 @@ public class Playlist(
     public string Description { get; } = description;
 
     /// <summary>
-    /// Count of total videos.
+    /// Total count of videos included in the playlist.
     /// </summary>
     /// <remarks>
-    /// May be null in case of playlists with infinite videos (e.g. mixes).
+    /// May be null in case of infinite playlists (e.g. auto-generated mixes).
     /// </remarks>
-    public int? VideosCount { get; } = videosCount;
+    public int? Count { get; } = count;
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; } = thumbnails;

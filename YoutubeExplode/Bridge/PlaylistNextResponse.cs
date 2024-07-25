@@ -35,7 +35,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
     public string? Description => null;
 
     [Lazy]
-    public int? VideosCount =>
+    public int? Count =>
         ContentRoot
             ?.GetPropertyOrNull("totalVideosText")
             ?.GetPropertyOrNull("runs")
