@@ -35,6 +35,25 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
     public string? Description => null;
 
     [Lazy]
+    public int? VideosCount =>
+        ContentRoot
+            ?.GetPropertyOrNull("totalVideosText")
+            ?.GetPropertyOrNull("runs")
+            ?.EnumerateArrayOrNull()
+            ?.FirstOrNull()
+            ?.GetPropertyOrNull("text")
+            ?.GetStringOrNull()
+            ?.ParseIntOrNull()
+        ?? ContentRoot
+            ?.GetPropertyOrNull("videoCountText")
+            ?.GetPropertyOrNull("runs")
+            ?.EnumerateArrayOrNull()
+            ?.ElementAtOrNull(2)
+            ?.GetPropertyOrNull("text")
+            ?.GetStringOrNull()
+            ?.ParseIntOrNull();
+
+    [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails => Videos.FirstOrDefault()?.Thumbnails ?? [];
 
     [Lazy]

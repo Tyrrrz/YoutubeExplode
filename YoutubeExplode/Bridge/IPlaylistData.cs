@@ -12,5 +12,7 @@ internal interface IPlaylistData
 
     string? Description { get; }
 
+    int? VideosCount { get; }
+
     IReadOnlyList<ThumbnailData> Thumbnails { get; }
 }
