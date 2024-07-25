@@ -42,7 +42,7 @@ public class PlaylistClient(HttpClient http)
         // System playlists have no description
         var description = response.Description ?? "";
 
-        var videosCount = response.VideosCount ?? 0;
+        var videosCount = response.VideosCount;
 
         var thumbnails = response
             .Thumbnails.Select(t =>

@@ -83,7 +83,6 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         playlist.Url.Should().NotBeNullOrWhiteSpace();
         playlist.Title.Should().NotBeNullOrWhiteSpace();
         playlist.Description.Should().NotBeNull();
-        playlist.VideosCount.Should().NotBe(0);
         playlist.Thumbnails.Should().NotBeEmpty();
     }
 
