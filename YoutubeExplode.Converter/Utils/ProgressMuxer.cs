@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace YoutubeExplode.Converter.Utils;
 
 internal class ProgressMuxer(IProgress<double> target)
 {
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private readonly Dictionary<int, double> _splitWeights = new();
     private readonly Dictionary<int, double> _splitValues = new();
 
     public IProgress<double> CreateInput(double weight = 1)
     {
-        lock (_lock)
+        using (_lock.EnterScope())
         {
             var index = _splitWeights.Count;
 
@@ -20,7 +21,7 @@ internal class ProgressMuxer(IProgress<double> target)
 
             return new Progress<double>(p =>
             {
-                lock (_lock)
+                using (_lock.EnterScope())
                 {
                     _splitValues[index] = p;
 
