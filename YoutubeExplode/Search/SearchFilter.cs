@@ -23,5 +23,5 @@ public enum SearchFilter
     /// <summary>
     /// Only search for channels.
     /// </summary>
-    Channel
+    Channel,
 }

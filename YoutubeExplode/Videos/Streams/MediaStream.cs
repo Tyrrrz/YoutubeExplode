@@ -131,7 +131,7 @@ internal partial class MediaStream(HttpClient http, IStreamInfo streamInfo) : St
             SeekOrigin.Begin => offset,
             SeekOrigin.Current => Position + offset,
             SeekOrigin.End => Length + offset,
-            _ => throw new ArgumentOutOfRangeException(nameof(origin))
+            _ => throw new ArgumentOutOfRangeException(nameof(origin)),
         };
 
     [ExcludeFromCodeCoverage]

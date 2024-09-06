@@ -38,7 +38,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
                 "CAISNQgDEitib3FfaWRlbnRpdHlmcm9udGVuZHVpc2VydmVyXzIwMjMwODI5LjA3X3AxGgJlbiACGgYIgLC_pwY"
             )
             {
-                Domain = "youtube.com"
+                Domain = "youtube.com",
             }
         );
     }

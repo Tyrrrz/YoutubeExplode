@@ -51,7 +51,7 @@ public readonly partial struct VideoQuality(string label, int maxHeight, int fra
             2880 => new Resolution(5120, 2880),
             3072 => new Resolution(4096, 3072),
             4320 => new Resolution(7680, 4320),
-            _ => new Resolution(16 * MaxHeight / 9, MaxHeight)
+            _ => new Resolution(16 * MaxHeight / 9, MaxHeight),
         };
 
     /// <inheritdoc />
@@ -188,7 +188,7 @@ public partial struct VideoQuality
             396 => 360,
             395 => 240,
             394 => 144,
-            _ => throw new ArgumentException($"Unrecognized itag '{itag}'.", nameof(itag))
+            _ => throw new ArgumentException($"Unrecognized itag '{itag}'.", nameof(itag)),
         };
 
         return new VideoQuality(maxHeight, framerate);

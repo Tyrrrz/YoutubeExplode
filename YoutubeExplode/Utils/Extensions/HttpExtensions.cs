@@ -30,7 +30,7 @@ internal static class HttpExtensions
             // Don't dispose the original request's content
             Content = request.Content is not null
                 ? new NonDisposableHttpContent(request.Content)
-                : null
+                : null,
         };
 
         foreach (var (key, value) in request.Headers)
