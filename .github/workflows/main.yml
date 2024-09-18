@@ -32,7 +32,7 @@ jobs:
   main:
     uses: Tyrrrz/.github/.github/workflows/nuget.yml@master
     with:
-      skip-tests: ${{ inputs.skip-tests }}
+      skip-tests: ${{ inputs.skip-tests || false }}
       deploy: ${{ inputs.deploy || github.ref_type == 'tag' }}
       package-version: ${{ inputs.package-version || (github.ref_type == 'tag' && github.ref_name) || format('0.0.0-ci-{0}', github.sha) }}
       dotnet-version: 8.0.x
