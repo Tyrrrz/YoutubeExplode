@@ -123,7 +123,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
                     "dN3gkBBffhs",
                     "8Kg-8ZjgLAQ",
                     "E9zfpKsw6f8",
-                    "eBCw9sC5D40"
+                    "eBCw9sC5D40",
                 ]
             );
     }
@@ -152,7 +152,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
                     "RnGJ3KJri1g",
                     "x-IR7PtA7RA",
                     "N-8E9mHxDy0",
-                    "5ly88Ju1N6A"
+                    "5ly88Ju1N6A",
                 ]
             );
     }
