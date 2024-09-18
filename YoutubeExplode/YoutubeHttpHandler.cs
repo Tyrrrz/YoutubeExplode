@@ -35,7 +35,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         _cookieContainer.Add(
             new Cookie(
                 "SOCS",
-                "CAISNQgDEitib3FfaWRlbnRpdHlmcm9udGVuZHVpc2VydmVyXzIwMjMwODI5LjA3X3AxGgJlbiACGgYIgLC_pwY"
+                "CAISEwgDEgk2NzM5OTg2ODUaAmVuIAEaBgiA6p23Bg"
             )
             {
                 Domain = "youtube.com",
