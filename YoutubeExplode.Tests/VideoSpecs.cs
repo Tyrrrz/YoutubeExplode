@@ -9,16 +9,13 @@ using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests;
 
-public class VideoSpecs(ITestOutputHelper testOutput)
+public class VideoSpecs(ITestOutputHelper testOutput) : SpecsBase
 {
     [Fact]
     public async Task I_can_get_the_metadata_of_a_video()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var video = await youtube.Videos.GetAsync(VideoIds.Normal);
+        var video = await Youtube.Videos.GetAsync(VideoIds.Normal);
 
         // Assert
         video.Id.Value.Should().Be(VideoIds.Normal);
@@ -58,12 +55,9 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_metadata_of_a_video_and_get_an_error_if_it_is_private()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
-            async () => await youtube.Videos.GetAsync(VideoIds.Private)
+            async () => await Youtube.Videos.GetAsync(VideoIds.Private)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -72,12 +66,9 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_metadata_of_a_video_and_get_an_error_if_it_does_not_exist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
-            async () => await youtube.Videos.GetAsync(VideoIds.Deleted)
+            async () => await Youtube.Videos.GetAsync(VideoIds.Deleted)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -94,11 +85,8 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.WithBrokenTitle)]
     public async Task I_can_get_the_metadata_of_any_available_video(string videoId)
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var video = await youtube.Videos.GetAsync(videoId);
+        var video = await Youtube.Videos.GetAsync(videoId);
 
         // Assert
         video.Id.Value.Should().Be(videoId);
@@ -116,11 +104,8 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_get_the_highest_resolution_thumbnail_from_a_video()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var video = await youtube.Videos.GetAsync(VideoIds.Normal);
+        var video = await Youtube.Videos.GetAsync(VideoIds.Normal);
         var thumbnail = video.Thumbnails.GetWithHighestResolution();
 
         // Assert

@@ -9,16 +9,13 @@ using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests;
 
-public class PlaylistSpecs(ITestOutputHelper testOutput)
+public class PlaylistSpecs(ITestOutputHelper testOutput) : SpecsBase
 {
     [Fact]
     public async Task I_can_get_the_metadata_of_a_playlist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var playlist = await youtube.Playlists.GetAsync(PlaylistIds.Normal);
+        var playlist = await Youtube.Playlists.GetAsync(PlaylistIds.Normal);
 
         // Assert
         playlist.Id.Value.Should().Be(PlaylistIds.Normal);
@@ -38,12 +35,9 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_metadata_of_a_playlist_and_get_an_error_if_it_is_private()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(
-            async () => await youtube.Playlists.GetAsync(PlaylistIds.Private)
+            async () => await Youtube.Playlists.GetAsync(PlaylistIds.Private)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -52,12 +46,9 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_metadata_of_a_playlist_and_get_an_error_if_it_does_not_exist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(
-            async () => await youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
+            async () => await Youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -72,11 +63,8 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [InlineData(PlaylistIds.Weird)]
     public async Task I_can_get_the_metadata_of_any_available_playlist(string playlistId)
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var playlist = await youtube.Playlists.GetAsync(playlistId);
+        var playlist = await Youtube.Playlists.GetAsync(playlistId);
 
         // Assert
         playlist.Id.Value.Should().Be(playlistId);
@@ -90,11 +78,8 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_get_videos_included_in_a_playlist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Normal);
+        var videos = await Youtube.Playlists.GetVideosAsync(PlaylistIds.Normal);
 
         // Assert
         videos.Should().HaveCountGreaterOrEqualTo(21);
@@ -131,11 +116,8 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_get_videos_included_in_a_large_playlist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large);
+        var videos = await Youtube.Playlists.GetVideosAsync(PlaylistIds.Large);
 
         // Assert
         videos.Should().HaveCountGreaterOrEqualTo(1900);
@@ -167,11 +149,8 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [InlineData(PlaylistIds.Weird)]
     public async Task I_can_get_videos_included_in_any_available_playlist(string playlistId)
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var videos = await youtube.Playlists.GetVideosAsync(playlistId);
+        var videos = await Youtube.Playlists.GetVideosAsync(playlistId);
 
         // Assert
         videos.Should().NotBeEmpty();
@@ -180,11 +159,8 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_get_a_subset_of_videos_included_in_a_playlist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large).CollectAsync(10);
+        var videos = await Youtube.Playlists.GetVideosAsync(PlaylistIds.Large).CollectAsync(10);
 
         // Assert
         videos.Should().HaveCount(10);

@@ -12,16 +12,13 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests;
 
-public class StreamSpecs(ITestOutputHelper testOutput)
+public class StreamSpecs(ITestOutputHelper testOutput) : SpecsBase
 {
     [Fact]
     public async Task I_can_get_the_list_of_available_streams_of_a_video()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(
             VideoIds.WithHighQualityStreams
         );
 
@@ -70,11 +67,8 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.WithHighDynamicRangeStreams)]
     public async Task I_can_get_the_list_of_available_streams_of_any_playable_video(string videoId)
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(videoId);
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
@@ -83,12 +77,9 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [Fact(Skip = "Preview video ID is not always available")]
     public async Task I_can_try_to_get_the_list_of_available_streams_of_a_video_and_get_an_error_if_it_is_paid()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(
-            async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
+            async () => await Youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
         );
 
         ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
@@ -99,12 +90,9 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_list_of_available_streams_of_a_video_and_get_an_error_if_it_is_private()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
-            async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
+            async () => await Youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -113,12 +101,9 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_list_of_available_streams_of_a_video_and_get_an_error_if_it_does_not_exist()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
-            async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
+            async () => await Youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -134,14 +119,13 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var buffer = MemoryPool<byte>.Shared.Rent(1024);
-        var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(videoId);
 
         foreach (var streamInfo in manifest.Streams)
         {
-            using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+            using var stream = await Youtube.Videos.Streams.GetAsync(streamInfo);
             var bytesRead = await stream.ReadAsync(buffer.Memory);
 
             // Assert
@@ -163,13 +147,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var file = TempFile.Create();
-        var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(videoId);
         var streamInfo = manifest.Streams.OrderBy(s => s.Size).First();
 
-        await youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
+        await Youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
 
         // Assert
         var fileInfo = new FileInfo(file.Path);
@@ -182,13 +165,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var file = TempFile.Create();
-        var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.Streams.GetWithHighestBitrate();
 
-        await youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
+        await Youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
 
         // Assert
         var fileInfo = new FileInfo(file.Path);
@@ -201,13 +183,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var file = TempFile.Create();
-        var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.GetVideoStreams().GetWithHighestVideoQuality();
 
-        await youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
+        await Youtube.Videos.Streams.DownloadAsync(streamInfo, file.Path);
 
         // Assert
         var fileInfo = new FileInfo(file.Path);
@@ -220,13 +201,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var buffer = new MemoryStream();
-        var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
+        var manifest = await Youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
         var streamInfo = manifest.GetAudioStreams().OrderBy(s => s.Size).First();
 
-        using var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+        using var stream = await Youtube.Videos.Streams.GetAsync(streamInfo);
         stream.Seek(1000, SeekOrigin.Begin);
         await stream.CopyToAsync(buffer);
 
@@ -237,11 +217,8 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_get_the_HTTP_live_stream_URL_for_a_video()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.LiveStream);
+        var url = await Youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.LiveStream);
 
         // Assert
         url.Should().NotBeNullOrWhiteSpace();
@@ -250,13 +227,10 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_HTTP_live_stream_URL_for_a_video_and_get_an_error_if_it_is_unplayable()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnplayableException>(
             async () =>
-                await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
+                await Youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -265,12 +239,9 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [Fact]
     public async Task I_can_try_to_get_the_HTTP_live_stream_URL_for_a_video_and_get_an_error_if_it_is_not_live()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act & assert
         var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(
-            async () => await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
+            async () => await Youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
         );
 
         testOutput.WriteLine(ex.ToString());

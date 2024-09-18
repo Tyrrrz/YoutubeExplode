@@ -7,16 +7,13 @@ using YoutubeExplode.Tests.TestData;
 
 namespace YoutubeExplode.Tests;
 
-public class ChannelSpecs
+public class ChannelSpecs : SpecsBase
 {
     [Fact]
     public async Task I_can_get_the_metadata_of_a_channel()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var channel = await youtube.Channels.GetAsync(ChannelIds.Normal);
+        var channel = await Youtube.Channels.GetAsync(ChannelIds.Normal);
 
         // Assert
         channel.Id.Value.Should().Be(ChannelIds.Normal);
@@ -28,11 +25,8 @@ public class ChannelSpecs
     [Fact]
     public async Task I_can_get_the_metadata_of_a_channel_by_user_name()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var channel = await youtube.Channels.GetByUserAsync(UserNames.Normal);
+        var channel = await Youtube.Channels.GetByUserAsync(UserNames.Normal);
 
         // Assert
         channel.Id.Value.Should().Be("UCX6OQ3DkcsbYNE6H8uQQuVA");
@@ -44,11 +38,8 @@ public class ChannelSpecs
     [Fact]
     public async Task I_can_get_the_metadata_of_a_channel_by_slug()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var channel = await youtube.Channels.GetBySlugAsync(ChannelSlugs.Normal);
+        var channel = await Youtube.Channels.GetBySlugAsync(ChannelSlugs.Normal);
 
         // Assert
         channel.Id.Value.Should().Be("UCSli-_XJrdRwRoPw8DXRiyw");
@@ -60,11 +51,8 @@ public class ChannelSpecs
     [Fact]
     public async Task I_can_get_the_metadata_of_a_channel_by_handle()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var channel = await youtube.Channels.GetByHandleAsync(ChannelHandles.Normal);
+        var channel = await Youtube.Channels.GetByHandleAsync(ChannelHandles.Normal);
 
         // Assert
         channel.Id.Value.Should().Be("UCX6OQ3DkcsbYNE6H8uQQuVA");
@@ -78,11 +66,8 @@ public class ChannelSpecs
     [InlineData(ChannelIds.Movies)]
     public async Task I_can_get_the_metadata_of_any_available_channel(string channelId)
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var channel = await youtube.Channels.GetAsync(channelId);
+        var channel = await Youtube.Channels.GetAsync(channelId);
 
         // Assert
         channel.Id.Value.Should().Be(channelId);
@@ -94,11 +79,8 @@ public class ChannelSpecs
     [Fact]
     public async Task I_can_get_videos_uploaded_by_a_channel()
     {
-        // Arrange
-        var youtube = new YoutubeClient();
-
         // Act
-        var videos = await youtube.Channels.GetUploadsAsync(ChannelIds.Normal);
+        var videos = await Youtube.Channels.GetUploadsAsync(ChannelIds.Normal);
 
         // Assert
         videos.Should().HaveCountGreaterOrEqualTo(730);

@@ -5,7 +5,7 @@ using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Tests;
 
-public class VideoIdSpecs
+public class VideoIdSpecs : SpecsBase
 {
     [Theory]
     [InlineData("9bZkp7q19f0")]

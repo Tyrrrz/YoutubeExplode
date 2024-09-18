@@ -5,7 +5,7 @@ using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Tests;
 
-public class PlaylistIdSpecs
+public class PlaylistIdSpecs : SpecsBase
 {
     [Theory]
     [InlineData("WL")]

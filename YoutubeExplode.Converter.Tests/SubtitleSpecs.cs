@@ -9,7 +9,7 @@ using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter.Tests;
 
-public class SubtitleSpecs : IAsyncLifetime
+public class SubtitleSpecs : SpecsBase, IAsyncLifetime
 {
     public async Task InitializeAsync() => await FFmpeg.InitializeAsync();
 
@@ -19,12 +19,10 @@ public class SubtitleSpecs : IAsyncLifetime
     public async Task I_can_download_a_video_as_a_single_mp4_file_with_subtitles()
     {
         // Arrange
-        var youtube = new YoutubeClient();
-
         using var dir = TempDir.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
-        var streamManifest = await youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
+        var streamManifest = await Youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
         var streamInfos = streamManifest
             .GetVideoStreams()
             .Where(s => s.Container == Container.Mp4)
@@ -32,11 +30,11 @@ public class SubtitleSpecs : IAsyncLifetime
             .Take(1)
             .ToArray();
 
-        var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("NtQkz0aRDe8");
+        var trackManifest = await Youtube.Videos.ClosedCaptions.GetManifestAsync("NtQkz0aRDe8");
         var trackInfos = trackManifest.Tracks;
 
         // Act
-        await youtube.Videos.DownloadAsync(
+        await Youtube.Videos.DownloadAsync(
             streamInfos,
             trackInfos,
             new ConversionRequestBuilder(filePath).Build()
@@ -58,12 +56,10 @@ public class SubtitleSpecs : IAsyncLifetime
     public async Task I_can_download_a_video_as_a_single_webm_file_with_subtitles()
     {
         // Arrange
-        var youtube = new YoutubeClient();
-
         using var dir = TempDir.Create();
         var filePath = Path.Combine(dir.Path, "video.webm");
 
-        var streamManifest = await youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
+        var streamManifest = await Youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
         var streamInfos = streamManifest
             .GetVideoStreams()
             .Where(s => s.Container == Container.WebM)
@@ -71,11 +67,11 @@ public class SubtitleSpecs : IAsyncLifetime
             .Take(1)
             .ToArray();
 
-        var trackManifest = await youtube.Videos.ClosedCaptions.GetManifestAsync("NtQkz0aRDe8");
+        var trackManifest = await Youtube.Videos.ClosedCaptions.GetManifestAsync("NtQkz0aRDe8");
         var trackInfos = trackManifest.Tracks;
 
         // Act
-        await youtube.Videos.DownloadAsync(
+        await Youtube.Videos.DownloadAsync(
             streamInfos,
             trackInfos,
             new ConversionRequestBuilder(filePath).Build()

@@ -5,7 +5,7 @@ using YoutubeExplode.Channels;
 
 namespace YoutubeExplode.Tests;
 
-public class ChannelHandleSpecs
+public class ChannelHandleSpecs : SpecsBase
 {
     [Theory]
     [InlineData("BeauMiles")]
