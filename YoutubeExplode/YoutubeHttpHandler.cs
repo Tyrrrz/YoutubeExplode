@@ -33,9 +33,18 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
         // https://github.com/Tyrrrz/YoutubeExplode/issues/732
         _cookieContainer.Add(
+            new Cookie("SOCS", "CAISEwgDEgk2Nzc5NDkyNDUaAmVuIAEaBgiApc23Bg")
+            {
+                Domain = "youtube.com"
+            }
+        );
+        _cookieContainer.Add(
+            new Cookie("VISITOR_INFO1_LIVE", "CHOSiMnTtoo") { Domain = "youtube.com" }
+        );
+        _cookieContainer.Add(
             new Cookie(
-                "SOCS",
-                "CAISNQgDEitib3FfaWRlbnRpdHlmcm9udGVuZHVpc2VydmVyXzIwMjMwODI5LjA3X3AxGgJlbiACGgYIgLC_pwY"
+                "VISITOR_PRIVACY_METADATA",
+                "CgJFUxIcEhgSFhMLFBUWFwwYGRobHB0eHw4PIBAREiEgNw%3D%3D"
             )
             {
                 Domain = "youtube.com"

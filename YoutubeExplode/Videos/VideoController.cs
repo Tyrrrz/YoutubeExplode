@@ -66,8 +66,8 @@ internal class VideoController(HttpClient http)
               "videoId": {{Json.Serialize(videoId)}},
               "context": {
                 "client": {
-                  "clientName": "ANDROID_TESTSUITE",
-                  "clientVersion": "1.9",
+                  "clientName": "ANDROID",
+                  "clientVersion": "17.36.4",
                   "androidSdkVersion": 30,
                   "hl": "en",
                   "gl": "US",
