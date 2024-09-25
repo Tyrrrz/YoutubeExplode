@@ -28,28 +28,39 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         foreach (var cookie in initialCookies)
             _cookieContainer.Add(cookie);
 
+        var request = new HttpRequestMessage()
+        {
+            RequestUri = new Uri(
+                "https://consent.youtube.com/save?gl=US&m=0&pc=yt&x=5&src=2&hl=en&bl=677949245&cm=2&set_eom=false&set_apyt=true&set_ytc=true"
+            ),
+            Method = HttpMethod.Post
+        };
+
+        var response = http.SendAsync(request).GetAwaiter().GetResult();
+
         // Consent to the use of cookies on YouTube.
         // This is required to access some personalized content, such as mix playlists.
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
         // https://github.com/Tyrrrz/YoutubeExplode/issues/732
-        _cookieContainer.Add(
-            new Cookie("SOCS", "CAISEwgDEgk2Nzc5NDkyNDUaAmVuIAEaBgiApc23Bg")
+        // Set cookies
+        if (response.Headers.TryGetValues("Set-Cookie", out var cookieHeaderValues))
+        {
+            foreach (var cookieHeaderValue in cookieHeaderValues)
             {
-                Domain = "youtube.com"
+                try
+                {
+                    _cookieContainer.SetCookies(
+                        response.RequestMessage!.RequestUri!,
+                        cookieHeaderValue
+                    );
+                }
+                catch (CookieException)
+                {
+                    // YouTube may send cookies for other domains, ignore them
+                    // https://github.com/Tyrrrz/YoutubeExplode/issues/762
+                }
             }
-        );
-        _cookieContainer.Add(
-            new Cookie("VISITOR_INFO1_LIVE", "CHOSiMnTtoo") { Domain = "youtube.com" }
-        );
-        _cookieContainer.Add(
-            new Cookie(
-                "VISITOR_PRIVACY_METADATA",
-                "CgJFUxIcEhgSFhMLFBUWFwwYGRobHB0eHw4PIBAREiEgNw%3D%3D"
-            )
-            {
-                Domain = "youtube.com"
-            }
-        );
+        }
     }
 
     private string? TryGenerateAuthHeaderValue(Uri uri)
