@@ -151,7 +151,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
     [Theory]
     [InlineData(VideoIds.Normal)]
-    [InlineData(VideoIds.Kids, Skip = "Kids videos can't be downloaded with the current client")]
+    [InlineData(VideoIds.Kids)]
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]

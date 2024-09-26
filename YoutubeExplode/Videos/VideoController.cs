@@ -66,10 +66,15 @@ internal class VideoController(HttpClient http)
               "videoId": {{Json.Serialize(videoId)}},
               "context": {
                 "client": {
-                  "clientName": "ANDROID_VR",
-                  "clientVersion": "1.57.29",
-                  "androidSdkVersion": 30,
+                  "clientName": "IOS",
+                  "clientVersion": "19.29.1",
+                  "deviceMake": "Apple",
+                  "deviceModel": "iPhone16,2",
                   "hl": "en",
+                  "osName": "iPhone",
+                  "osVersion": "17.5.1.21F90",
+                  "timeZone": "UTC",
+                  "userAgent": "com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X;)",
                   "gl": "US",
                   "utcOffsetMinutes": 0
                 }
@@ -82,7 +87,7 @@ internal class VideoController(HttpClient http)
         // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
         request.Headers.Add(
             "User-Agent",
-            "com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip"
+            "com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X)"
         );
 
         using var response = await Http.SendAsync(request, cancellationToken);
