@@ -59,9 +59,7 @@ internal partial class FFmpeg
     public static string GetFilePath() =>
         // Try to find FFmpeg in the probe directory
         Directory
-            .EnumerateFiles(
-                AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory()
-            )
+            .EnumerateFiles(AppContext.BaseDirectory ?? Directory.GetCurrentDirectory())
             .FirstOrDefault(f =>
                 string.Equals(
                     Path.GetFileNameWithoutExtension(f),

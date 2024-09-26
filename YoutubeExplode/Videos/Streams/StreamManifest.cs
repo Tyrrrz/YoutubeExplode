@@ -26,6 +26,11 @@ public class StreamManifest(IReadOnlyList<IStreamInfo> streams)
     /// <summary>
     /// Gets muxed streams (i.e. streams containing both audio and video).
     /// </summary>
+    /// <remarks>
+    /// These streams are generally deprecated by YouTube and may not be available
+    /// for every video. If needed, use the YoutubeExplode.Converter package to
+    /// manually mux audio-only and video-only streams into a single container.
+    /// </remarks>
     public IEnumerable<MuxedStreamInfo> GetMuxedStreams() => Streams.OfType<MuxedStreamInfo>();
 
     /// <summary>

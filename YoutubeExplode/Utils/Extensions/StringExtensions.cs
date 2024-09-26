@@ -58,7 +58,7 @@ internal static class StringExtensions
         new StringBuilder(str)
         {
             [firstCharIndex] = str[secondCharIndex],
-            [secondCharIndex] = str[firstCharIndex]
+            [secondCharIndex] = str[firstCharIndex],
         }.ToString();
 
     public static int? ParseIntOrNull(this string str) =>

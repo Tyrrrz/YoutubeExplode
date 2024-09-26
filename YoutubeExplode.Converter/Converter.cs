@@ -133,7 +133,7 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
         }
 
         // Metadata for subtitles
-        foreach (var (subtitleInput, i) in subtitleInputs.WithIndex())
+        foreach (var (i, subtitleInput) in subtitleInputs.Index())
         {
             // Language codes can be stored in any format, but most players expect
             // three-letter codes, so we'll try to convert to that first.

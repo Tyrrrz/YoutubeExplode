@@ -210,7 +210,7 @@ internal static class LanguageExtensions
             "za" => "zha",
             "zh" => "zho",
             "zu" => "zul",
-            _ => null
+            _ => null,
         };
     }
 }

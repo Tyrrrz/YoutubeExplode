@@ -7,6 +7,11 @@ on:
         type: string
         description: Package version
         required: false
+      skip-tests:
+        type: boolean
+        description: Skip tests
+        required: false
+        default: false
       deploy:
         type: boolean
         description: Deploy package
@@ -27,6 +32,7 @@ jobs:
   main:
     uses: Tyrrrz/.github/.github/workflows/nuget.yml@master
     with:
+      skip-tests: ${{ inputs.skip-tests || false }}
       deploy: ${{ inputs.deploy || github.ref_type == 'tag' }}
       package-version: ${{ inputs.package-version || (github.ref_type == 'tag' && github.ref_name) || format('0.0.0-ci-{0}', github.sha) }}
       dotnet-version: 8.0.x

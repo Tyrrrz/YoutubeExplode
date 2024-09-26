@@ -87,6 +87,10 @@ Additionally, the streams are further divided into 3 categories based on their c
 > To download the video in the highest available quality, you will need to resolve the best audio-only and video-only streams separately and then mux them together.
 > The muxing process can be performed using FFmpeg with the help of the [**YoutubeExplode.Converter**](YoutubeExplode.Converter) package.
 
+> **Warning**:
+> Muxed streams are deprecated by YouTube and are not guaranteed to be available for every video.
+> If possible, avoid relying on them too much and instead perform muxing manually using the provided audio-only and video-only streams.
+
 You can request the manifest that lists all available streams for a particular video by calling `Videos.Streams.GetManifestAsync(...)`:
 
 ```csharp

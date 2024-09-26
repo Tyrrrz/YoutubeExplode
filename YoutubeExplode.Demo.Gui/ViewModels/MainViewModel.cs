@@ -97,7 +97,7 @@ public partial class MainViewModel : ObservableObject
                 FileTypeChoices = fileTypes
                     ?.Select(t => new FilePickerFileType($"{t} file") { Patterns = [$"*.{t}"] })
                     .ToArray(),
-                DefaultExtension = Path.GetExtension(defaultFileName)
+                DefaultExtension = Path.GetExtension(defaultFileName),
             }
         );
 

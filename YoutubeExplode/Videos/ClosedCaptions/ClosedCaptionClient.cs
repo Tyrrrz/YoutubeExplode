@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -147,7 +148,7 @@ public class ClosedCaptionClient(HttpClient http)
         var track = await GetAsync(trackInfo, cancellationToken);
 
         var buffer = new StringBuilder();
-        foreach (var (caption, i) in track.Captions.WithIndex())
+        foreach (var (i, caption) in track.Captions.Index())
         {
             cancellationToken.ThrowIfCancellationRequested();
 

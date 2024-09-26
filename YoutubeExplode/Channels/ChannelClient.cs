@@ -65,7 +65,7 @@ public class ChannelClient(HttpClient http)
                     new Thumbnail(
                         "https://www.gstatic.com/youtube/img/tvfilm/clapperboard_profile.png",
                         new Resolution(1024, 1024)
-                    )
+                    ),
                 ]
             );
         }

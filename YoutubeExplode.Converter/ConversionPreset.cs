@@ -34,5 +34,5 @@ public enum ConversionPreset
     /// <summary>
     /// Fastest conversion speed and biggest output file size.
     /// </summary>
-    UltraFast = 3
+    UltraFast = 3,
 }

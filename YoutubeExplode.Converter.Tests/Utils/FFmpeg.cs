@@ -16,10 +16,9 @@ public static class FFmpeg
 {
     private static readonly SemaphoreSlim Lock = new(1, 1);
 
-    public static Version Version { get; } = new(6, 1);
+    public static Version Version { get; } = new(7, 0);
 
-    private static string FileName { get; } =
-        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "ffmpeg.exe" : "ffmpeg";
+    private static string FileName { get; } = OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
 
     public static string FilePath { get; } =
         Path.Combine(
@@ -32,13 +31,13 @@ public static class FFmpeg
     {
         static string GetPlatformMoniker()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
                 return "windows";
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
                 return "linux";
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (OperatingSystem.IsMacOS())
                 return "osx";
 
             throw new NotSupportedException("Unsupported OS platform.");
@@ -68,31 +67,31 @@ public static class FFmpeg
     {
         static string GetHashString()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "48130a80aebffb61d06913350c3ad3187efd85096f898045fd65001bf89d7d7f";
+                    return "96f2d2fae3a298adadf8aaa19c8b79c04ba18afef61f8b8d157032ccd5170992";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-                    return "71e83e4d5b4ed8e9e5b13a8bc118b73affef2ff12f9e14c388bfb17db7008f8d";
+                    return "81b49b5d9cd3ff9ace26f29b0b3cf7cd6358769f27ad32f8079b14a9db0a1e7a";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    return "cd2d765565d1cc36e3fc0653d8ad6444c1736b883144de885c1f178a404c977c";
+                    return "58efff14efe66ae666f9d9145ee035e360e80cc0d61b0ebc4162e3528e7aa933";
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "856b4f0e5cd9de45c98b703f7258d578bbdc0ac818073a645315241f9e7d5780";
+                    return "d1e03fb8dbe439b5f626706140973d48e5704bf0b30d529828a0fcb8cf5abed8";
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (OperatingSystem.IsMacOS())
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-                    return "1671abe5dcc0b4adfaea6f2e531e377a3ccd8ea21aa2b5a0589b0e5ae7d85a37";
+                    return "af9ef6994ef259ae3ae6dc215170c80db5d4390ea7cfe53cc30a544dd8f68a9b";
 
                 if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-                    return "bcbc7de089f68c3565dd40e8fe462df28a181af8df756621fc4004a747b845cf";
+                    return "d799c74e8b17bd40b42cf7a2ad02b6045022085bcd14ecfaea3cd1012d6add30";
             }
 
             throw new NotSupportedException("Unsupported architecture.");
@@ -138,7 +137,7 @@ public static class FFmpeg
         }
 
         // Add the execute permission on Unix
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(
                 FilePath,
