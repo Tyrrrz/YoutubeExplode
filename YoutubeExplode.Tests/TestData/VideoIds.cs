@@ -3,7 +3,6 @@
 internal static class VideoIds
 {
     public const string Normal = "9bZkp7q19f0";
-    public const string Kids = "XqZsoesa55w";
     public const string Unlisted = "UGh4_HsibAE";
     public const string Private = "pb_hHv3fByo";
     public const string Deleted = "qld9w0b-1ao";

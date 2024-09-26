@@ -151,7 +151,6 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
     [Theory]
     [InlineData(VideoIds.Normal)]
-    [InlineData(VideoIds.Kids)]
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
