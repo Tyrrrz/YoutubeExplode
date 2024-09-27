@@ -262,7 +262,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         testOutput.WriteLine(ex.ToString());
     }
 
-    [Fact]
+    [Fact(Skip = "The iOS client returns HLS URLs even for non-live videos")]
     public async Task I_can_try_to_get_the_HTTP_live_stream_URL_for_a_video_and_get_an_error_if_it_is_not_live()
     {
         // Arrange
