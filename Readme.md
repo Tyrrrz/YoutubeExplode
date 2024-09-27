@@ -78,7 +78,7 @@ var duration = video.Duration; // 00:07:20
 Every YouTube video has a number of streams available, differing in containers, video quality, bitrate, framerate, and other parameters.
 Additionally, the streams are further divided into 3 categories based on their content:
 
-- Muxed streams — contain both video and audio
+- ~~Muxed streams — contain both video and audio~~ (no longer provided by YouTube)
 - Audio-only streams — contain only audio
 - Video-only streams — contain only video
 
@@ -110,13 +110,10 @@ using YoutubeExplode.Videos.Streams;
 
 // ...
 
-// Get highest quality muxed stream
-var streamInfo = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality();
-
-// ...or highest bitrate audio-only stream
+// Get the highest bitrate audio-only stream
 var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
 
-// ...or highest quality MP4 video-only stream
+// ...or the highest quality MP4 video-only stream
 var streamInfo = streamManifest
     .GetVideoOnlyStreams()
     .Where(s => s.Container == Container.Mp4)
