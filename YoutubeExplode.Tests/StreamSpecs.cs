@@ -62,9 +62,9 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
-    [InlineData(VideoIds.AgeRestrictedViolent, Skip = "Age-restricted videos are broken again")]
-    [InlineData(VideoIds.AgeRestrictedSexual, Skip = "Age-restricted videos are broken again")]
-    [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+    [InlineData(VideoIds.ContentCheckViolent, Skip = "Needs n-signature deciphering to support")]
+    [InlineData(VideoIds.ContentCheckSexual, Skip = "Needs n-signature deciphering to support")]
+    [InlineData(VideoIds.ContentCheckSuicide)]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     [InlineData(VideoIds.WithHighDynamicRangeStreams)]
@@ -126,8 +126,8 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
     [Theory]
     [InlineData(VideoIds.Normal)]
-    [InlineData(VideoIds.AgeRestrictedViolent, Skip = "Age-restricted videos are broken again")]
-    [InlineData(VideoIds.AgeRestrictedSexual, Skip = "Age-restricted videos are broken again")]
+    [InlineData(VideoIds.ContentCheckViolent, Skip = "Needs n-signature deciphering to support")]
+    [InlineData(VideoIds.ContentCheckSexual, Skip = "Needs n-signature deciphering to support")]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     public async Task I_can_get_a_specific_stream_of_a_video(string videoId)
@@ -154,12 +154,11 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.Unlisted)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
-    [InlineData(VideoIds.AgeRestrictedViolent, Skip = "Age-restricted videos are broken again")]
-    [InlineData(VideoIds.AgeRestrictedSexual, Skip = "Age-restricted videos are broken again")]
-    [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+    [InlineData(VideoIds.ContentCheckViolent, Skip = "Needs n-signature deciphering to support")]
+    [InlineData(VideoIds.ContentCheckSexual, Skip = "Needs n-signature deciphering to support")]
+    [InlineData(VideoIds.ContentCheckSuicide)]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
-    [InlineData(VideoIds.WithSuicideWarning)]
     public async Task I_can_download_a_specific_stream_of_a_video(string videoId)
     {
         // Arrange

@@ -89,8 +89,7 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.RequiresPurchaseDistributed)]
     [InlineData(VideoIds.EmbedRestrictedByYouTube)]
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
-    [InlineData(VideoIds.AgeRestrictedViolent)]
-    [InlineData(VideoIds.AgeRestrictedEmbedRestricted)]
+    [InlineData(VideoIds.ContentCheckViolent)]
     [InlineData(VideoIds.WithBrokenTitle)]
     public async Task I_can_get_the_metadata_of_any_available_video(string videoId)
     {
