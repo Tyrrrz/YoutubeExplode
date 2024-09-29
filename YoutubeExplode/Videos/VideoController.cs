@@ -66,6 +66,7 @@ internal class VideoController(HttpClient http)
             $$"""
             {
               "videoId": {{Json.Serialize(videoId)}},
+              "contentCheckOk": true,
               "context": {
                 "client": {
                   "clientName": "IOS",
