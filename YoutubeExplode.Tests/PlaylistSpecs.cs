@@ -189,4 +189,16 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         // Assert
         videos.Should().HaveCount(10);
     }
+
+    [Fact]
+    public async Task I_can_get_videos_included_in_a_buggy_playlist()
+    {
+        var youtube = new YoutubeClient();
+
+        // Act
+        var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.EnormousDuplicates);
+
+        // Assert
+        videos.Should().HaveCountGreaterOrEqualTo(3_900);
+    }
 }

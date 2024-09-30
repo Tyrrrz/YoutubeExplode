@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
+using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Playlists;
@@ -92,9 +94,15 @@ public class PlaylistClient(HttpClient http)
             );
 
             var videos = new List<PlaylistVideo>();
-
-            foreach (var videoData in response.Videos)
+            var originalVideos = response.Videos.Where(v =>
             {
+                return !encounteredIds.Any(e => string.Equals(e.Value, v.Id));
+            });
+
+            foreach (var videoData in originalVideos)
+            {
+                PlaylistVideoData? lastVideoData = null ?? response.Videos.Last();
+
                 var videoId =
                     videoData.Id
                     ?? throw new YoutubeExplodeException("Failed to extract the video ID.");
@@ -105,9 +113,14 @@ public class PlaylistClient(HttpClient http)
                     videoData.Index
                     ?? throw new YoutubeExplodeException("Failed to extract the video index.");
 
-                // Don't yield the same video twice
                 if (!encounteredIds.Add(videoId))
+                {
+                    /*if (videoData.Id != lastVideoData.Id)
+                    {
+                        continue;
+                    }*/
                     continue;
+                }
 
                 var videoTitle =
                     videoData.Title
