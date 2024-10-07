@@ -191,8 +191,9 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     }
 
     [Fact]
-    public async Task I_can_get_videos_included_in_a_buggy_playlist()
+    public async Task I_can_get_videos_included_in_a_playlist_with_a_lot_of_duplicate()
     {
+        // Arrange
         var youtube = new YoutubeClient();
 
         // Act
@@ -200,5 +201,6 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
 
         // Assert
         videos.Should().HaveCountGreaterOrEqualTo(3_900);
+        videos.Should().OnlyHaveUniqueItems();
     }
 }
