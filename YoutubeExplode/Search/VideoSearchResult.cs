@@ -14,6 +14,8 @@ public class VideoSearchResult(
     string title,
     Author author,
     TimeSpan? duration,
+    long? viewCount,
+    string? simpleUploadDate,
     IReadOnlyList<Thumbnail> thumbnails
 ) : ISearchResult, IVideo
 {
@@ -31,6 +33,12 @@ public class VideoSearchResult(
 
     /// <inheritdoc />
     public TimeSpan? Duration { get; } = duration;
+
+    /// <inheritdoc />
+    public long? ViewCount { get; } = viewCount;
+
+    /// <inheritdoc />
+    public string? SimpleUploadDate { get; } = simpleUploadDate;
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; } = thumbnails;

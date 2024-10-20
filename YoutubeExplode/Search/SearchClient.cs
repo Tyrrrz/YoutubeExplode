@@ -70,6 +70,16 @@ public class SearchClient(HttpClient http)
                     videoData.ChannelId
                     ?? throw new YoutubeExplodeException("Failed to extract the video channel ID.");
 
+                var viewCount =
+                    videoData.ViewCount
+                    ?? throw new YoutubeExplodeException("Failed to extract the video view count.");
+
+                var simpleUploadDate =
+                    videoData.SimpleUploadDate
+                    ?? throw new YoutubeExplodeException(
+                        "Failed to extract the video simple upload date."
+                    );
+
                 var videoThumbnails = videoData
                     .Thumbnails.Select(t =>
                     {
@@ -103,6 +113,8 @@ public class SearchClient(HttpClient http)
                     videoTitle,
                     new Author(videoChannelId, videoChannelTitle),
                     videoData.Duration,
+                    viewCount,
+                    simpleUploadDate,
                     videoThumbnails
                 );
 
