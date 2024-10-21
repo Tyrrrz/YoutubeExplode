@@ -34,10 +34,20 @@ public class VideoSearchResult(
     /// <inheritdoc />
     public TimeSpan? Duration { get; } = duration;
 
-    /// <inheritdoc />
-    public long? ViewCount { get; } = viewCount;
+    /// <summary>
+    /// Video view count.
+    /// </summary>
+    /// <remarks>
+    /// May be little bit inaccurate due to YouTube's view count caching.
+    /// </remarks>
+    public long ViewCount { get; } = viewCount;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Video simplyfied upload date.
+    /// </summary>
+    /// <remarks>
+    /// May be null if the video is planned premiere or live stream.
+    /// </remarks>
     public string? SimpleUploadDate { get; } = simpleUploadDate;
 
     /// <inheritdoc />
