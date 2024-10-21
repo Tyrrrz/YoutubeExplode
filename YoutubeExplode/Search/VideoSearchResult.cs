@@ -14,7 +14,7 @@ public class VideoSearchResult(
     string title,
     Author author,
     TimeSpan? duration,
-    long? viewCount,
+    long viewCount,
     string? simpleUploadDate,
     IReadOnlyList<Thumbnail> thumbnails
 ) : ISearchResult, IVideo
