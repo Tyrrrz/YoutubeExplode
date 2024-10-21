@@ -178,22 +178,6 @@ internal partial class SearchResponse
                 ?.GetStringOrNull();
 
         [Lazy]
-        public long? ViewCount =>
-            content
-                .GetPropertyOrNull("viewCountText")
-                ?.GetPropertyOrNull("simpleText")
-                ?.GetStringOrNull()
-                ?.StripNonDigit()
-                ?.ParseLongOrNull();
-
-        [Lazy]
-        public string? SimpleUploadDate =>
-            content
-                .GetPropertyOrNull("publishedTimeText")
-                ?.GetPropertyOrNull("simpleText")
-                ?.GetStringOrNull();
-
-        [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
             content
                 .GetPropertyOrNull("thumbnails")
