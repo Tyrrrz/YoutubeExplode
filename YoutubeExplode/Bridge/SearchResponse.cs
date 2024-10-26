@@ -123,13 +123,6 @@ internal partial class SearchResponse
                 ?.ParseLongOrNull();
 
         [Lazy]
-        public string? SimpleUploadDate =>
-            content
-                .GetPropertyOrNull("publishedTimeText")
-                ?.GetPropertyOrNull("simpleText")
-                ?.GetStringOrNull();
-
-        [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
             content
                 .GetPropertyOrNull("thumbnail")

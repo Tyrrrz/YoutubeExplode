@@ -15,7 +15,6 @@ public class VideoSearchResult(
     Author author,
     TimeSpan? duration,
     long viewCount,
-    string? simpleUploadDate,
     IReadOnlyList<Thumbnail> thumbnails
 ) : ISearchResult, IVideo
 {
@@ -41,14 +40,6 @@ public class VideoSearchResult(
     /// May be little bit inaccurate due to YouTube's view count caching.
     /// </remarks>
     public long ViewCount { get; } = viewCount;
-
-    /// <summary>
-    /// Video simplyfied upload date.
-    /// </summary>
-    /// <remarks>
-    /// May be null if the video is planned premiere or live stream.
-    /// </remarks>
-    public string? SimpleUploadDate { get; } = simpleUploadDate;
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; } = thumbnails;

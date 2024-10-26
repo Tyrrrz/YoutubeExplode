@@ -72,8 +72,6 @@ public class SearchClient(HttpClient http)
 
                 var viewCount = videoData.ViewCount ?? 0;
 
-                var simpleUploadDate = videoData.SimpleUploadDate;
-
                 var videoThumbnails = videoData
                     .Thumbnails.Select(t =>
                     {
@@ -108,7 +106,6 @@ public class SearchClient(HttpClient http)
                     new Author(videoChannelId, videoChannelTitle),
                     videoData.Duration,
                     viewCount,
-                    simpleUploadDate,
                     videoThumbnails
                 );
 
