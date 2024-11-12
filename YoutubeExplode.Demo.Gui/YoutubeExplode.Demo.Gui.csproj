@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ApplicationIcon>..\favicon.ico</ApplicationIcon>
+    <TargetFramework>net9.0</TargetFramework>
+    <ApplicationIcon>../favicon.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
