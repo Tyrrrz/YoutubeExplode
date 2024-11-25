@@ -28,7 +28,7 @@ internal partial class SearchResponse(JsonElement content)
     [Lazy]
     public IReadOnlyList<PlaylistData> Playlists =>
         ContentRoot
-            ?.EnumerateDescendantProperties("playlistRenderer")
+            ?.EnumerateDescendantProperties("lockupViewModel")
             .Select(j => new PlaylistData(j))
             .ToArray() ?? [];
 
@@ -129,34 +129,34 @@ internal partial class SearchResponse
     public class PlaylistData(JsonElement content)
     {
         [Lazy]
-        public string? Id => content.GetPropertyOrNull("playlistId")?.GetStringOrNull();
+        public string? Id => content.GetPropertyOrNull("contentId")?.GetStringOrNull();
 
         [Lazy]
-        public string? Title =>
-            content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
-            ?? content
-                .GetPropertyOrNull("title")
-                ?.GetPropertyOrNull("runs")
-                ?.EnumerateArrayOrNull()
-                ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
-                .WhereNotNull()
-                .ConcatToString();
+        private JsonElement? Metadata => content.GetPropertyOrNull("metadata")?.GetPropertyOrNull("lockupMetadataViewModel");
+
+        [Lazy]
+        public string? Title => Metadata?.GetPropertyOrNull("title")?.GetPropertyOrNull("content")?.GetStringOrNull();
 
         [Lazy]
         private JsonElement? AuthorDetails =>
-            content
-                .GetPropertyOrNull("longBylineText")
-                ?.GetPropertyOrNull("runs")
+            Metadata
+                ?.EnumerateDescendantProperties("metadataParts")
+                ?.ElementAtOrNull(0)
                 ?.EnumerateArrayOrNull()
-                ?.ElementAtOrNull(0);
+                ?.ElementAtOrNull(0)
+                ?.GetPropertyOrNull("text");
 
         [Lazy]
-        public string? Author => AuthorDetails?.GetPropertyOrNull("text")?.GetStringOrNull();
+        public string? Author => AuthorDetails?.GetPropertyOrNull("content")?.GetStringOrNull();
 
         [Lazy]
         public string? ChannelId =>
             AuthorDetails
-                ?.GetPropertyOrNull("navigationEndpoint")
+                ?.GetPropertyOrNull("commandRuns")
+                ?.EnumerateArrayOrNull()
+                ?.ElementAtOrNull(0)
+                ?.GetPropertyOrNull("onTap")
+                ?.GetPropertyOrNull("innertubeCommand")
                 ?.GetPropertyOrNull("browseEndpoint")
                 ?.GetPropertyOrNull("browseId")
                 ?.GetStringOrNull();
@@ -164,9 +164,13 @@ internal partial class SearchResponse
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
             content
-                .GetPropertyOrNull("thumbnails")
-                ?.EnumerateDescendantProperties("thumbnails")
-                .SelectMany(j => j.EnumerateArrayOrEmpty())
+                .GetPropertyOrNull("contentImage")
+                ?.GetPropertyOrNull("collectionThumbnailViewModel")
+                ?.GetPropertyOrNull("primaryThumbnail")
+                ?.GetPropertyOrNull("thumbnailViewModel")
+                ?.GetPropertyOrNull("image")
+                ?.GetPropertyOrNull("sources")
+                ?.EnumerateArrayOrEmpty()
                 .Select(j => new ThumbnailData(j))
                 .ToArray() ?? [];
     }
