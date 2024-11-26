@@ -30,7 +30,13 @@ internal partial class SearchResponse(JsonElement content)
         ContentRoot
             ?.EnumerateDescendantProperties("lockupViewModel")
             .Select(j => new PlaylistData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        // fall back to older working paths
+        ?? ContentRoot
+            ?.EnumerateDescendantProperties("playlistRenderer")
+            .Select(j => new PlaylistData(j))
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public IReadOnlyList<ChannelData> Channels =>
@@ -129,13 +135,27 @@ internal partial class SearchResponse
     public class PlaylistData(JsonElement content)
     {
         [Lazy]
-        public string? Id => content.GetPropertyOrNull("contentId")?.GetStringOrNull();
+        public string? Id =>
+            content.GetPropertyOrNull("contentId")?.GetStringOrNull()
+            // fall back to older working paths
+            ?? content.GetPropertyOrNull("playlistId")?.GetStringOrNull();
 
         [Lazy]
-        private JsonElement? Metadata => content.GetPropertyOrNull("metadata")?.GetPropertyOrNull("lockupMetadataViewModel");
+        private JsonElement? Metadata =>
+            content.GetPropertyOrNull("metadata")?.GetPropertyOrNull("lockupMetadataViewModel");
 
         [Lazy]
-        public string? Title => Metadata?.GetPropertyOrNull("title")?.GetPropertyOrNull("content")?.GetStringOrNull();
+        public string? Title =>
+            Metadata?.GetPropertyOrNull("title")?.GetPropertyOrNull("content")?.GetStringOrNull()
+            // fall back to older working paths
+            ?? content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+            ?? content
+                .GetPropertyOrNull("title")
+                ?.GetPropertyOrNull("runs")
+                ?.EnumerateArrayOrNull()
+                ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
+                .WhereNotNull()
+                .ConcatToString();
 
         [Lazy]
         private JsonElement? AuthorDetails =>
@@ -144,10 +164,19 @@ internal partial class SearchResponse
                 ?.ElementAtOrNull(0)
                 ?.EnumerateArrayOrNull()
                 ?.ElementAtOrNull(0)
-                ?.GetPropertyOrNull("text");
+                ?.GetPropertyOrNull("text")
+            // fall back to older working paths
+            ?? content
+                .GetPropertyOrNull("longBylineText")
+                ?.GetPropertyOrNull("runs")
+                ?.EnumerateArrayOrNull()
+                ?.ElementAtOrNull(0);
 
         [Lazy]
-        public string? Author => AuthorDetails?.GetPropertyOrNull("content")?.GetStringOrNull();
+        public string? Author =>
+            AuthorDetails?.GetPropertyOrNull("content")?.GetStringOrNull()
+            // fall back to older working paths
+            ?? AuthorDetails?.GetPropertyOrNull("text")?.GetStringOrNull();
 
         [Lazy]
         public string? ChannelId =>
@@ -157,6 +186,12 @@ internal partial class SearchResponse
                 ?.ElementAtOrNull(0)
                 ?.GetPropertyOrNull("onTap")
                 ?.GetPropertyOrNull("innertubeCommand")
+                ?.GetPropertyOrNull("browseEndpoint")
+                ?.GetPropertyOrNull("browseId")
+                ?.GetStringOrNull()
+            // fall back to older working paths
+            ?? AuthorDetails
+                ?.GetPropertyOrNull("navigationEndpoint")
                 ?.GetPropertyOrNull("browseEndpoint")
                 ?.GetPropertyOrNull("browseId")
                 ?.GetStringOrNull();
@@ -172,7 +207,15 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("sources")
                 ?.EnumerateArrayOrEmpty()
                 .Select(j => new ThumbnailData(j))
-                .ToArray() ?? [];
+                .ToArray()
+            // fall back to older working paths
+            ?? content
+                .GetPropertyOrNull("thumbnails")
+                ?.EnumerateDescendantProperties("thumbnails")
+                .SelectMany(j => j.EnumerateArrayOrEmpty())
+                .Select(j => new ThumbnailData(j))
+                .ToArray()
+            ?? [];
     }
 }
 
