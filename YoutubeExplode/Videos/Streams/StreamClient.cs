@@ -13,6 +13,7 @@ using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
+using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Videos.Streams;
 
@@ -123,6 +124,10 @@ public class StreamClient(HttpClient http)
                 streamData.Bitrate?.Pipe(s => new Bitrate(s))
                 ?? throw new YoutubeExplodeException("Failed to extract the stream bitrate.");
 
+            var audioLanguage = !string.IsNullOrWhiteSpace(streamData.AudioLanguageCode)
+                ? new Language(streamData.AudioLanguageCode, streamData.AudioLanguageName!)
+                : (Language?)null;
+
             // Muxed or video-only stream
             if (!string.IsNullOrWhiteSpace(streamData.VideoCodec))
             {
@@ -146,6 +151,8 @@ public class StreamClient(HttpClient http)
                         new FileSize(contentLength.Value),
                         bitrate,
                         streamData.AudioCodec,
+                        audioLanguage,
+                        streamData.IsAudioLanguageDefault,
                         streamData.VideoCodec,
                         videoQuality,
                         videoResolution
@@ -177,7 +184,9 @@ public class StreamClient(HttpClient http)
                     container,
                     new FileSize(contentLength.Value),
                     bitrate,
-                    streamData.AudioCodec
+                    streamData.AudioCodec,
+                    audioLanguage,
+                    streamData.IsAudioLanguageDefault
                 );
 
                 yield return streamInfo;

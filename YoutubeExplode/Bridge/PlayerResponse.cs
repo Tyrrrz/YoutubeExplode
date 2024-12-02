@@ -236,15 +236,37 @@ internal partial class PlayerResponse
         public string? Container => MimeType?.SubstringUntil(";").SubstringAfter("/");
 
         [Lazy]
+        public string? Codecs => MimeType?.SubstringAfter("codecs=\"").SubstringUntil("\"");
+
+        [Lazy]
         private bool IsAudioOnly =>
             MimeType?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false;
 
         [Lazy]
-        public string? Codecs => MimeType?.SubstringAfter("codecs=\"").SubstringUntil("\"");
-
-        [Lazy]
         public string? AudioCodec =>
             IsAudioOnly ? Codecs : Codecs?.SubstringAfter(", ").NullIfWhiteSpace();
+
+        [Lazy]
+        public string? AudioLanguageCode =>
+            content
+                .GetPropertyOrNull("audioTrack")
+                ?.GetPropertyOrNull("id")
+                ?.GetStringOrNull()
+                ?.SubstringUntil(".");
+
+        [Lazy]
+        public string? AudioLanguageName =>
+            content
+                .GetPropertyOrNull("audioTrack")
+                ?.GetPropertyOrNull("displayName")
+                ?.GetStringOrNull();
+
+        [Lazy]
+        public bool? IsAudioLanguageDefault =>
+            content
+                .GetPropertyOrNull("audioTrack")
+                ?.GetPropertyOrNull("audioIsDefault")
+                ?.GetBooleanOrNull();
 
         [Lazy]
         public string? VideoCodec

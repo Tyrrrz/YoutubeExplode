@@ -25,6 +25,14 @@ internal static class JsonExtensions
         return null;
     }
 
+    public static bool? GetBooleanOrNull(this JsonElement element) =>
+        element.ValueKind switch
+        {
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            _ => null,
+        };
+
     public static string? GetStringOrNull(this JsonElement element) =>
         element.ValueKind == JsonValueKind.String ? element.GetString() : null;
 

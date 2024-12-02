@@ -70,6 +70,12 @@ internal partial class DashManifest
         [Lazy]
         public string? AudioCodec => IsAudioOnly ? (string?)content.Attribute("codecs") : null;
 
+        public string? AudioLanguageCode => null;
+
+        public string? AudioLanguageName => null;
+
+        public bool? IsAudioLanguageDefault => null;
+
         [Lazy]
         public string? VideoCodec => IsAudioOnly ? null : (string?)content.Attribute("codecs");
 
