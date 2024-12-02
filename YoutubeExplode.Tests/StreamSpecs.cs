@@ -1,3 +1,4 @@
+using System;
 using System.Buffers;
 using System.IO;
 using System.Linq;
@@ -55,6 +56,61 @@ public class StreamSpecs(ITestOutputHelper testOutput)
             .GetVideoStreams()
             .Should()
             .Contain(s => s.VideoQuality.MaxHeight == 144 && !s.VideoQuality.IsHighDefinition);
+    }
+
+    [Fact]
+    public async Task I_can_get_the_list_of_available_streams_of_a_video_with_multiple_audio_languages()
+    {
+        // Arrange
+        var youtube = new YoutubeClient();
+
+        // Act
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(
+            VideoIds.WithMultipleAudioLanguages
+        );
+
+        // Assert
+        manifest.Streams.Should().NotBeEmpty();
+
+        manifest
+            .GetAudioStreams()
+            .Should()
+            .Contain(t =>
+                t.AudioLanguage != null
+                && t.AudioLanguage.Value.Code == "en-US"
+                && t.AudioLanguage.Value.Name == "English (United States) original"
+                && t.IsAudioLanguageDefault == true
+            );
+
+        manifest
+            .GetAudioStreams()
+            .Should()
+            .Contain(t =>
+                t.AudioLanguage != null
+                && t.AudioLanguage.Value.Code == "fr-FR"
+                && t.AudioLanguage.Value.Name == "French (France)"
+                && t.IsAudioLanguageDefault == false
+            );
+
+        manifest
+            .GetAudioStreams()
+            .Should()
+            .Contain(t =>
+                t.AudioLanguage != null
+                && t.AudioLanguage.Value.Code == "it"
+                && t.AudioLanguage.Value.Name == "Italian"
+                && t.IsAudioLanguageDefault == false
+            );
+
+        manifest
+            .GetAudioStreams()
+            .Should()
+            .Contain(t =>
+                t.AudioLanguage != null
+                && t.AudioLanguage.Value.Code == "pt-BR"
+                && t.AudioLanguage.Value.Name == "Portuguese (Brazil)"
+                && t.IsAudioLanguageDefault == false
+            );
     }
 
     [Theory]

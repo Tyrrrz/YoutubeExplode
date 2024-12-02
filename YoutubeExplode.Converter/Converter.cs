@@ -116,18 +116,43 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
                 if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
                 {
-                    arguments
-                        .Add($"-metadata:s:a:{lastAudioStreamIndex++}")
-                        .Add($"title={audioStreamInfo.Bitrate}");
+                    // Contains language information
+                    if (audioStreamInfo.AudioLanguage is not null)
+                    {
+                        // Language codes can be stored in any format, but most players expect
+                        // three-letter codes, so we'll try to convert to that first.
+                        var languageCode =
+                            audioStreamInfo.AudioLanguage.Value.TryGetThreeLetterCode()
+                            ?? audioStreamInfo.AudioLanguage.Value.Code;
+
+                        arguments
+                            .Add($"-metadata:s:a:{lastAudioStreamIndex}")
+                            .Add($"language={languageCode}")
+                            .Add($"-metadata:s:a:{lastAudioStreamIndex}")
+                            .Add(
+                                $"title={audioStreamInfo.AudioLanguage.Value.Name} | {audioStreamInfo.Bitrate}"
+                            );
+                    }
+                    // Does not contain language information
+                    else
+                    {
+                        arguments
+                            .Add($"-metadata:s:a:{lastAudioStreamIndex}")
+                            .Add($"title={audioStreamInfo.Bitrate}");
+                    }
+
+                    lastAudioStreamIndex++;
                 }
 
                 if (streamInput.Info is IVideoStreamInfo videoStreamInfo)
                 {
                     arguments
-                        .Add($"-metadata:s:v:{lastVideoStreamIndex++}")
+                        .Add($"-metadata:s:v:{lastVideoStreamIndex}")
                         .Add(
                             $"title={videoStreamInfo.VideoQuality.Label} | {videoStreamInfo.Bitrate}"
                         );
+
+                    lastVideoStreamIndex++;
                 }
             }
         }

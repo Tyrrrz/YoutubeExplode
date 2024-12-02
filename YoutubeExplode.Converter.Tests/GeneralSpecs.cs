@@ -92,7 +92,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync("9bZkp7q19f0");
+        var manifest = await youtube.Videos.Streams.GetManifestAsync("ngqcjXfggHQ");
 
         var audioStreamInfos = manifest
             .GetAudioOnlyStreams()
@@ -117,6 +117,20 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Assert
         MediaFormat.IsMp4File(filePath).Should().BeTrue();
 
+        foreach (var streamInfo in audioStreamInfos)
+        {
+            if (streamInfo.AudioLanguage is not null)
+            {
+                FileEx
+                    .ContainsBytes(
+                        filePath,
+                        Encoding.ASCII.GetBytes(streamInfo.AudioLanguage.Value.Name)
+                    )
+                    .Should()
+                    .BeTrue();
+            }
+        }
+
         foreach (var streamInfo in videoStreamInfos)
         {
             FileEx
@@ -136,7 +150,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync("9bZkp7q19f0");
+        var manifest = await youtube.Videos.Streams.GetManifestAsync("ngqcjXfggHQ");
 
         var audioStreamInfos = manifest
             .GetAudioOnlyStreams()
@@ -160,6 +174,20 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 
         // Assert
         MediaFormat.IsWebMFile(filePath).Should().BeTrue();
+
+        foreach (var streamInfo in audioStreamInfos)
+        {
+            if (streamInfo.AudioLanguage is not null)
+            {
+                FileEx
+                    .ContainsBytes(
+                        filePath,
+                        Encoding.ASCII.GetBytes(streamInfo.AudioLanguage.Value.Name)
+                    )
+                    .Should()
+                    .BeTrue();
+            }
+        }
 
         foreach (var streamInfo in videoStreamInfos)
         {

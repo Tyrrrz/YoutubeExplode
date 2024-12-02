@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+// TODO: breaking change: update the namespace
+// ReSharper disable once CheckNamespace
 namespace YoutubeExplode.Videos.ClosedCaptions;
 
 /// <summary>

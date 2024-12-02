@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Videos.Streams;
 
@@ -10,7 +11,9 @@ public class AudioOnlyStreamInfo(
     Container container,
     FileSize size,
     Bitrate bitrate,
-    string audioCodec
+    string audioCodec,
+    Language? audioLanguage,
+    bool? isAudioLanguageDefault
 ) : IAudioStreamInfo
 {
     /// <inheritdoc />
@@ -29,6 +32,15 @@ public class AudioOnlyStreamInfo(
     public string AudioCodec { get; } = audioCodec;
 
     /// <inheritdoc />
+    public Language? AudioLanguage { get; } = audioLanguage;
+
+    /// <inheritdoc />
+    public bool? IsAudioLanguageDefault { get; } = isAudioLanguageDefault;
+
+    /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    public override string ToString() => $"Audio-only ({Container})";
+    public override string ToString() =>
+        AudioLanguage is not null
+            ? $"Audio-only ({Container} | {AudioLanguage})"
+            : $"Audio-only ({Container})";
 }

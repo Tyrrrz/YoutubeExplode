@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Common;
+using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Videos.Streams;
 
@@ -12,6 +13,8 @@ public class MuxedStreamInfo(
     FileSize size,
     Bitrate bitrate,
     string audioCodec,
+    Language? audioLanguage,
+    bool? isAudioLanguageDefault,
     string videoCodec,
     VideoQuality videoQuality,
     Resolution videoResolution
@@ -31,6 +34,12 @@ public class MuxedStreamInfo(
 
     /// <inheritdoc />
     public string AudioCodec { get; } = audioCodec;
+
+    /// <inheritdoc />
+    public Language? AudioLanguage { get; } = audioLanguage;
+
+    /// <inheritdoc />
+    public bool? IsAudioLanguageDefault { get; } = isAudioLanguageDefault;
 
     /// <inheritdoc />
     public string VideoCodec { get; } = videoCodec;

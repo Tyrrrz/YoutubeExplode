@@ -18,6 +18,12 @@ internal interface IStreamData
 
     string? AudioCodec { get; }
 
+    string? AudioLanguageCode { get; }
+
+    string? AudioLanguageName { get; }
+
+    bool? IsAudioLanguageDefault { get; }
+
     string? VideoCodec { get; }
 
     string? VideoQualityLabel { get; }

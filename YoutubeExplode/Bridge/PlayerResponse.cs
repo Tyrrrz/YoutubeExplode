@@ -247,6 +247,28 @@ internal partial class PlayerResponse
             IsAudioOnly ? Codecs : Codecs?.SubstringAfter(", ").NullIfWhiteSpace();
 
         [Lazy]
+        public string? AudioLanguageCode =>
+            content
+                .GetPropertyOrNull("audioTrack")
+                ?.GetPropertyOrNull("id")
+                ?.GetStringOrNull()
+                ?.SubstringUntil(".");
+
+        [Lazy]
+        public string? AudioLanguageName =>
+            content
+                .GetPropertyOrNull("audioTrack")
+                ?.GetPropertyOrNull("displayName")
+                ?.GetStringOrNull();
+
+        [Lazy]
+        public bool? IsAudioLanguageDefault =>
+            content
+                .GetPropertyOrNull("audioTrack")
+                ?.GetPropertyOrNull("audioIsDefault")
+                ?.GetBooleanOrNull();
+
+        [Lazy]
         public string? VideoCodec
         {
             get
