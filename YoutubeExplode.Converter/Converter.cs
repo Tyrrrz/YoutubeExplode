@@ -117,17 +117,21 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
                 if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
                 {
                     // Contains language information
-                    if (audioStreamInfo.AudioLanguage is { } language)
+                    if (audioStreamInfo.AudioLanguage is not null)
                     {
                         // Language codes can be stored in any format, but most players expect
                         // three-letter codes, so we'll try to convert to that first.
-                        var languageCode = language.TryGetThreeLetterCode() ?? language.Code;
+                        var languageCode =
+                            audioStreamInfo.AudioLanguage.Value.TryGetThreeLetterCode()
+                            ?? audioStreamInfo.AudioLanguage.Value.Code;
 
                         arguments
                             .Add($"-metadata:s:a:{lastAudioStreamIndex}")
                             .Add($"language={languageCode}")
                             .Add($"-metadata:s:a:{lastAudioStreamIndex}")
-                            .Add($"title={language.Name} | {audioStreamInfo.Bitrate}");
+                            .Add(
+                                $"title={audioStreamInfo.AudioLanguage.Value.Name} | {audioStreamInfo.Bitrate}"
+                            );
                     }
                     // Does not contain language information
                     else
