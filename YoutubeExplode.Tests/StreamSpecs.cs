@@ -66,7 +66,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(
-            VideoIds.WithMultipleAUdioLanguages
+            VideoIds.WithMultipleAudioLanguages
         );
 
         // Assert
