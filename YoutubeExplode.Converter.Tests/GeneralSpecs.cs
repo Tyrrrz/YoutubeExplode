@@ -150,7 +150,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync("9bZkp7q19f0");
+        var manifest = await youtube.Videos.Streams.GetManifestAsync("ngqcjXfggHQ");
 
         var audioStreamInfos = manifest
             .GetAudioOnlyStreams()
