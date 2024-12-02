@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -100,6 +101,16 @@ public class SearchSpecs
 
         // Assert
         playlists.Should().NotBeEmpty();
+
+        var last = playlists.Last();
+
+        last.Title.Should().NotBeNullOrWhiteSpace();
+        last.Author.Should().NotBeNull();
+        last.Thumbnails.Should().NotBeEmpty();
+
+        var lastThumb = last.Thumbnails.Last();
+        lastThumb.Url.Should().NotBeNullOrWhiteSpace();
+        lastThumb.Resolution.Should().NotBeSameAs(default(Resolution));
     }
 
     [Fact]
