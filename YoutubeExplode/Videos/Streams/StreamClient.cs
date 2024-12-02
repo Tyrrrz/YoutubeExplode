@@ -125,7 +125,10 @@ public class StreamClient(HttpClient http)
                 ?? throw new YoutubeExplodeException("Failed to extract the stream bitrate.");
 
             var audioLanguage = !string.IsNullOrWhiteSpace(streamData.AudioLanguageCode)
-                ? new Language(streamData.AudioLanguageCode, streamData.AudioLanguageName!)
+                ? new Language(
+                    streamData.AudioLanguageCode,
+                    streamData.AudioLanguageName ?? streamData.AudioLanguageCode
+                )
                 : (Language?)null;
 
             // Muxed or video-only stream

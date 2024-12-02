@@ -236,11 +236,11 @@ internal partial class PlayerResponse
         public string? Container => MimeType?.SubstringUntil(";").SubstringAfter("/");
 
         [Lazy]
-        public string? Codecs => MimeType?.SubstringAfter("codecs=\"").SubstringUntil("\"");
-
-        [Lazy]
         private bool IsAudioOnly =>
             MimeType?.StartsWith("audio/", StringComparison.OrdinalIgnoreCase) ?? false;
+
+        [Lazy]
+        public string? Codecs => MimeType?.SubstringAfter("codecs=\"").SubstringUntil("\"");
 
         [Lazy]
         public string? AudioCodec =>

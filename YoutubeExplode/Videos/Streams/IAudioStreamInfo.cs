@@ -21,7 +21,7 @@ public interface IAudioStreamInfo : IStreamInfo
     Language? AudioLanguage { get; }
 
     /// <summary>
-    /// Whether the audio track language corresponds to the default language of the video.
+    /// Whether the audio stream's language corresponds to the default language of the video.
     /// </summary>
     /// <remarks>
     /// May be null if the audio stream does not have language information.
