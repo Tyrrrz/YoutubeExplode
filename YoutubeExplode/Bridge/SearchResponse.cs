@@ -31,7 +31,6 @@ internal partial class SearchResponse(JsonElement content)
             ?.EnumerateDescendantProperties("lockupViewModel")
             .Select(j => new PlaylistData(j))
             .ToArray()
-        // fall back to older working paths
         ?? ContentRoot
             ?.EnumerateDescendantProperties("playlistRenderer")
             .Select(j => new PlaylistData(j))
@@ -137,7 +136,6 @@ internal partial class SearchResponse
         [Lazy]
         public string? Id =>
             content.GetPropertyOrNull("contentId")?.GetStringOrNull()
-            // fall back to older working paths
             ?? content.GetPropertyOrNull("playlistId")?.GetStringOrNull();
 
         [Lazy]
@@ -147,8 +145,10 @@ internal partial class SearchResponse
         [Lazy]
         public string? Title =>
             Metadata?.GetPropertyOrNull("title")?.GetPropertyOrNull("content")?.GetStringOrNull()
-            // fall back to older working paths
-            ?? content.GetPropertyOrNull("title")?.GetPropertyOrNull("simpleText")?.GetStringOrNull()
+            ?? content
+                .GetPropertyOrNull("title")
+                ?.GetPropertyOrNull("simpleText")
+                ?.GetStringOrNull()
             ?? content
                 .GetPropertyOrNull("title")
                 ?.GetPropertyOrNull("runs")
@@ -165,7 +165,6 @@ internal partial class SearchResponse
                 ?.EnumerateArrayOrNull()
                 ?.ElementAtOrNull(0)
                 ?.GetPropertyOrNull("text")
-            // fall back to older working paths
             ?? content
                 .GetPropertyOrNull("longBylineText")
                 ?.GetPropertyOrNull("runs")
@@ -175,7 +174,6 @@ internal partial class SearchResponse
         [Lazy]
         public string? Author =>
             AuthorDetails?.GetPropertyOrNull("content")?.GetStringOrNull()
-            // fall back to older working paths
             ?? AuthorDetails?.GetPropertyOrNull("text")?.GetStringOrNull();
 
         [Lazy]
@@ -189,7 +187,6 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("browseEndpoint")
                 ?.GetPropertyOrNull("browseId")
                 ?.GetStringOrNull()
-            // fall back to older working paths
             ?? AuthorDetails
                 ?.GetPropertyOrNull("navigationEndpoint")
                 ?.GetPropertyOrNull("browseEndpoint")
@@ -208,7 +205,6 @@ internal partial class SearchResponse
                 ?.EnumerateArrayOrEmpty()
                 .Select(j => new ThumbnailData(j))
                 .ToArray()
-            // fall back to older working paths
             ?? content
                 .GetPropertyOrNull("thumbnails")
                 ?.EnumerateDescendantProperties("thumbnails")
