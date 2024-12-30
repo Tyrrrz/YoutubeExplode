@@ -61,7 +61,8 @@ internal class PlaylistController(HttpClient http)
         CancellationToken cancellationToken = default
     )
     {
-        for (var retriesRemaining = 5; ; retriesRemaining--)
+        const int retriesCount = 5;
+        for (var retriesRemaining = retriesCount; ; retriesRemaining--)
         {
             using var request = new HttpRequestMessage(
                 HttpMethod.Post,
@@ -104,8 +105,9 @@ internal class PlaylistController(HttpClient http)
                     continue;
 
                 // Some system playlists are unavailable through this endpoint until their page is opened by
-                // at least one user. Retry if this is the first request and we haven't retried yet.
-                if (index <= 0 && string.IsNullOrWhiteSpace(visitorData) && retriesRemaining >= 5)
+                // at least one user. If this is the first request, and we haven't retried yet, attempt to
+                // warm up the playlist by opening its page, and then retry.
+                if (index <= 0 && string.IsNullOrWhiteSpace(visitorData) && retriesRemaining >= retriesCount)
                 {
                     using (
                         await http.GetAsync(
