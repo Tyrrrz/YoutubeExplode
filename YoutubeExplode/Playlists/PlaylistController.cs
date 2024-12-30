@@ -61,7 +61,8 @@ internal class PlaylistController(HttpClient http)
         CancellationToken cancellationToken = default
     )
     {
-        for (var retriesRemaining = 5; ; retriesRemaining--)
+        const int retriesCount = 5;
+        for (var retriesRemaining = retriesCount; ; retriesRemaining--)
         {
             using var request = new HttpRequestMessage(
                 HttpMethod.Post,
@@ -99,9 +100,27 @@ internal class PlaylistController(HttpClient http)
             if (!playlistResponse.IsAvailable)
             {
                 // Retry if this is not the first request, meaning that the previous requests were successful,
-                // and that the playlist is probably not actually unavailable.
+                // indicating that it's most likely a transient error.
                 if (index > 0 && !string.IsNullOrWhiteSpace(visitorData) && retriesRemaining > 0)
                     continue;
+
+                // Some system playlists are unavailable through this endpoint until their page is opened by
+                // at least one user. If this is the first request, and we haven't retried yet, attempt to
+                // warm up the playlist by opening its page, and then retry.
+                if (index <= 0 && string.IsNullOrWhiteSpace(visitorData) && retriesRemaining >= retriesCount)
+                {
+                    using (
+                        await http.GetAsync(
+                            $"https://youtube.com/playlist?list={playlistId}",
+                            cancellationToken
+                        )
+                    )
+                    {
+                        // We don't actually care about the outcome of this request
+                    }
+
+                    continue;
+                }
 
                 throw new PlaylistUnavailableException(
                     $"Playlist '{playlistId}' is not available."
