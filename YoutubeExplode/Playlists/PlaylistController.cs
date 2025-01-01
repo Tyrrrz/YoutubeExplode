@@ -107,7 +107,11 @@ internal class PlaylistController(HttpClient http)
                 // Some system playlists are unavailable through this endpoint until their page is opened by
                 // at least one user. If this is the first request, and we haven't retried yet, attempt to
                 // warm up the playlist by opening its page, and then retry.
-                if (index <= 0 && string.IsNullOrWhiteSpace(visitorData) && retriesRemaining >= retriesCount)
+                if (
+                    index <= 0
+                    && string.IsNullOrWhiteSpace(visitorData)
+                    && retriesRemaining >= retriesCount
+                )
                 {
                     using (
                         await http.GetAsync(
