@@ -10,7 +10,8 @@ namespace YoutubeExplode.Videos;
 internal class VideoController(HttpClient http)
 {
     protected HttpClient Http { get; } = http;
-    private string vData = null!;
+
+    private string _visitorData = null!;
 
     public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
         VideoId videoId,
@@ -62,8 +63,8 @@ internal class VideoController(HttpClient http)
             "https://www.youtube.com/youtubei/v1/player"
         );
 
-        if (vData == null)
-            vData = YoutubeParsingHelper.GetRandomVisitorData();
+        if (_visitorData == null)
+            _visitorData = YoutubeParsingHelper.GetRandomVisitorData();
 
         request.Content = new StringContent(
             // lang=json
@@ -80,7 +81,7 @@ internal class VideoController(HttpClient http)
                   "platform": "MOBILE",
                   "osName": "IOS",
                   "osVersion": "18.1.0.22B83",
-                  "visitorData": {{Json.Serialize(vData)}},
+                  "visitorData": {{Json.Serialize(_visitorData)}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
