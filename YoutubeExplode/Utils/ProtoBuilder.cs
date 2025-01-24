@@ -6,16 +6,16 @@ namespace YoutubeExplode.Utils
 {
     internal class ProtoBuilder
     {
-        private MemoryStream byteBuffer;
+        private MemoryStream _byteBuffer;
 
         public ProtoBuilder()
         {
-            this.byteBuffer = new MemoryStream();
+            _byteBuffer = new MemoryStream();
         }
 
         public byte[] ToBytes()
         {
-            return byteBuffer.ToArray();
+            return _byteBuffer.ToArray();
         }
 
         public string ToUrlencodedBase64()
@@ -32,7 +32,7 @@ namespace YoutubeExplode.Utils
         {
             if (val == 0)
             {
-                byteBuffer.WriteByte(0);
+                _byteBuffer.WriteByte(0);
             }
             else
             {
@@ -46,7 +46,7 @@ namespace YoutubeExplode.Utils
                     {
                         b |= 0x80;
                     }
-                    byteBuffer.WriteByte(b);
+                    _byteBuffer.WriteByte(b);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace YoutubeExplode.Utils
         {
             Field(field, 2);
             WriteVarint(bytes.Length);
-            byteBuffer.Write(bytes, 0, bytes.Length);
+            _byteBuffer.Write(bytes, 0, bytes.Length);
         }
     }
 }
