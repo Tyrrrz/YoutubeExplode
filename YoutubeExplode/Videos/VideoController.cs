@@ -11,8 +11,6 @@ internal class VideoController(HttpClient http)
 {
     protected HttpClient Http { get; } = http;
 
-    private string _visitorData = null!;
-
     public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
         VideoId videoId,
         CancellationToken cancellationToken = default
@@ -63,9 +61,6 @@ internal class VideoController(HttpClient http)
             "https://www.youtube.com/youtubei/v1/player"
         );
 
-        if (_visitorData == null)
-            _visitorData = YoutubeParsingHelper.GetRandomVisitorData();
-
         request.Content = new StringContent(
             // lang=json
             $$"""
@@ -81,7 +76,7 @@ internal class VideoController(HttpClient http)
                   "platform": "MOBILE",
                   "osName": "IOS",
                   "osVersion": "18.1.0.22B83",
-                  "visitorData": {{Json.Serialize(_visitorData)}},
+                  "visitorData": {{Json.Serialize(VisitorData.Generate())}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
