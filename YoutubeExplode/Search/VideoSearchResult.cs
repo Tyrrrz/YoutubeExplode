@@ -14,6 +14,7 @@ public class VideoSearchResult(
     string title,
     Author author,
     TimeSpan? duration,
+    long viewCount,
     IReadOnlyList<Thumbnail> thumbnails
 ) : ISearchResult, IVideo
 {
@@ -31,6 +32,14 @@ public class VideoSearchResult(
 
     /// <inheritdoc />
     public TimeSpan? Duration { get; } = duration;
+
+    /// <summary>
+    /// Video view count.
+    /// </summary>
+    /// <remarks>
+    /// May be little bit inaccurate due to YouTube's view count caching.
+    /// </remarks>
+    public long ViewCount { get; } = viewCount;
 
     /// <inheritdoc />
     public IReadOnlyList<Thumbnail> Thumbnails { get; } = thumbnails;
