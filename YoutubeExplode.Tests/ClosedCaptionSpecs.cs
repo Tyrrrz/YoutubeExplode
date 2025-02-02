@@ -22,7 +22,7 @@ public class ClosedCaptionSpecs
         );
 
         // Assert
-        manifest.Tracks.Should().HaveCountGreaterOrEqualTo(3);
+        manifest.Tracks.Should().HaveCountGreaterThanOrEqualTo(3);
 
         manifest
             .Tracks.Should()
@@ -64,7 +64,7 @@ public class ClosedCaptionSpecs
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
         // Assert
-        track.Captions.Should().HaveCountGreaterOrEqualTo(500);
+        track.Captions.Should().HaveCountGreaterThanOrEqualTo(500);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class ClosedCaptionSpecs
         var track = await youtube.Videos.ClosedCaptions.GetAsync(trackInfo);
 
         // Assert
-        track.Captions.Should().HaveCountGreaterOrEqualTo(2000);
+        track.Captions.Should().HaveCountGreaterThanOrEqualTo(2000);
     }
 
     [Fact]

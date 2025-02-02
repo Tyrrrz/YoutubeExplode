@@ -101,7 +101,7 @@ public class ChannelSpecs
         var videos = await youtube.Channels.GetUploadsAsync(ChannelIds.Normal);
 
         // Assert
-        videos.Should().HaveCountGreaterOrEqualTo(730);
+        videos.Should().HaveCountGreaterThanOrEqualTo(730);
         videos.Select(v => v.Author.ChannelId).Should().OnlyContain(i => i == ChannelIds.Normal);
     }
 }

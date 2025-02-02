@@ -49,10 +49,10 @@ public class VideoSpecs(ITestOutputHelper testOutput)
                 "육갑",
                 "Psy Gangnam Style"
             );
-        video.Engagement.ViewCount.Should().BeGreaterOrEqualTo(4_650_000_000);
-        video.Engagement.LikeCount.Should().BeGreaterOrEqualTo(24_000_000);
-        video.Engagement.DislikeCount.Should().BeGreaterOrEqualTo(0);
-        video.Engagement.AverageRating.Should().BeGreaterOrEqualTo(0);
+        video.Engagement.ViewCount.Should().BeGreaterThanOrEqualTo(4_650_000_000);
+        video.Engagement.LikeCount.Should().BeGreaterThanOrEqualTo(24_000_000);
+        video.Engagement.DislikeCount.Should().BeGreaterThanOrEqualTo(0);
+        video.Engagement.AverageRating.Should().BeGreaterThanOrEqualTo(0);
     }
 
     [Fact]
