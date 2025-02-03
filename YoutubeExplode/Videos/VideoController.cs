@@ -76,7 +76,7 @@ internal class VideoController(HttpClient http)
                   "platform": "MOBILE",
                   "osName": "IOS",
                   "osVersion": "18.1.0.22B83",
-                  "visitorData": {{Json.Serialize(VisitorData.Generate())}},
+                  "visitorData": {{Json.Serialize(await VisitorData.ExtractFromYoutube(Http))}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
