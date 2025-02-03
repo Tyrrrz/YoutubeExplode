@@ -1,15 +1,58 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
+using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos;
 
 internal class VideoController(HttpClient http)
 {
+    private string? _visitorData;
+
     protected HttpClient Http { get; } = http;
+
+    private async ValueTask<string> ResolveVisitorDataAsync(
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (!string.IsNullOrWhiteSpace(_visitorData))
+            return _visitorData;
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            "https://www.youtube.com/sw.js_data"
+        );
+
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        request.Headers.Add(
+            "User-Agent",
+            "com.google.ios.youtube/19.45.4 (iPhone16,2; U; CPU iOS 18_1_0 like Mac OS X; US)"
+        );
+
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        // TODO: move this to a bridge wrapper
+        var jsonString = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (jsonString.StartsWith(")]}'"))
+            jsonString = jsonString[4..];
+
+        var json = Json.Parse(jsonString);
+
+        // This is just an ordered (but unstructured) blob of data
+        var value = json[0][2][0][0][13].GetStringOrNull();
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new YoutubeExplodeException("Failed to resolve visitor data.");
+        }
+
+        return _visitorData = value;
+    }
 
     public async ValueTask<VideoWatchPage> GetVideoWatchPageAsync(
         VideoId videoId,
@@ -47,6 +90,8 @@ internal class VideoController(HttpClient http)
         CancellationToken cancellationToken = default
     )
     {
+        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
+
         // The most optimal client to impersonate is any mobile client, because they
         // don't require signature deciphering (for both normal and n-parameter signatures).
         // However, we can't use the ANDROID client because it has a limitation, preventing it
@@ -76,7 +121,7 @@ internal class VideoController(HttpClient http)
                   "platform": "MOBILE",
                   "osName": "IOS",
                   "osVersion": "18.1.0.22B83",
-                  "visitorData": {{Json.Serialize(await VisitorData.ExtractFromYoutube(Http))}},
+                  "visitorData": {{Json.Serialize(visitorData)}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
@@ -112,6 +157,8 @@ internal class VideoController(HttpClient http)
         CancellationToken cancellationToken = default
     )
     {
+        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
+
         // The only client that can handle age-restricted videos without authentication is the
         // TVHTML5_SIMPLY_EMBEDDED_PLAYER client.
         // This client does require signature deciphering, so we only use it as a fallback.
@@ -129,6 +176,7 @@ internal class VideoController(HttpClient http)
                 "client": {
                   "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
                   "clientVersion": "2.0",
+                  "visitorData": {{Json.Serialize(visitorData)}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
