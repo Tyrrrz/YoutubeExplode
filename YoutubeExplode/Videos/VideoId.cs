@@ -59,6 +59,18 @@ public partial struct VideoId
                 return id;
         }
 
+        // Try to extract the ID from the URL (shortened)
+        // https://youtu.be/watch?v=Fcds0_MrgNU
+        {
+            var id = Regex
+                .Match(videoIdOrUrl, @"youtu\.be/watch.*?v=(.*?)(?:\?|&|/|$)")
+                .Groups[1]
+                .Value.Pipe(WebUtility.UrlDecode);
+
+            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
+                return id;
+        }
+
         // Try to extract the ID from the URL (embedded)
         // https://www.youtube.com/embed/yIVRs6YSbOM
         {
