@@ -59,7 +59,7 @@ public partial struct VideoId
                 return id;
         }
 
-        // Try to extract the ID from the URL (shortened)
+        // Try to extract the ID from the URL (partially shortened)
         // https://youtu.be/watch?v=Fcds0_MrgNU
         {
             var id = Regex
