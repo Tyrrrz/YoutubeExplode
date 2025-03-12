@@ -22,6 +22,7 @@ public class VideoIdSpecs
 
     [Theory]
     [InlineData("youtube.com/watch?v=yIVRs6YSbOM", "yIVRs6YSbOM")]
+    [InlineData("youtu.be/watch?v=Fcds0_MrgNU", "Fcds0_MrgNU")]
     [InlineData("youtu.be/yIVRs6YSbOM", "yIVRs6YSbOM")]
     [InlineData("youtube.com/embed/yIVRs6YSbOM", "yIVRs6YSbOM")]
     [InlineData("youtube.com/shorts/sKL1vjP0tIo", "sKL1vjP0tIo")]
