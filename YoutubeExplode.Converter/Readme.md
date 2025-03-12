@@ -34,7 +34,7 @@ var videoUrl = "https://youtube.com/watch?v=u_yIGGhubZs";
 await youtube.Videos.DownloadAsync(videoUrl, "video.mp4");
 ```
 
-Under the hood, this resolves the video's media streams, downloads the best candidates based on format, bitrate, framerate, and quality, and muxes them together into a single file.
+Internally, this resolves the video's media streams, downloads the best candidates based on format, bitrate, framerate, and quality, and muxes them together into a single file.
 
 > **Note**:
 > If the specified output format is a known audio-only container (e.g. `mp3` or `ogg`) then only the audio stream is downloaded.
@@ -89,8 +89,10 @@ var videoStreamInfo = streamManifest
     .First(s => s.VideoQuality.Label == "1080p60");
 
 // Download and mux streams into a single file
-var streamInfos = new IStreamInfo[] { audioStreamInfo, videoStreamInfo };
-await youtube.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder("video.mp4").Build());
+await youtube.Videos.DownloadAsync(
+    [audioStreamInfo, videoStreamInfo],
+    new ConversionRequestBuilder("video.mp4").Build()
+);
 ```
 
 > **Warning**:
