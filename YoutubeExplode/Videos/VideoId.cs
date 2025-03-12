@@ -47,11 +47,11 @@ public partial struct VideoId
                 return id;
         }
 
-        // Try to extract the ID from the URL (shortened)
-        // https://youtu.be/yIVRs6YSbOM
+        // Try to extract the ID from the URL (partially shortened)
+        // https://youtu.be/watch?v=Fcds0_MrgNU
         {
             var id = Regex
-                .Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)")
+                .Match(videoIdOrUrl, @"youtu\.be/watch.*?v=(.*?)(?:\?|&|/|$)")
                 .Groups[1]
                 .Value.Pipe(WebUtility.UrlDecode);
 
@@ -59,11 +59,11 @@ public partial struct VideoId
                 return id;
         }
 
-        // Try to extract the ID from the URL (partially shortened)
-        // https://youtu.be/watch?v=Fcds0_MrgNU
+        // Try to extract the ID from the URL (shortened)
+        // https://youtu.be/yIVRs6YSbOM
         {
             var id = Regex
-                .Match(videoIdOrUrl, @"youtu\.be/watch.*?v=(.*?)(?:\?|&|/|$)")
+                .Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)")
                 .Groups[1]
                 .Value.Pipe(WebUtility.UrlDecode);
 
