@@ -60,9 +60,9 @@ internal static class UrlEx
 
             queryBuilder.Append(queryBuilder.Length > 0 ? '&' : '?');
 
-            queryBuilder.Append(WebUtility.UrlEncode(parameter.Key));
+            queryBuilder.Append(Uri.EscapeDataString(parameter.Key));
             queryBuilder.Append('=');
-            queryBuilder.Append(WebUtility.UrlEncode(parameter.Value));
+            queryBuilder.Append(Uri.EscapeDataString(parameter.Value));
         }
 
         urlBuilder.Query = queryBuilder.ToString();
@@ -77,8 +77,8 @@ internal static class UrlEx
 
         return urlWithoutParameter
             + (hasOtherParameters ? '&' : '?')
-            + WebUtility.UrlEncode(key)
+            + Uri.EscapeDataString(key)
             + '='
-            + WebUtility.UrlEncode(value);
+            + Uri.EscapeDataString(value);
     }
 }
