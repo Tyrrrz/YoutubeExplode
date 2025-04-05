@@ -303,10 +303,10 @@ using YoutubeExplode;
 
 var youtube = new YoutubeClient();
 
-var channelUrl = "https://youtube.com/@BeauMiles";
+var channelUrl = "https://youtube.com/@BlenderOfficial";
 var channel = await youtube.Channels.GetByHandleAsync(channelUrl);
 
-var id = channel.Id; // "UCm325cMiw9B15xl22_gr6Dw"
+var id = channel.Id; // "UCSMOQeBJ2RAnuFungnQOxLg"
 ```
 
 #### Retrieving channel uploads
