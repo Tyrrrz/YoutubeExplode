@@ -231,16 +231,15 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         // Act & assert
-        var ex = await Assert.ThrowsAnyAsync<Exception>(
-            async () =>
-                await youtube.Videos.DownloadAsync(
-                    "9bZkp7q19f0",
-                    filePath,
-                    o =>
-                        o.SetFFmpegPath(FFmpeg.FilePath)
-                            .SetContainer("invalid_format")
-                            .SetPreset(ConversionPreset.UltraFast)
-                )
+        var ex = await Assert.ThrowsAnyAsync<Exception>(async () =>
+            await youtube.Videos.DownloadAsync(
+                "9bZkp7q19f0",
+                filePath,
+                o =>
+                    o.SetFFmpegPath(FFmpeg.FilePath)
+                        .SetContainer("invalid_format")
+                        .SetPreset(ConversionPreset.UltraFast)
+            )
         );
 
         Directory.EnumerateFiles(dir.Path, "*", SearchOption.AllDirectories).Should().BeEmpty();

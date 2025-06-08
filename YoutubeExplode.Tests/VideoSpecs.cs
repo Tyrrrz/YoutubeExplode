@@ -62,8 +62,8 @@ public class VideoSpecs(ITestOutputHelper testOutput)
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
-            async () => await youtube.Videos.GetAsync(VideoIds.Private)
+        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+            await youtube.Videos.GetAsync(VideoIds.Private)
         );
 
         testOutput.WriteLine(ex.ToString());
@@ -76,8 +76,8 @@ public class VideoSpecs(ITestOutputHelper testOutput)
         var youtube = new YoutubeClient();
 
         // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(
-            async () => await youtube.Videos.GetAsync(VideoIds.Deleted)
+        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
+            await youtube.Videos.GetAsync(VideoIds.Deleted)
         );
 
         testOutput.WriteLine(ex.ToString());
