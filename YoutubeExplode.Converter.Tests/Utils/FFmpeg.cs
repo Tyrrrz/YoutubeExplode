@@ -16,7 +16,7 @@ public static class FFmpeg
 {
     private static readonly SemaphoreSlim Lock = new(1, 1);
 
-    public static Version Version { get; } = new(7, 0);
+    public static Version Version { get; } = new(7, 1, 1);
 
     private static string FileName { get; } = OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
 
@@ -83,6 +83,12 @@ public static class FFmpeg
             {
                 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
                     return "d1e03fb8dbe439b5f626706140973d48e5704bf0b30d529828a0fcb8cf5abed8";
+
+                if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
+                    return "74ab5e54627eec4a439dc3f45a1b201ff9c5e5cadab167eff9cad3b87a21136f";
+
+                if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                    return "eeaf728855245e5b6dab9e9fbcfde04daf74e03142b5ba089884261dccf15557";
             }
 
             if (OperatingSystem.IsMacOS())
