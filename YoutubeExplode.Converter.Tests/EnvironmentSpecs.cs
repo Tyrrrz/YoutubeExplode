@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 using YoutubeExplode.Converter.Tests.Utils;
 
 namespace YoutubeExplode.Converter.Tests;
 
-public class EnvironmentSpecs : IAsyncLifetime
+public class EnvironmentSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 {
     public async Task InitializeAsync() => await FFmpeg.InitializeAsync();
 
@@ -23,16 +24,25 @@ public class EnvironmentSpecs : IAsyncLifetime
 
         var logFilePath = Path.Combine(dir.Path, "ffreport.log");
 
+        // FFREPORT file path must be relative to the current working directory
+        var logFilePathFormatted = Path.GetRelativePath(
+                Directory.GetCurrentDirectory(),
+                logFilePath
+            )
+            .Replace('\\', '/');
+
         // Act
         await youtube.Videos.DownloadAsync(
             "9bZkp7q19f0",
             filePath,
-            o => o
-                .SetFFmpegPath(FFmpeg.FilePath)
-                .SetEnvironmentVariable("FFREPORT", $"file={logFilePath}:level=32")
+            o =>
+                o.SetFFmpegPath(FFmpeg.FilePath)
+                    .SetEnvironmentVariable("FFREPORT", $"file={logFilePathFormatted}:level=32")
         );
 
         // Assert
         File.Exists(logFilePath).Should().BeTrue();
+
+        testOutput.WriteLine(await File.ReadAllTextAsync(logFilePath));
     }
 }
