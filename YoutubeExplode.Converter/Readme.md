@@ -58,6 +58,7 @@ await youtube.Videos.DownloadAsync(videoUrl, "video.mp4", o => o
     .SetContainer("webm") // override format
     .SetPreset(ConversionPreset.UltraFast) // change preset
     .SetFFmpegPath("path/to/ffmpeg") // custom FFmpeg location
+    .SetEnvironmentVariable("FFREPORT", "file=ffreport.log") // custom environment variable(s) passed to FFmpeg
 );
 ```
 
