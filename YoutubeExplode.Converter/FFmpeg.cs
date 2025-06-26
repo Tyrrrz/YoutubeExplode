@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,9 +14,12 @@ using YoutubeExplode.Converter.Utils.Extensions;
 namespace YoutubeExplode.Converter;
 
 // Ideally this should use named pipes and stream through stdout.
-// However, named pipes aren't well supported on non-Windows OS and
+// However, named pipes aren't well-supported on non-Windows OS and
 // stdout streaming only works with some specific formats.
-internal partial class FFmpeg(string filePath)
+internal partial class FFmpeg(
+    string filePath,
+    IReadOnlyDictionary<string, string?> environmentVariables
+)
 {
     public async ValueTask ExecuteAsync(
         string arguments,
@@ -36,6 +40,7 @@ internal partial class FFmpeg(string filePath)
         {
             await Cli.Wrap(filePath)
                 .WithArguments(arguments)
+                .WithEnvironmentVariables(environmentVariables)
                 .WithStandardErrorPipe(stdErrPipe)
                 .ExecuteAsync(cancellationToken);
         }
