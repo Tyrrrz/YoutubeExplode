@@ -24,20 +24,22 @@ public class EnvironmentSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 
         var logFilePath = Path.Combine(dir.Path, "ffreport.log");
 
-        // FFREPORT file path must be relative to the current working directory
-        var logFilePathFormatted = Path.GetRelativePath(
-                Directory.GetCurrentDirectory(),
-                logFilePath
-            )
-            .Replace('\\', '/');
-
         // Act
         await youtube.Videos.DownloadAsync(
             "9bZkp7q19f0",
             filePath,
             o =>
+            {
+                // FFREPORT file path must be relative to the current working directory
+                var logFilePathFormatted = Path.GetRelativePath(
+                        Directory.GetCurrentDirectory(),
+                        logFilePath
+                    )
+                    .Replace('\\', '/');
+
                 o.SetFFmpegPath(FFmpeg.FilePath)
-                    .SetEnvironmentVariable("FFREPORT", $"file={logFilePathFormatted}:level=32")
+                    .SetEnvironmentVariable("FFREPORT", $"file={logFilePathFormatted}:level=32");
+            }
         );
 
         // Assert
