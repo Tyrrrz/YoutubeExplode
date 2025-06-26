@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using YoutubeExplode.Converter.Utils.Extensions;
@@ -11,6 +12,10 @@ namespace YoutubeExplode.Converter;
 /// </summary>
 public class ConversionRequestBuilder(string outputFilePath)
 {
+    private readonly Dictionary<string, string?> _environmentVariables = new(
+        StringComparer.Ordinal
+    );
+
     private string? _ffmpegCliFilePath;
     private Container? _container;
     private ConversionPreset _preset;
@@ -65,6 +70,15 @@ public class ConversionRequestBuilder(string outputFilePath)
     }
 
     /// <summary>
+    /// Sets an environment variable for the FFmpeg process.
+    /// </summary>
+    public ConversionRequestBuilder SetEnvironmentVariable(string name, string? value)
+    {
+        _environmentVariables[name] = value;
+        return this;
+    }
+
+    /// <summary>
     /// Builds the resulting request.
     /// </summary>
     public ConversionRequest Build() =>
@@ -72,6 +86,7 @@ public class ConversionRequestBuilder(string outputFilePath)
             _ffmpegCliFilePath ?? FFmpeg.GetFilePath(),
             outputFilePath,
             _container ?? GetDefaultContainer(),
-            _preset
+            _preset,
+            _environmentVariables
         );
 }

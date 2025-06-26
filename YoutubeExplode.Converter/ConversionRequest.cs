@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using YoutubeExplode.Videos.Streams;
 
@@ -11,7 +12,8 @@ public class ConversionRequest(
     string ffmpegCliFilePath,
     string outputFilePath,
     Container container,
-    ConversionPreset preset
+    ConversionPreset preset,
+    IReadOnlyDictionary<string, string?> environmentVariables
 )
 {
     /// <summary>
@@ -24,7 +26,13 @@ public class ConversionRequest(
         ConversionFormat format,
         ConversionPreset preset
     )
-        : this(ffmpegCliFilePath, outputFilePath, new Container(format.Name), preset) { }
+        : this(
+            ffmpegCliFilePath,
+            outputFilePath,
+            new Container(format.Name),
+            preset,
+            new Dictionary<string, string?>()
+        ) { }
 
     /// <summary>
     /// Path to the FFmpeg CLI.
@@ -51,4 +59,10 @@ public class ConversionRequest(
     /// Encoder preset.
     /// </summary>
     public ConversionPreset Preset { get; } = preset;
+
+    /// <summary>
+    /// Environment variables to set for the FFmpeg process.
+    /// </summary>
+    public IReadOnlyDictionary<string, string?> EnvironmentVariables { get; } =
+        environmentVariables;
 }

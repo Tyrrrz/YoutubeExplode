@@ -199,7 +199,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task I_can_download_a_video_using_custom_conversion_settings()
+    public async Task I_can_download_a_video_with_custom_conversion_settings()
     {
         // Arrange
         var youtube = new YoutubeClient();

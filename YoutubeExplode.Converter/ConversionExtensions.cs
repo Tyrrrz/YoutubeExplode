@@ -79,7 +79,7 @@ public static class ConversionExtensions
         CancellationToken cancellationToken = default
     )
     {
-        var ffmpeg = new FFmpeg(request.FFmpegCliFilePath);
+        var ffmpeg = new FFmpeg(request.FFmpegCliFilePath, request.EnvironmentVariables);
         var converter = new Converter(videoClient, ffmpeg, request.Preset);
 
         await converter.ProcessAsync(
