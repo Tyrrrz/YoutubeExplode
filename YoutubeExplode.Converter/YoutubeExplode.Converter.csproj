@@ -27,7 +27,7 @@
     <PackageReference Include="PolyShim" Version="1.15.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.8" />
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="9.0.9" />
     <ProjectReference Include="..\YoutubeExplode\YoutubeExplode.csproj" />
   </ItemGroup>
 </Project>
