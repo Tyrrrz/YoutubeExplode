@@ -270,7 +270,7 @@ public class StreamClient(HttpClient http)
             var playerResponse = await _controller.GetPlayerResponseAsync(
                 videoId,
                 cancellationToken
-            );
+            );a
 
             return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
         }
