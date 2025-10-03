@@ -77,7 +77,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
             .Contain(t =>
                 t.AudioLanguage != null
                 && t.AudioLanguage.Value.Code == "en-US"
-                && t.AudioLanguage.Value.Name == "English (United States) original"
+                && t.AudioLanguage.Value.Name == "English (US) original"
                 && t.IsAudioLanguageDefault == true
             );
 
@@ -87,7 +87,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
             .Contain(t =>
                 t.AudioLanguage != null
                 && t.AudioLanguage.Value.Code == "fr-FR"
-                && t.AudioLanguage.Value.Name == "French (France)"
+                && t.AudioLanguage.Value.Name == "French (FR)"
                 && t.IsAudioLanguageDefault == false
             );
 
@@ -107,7 +107,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
             .Contain(t =>
                 t.AudioLanguage != null
                 && t.AudioLanguage.Value.Code == "pt-BR"
-                && t.AudioLanguage.Value.Name == "Portuguese (Brazil)"
+                && t.AudioLanguage.Value.Name == "Portuguese (BR)"
                 && t.IsAudioLanguageDefault == false
             );
     }
