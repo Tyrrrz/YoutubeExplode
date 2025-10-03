@@ -28,6 +28,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         foreach (var cookie in initialCookies)
             _cookieContainer.Add(cookie);
 
+        // Don't overwrite custom cookie
         // Consent to the use of cookies on YouTube.
         // This is required to access some personalized content, such as mix playlists.
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
