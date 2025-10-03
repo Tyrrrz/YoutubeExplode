@@ -53,6 +53,27 @@ internal class PlaylistVideoData(JsonElement content)
             ?.GetPropertyOrNull("navigationEndpoint")
             ?.GetPropertyOrNull("browseEndpoint")
             ?.GetPropertyOrNull("browseId")
+            ?.GetStringOrNull()
+        // Some videos have multiple authors. Our current data model does not support that, so we only
+        // extract the first one, since it's the channel that actually uploaded the video.
+        ?? AuthorDetails
+            ?.GetPropertyOrNull("navigationEndpoint")
+            ?.GetPropertyOrNull("showDialogCommand")
+            ?.GetPropertyOrNull("panelLoadingStrategy")
+            ?.GetPropertyOrNull("inlineContent")
+            ?.GetPropertyOrNull("dialogViewModel")
+            ?.GetPropertyOrNull("customContent")
+            ?.GetPropertyOrNull("listViewModel")
+            ?.GetPropertyOrNull("listItems")
+            ?.EnumerateArrayOrNull()
+            ?.FirstOrNull()
+            ?.GetPropertyOrNull("listItemViewModel")
+            ?.GetPropertyOrNull("rendererContext")
+            ?.GetPropertyOrNull("commandContext")
+            ?.GetPropertyOrNull("onTap")
+            ?.GetPropertyOrNull("innertubeCommand")
+            ?.GetPropertyOrNull("browseEndpoint")
+            ?.GetPropertyOrNull("browseId")
             ?.GetStringOrNull();
 
     [Lazy]
