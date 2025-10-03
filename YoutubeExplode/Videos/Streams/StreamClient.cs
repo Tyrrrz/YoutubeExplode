@@ -58,10 +58,7 @@ public class StreamClient(HttpClient http)
             contentLength = response.Content.Headers.ContentLength;
 
             // 404 error indicates that the stream is not available
-            if (
-                response.StatusCode == HttpStatusCode.NotFound
-                || response.StatusCode == HttpStatusCode.Forbidden
-            )
+            if (response.StatusCode == HttpStatusCode.NotFound)
                 return null;
 
             response.EnsureSuccessStatusCode();
@@ -79,10 +76,7 @@ public class StreamClient(HttpClient http)
             );
 
             // 404 error indicates that the stream has mismatched content length or is not available
-            if (
-                response.StatusCode == HttpStatusCode.NotFound
-                || response.StatusCode == HttpStatusCode.Forbidden
-            )
+            if (response.StatusCode == HttpStatusCode.NotFound)
                 return null;
 
             response.EnsureSuccessStatusCode();
