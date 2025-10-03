@@ -24,11 +24,6 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
     )
         : base(http, disposeClient)
     {
-        // Pre-fill cookies
-        foreach (var cookie in initialCookies)
-            _cookieContainer.Add(cookie);
-
-        // Don't overwrite custom cookie
         // Consent to the use of cookies on YouTube.
         // This is required to access some personalized content, such as mix playlists.
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
@@ -39,6 +34,10 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
                 Domain = "youtube.com",
             }
         );
+
+        // Pre-fill cookies
+        foreach (var cookie in initialCookies)
+            _cookieContainer.Add(cookie);
     }
 
     private string? TryGenerateAuthHeaderValue(Uri uri)
