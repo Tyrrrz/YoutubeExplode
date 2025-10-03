@@ -35,7 +35,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
             }
         );
 
-        // Pre-fill cookies
+        // Add user-supplied cookies
         foreach (var cookie in initialCookies)
             _cookieContainer.Add(cookie);
     }
