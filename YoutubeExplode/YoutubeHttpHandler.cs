@@ -32,6 +32,10 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // This is required to access some personalized content, such as mix playlists.
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
         // https://github.com/Tyrrrz/YoutubeExplode/issues/732
+        // https://github.com/Tyrrrz/YoutubeExplode/issues/907
+        // The cookie is supposed to be invalidated after 13 months, at which point the value
+        // becomes invalid and needs to be manually replaced in code with a new one.
+        // https://policies.google.com/technologies/cookies/embedded
         _cookieContainer.Add(
             new Cookie("SOCS", "CAISEwgDEgk4MTM4MzYzNTIaAmVuIAEaBgiApPzGBg")
             {
