@@ -28,7 +28,7 @@ For example, to download a video in the specified format using the highest quali
 using YoutubeExplode;
 using YoutubeExplode.Converter;
 
-var youtube = new YoutubeClient();
+using var youtube = new YoutubeClient();
 
 var videoUrl = "https://youtube.com/watch?v=u_yIGGhubZs";
 await youtube.Videos.DownloadAsync(videoUrl, "video.mp4");
@@ -51,7 +51,7 @@ To configure various aspects of the conversion process, use the following overlo
 using YoutubeExplode;
 using YoutubeExplode.Converter;
 
-var youtube = new YoutubeClient();
+using var youtube = new YoutubeClient();
 var videoUrl = "https://youtube.com/watch?v=u_yIGGhubZs";
 
 await youtube.Videos.DownloadAsync(videoUrl, "video.mp4", o => o
@@ -71,7 +71,7 @@ using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
 using YoutubeExplode.Converter;
 
-var youtube = new YoutubeClient();
+using var youtube = new YoutubeClient();
 
 // Get stream manifest
 var videoUrl = "https://youtube.com/watch?v=u_yIGGhubZs";

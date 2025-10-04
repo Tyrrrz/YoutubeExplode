@@ -13,7 +13,7 @@ public class SearchSpecs
     public async Task I_can_get_results_from_a_search_query()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var results = await youtube.Search.GetResultsAsync("undead corporation");
@@ -31,7 +31,7 @@ public class SearchSpecs
     public async Task I_can_get_results_from_a_search_query_that_contains_special_characters()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var results = await youtube.Search.GetResultsAsync("\"dune 2\" ending");
@@ -47,7 +47,7 @@ public class SearchSpecs
         // https://github.com/Tyrrrz/YoutubeExplode/issues/787
 
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var results = await youtube.Search.GetResultsAsync("נועה קירל");
@@ -65,7 +65,7 @@ public class SearchSpecs
         // https://github.com/Tyrrrz/YoutubeExplode/issues/787
 
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var results = await youtube.Search.GetResultsAsync("\"נועה קירל\"");
@@ -81,7 +81,7 @@ public class SearchSpecs
     public async Task I_can_get_video_results_from_a_search_query()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var videos = await youtube.Search.GetVideosAsync("undead corporation");
@@ -94,7 +94,7 @@ public class SearchSpecs
     public async Task I_can_get_playlist_results_from_a_search_query()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var playlists = await youtube.Search.GetPlaylistsAsync("undead corporation");
@@ -117,7 +117,7 @@ public class SearchSpecs
     public async Task I_can_get_channel_results_from_a_search_query()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var channels = await youtube.Search.GetChannelsAsync("undead corporation");
