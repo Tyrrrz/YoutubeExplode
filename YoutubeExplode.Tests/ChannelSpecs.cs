@@ -13,7 +13,7 @@ public class ChannelSpecs
     public async Task I_can_get_the_metadata_of_a_channel()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var channel = await youtube.Channels.GetAsync(ChannelIds.Normal);
@@ -29,7 +29,7 @@ public class ChannelSpecs
     public async Task I_can_get_the_metadata_of_a_channel_by_user_name()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var channel = await youtube.Channels.GetByUserAsync(UserNames.Normal);
@@ -45,7 +45,7 @@ public class ChannelSpecs
     public async Task I_can_get_the_metadata_of_a_channel_by_slug()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var channel = await youtube.Channels.GetBySlugAsync(ChannelSlugs.Normal);
@@ -61,7 +61,7 @@ public class ChannelSpecs
     public async Task I_can_get_the_metadata_of_a_channel_by_handle()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var channel = await youtube.Channels.GetByHandleAsync(ChannelHandles.Normal);
@@ -79,7 +79,7 @@ public class ChannelSpecs
     public async Task I_can_get_the_metadata_of_any_available_channel(string channelId)
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var channel = await youtube.Channels.GetAsync(channelId);
@@ -95,7 +95,7 @@ public class ChannelSpecs
     public async Task I_can_get_videos_uploaded_by_a_channel()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var videos = await youtube.Channels.GetUploadsAsync(ChannelIds.Normal);

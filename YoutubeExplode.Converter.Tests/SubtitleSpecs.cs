@@ -19,7 +19,7 @@ public class SubtitleSpecs : IAsyncLifetime
     public async Task I_can_download_a_video_as_a_single_mp4_file_with_subtitles()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         using var dir = TempDir.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
@@ -58,7 +58,7 @@ public class SubtitleSpecs : IAsyncLifetime
     public async Task I_can_download_a_video_as_a_single_webm_file_with_subtitles()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         using var dir = TempDir.Create();
         var filePath = Path.Combine(dir.Path, "video.webm");

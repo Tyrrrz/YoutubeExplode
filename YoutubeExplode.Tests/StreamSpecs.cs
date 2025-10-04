@@ -18,7 +18,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_the_list_of_available_streams_of_a_video()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(
@@ -61,7 +61,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_the_list_of_available_streams_of_a_video_with_multiple_audio_languages()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(
@@ -126,7 +126,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_the_list_of_available_streams_of_any_playable_video(string videoId)
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
@@ -139,7 +139,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_list_of_available_streams_of_a_video_and_get_an_error_if_it_is_paid()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
@@ -155,7 +155,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_list_of_available_streams_of_a_video_and_get_an_error_if_it_is_private()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
@@ -169,7 +169,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_list_of_available_streams_of_a_video_and_get_an_error_if_it_does_not_exist()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
@@ -189,7 +189,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var buffer = MemoryPool<byte>.Shared.Rent(1024);
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
@@ -218,7 +218,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var file = TempFile.Create();
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
@@ -237,7 +237,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var file = TempFile.Create();
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
@@ -256,7 +256,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var file = TempFile.Create();
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
@@ -275,7 +275,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     {
         // Arrange
         using var buffer = new MemoryStream();
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.Normal);
@@ -293,7 +293,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_the_HTTP_live_stream_URL_for_a_video()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var url = await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.LiveStream);
@@ -306,7 +306,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_HTTP_live_stream_URL_for_a_video_and_get_an_error_if_it_is_unplayable()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
@@ -320,7 +320,7 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_HTTP_live_stream_URL_for_a_video_and_get_an_error_if_it_is_not_live()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>

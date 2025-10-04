@@ -17,7 +17,7 @@ public class EnvironmentSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
     public async Task I_can_download_a_video_with_custom_environment_variables_passed_to_FFmpeg()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         using var dir = TempDir.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");

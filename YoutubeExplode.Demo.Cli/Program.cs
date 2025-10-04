@@ -15,7 +15,7 @@ public static class Program
     {
         Console.Title = "YoutubeExplode Demo";
 
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Get the video ID
         Console.Write("Enter YouTube video ID or URL: ");

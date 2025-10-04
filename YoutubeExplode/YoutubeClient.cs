@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -12,19 +13,21 @@ namespace YoutubeExplode;
 /// <summary>
 /// Client for interacting with YouTube.
 /// </summary>
-public class YoutubeClient
+public class YoutubeClient : IDisposable
 {
+    private readonly HttpClient _youtubeHttp;
+
     /// <summary>
     /// Initializes an instance of <see cref="YoutubeClient" />.
     /// </summary>
     public YoutubeClient(HttpClient http, IReadOnlyList<Cookie> initialCookies)
     {
-        var youtubeHttp = new HttpClient(new YoutubeHttpHandler(http, initialCookies), true);
+        _youtubeHttp = new HttpClient(new YoutubeHttpHandler(http, initialCookies), true);
 
-        Videos = new VideoClient(youtubeHttp);
-        Playlists = new PlaylistClient(youtubeHttp);
-        Channels = new ChannelClient(youtubeHttp);
-        Search = new SearchClient(youtubeHttp);
+        Videos = new VideoClient(_youtubeHttp);
+        Playlists = new PlaylistClient(_youtubeHttp);
+        Channels = new ChannelClient(_youtubeHttp);
+        Search = new SearchClient(_youtubeHttp);
     }
 
     /// <summary>
@@ -64,4 +67,7 @@ public class YoutubeClient
     /// Operations related to YouTube search.
     /// </summary>
     public SearchClient Search { get; }
+
+    /// <inheritdoc />
+    public void Dispose() => _youtubeHttp.Dispose();
 }
