@@ -172,10 +172,8 @@ internal class VideoController(HttpClient http)
               "videoId": {{Json.Serialize(videoId)}},
               "context": {
                 "client": {
-                  "clientName": "ANDROID",
-                  "clientVersion": "20.10.38",
-                  "osName": "Android",
-                  "osVersion": "11",
+                  "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+                  "clientVersion": "2.0",
                   "visitorData": {{Json.Serialize(visitorData)}},
                   "hl": "en",
                   "gl": "US",
