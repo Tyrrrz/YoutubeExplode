@@ -31,7 +31,7 @@ internal class VideoController(HttpClient http)
 
         request.Headers.Add(
             "User-Agent",
-            "com.google.ios.youtube/19.45.4 (iPhone16,2; U; CPU iOS 18_1_0 like Mac OS X; US)"
+            "com.google.android.youtube/20.10.38 (Linux; U; ANDROID 11) gzip"
         );
 
         using var response = await Http.SendAsync(request, cancellationToken);
@@ -114,13 +114,11 @@ internal class VideoController(HttpClient http)
               "contentCheckOk": true,
               "context": {
                 "client": {
-                  "clientName": "IOS",
-                  "clientVersion": "19.45.4",
-                  "deviceMake": "Apple",
-                  "deviceModel": "iPhone16,2",
+                  "clientName": "ANDROID",
+                  "clientVersion": "20.10.38",
+                  "osName": "Android",
+                  "osVersion": "11",
                   "platform": "MOBILE",
-                  "osName": "IOS",
-                  "osVersion": "18.1.0.22B83",
                   "visitorData": {{Json.Serialize(visitorData)}},
                   "hl": "en",
                   "gl": "US",
@@ -135,7 +133,7 @@ internal class VideoController(HttpClient http)
         // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
         request.Headers.Add(
             "User-Agent",
-            "com.google.ios.youtube/19.45.4 (iPhone16,2; U; CPU iOS 18_1_0 like Mac OS X; US)"
+            "com.google.android.youtube/20.10.38 (Linux; U; ANDROID 11) gzip"
         );
 
         using var response = await Http.SendAsync(request, cancellationToken);
