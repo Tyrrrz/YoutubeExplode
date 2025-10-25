@@ -15,7 +15,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_the_metadata_of_a_playlist()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var playlist = await youtube.Playlists.GetAsync(PlaylistIds.Normal);
@@ -39,7 +39,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_metadata_of_a_playlist_and_get_an_error_if_it_is_private()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
@@ -53,7 +53,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_try_to_get_the_metadata_of_a_playlist_and_get_an_error_if_it_does_not_exist()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act & assert
         var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
@@ -73,7 +73,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_the_metadata_of_any_available_playlist(string playlistId)
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var playlist = await youtube.Playlists.GetAsync(playlistId);
@@ -91,7 +91,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_videos_included_in_a_playlist()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Normal);
@@ -132,7 +132,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_videos_included_in_a_large_playlist()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large);
@@ -168,7 +168,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_videos_included_in_any_available_playlist(string playlistId)
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var videos = await youtube.Playlists.GetVideosAsync(playlistId);
@@ -181,7 +181,7 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
     public async Task I_can_get_a_subset_of_videos_included_in_a_playlist()
     {
         // Arrange
-        var youtube = new YoutubeClient();
+        using var youtube = new YoutubeClient();
 
         // Act
         var videos = await youtube.Playlists.GetVideosAsync(PlaylistIds.Large).CollectAsync(10);
