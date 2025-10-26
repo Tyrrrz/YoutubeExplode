@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using YoutubeExplode.Bridge;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Videos;
@@ -83,13 +84,22 @@ public class PlaylistClient(HttpClient http)
 
         do
         {
-            var response = await _controller.GetPlaylistNextResponseAsync(
-                playlistId,
-                lastVideoId,
-                lastVideoIndex,
-                visitorData,
-                cancellationToken
-            );
+            PlaylistNextResponse response;
+            try
+            {
+                response = await _controller.GetPlaylistNextResponseAsync(
+                    playlistId,
+                    lastVideoId,
+                    lastVideoIndex,
+                    visitorData,
+                    cancellationToken
+                );
+            }
+            catch (PlaylistUnavailableException)
+            {
+                // Stop enumeration if the playlist becomes unavailable
+                yield break;
+            }
 
             var videos = new List<PlaylistVideo>();
 
