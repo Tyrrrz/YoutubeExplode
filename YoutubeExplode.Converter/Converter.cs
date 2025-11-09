@@ -99,9 +99,7 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
             {
                 if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
                 {
-                    arguments
-                        .Add($"-b:a:{lastAudioStreamIndex++}")
-                        .Add(Math.Round(audioStreamInfo.Bitrate.KiloBitsPerSecond) + "K");
+                    arguments.Add($"-q:a:{lastAudioStreamIndex++}").Add("0"); // Have ffmpeg determine best quality possible
                 }
             }
         }
