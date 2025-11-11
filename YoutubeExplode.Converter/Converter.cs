@@ -83,25 +83,23 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
             }
         }
 
-        // MP4: explicitly specify the codec for subtitles, otherwise they won't get embedded
+        // MP4: explicitly specify the codec for subtitles, otherwise they don't get embedded.
         if (container == Container.Mp4 && subtitleInputs.Any())
         {
             arguments.Add("-c:s").Add("mov_text");
         }
 
-        // MP3: explicitly specify the bitrate for audio streams, otherwise their metadata
-        // might contain invalid total duration.
-// MP3: explicitly specify the quality for audio streams, otherwise their metadata
-// might contain invalid total duration.
-// https://superuser.com/a/893044
+        // MP3: force the audio streams to be re-encoded by explicitly specifying quality,
+        // otherwise the output file metadata may end up being corrupted.
+        // https://superuser.com/a/893044
         if (container == Container.Mp3)
         {
             var lastAudioStreamIndex = 0;
             foreach (var streamInput in streamInputs)
             {
-                if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
+                if (streamInput.Info is IAudioStreamInfo)
                 {
-                    // Have FFmpeg determine best quality possible
+                    // Have FFmpeg determine the best quality possible
                     arguments.Add($"-q:a:{lastAudioStreamIndex++}").Add("0");
                 }
             }
