@@ -91,7 +91,9 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
         // MP3: explicitly specify the bitrate for audio streams, otherwise their metadata
         // might contain invalid total duration.
-        // https://superuser.com/a/893044
+// MP3: explicitly specify the quality for audio streams, otherwise their metadata
+// might contain invalid total duration.
+// https://superuser.com/a/893044
         if (container == Container.Mp3)
         {
             var lastAudioStreamIndex = 0;
