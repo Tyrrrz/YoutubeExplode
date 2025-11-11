@@ -91,7 +91,9 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
 
         // MP3: explicitly specify the bitrate for audio streams, otherwise their metadata
         // might contain invalid total duration.
-        // https://superuser.com/a/893044
+// MP3: explicitly specify the quality for audio streams, otherwise their metadata
+// might contain invalid total duration.
+// https://superuser.com/a/893044
         if (container == Container.Mp3)
         {
             var lastAudioStreamIndex = 0;
@@ -99,9 +101,8 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
             {
                 if (streamInput.Info is IAudioStreamInfo audioStreamInfo)
                 {
-                    arguments
-                        .Add($"-b:a:{lastAudioStreamIndex++}")
-                        .Add(Math.Round(audioStreamInfo.Bitrate.KiloBitsPerSecond) + "K");
+                    // Have FFmpeg determine best quality possible
+                    arguments.Add($"-q:a:{lastAudioStreamIndex++}").Add("0");
                 }
             }
         }
