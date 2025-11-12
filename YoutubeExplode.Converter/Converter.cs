@@ -94,15 +94,8 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
         // https://superuser.com/a/893044
         if (container == Container.Mp3)
         {
-            var lastAudioStreamIndex = 0;
-            foreach (var streamInput in streamInputs)
-            {
-                if (streamInput.Info is IAudioStreamInfo)
-                {
-                    // Have FFmpeg determine the best quality possible
-                    arguments.Add($"-q:a:{lastAudioStreamIndex++}").Add("0");
-                }
-            }
+            // Have FFmpeg determine the best quality possible
+            arguments.Add("-q:a").Add(0);
         }
 
         // Metadata for stream inputs
