@@ -135,9 +135,11 @@ internal partial class FFmpeg
                     + TimeSpan.FromSeconds(seconds);
 
                 progress.Report(
-                    (
-                        processedDuration.TotalMilliseconds / totalDuration.Value.TotalMilliseconds
-                    ).Clamp(0, 1)
+                    Math.Clamp(
+                        processedDuration.TotalMilliseconds / totalDuration.Value.TotalMilliseconds,
+                        0,
+                        1
+                    )
                 );
             }
         });

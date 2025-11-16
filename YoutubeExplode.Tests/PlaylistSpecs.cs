@@ -101,31 +101,29 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         videos
             .Select(v => v.Id.Value)
             .Should()
-            .Contain(
-                [
-                    "uPZSSdkGQhM",
-                    "fi0w57kr_jY",
-                    "xLJt5A-NeQI",
-                    "EpDA3XaELqs",
-                    "eyltEFyZ678",
-                    "TW3gx4t4944",
-                    "w9H_P2wAwSE",
-                    "OyixJ7A9phg",
-                    "dzwRzUEc_tA",
-                    "vEpq3nYeZBc",
-                    "4gYioQkIqKk",
-                    "xyh8iG5mRIs",
-                    "ORrYEEH_KPc",
-                    "ii0T5JUO2BY",
-                    "hgycbw6Beuc",
-                    "Dz-zgq6OqTI",
-                    "I1b4GT-GuEs",
-                    "dN3gkBBffhs",
-                    "8Kg-8ZjgLAQ",
-                    "E9zfpKsw6f8",
-                    "eBCw9sC5D40",
-                ]
-            );
+            .Contain([
+                "uPZSSdkGQhM",
+                "fi0w57kr_jY",
+                "xLJt5A-NeQI",
+                "EpDA3XaELqs",
+                "eyltEFyZ678",
+                "TW3gx4t4944",
+                "w9H_P2wAwSE",
+                "OyixJ7A9phg",
+                "dzwRzUEc_tA",
+                "vEpq3nYeZBc",
+                "4gYioQkIqKk",
+                "xyh8iG5mRIs",
+                "ORrYEEH_KPc",
+                "ii0T5JUO2BY",
+                "hgycbw6Beuc",
+                "Dz-zgq6OqTI",
+                "I1b4GT-GuEs",
+                "dN3gkBBffhs",
+                "8Kg-8ZjgLAQ",
+                "E9zfpKsw6f8",
+                "eBCw9sC5D40",
+            ]);
     }
 
     [Fact]
@@ -142,19 +140,17 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         videos
             .Select(v => v.Id.Value)
             .Should()
-            .Contain(
-                [
-                    "RBumgq5yVrA",
-                    "kN0iD0pI3o0",
-                    "YqB8Dm65X18",
-                    "jlvY1o6XKwA",
-                    "-0kcet4aPpQ",
-                    "RnGJ3KJri1g",
-                    "x-IR7PtA7RA",
-                    "N-8E9mHxDy0",
-                    "5ly88Ju1N6A",
-                ]
-            );
+            .Contain([
+                "RBumgq5yVrA",
+                "kN0iD0pI3o0",
+                "YqB8Dm65X18",
+                "jlvY1o6XKwA",
+                "-0kcet4aPpQ",
+                "RnGJ3KJri1g",
+                "x-IR7PtA7RA",
+                "N-8E9mHxDy0",
+                "5ly88Ju1N6A",
+            ]);
     }
 
     [Theory]

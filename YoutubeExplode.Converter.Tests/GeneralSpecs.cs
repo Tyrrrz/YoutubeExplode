@@ -8,6 +8,7 @@ using Gress;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Converter.Tests.Utils;
+using YoutubeExplode.Converter.Tests.Utils.Extensions;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter.Tests;
@@ -121,8 +122,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         {
             if (streamInfo.AudioLanguage is not null)
             {
-                FileEx
-                    .ContainsBytes(
+                File.ContainsBytes(
                         filePath,
                         Encoding.ASCII.GetBytes(streamInfo.AudioLanguage.Value.Name)
                     )
@@ -133,8 +133,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 
         foreach (var streamInfo in videoStreamInfos)
         {
-            FileEx
-                .ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
+            File.ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
                 .Should()
                 .BeTrue();
         }
@@ -179,8 +178,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         {
             if (streamInfo.AudioLanguage is not null)
             {
-                FileEx
-                    .ContainsBytes(
+                File.ContainsBytes(
                         filePath,
                         Encoding.ASCII.GetBytes(streamInfo.AudioLanguage.Value.Name)
                     )
@@ -191,8 +189,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 
         foreach (var streamInfo in videoStreamInfos)
         {
-            FileEx
-                .ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
+            File.ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
                 .Should()
                 .BeTrue();
         }

@@ -182,7 +182,7 @@ public partial class MainViewModel : ObservableObject
             Progress = 0;
 
             // Generate a default file name
-            var defaultFileName = PathEx.SanitizeFileName(
+            var defaultFileName = Path.SanitizeFileName(
                 $"{Video.Title}.{streamInfo.Container.Name}"
             );
 
@@ -225,7 +225,7 @@ public partial class MainViewModel : ObservableObject
             Progress = 0;
 
             // Generate a default file name
-            var defaultFileName = PathEx.SanitizeFileName(
+            var defaultFileName = Path.SanitizeFileName(
                 $"{Video.Title}.{trackInfo.Language.Name}.srt"
             );
 

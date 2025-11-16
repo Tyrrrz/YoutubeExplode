@@ -5,27 +5,34 @@ namespace YoutubeExplode.Utils.Extensions;
 
 internal static class XElementExtensions
 {
-    public static XElement StripNamespaces(this XElement element)
+    extension(XElement element)
     {
-        // Adapted from http://stackoverflow.com/a/1147012
-
-        var result = new XElement(element);
-
-        foreach (var descendantElement in result.DescendantsAndSelf())
+        public XElement StripNamespaces()
         {
-            descendantElement.Name = XNamespace.None.GetName(descendantElement.Name.LocalName);
+            // Adapted from http://stackoverflow.com/a/1147012
 
-            descendantElement.ReplaceAttributes(
-                descendantElement
-                    .Attributes()
-                    .Where(a => !a.IsNamespaceDeclaration)
-                    .Where(a =>
-                        a.Name.Namespace != XNamespace.Xml && a.Name.Namespace != XNamespace.Xmlns
-                    )
-                    .Select(a => new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value))
-            );
+            var result = new XElement(element);
+
+            foreach (var descendantElement in result.DescendantsAndSelf())
+            {
+                descendantElement.Name = XNamespace.None.GetName(descendantElement.Name.LocalName);
+
+                descendantElement.ReplaceAttributes(
+                    descendantElement
+                        .Attributes()
+                        .Where(a => !a.IsNamespaceDeclaration)
+                        .Where(a =>
+                            a.Name.Namespace != XNamespace.Xml
+                            && a.Name.Namespace != XNamespace.Xmlns
+                        )
+                        .Select(a => new XAttribute(
+                            XNamespace.None.GetName(a.Name.LocalName),
+                            a.Value
+                        ))
+                );
+            }
+
+            return result;
         }
-
-        return result;
     }
 }

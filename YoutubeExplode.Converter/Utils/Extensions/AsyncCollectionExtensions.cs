@@ -6,16 +6,18 @@ namespace YoutubeExplode.Converter.Utils.Extensions;
 
 internal static class AsyncCollectionExtensions
 {
-    public static async ValueTask<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> source)
+    extension<T>(IAsyncEnumerable<T> source)
     {
-        var list = new List<T>();
+        public async ValueTask<List<T>> ToListAsync()
+        {
+            var list = new List<T>();
 
-        await foreach (var i in source)
-            list.Add(i);
+            await foreach (var i in source)
+                list.Add(i);
 
-        return list;
+            return list;
+        }
+
+        public ValueTaskAwaiter<List<T>> GetAwaiter() => source.ToListAsync().GetAwaiter();
     }
-
-    public static ValueTaskAwaiter<List<T>> GetAwaiter<T>(this IAsyncEnumerable<T> source) =>
-        source.ToListAsync().GetAwaiter();
 }

@@ -17,46 +17,51 @@ internal static class HttpExtensions
 
         protected override bool TryComputeLength(out long length)
         {
-            length = default;
+            length = 0;
             return false;
         }
     }
 
-    public static HttpRequestMessage Clone(this HttpRequestMessage request)
+    extension(HttpRequestMessage request)
     {
-        var clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri)
+        public HttpRequestMessage Clone()
         {
-            Version = request.Version,
-            // Don't dispose the original request's content
-            Content = request.Content is not null
-                ? new NonDisposableHttpContent(request.Content)
-                : null,
-        };
+            var clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri)
+            {
+                Version = request.Version,
+                // Don't dispose the original request's content
+                Content = request.Content is not null
+                    ? new NonDisposableHttpContent(request.Content)
+                    : null,
+            };
 
-        foreach (var (key, value) in request.Headers)
-            clonedRequest.Headers.TryAddWithoutValidation(key, value);
+            foreach (var (key, value) in request.Headers)
+                clonedRequest.Headers.TryAddWithoutValidation(key, value);
 
-        if (request.Content is not null && clonedRequest.Content is not null)
-        {
-            foreach (var (key, value) in request.Content.Headers)
-                clonedRequest.Content.Headers.TryAddWithoutValidation(key, value);
+            if (request.Content is not null && clonedRequest.Content is not null)
+            {
+                foreach (var (key, value) in request.Content.Headers)
+                    clonedRequest.Content.Headers.TryAddWithoutValidation(key, value);
+            }
+
+            return clonedRequest;
         }
-
-        return clonedRequest;
     }
 
-    public static async ValueTask<HttpResponseMessage> HeadAsync(
-        this HttpClient http,
-        string requestUri,
-        CancellationToken cancellationToken = default
-    )
+    extension(HttpClient http)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
+        public async ValueTask<HttpResponseMessage> HeadAsync(
+            string requestUri,
+            CancellationToken cancellationToken = default
+        )
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Head, requestUri);
 
-        return await http.SendAsync(
-            request,
-            HttpCompletionOption.ResponseHeadersRead,
-            cancellationToken
-        );
+            return await http.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken
+            );
+        }
     }
 }

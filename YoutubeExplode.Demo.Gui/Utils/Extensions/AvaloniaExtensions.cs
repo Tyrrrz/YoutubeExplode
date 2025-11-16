@@ -6,12 +6,15 @@ namespace YoutubeExplode.Demo.Gui.Utils.Extensions;
 
 internal static class AvaloniaExtensions
 {
-    public static Window? TryGetMainWindow(this IApplicationLifetime lifetime) =>
-        lifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime
-            ? desktopLifetime.MainWindow
-            : null;
+    extension(IApplicationLifetime lifetime)
+    {
+        public Window? TryGetMainWindow() =>
+            lifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime
+                ? desktopLifetime.MainWindow
+                : null;
 
-    public static TopLevel? TryGetTopLevel(this IApplicationLifetime lifetime) =>
-        lifetime.TryGetMainWindow()
-        ?? (lifetime as ISingleViewApplicationLifetime)?.MainView?.GetVisualRoot() as TopLevel;
+        public TopLevel? TryGetTopLevel() =>
+            lifetime.TryGetMainWindow()
+            ?? (lifetime as ISingleViewApplicationLifetime)?.MainView?.GetVisualRoot() as TopLevel;
+    }
 }
