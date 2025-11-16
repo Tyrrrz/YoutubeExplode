@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{2D3632A9-3
 		License.txt = License.txt
 		Readme.md = Readme.md
 		Directory.Build.props = Directory.Build.props
+		global.json = global.json
+		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeExplode.Demo.Cli", "YoutubeExplode.Demo.Cli\YoutubeExplode.Demo.Cli.csproj", "{6983B0A4-44B0-4FAF-81C7-94CC784570F0}"
