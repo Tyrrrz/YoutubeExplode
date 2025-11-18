@@ -4,9 +4,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="CSharpier.MsBuild" Version="1.2.1" PrivateAssets="all" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\YoutubeExplode\YoutubeExplode.csproj" />
   </ItemGroup>

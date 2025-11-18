@@ -5,9 +5,11 @@
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
+
   <ItemGroup>
     <AvaloniaResource Include="..\favicon.ico" Link="favicon.ico" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.4.3" />
     <PackageReference Include="Avalonia" Version="11.3.8" />
@@ -22,6 +24,7 @@
     <PackageReference Include="Material.Avalonia" Version="3.9.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.2.0" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\YoutubeExplode\YoutubeExplode.csproj" />
   </ItemGroup>
