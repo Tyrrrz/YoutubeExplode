@@ -82,12 +82,12 @@ Additionally, the streams are further divided into 3 categories based on their c
 - Audio-only streams — contain only audio
 - Video-only streams — contain only video
 
-> **Warning**:
+> [!WARNING]
 > Muxed streams contain both audio and video, but these streams are limited in quality (up to 720p30).
 > To download the video in the highest available quality, you will need to resolve the best audio-only and video-only streams separately and then mux them together.
 > The muxing process can be performed using FFmpeg with the help of the [**YoutubeExplode.Converter**](YoutubeExplode.Converter) package.
 
-> **Warning**:
+> [!WARNING]
 > Muxed streams are deprecated by YouTube and are not guaranteed to be available for every video.
 > If possible, avoid relying on them too much and instead perform muxing manually using the provided audio-only and video-only streams.
 
@@ -132,7 +132,7 @@ var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
 await youtube.Videos.Streams.DownloadAsync(streamInfo, $"video.{streamInfo.Container}");
 ```
 
-> **Warning**:
+> [!WARNING]
 > While the `Url` property in the stream metadata can be used to access the underlying content, you need a series of carefully crafted HTTP requests in order to do so.
 > It's highly recommended to use `Videos.Streams.GetAsync(...)` or `Videos.Streams.DownloadAsync(...)` instead, as they will perform all the heavy lifting for you.
 
@@ -249,7 +249,7 @@ await foreach (var batch in youtube.Playlists.GetVideoBatchesAsync(playlistUrl))
 }
 ```
 
-> **Note**:
+> [!NOTE]
 > You can craft playlist IDs to fetch special auto-generated playlists, such as music mixes, popular channel uploads, liked videos, and more.
 > See [this reference](https://wiki.archiveteam.org/index.php/YouTube/Technical_details#Playlists) for more information.
 
