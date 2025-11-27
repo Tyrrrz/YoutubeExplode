@@ -208,13 +208,12 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
         if (framerateComparison != 0)
             return framerateComparison;
 
-        var labelComparison = StringComparer.OrdinalIgnoreCase.Compare(Label, other.Label);
-        return labelComparison;
+        return string.Compare(Label, other.Label, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc />
     public bool Equals(VideoQuality other) =>
-        StringComparer.OrdinalIgnoreCase.Equals(Label, other.Label)
+        string.Equals(Label, other.Label, StringComparison.OrdinalIgnoreCase)
         && MaxHeight == other.MaxHeight
         && Framerate == other.Framerate;
 
@@ -223,7 +222,11 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
 
     /// <inheritdoc />
     public override int GetHashCode() =>
-        HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(Label), MaxHeight, Framerate);
+        HashCode.Combine(
+            Label.GetHashCode(StringComparison.OrdinalIgnoreCase),
+            MaxHeight,
+            Framerate
+        );
 
     /// <summary>
     /// Equality check.

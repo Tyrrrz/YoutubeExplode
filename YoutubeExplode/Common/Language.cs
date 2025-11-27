@@ -29,13 +29,14 @@ public readonly partial struct Language(string code, string name)
 public partial struct Language : IEquatable<Language>
 {
     /// <inheritdoc />
-    public bool Equals(Language other) => StringComparer.OrdinalIgnoreCase.Equals(Code, other.Code);
+    public bool Equals(Language other) =>
+        string.Equals(Code, other.Code, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Language other && Equals(other);
 
     /// <inheritdoc />
-    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Code);
+    public override int GetHashCode() => Code.GetHashCode(StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Equality check.
