@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -59,49 +57,5 @@ internal static class StringExtensions
                 [firstCharIndex] = str[secondCharIndex],
                 [secondCharIndex] = str[firstCharIndex],
             }.ToString();
-
-        public int? ParseIntOrNull() =>
-            int.TryParse(str, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
-                ? result
-                : null;
-
-        public int ParseInt() =>
-            ParseIntOrNull(str)
-            ?? throw new FormatException($"Cannot parse integer number from string '{str}'.");
-
-        public long? ParseLongOrNull() =>
-            long.TryParse(str, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var result)
-                ? result
-                : null;
-
-        public double? ParseDoubleOrNull() =>
-            double.TryParse(
-                str,
-                NumberStyles.Float | NumberStyles.AllowThousands,
-                NumberFormatInfo.InvariantInfo,
-                out var result
-            )
-                ? result
-                : null;
-
-        public TimeSpan? ParseTimeSpanOrNull(string[] formats) =>
-            TimeSpan.TryParseExact(str, formats, DateTimeFormatInfo.InvariantInfo, out var result)
-                ? result
-                : null;
-
-        public DateTimeOffset? ParseDateTimeOffsetOrNull() =>
-            DateTimeOffset.TryParse(
-                str,
-                DateTimeFormatInfo.InvariantInfo,
-                DateTimeStyles.None,
-                out var result
-            )
-                ? result
-                : null;
-    }
-
-    extension<T>(IEnumerable<T> source)
-    {
-        public string ConcatToString() => string.Concat(source);
     }
 }

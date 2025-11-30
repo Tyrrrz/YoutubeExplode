@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -40,7 +41,11 @@ public class ChannelClient(HttpClient http)
                 .LastOrDefault()
                 ?.Groups[1]
                 .Value.NullIfWhiteSpace()
-                ?.ParseIntOrNull()
+                ?.Pipe(s =>
+                    int.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                        ? result
+                        : (int?)null
+                )
             ?? 100;
 
         var thumbnails = new[] { new Thumbnail(logoUrl, new Resolution(logoSize, logoSize)) };

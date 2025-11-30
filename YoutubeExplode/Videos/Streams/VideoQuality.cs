@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Common;
 using YoutubeExplode.Utils.Extensions;
@@ -82,8 +83,14 @@ public partial struct VideoQuality
 
         var match = Regex.Match(label, @"^(\d+)\D(\d+)?");
 
-        var maxHeight = match.Groups[1].Value.ParseInt();
-        var framerate = match.Groups[2].Value.NullIfWhiteSpace()?.ParseIntOrNull();
+        var maxHeight = match.Groups[1].Value.Pipe(s => int.Parse(s, CultureInfo.InvariantCulture));
+
+        var framerate = match
+            .Groups[2]
+            .Value.NullIfWhiteSpace()
+            ?.Pipe(s =>
+                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
+            );
 
         return new VideoQuality(label, maxHeight, framerate ?? framerateFallback);
     }

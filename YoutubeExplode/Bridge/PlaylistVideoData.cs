@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
@@ -29,7 +30,7 @@ internal class PlaylistVideoData(JsonElement content)
             ?.EnumerateArrayOrNull()
             ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
-            .ConcatToString();
+            .Pipe(string.Concat);
 
     [Lazy]
     private JsonElement? AuthorDetails =>
@@ -81,21 +82,43 @@ internal class PlaylistVideoData(JsonElement content)
         content
             .GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
-            ?.ParseDoubleOrNull()
+            ?.Pipe(s =>
+                double.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                    ? result
+                    : (double?)null
+            )
             ?.Pipe(TimeSpan.FromSeconds)
         ?? content
             .GetPropertyOrNull("lengthText")
             ?.GetPropertyOrNull("simpleText")
             ?.GetStringOrNull()
-            ?.ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"])
+            ?.Pipe(s =>
+                TimeSpan.TryParseExact(
+                    s,
+                    [@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"],
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (TimeSpan?)null
+            )
         ?? content
             .GetPropertyOrNull("lengthText")
             ?.GetPropertyOrNull("runs")
             ?.EnumerateArrayOrNull()
             ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
             .WhereNotNull()
-            .ConcatToString()
-            .ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"]);
+            .Pipe(string.Concat)
+            ?.Pipe(s =>
+                TimeSpan.TryParseExact(
+                    s,
+                    [@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"],
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (TimeSpan?)null
+            );
 
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails =>

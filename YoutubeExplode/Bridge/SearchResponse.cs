@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
@@ -69,7 +70,7 @@ internal partial class SearchResponse
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
-                .ConcatToString();
+                .Pipe(string.Concat);
 
         [Lazy]
         private JsonElement? AuthorDetails =>
@@ -108,15 +109,33 @@ internal partial class SearchResponse
                 .GetPropertyOrNull("lengthText")
                 ?.GetPropertyOrNull("simpleText")
                 ?.GetStringOrNull()
-                ?.ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"])
+                ?.Pipe(s =>
+                    TimeSpan.TryParseExact(
+                        s,
+                        [@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"],
+                        CultureInfo.InvariantCulture,
+                        out var result
+                    )
+                        ? result
+                        : (TimeSpan?)null
+                )
             ?? content
                 .GetPropertyOrNull("lengthText")
                 ?.GetPropertyOrNull("runs")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
-                .ConcatToString()
-                .ParseTimeSpanOrNull([@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"]);
+                .Pipe(string.Concat)
+                ?.Pipe(s =>
+                    TimeSpan.TryParseExact(
+                        s,
+                        [@"m\:ss", @"mm\:ss", @"h\:mm\:ss", @"hh\:mm\:ss"],
+                        CultureInfo.InvariantCulture,
+                        out var result
+                    )
+                        ? result
+                        : (TimeSpan?)null
+                );
 
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
@@ -155,7 +174,7 @@ internal partial class SearchResponse
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
-                .ConcatToString();
+                .Pipe(string.Concat);
 
         [Lazy]
         private JsonElement? AuthorDetails =>
@@ -231,7 +250,7 @@ internal partial class SearchResponse
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => j.GetPropertyOrNull("text")?.GetStringOrNull())
                 .WhereNotNull()
-                .ConcatToString();
+                .Pipe(string.Concat);
 
         [Lazy]
         public IReadOnlyList<ThumbnailData> Thumbnails =>
