@@ -23,22 +23,23 @@ public static class BatchItemExtensions
     // To that end, we use a marker interface and a generic constraint to limit the
     // set of types that these extension methods can be used on.
 
-    /// <summary>
-    /// Enumerates all items in the sequence and buffers them in memory.
-    /// </summary>
-    public static async ValueTask<IReadOnlyList<T>> CollectAsync<T>(this IAsyncEnumerable<T> source)
-        where T : IBatchItem => await source.ToListAsync();
+    /// <inheritdoc cref="BatchItemExtensions" />
+    extension<T>(IAsyncEnumerable<T> source)
+        where T : IBatchItem
+    {
+        /// <summary>
+        /// Enumerates all items in the sequence and buffers them in memory.
+        /// </summary>
+        public async ValueTask<IReadOnlyList<T>> CollectAsync() => await source.ToListAsync();
 
-    /// <summary>
-    /// Enumerates a subset of items in the sequence and buffers them in memory.
-    /// </summary>
-    public static async ValueTask<IReadOnlyList<T>> CollectAsync<T>(
-        this IAsyncEnumerable<T> source,
-        int count
-    )
-        where T : IBatchItem => await source.TakeAsync(count).ToListAsync();
+        /// <summary>
+        /// Enumerates a subset of items in the sequence and buffers them in memory.
+        /// </summary>
+        public async ValueTask<IReadOnlyList<T>> CollectAsync(int count) =>
+            await source.TakeAsync(count).ToListAsync();
 
-    /// <inheritdoc cref="CollectAsync{T}(System.Collections.Generic.IAsyncEnumerable{T})" />
-    public static ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter<T>(this IAsyncEnumerable<T> source)
-        where T : IBatchItem => source.CollectAsync().GetAwaiter();
+        /// <inheritdoc cref="BatchItemExtensions.CollectAsync{T}(System.Collections.Generic.IAsyncEnumerable{T})" />
+        public ValueTaskAwaiter<IReadOnlyList<T>> GetAwaiter() =>
+            source.CollectAsync().GetAwaiter();
+    }
 }

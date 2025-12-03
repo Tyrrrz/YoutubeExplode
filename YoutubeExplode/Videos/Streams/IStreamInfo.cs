@@ -43,25 +43,31 @@ public interface IStreamInfo
 /// </summary>
 public static class StreamInfoExtensions
 {
-    internal static bool IsThrottled(this IStreamInfo streamInfo) =>
-        !string.Equals(
-            UrlEx.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
-            "yes",
-            StringComparison.OrdinalIgnoreCase
-        );
+    /// <inheritdoc cref="StreamInfoExtensions" />
+    extension(IStreamInfo streamInfo)
+    {
+        internal bool IsThrottled() =>
+            !string.Equals(
+                UrlEx.TryGetQueryParameterValue(streamInfo.Url, "ratebypass"),
+                "yes",
+                StringComparison.OrdinalIgnoreCase
+            );
+    }
 
-    /// <summary>
-    /// Gets the stream with the highest bitrate.
-    /// Returns null if the sequence is empty.
-    /// </summary>
-    public static IStreamInfo? TryGetWithHighestBitrate(
-        this IEnumerable<IStreamInfo> streamInfos
-    ) => streamInfos.MaxBy(s => s.Bitrate);
+    /// <inheritdoc cref="StreamInfoExtensions" />
+    extension(IEnumerable<IStreamInfo> streamInfos)
+    {
+        /// <summary>
+        /// Gets the stream with the highest bitrate.
+        /// Returns null if the sequence is empty.
+        /// </summary>
+        public IStreamInfo? TryGetWithHighestBitrate() => streamInfos.MaxBy(s => s.Bitrate);
 
-    /// <summary>
-    /// Gets the stream with the highest bitrate.
-    /// </summary>
-    public static IStreamInfo GetWithHighestBitrate(this IEnumerable<IStreamInfo> streamInfos) =>
-        streamInfos.TryGetWithHighestBitrate()
-        ?? throw new InvalidOperationException("Input stream collection is empty.");
+        /// <summary>
+        /// Gets the stream with the highest bitrate.
+        /// </summary>
+        public IStreamInfo GetWithHighestBitrate() =>
+            streamInfos.TryGetWithHighestBitrate()
+            ?? throw new InvalidOperationException("Input stream collection is empty.");
+    }
 }

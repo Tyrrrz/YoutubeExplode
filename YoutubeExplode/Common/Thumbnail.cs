@@ -30,18 +30,9 @@ public partial class Thumbnail
 {
     internal static IReadOnlyList<Thumbnail> GetDefaultSet(VideoId videoId) =>
         [
-            new Thumbnail(
-                $"https://img.youtube.com/vi/{videoId}/default.jpg",
-                new Resolution(120, 90)
-            ),
-            new Thumbnail(
-                $"https://img.youtube.com/vi/{videoId}/mqdefault.jpg",
-                new Resolution(320, 180)
-            ),
-            new Thumbnail(
-                $"https://img.youtube.com/vi/{videoId}/hqdefault.jpg",
-                new Resolution(480, 360)
-            ),
+            new($"https://img.youtube.com/vi/{videoId}/default.jpg", new Resolution(120, 90)),
+            new($"https://img.youtube.com/vi/{videoId}/mqdefault.jpg", new Resolution(320, 180)),
+            new($"https://img.youtube.com/vi/{videoId}/hqdefault.jpg", new Resolution(480, 360)),
         ];
 }
 
@@ -50,17 +41,20 @@ public partial class Thumbnail
 /// </summary>
 public static class ThumbnailExtensions
 {
-    /// <summary>
-    /// Gets the thumbnail with the highest resolution (by area).
-    /// Returns null if the sequence is empty.
-    /// </summary>
-    public static Thumbnail? TryGetWithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
-        thumbnails.MaxBy(t => t.Resolution.Area);
+    /// <inheritdoc cref="ThumbnailExtensions" />
+    extension(IEnumerable<Thumbnail> thumbnails)
+    {
+        /// <summary>
+        /// Gets the thumbnail with the highest resolution (by area).
+        /// Returns null if the sequence is empty.
+        /// </summary>
+        public Thumbnail? TryGetWithHighestResolution() => thumbnails.MaxBy(t => t.Resolution.Area);
 
-    /// <summary>
-    /// Gets the thumbnail with the highest resolution (by area).
-    /// </summary>
-    public static Thumbnail GetWithHighestResolution(this IEnumerable<Thumbnail> thumbnails) =>
-        thumbnails.TryGetWithHighestResolution()
-        ?? throw new InvalidOperationException("Input thumbnail collection is empty.");
+        /// <summary>
+        /// Gets the thumbnail with the highest resolution (by area).
+        /// </summary>
+        public Thumbnail GetWithHighestResolution() =>
+            thumbnails.TryGetWithHighestResolution()
+            ?? throw new InvalidOperationException("Input thumbnail collection is empty.");
+    }
 }
