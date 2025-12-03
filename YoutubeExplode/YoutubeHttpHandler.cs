@@ -63,7 +63,9 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
 
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var token = $"{timestamp} {sessionId} {uri.Domain}";
-        var tokenHash = Hash.Compute(SHA1.Create(), Encoding.UTF8.GetBytes(token)).ToHex();
+        var tokenHash = Convert.ToHexString(
+            Hash.Compute(SHA1.Create(), Encoding.UTF8.GetBytes(token))
+        );
 
         return $"SAPISIDHASH {timestamp}_{tokenHash}";
     }
