@@ -23,12 +23,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(
-                    s,
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,
-                    out var result
-                )
+                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
                     ? result
                     : (DateTimeOffset?)null
             )
@@ -37,12 +32,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(
-                    s,
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.None,
-                    out var result
-                )
+                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
                     ? result
                     : (DateTimeOffset?)null
             );
