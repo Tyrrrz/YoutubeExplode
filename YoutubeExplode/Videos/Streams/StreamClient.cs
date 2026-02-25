@@ -113,8 +113,7 @@ public class StreamClient(HttpClient http)
             }
 
             var contentLength = await TryGetContentLengthAsync(streamData, url, cancellationToken);
-            if (contentLength is null)
-                continue;
+            var fileSize = contentLength is null ? new FileSize() : new FileSize(contentLength.Value);
 
             var container =
                 streamData.Container?.Pipe(s => new Container(s))
@@ -151,7 +150,7 @@ public class StreamClient(HttpClient http)
                     var streamInfo = new MuxedStreamInfo(
                         url,
                         container,
-                        new FileSize(contentLength.Value),
+                        fileSize,
                         bitrate,
                         streamData.AudioCodec,
                         audioLanguage,
@@ -169,7 +168,7 @@ public class StreamClient(HttpClient http)
                     var streamInfo = new VideoOnlyStreamInfo(
                         url,
                         container,
-                        new FileSize(contentLength.Value),
+                        fileSize,
                         bitrate,
                         streamData.VideoCodec,
                         videoQuality,
@@ -185,7 +184,7 @@ public class StreamClient(HttpClient http)
                 var streamInfo = new AudioOnlyStreamInfo(
                     url,
                     container,
-                    new FileSize(contentLength.Value),
+                    fileSize,
                     bitrate,
                     streamData.AudioCodec,
                     audioLanguage,
