@@ -24,10 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.10.0" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
-    <PackageReference Include="PolyShim" Version="2.3.0" PrivateAssets="all" />
+    <PackageReference Include="CliWrap" />
+    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+    <PackageReference Include="PolyShim" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
