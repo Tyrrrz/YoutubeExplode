@@ -8,14 +8,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4" PrivateAssets="all" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.2.1" PrivateAssets="all" />
-    <PackageReference Include="FluentAssertions" Version="8.8.0" />
-    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" PrivateAssets="all" />
-    <PackageReference Include="Gress" Version="2.1.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />
+    <PackageReference Include="coverlet.collector" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="all" />
+    <PackageReference Include="Gress" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
