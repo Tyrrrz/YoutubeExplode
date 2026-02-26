@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <!-- Enable central package management, https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management -->
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageVersion Include="AngleSharp" Version="1.4.0" />
     <PackageVersion Include="CSharpier.MsBuild" Version="1.2.1" />
