@@ -28,7 +28,7 @@ internal static class StringExtensions
 
             return index < 0
                 ? string.Empty
-                : str.Substring(index + sub.Length, str.Length - index - sub.Length);
+                : str[(index + sub.Length)..];
         }
 
         public string StripNonDigit()
