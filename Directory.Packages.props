@@ -12,7 +12,6 @@
     <PackageVersion Include="System.Text.Json" Version="10.0.3" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageVersion Include="CliWrap" Version="3.10.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.103" />
     <PackageVersion Include="Gress" Version="2.1.1" />
     <PackageVersion Include="AsyncImageLoader.Avalonia" Version="3.6.0" />
     <PackageVersion Include="Avalonia" Version="11.3.12" />

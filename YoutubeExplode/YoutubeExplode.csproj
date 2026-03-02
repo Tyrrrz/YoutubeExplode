@@ -30,7 +30,6 @@
       Include="Microsoft.Bcl.AsyncInterfaces"
       Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))"
     />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
     <PackageReference Include="PolyShim" PrivateAssets="all" />
     <!-- System.Text.Json is downgraded to v9.0.2 for netstandard2.0 targets to maintain compatibility
          with UWP projects using the .NET Native Toolchain, which cannot handle v10.x.
