@@ -14,7 +14,7 @@
 
   <PropertyGroup>
     <Description>Extension for YoutubeExplode that provides an interface to download and convert videos using FFmpeg</Description>
-    <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode/tree/master/YoutubeExplode.Converter</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode/tree/prime/YoutubeExplode.Converter</PackageProjectUrl>
     <PackageIcon>favicon.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>

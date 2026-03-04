@@ -16,16 +16,16 @@ on:
     - cron: "0 0 * * *"
   push:
     branches:
-      - master
+      - prime
     tags:
       - "*"
   pull_request:
     branches:
-      - master
+      - prime
 
 jobs:
   main:
-    uses: Tyrrrz/.github/.github/workflows/nuget.yml@master
+    uses: Tyrrrz/.github/.github/workflows/nuget.yml@prime
     with:
       # CI tests currently don't work due to YouTube's anti-bot measures
       # https://github.com/Tyrrrz/YoutubeExplode/issues/794
