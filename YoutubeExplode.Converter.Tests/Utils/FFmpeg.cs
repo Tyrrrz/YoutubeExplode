@@ -14,7 +14,7 @@ public static class FFmpeg
 {
     private static readonly SemaphoreSlim Lock = new(1, 1);
 
-    public static Version Version { get; } = new(7, 1, 1);
+    public static Version Version { get; } = new(8, 0, 1);
 
     private static string FileName { get; } = OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
 
