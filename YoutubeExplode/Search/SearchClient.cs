@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils.Extensions;
@@ -70,6 +71,13 @@ public class SearchClient(HttpClient http)
                     videoData.ChannelId
                     ?? throw new YoutubeExplodeException("Failed to extract the video channel ID.");
 
+                // Some videos have invalid channel IDs (e.g. just "UC"). Such videos appear to generally
+                // be unplayable anyway, so it's safe to skip them.
+                // https://github.com/Tyrrrz/YoutubeExplode/issues/944
+                var parsedVideoChannelId = ChannelId.TryParse(videoChannelId);
+                if (parsedVideoChannelId is null)
+                    continue;
+
                 var videoThumbnails = videoData
                     .Thumbnails.Select(t =>
                     {
@@ -101,7 +109,7 @@ public class SearchClient(HttpClient http)
                 var video = new VideoSearchResult(
                     videoId,
                     videoTitle,
-                    new Author(videoChannelId, videoChannelTitle),
+                    new Author(parsedVideoChannelId.Value, videoChannelTitle),
                     videoData.Duration,
                     videoThumbnails
                 );
