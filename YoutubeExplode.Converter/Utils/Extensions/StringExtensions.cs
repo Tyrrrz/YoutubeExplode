@@ -4,17 +4,18 @@ namespace YoutubeExplode.Converter.Utils.Extensions;
 
 internal static class StringExtensions
 {
-    extension(string s)
+    extension(string str)
     {
-        public string? NullIfWhiteSpace() => !string.IsNullOrWhiteSpace(s) ? s : null;
+        public string? NullIfWhiteSpace() => !string.IsNullOrWhiteSpace(str) ? str : null;
 
         public string SubstringUntil(
             string sub,
             StringComparison comparison = StringComparison.Ordinal
-        )
-        {
-            var index = s.IndexOf(sub, comparison);
-            return index < 0 ? s : s[..index];
-        }
+        ) =>
+            str.IndexOf(sub, comparison) switch
+            {
+                >= 0 and var index => str[..index],
+                _ => str,
+            };
     }
 }

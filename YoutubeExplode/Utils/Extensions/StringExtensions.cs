@@ -13,20 +13,22 @@ internal static class StringExtensions
         public string SubstringUntil(
             string sub,
             StringComparison comparison = StringComparison.Ordinal
-        )
-        {
-            var index = str.IndexOf(sub, comparison);
-            return index < 0 ? str : str[..index];
-        }
+        ) =>
+            str.IndexOf(sub, comparison) switch
+            {
+                >= 0 and var index => str[..index],
+                _ => str,
+            };
 
         public string SubstringAfter(
             string sub,
             StringComparison comparison = StringComparison.Ordinal
-        )
-        {
-            var index = str.IndexOf(sub, comparison);
-            return index < 0 ? string.Empty : str[(index + sub.Length)..];
-        }
+        ) =>
+            str.IndexOf(sub, comparison) switch
+            {
+                >= 0 and var index => str[(index + sub.Length)..],
+                _ => "",
+            };
 
         public string StripNonDigit()
         {
