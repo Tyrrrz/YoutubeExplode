@@ -25,7 +25,7 @@ internal class PlaylistController(HttpClient http)
             // lang=json
             $$"""
             {
-              "browseId": {{Json.Serialize("VL" + playlistId)}},
+              "browseId": {{Json.Encode("VL" + playlistId)}},
               "context": {
                 "client": {
                   "clientName": "WEB",
@@ -73,9 +73,9 @@ internal class PlaylistController(HttpClient http)
                 // lang=json
                 $$"""
                 {
-                  "playlistId": {{Json.Serialize(playlistId)}},
-                  "videoId": {{Json.Serialize(videoId)}},
-                  "playlistIndex": {{Json.Serialize(index)}},
+                  "playlistId": {{Json.Encode(playlistId)}},
+                  "videoId": {{Json.Encode(videoId)}},
+                  "playlistIndex": {{Json.Encode(index)}},
                   "context": {
                     "client": {
                       "clientName": "WEB",
@@ -83,7 +83,7 @@ internal class PlaylistController(HttpClient http)
                       "hl": "en",
                       "gl": "US",
                       "utcOffsetMinutes": 0,
-                      "visitorData": {{Json.Serialize(visitorData)}}
+                      "visitorData": {{Json.Encode(visitorData)}}
                     }
                   }
                 }

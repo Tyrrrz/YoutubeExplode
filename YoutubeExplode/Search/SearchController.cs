@@ -24,15 +24,15 @@ internal class SearchController(HttpClient http)
             // lang=json
             $$"""
             {
-              "query": {{Json.Serialize(searchQuery)}},
-              "params": {{Json.Serialize(searchFilter switch
+              "query": {{Json.Encode(searchQuery)}},
+              "params": {{Json.Encode(searchFilter switch
               {
-                  SearchFilter.Video => "EgIQAQ%3D%3D",
-                  SearchFilter.Playlist => "EgIQAw%3D%3D",
-                  SearchFilter.Channel => "EgIQAg%3D%3D",
-                  _ => null
+                SearchFilter.Video => "EgIQAQ%3D%3D",
+                SearchFilter.Playlist => "EgIQAw%3D%3D",
+                SearchFilter.Channel => "EgIQAg%3D%3D",
+                _ => null
               })}},
-              "continuation": {{Json.Serialize(continuationToken)}},
+              "continuation": {{Json.Encode(continuationToken)}},
               "context": {
                 "client": {
                   "clientName": "WEB",

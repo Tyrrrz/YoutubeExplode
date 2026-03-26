@@ -107,7 +107,7 @@ internal class VideoController(HttpClient http)
             // lang=json
             $$"""
             {
-              "videoId": {{Json.Serialize(videoId)}},
+              "videoId": {{Json.Encode(videoId)}},
               "contentCheckOk": true,
               "context": {
                 "client": {
@@ -118,7 +118,7 @@ internal class VideoController(HttpClient http)
                   "osName": "Android",
                   "osVersion": "12L",
                   "platform": "MOBILE",
-                  "visitorData": {{Json.Serialize(visitorData)}},
+                  "visitorData": {{Json.Encode(visitorData)}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
@@ -168,12 +168,12 @@ internal class VideoController(HttpClient http)
             // lang=json
             $$"""
             {
-              "videoId": {{Json.Serialize(videoId)}},
+              "videoId": {{Json.Encode(videoId)}},
               "context": {
                 "client": {
                   "clientName": "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
                   "clientVersion": "2.0",
-                  "visitorData": {{Json.Serialize(visitorData)}},
+                  "visitorData": {{Json.Encode(visitorData)}},
                   "hl": "en",
                   "gl": "US",
                   "utcOffsetMinutes": 0
@@ -184,7 +184,7 @@ internal class VideoController(HttpClient http)
               },
               "playbackContext": {
                 "contentPlaybackContext": {
-                  "signatureTimestamp": {{Json.Serialize(signatureTimestamp)}}
+                  "signatureTimestamp": {{Json.Encode(signatureTimestamp)}}
                 }
               }
             }

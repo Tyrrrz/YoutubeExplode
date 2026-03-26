@@ -58,34 +58,32 @@ internal static class Json
         }
     }
 
-    public static string Encode(string value)
+    public static string Escape(string value)
     {
         var buffer = new StringBuilder(value.Length);
 
-        foreach (var c in value)
+        foreach (var ch in value)
         {
-            if (c == '\n')
+            if (ch == '\n')
                 buffer.Append("\\n");
-            else if (c == '\r')
+            else if (ch == '\r')
                 buffer.Append("\\r");
-            else if (c == '\t')
+            else if (ch == '\t')
                 buffer.Append("\\t");
-            else if (c == '\\')
+            else if (ch == '\\')
                 buffer.Append("\\\\");
-            else if (c == '"')
+            else if (ch == '"')
                 buffer.Append("\\\"");
             else
-                buffer.Append(c);
+                buffer.Append(ch);
         }
 
         return buffer.ToString();
     }
 
-    // AOT-compatible serialization
-    public static string Serialize(string? value) =>
-        value is not null ? '"' + Encode(value) + '"' : "null";
+    public static string Encode(string? value) =>
+        value is not null ? '"' + Escape(value) + '"' : "null";
 
-    // AOT-compatible serialization
-    public static string Serialize(int? value) =>
+    public static string Encode(int? value) =>
         value is not null ? value.Value.ToString(CultureInfo.InvariantCulture) : "null";
 }
