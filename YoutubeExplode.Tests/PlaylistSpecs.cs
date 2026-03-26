@@ -41,10 +41,11 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
-            await youtube.Playlists.GetAsync(PlaylistIds.Private)
-        );
+        // Act
+        var act = async () => await youtube.Playlists.GetAsync(PlaylistIds.Private);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<PlaylistUnavailableException>()).Which;
 
         testOutput.WriteLine(ex.ToString());
     }
@@ -55,10 +56,11 @@ public class PlaylistSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<PlaylistUnavailableException>(async () =>
-            await youtube.Playlists.GetAsync(PlaylistIds.NonExisting)
-        );
+        // Act
+        var act = async () => await youtube.Playlists.GetAsync(PlaylistIds.NonExisting);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<PlaylistUnavailableException>()).Which;
 
         testOutput.WriteLine(ex.ToString());
     }

@@ -74,7 +74,10 @@ public class PlaylistIdSpecs
         string playlistIdOrUrl
     )
     {
-        // Act & assert
-        Assert.Throws<ArgumentException>(() => PlaylistId.Parse(playlistIdOrUrl));
+        // Act
+        var act = () => PlaylistId.Parse(playlistIdOrUrl);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }

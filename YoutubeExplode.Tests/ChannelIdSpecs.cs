@@ -46,7 +46,10 @@ public class ChannelIdSpecs
         string channelIdOrUrl
     )
     {
-        // Act & assert
-        Assert.Throws<ArgumentException>(() => ChannelId.Parse(channelIdOrUrl));
+        // Act
+        var act = () => ChannelId.Parse(channelIdOrUrl);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }

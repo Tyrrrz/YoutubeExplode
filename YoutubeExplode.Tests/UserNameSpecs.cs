@@ -44,7 +44,10 @@ public class UserNameSpecs
         string userName
     )
     {
-        // Act & assert
-        Assert.Throws<ArgumentException>(() => UserName.Parse(userName));
+        // Act
+        var act = () => UserName.Parse(userName);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }

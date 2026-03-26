@@ -141,10 +141,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoRequiresPurchaseException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase)
-        );
+        // Act
+        var act = async () =>
+            await youtube.Videos.Streams.GetManifestAsync(VideoIds.RequiresPurchase);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<VideoRequiresPurchaseException>()).Which;
 
         ex.PreviewVideoId.Value.Should().NotBeNullOrWhiteSpace();
 
@@ -157,10 +159,11 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private)
-        );
+        // Act
+        var act = async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Private);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<VideoUnavailableException>()).Which;
 
         testOutput.WriteLine(ex.ToString());
     }
@@ -171,10 +174,11 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnavailableException>(async () =>
-            await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted)
-        );
+        // Act
+        var act = async () => await youtube.Videos.Streams.GetManifestAsync(VideoIds.Deleted);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<VideoUnavailableException>()).Which;
 
         testOutput.WriteLine(ex.ToString());
     }
@@ -308,10 +312,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<VideoUnplayableException>(async () =>
-            await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase)
-        );
+        // Act
+        var act = async () =>
+            await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.RequiresPurchase);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<VideoUnplayableException>()).Which;
 
         testOutput.WriteLine(ex.ToString());
     }
@@ -322,10 +328,12 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         // Arrange
         using var youtube = new YoutubeClient();
 
-        // Act & assert
-        var ex = await Assert.ThrowsAsync<YoutubeExplodeException>(async () =>
-            await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal)
-        );
+        // Act
+        var act = async () =>
+            await youtube.Videos.Streams.GetHttpLiveStreamUrlAsync(VideoIds.Normal);
+
+        // Assert
+        var ex = (await act.Should().ThrowAsync<YoutubeExplodeException>()).Which;
 
         testOutput.WriteLine(ex.ToString());
     }

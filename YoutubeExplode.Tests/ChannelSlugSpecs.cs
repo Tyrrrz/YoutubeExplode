@@ -48,7 +48,10 @@ public class ChannelSlugSpecs
         string channelSlugOrUrl
     )
     {
-        // Act & assert
-        Assert.Throws<ArgumentException>(() => ChannelSlug.Parse(channelSlugOrUrl));
+        // Act
+        var act = () => ChannelSlug.Parse(channelSlugOrUrl);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }

@@ -48,7 +48,10 @@ public class VideoIdSpecs
         string videoId
     )
     {
-        // Act & assert
-        Assert.Throws<ArgumentException>(() => VideoId.Parse(videoId));
+        // Act
+        var act = () => VideoId.Parse(videoId);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }

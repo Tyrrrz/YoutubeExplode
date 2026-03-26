@@ -47,7 +47,10 @@ public class ChannelHandleSpecs
         string channelHandleOrUrl
     )
     {
-        // Act & assert
-        Assert.Throws<ArgumentException>(() => ChannelHandle.Parse(channelHandleOrUrl));
+        // Act
+        var act = () => ChannelHandle.Parse(channelHandleOrUrl);
+
+        // Assert
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }
