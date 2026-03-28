@@ -89,7 +89,14 @@ public partial struct VideoQuality
             .Groups[2]
             .Value.NullIfWhiteSpace()
             ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
+                int.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (int?)null
             );
 
         return new VideoQuality(label, maxHeight, framerate ?? framerateFallback);

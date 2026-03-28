@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+#pragma warning disable CS0246
 using Lazy;
+#pragma warning restore CS0246
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -55,7 +57,12 @@ internal partial class DashManifest
             ?? Url?.Pipe(s => Regex.Match(s, @"[/\?]clen[/=](\d+)").Groups[1].Value)
                 .NullIfWhiteSpace()
                 ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                    long.TryParse(
+                        s,
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out var result
+                    )
                         ? result
                         : (long?)null
                 );

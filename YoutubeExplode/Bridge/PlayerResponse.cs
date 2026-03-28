@@ -58,7 +58,12 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
             ?.Pipe(s =>
-                double.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                double.TryParse(
+                    s,
+                    NumberStyles.Float | NumberStyles.AllowThousands,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
                     ? result
                     : (double?)null
             )
@@ -90,7 +95,12 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("viewCount")
             ?.GetStringOrNull()
             ?.Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                long.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
                     ? result
                     : (long?)null
             );
@@ -237,14 +247,24 @@ internal partial class PlayerResponse
                 .GetPropertyOrNull("contentLength")
                 ?.GetStringOrNull()
                 ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                    long.TryParse(
+                        s,
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out var result
+                    )
                         ? result
                         : (long?)null
                 )
             ?? Url?.Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))
                 ?.NullIfWhiteSpace()
                 ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                    long.TryParse(
+                        s,
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out var result
+                    )
                         ? result
                         : (long?)null
                 );

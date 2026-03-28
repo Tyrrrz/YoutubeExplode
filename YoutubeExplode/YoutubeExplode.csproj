@@ -1,15 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0;net7.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net10.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
-    <IsTrimmable
-      Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))"
-      >true</IsTrimmable
-    >
-    <IsAotCompatible
-      Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))"
-      >true</IsAotCompatible
-    >
+    <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+    <!-- Suppress Lazy attribute resolution errors from AntiHruk code generator -->
+    <NoWarn>$(NoWarn);CS0246</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,17 +26,9 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.4" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <PackageReference Include="Lazy.Fody" Version="1.11.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="PolyShim" Version="1.7.0" PrivateAssets="all" />
-    <PackageReference Include="System.Memory" Version="4.5.5" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
-    <PackageReference Include="System.Text.Json" Version="7.0.3" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'net461'" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>

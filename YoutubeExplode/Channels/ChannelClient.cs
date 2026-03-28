@@ -42,7 +42,12 @@ public class ChannelClient(HttpClient http)
                 ?.Groups[1]
                 .Value.NullIfWhiteSpace()
                 ?.Pipe(s =>
-                    int.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                    int.TryParse(
+                        s,
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out var result
+                    )
                         ? result
                         : (int?)null
                 )

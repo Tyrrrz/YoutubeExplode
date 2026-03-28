@@ -45,7 +45,14 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
             ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
+                int.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (int?)null
             )
         ?? ContentRoot
             ?.GetPropertyOrNull("videoCountText")
@@ -55,7 +62,14 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
             ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
+                int.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (int?)null
             );
 
     [Lazy]

@@ -114,7 +114,14 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
             ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
+                int.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (int?)null
             )
         ?? SidebarPrimary
             ?.GetPropertyOrNull("stats")
@@ -125,7 +132,14 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.Split(' ')
             ?.FirstOrDefault()
             ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
+                int.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
+                    ? result
+                    : (int?)null
             );
 
     [Lazy]

@@ -16,8 +16,9 @@ internal static class Json
 
         // We trust that the source contains valid json, we just need to extract it.
         // To do it, we will be matching curly braces until we even out.
-        foreach (var (i, ch) in source.Index())
+        for (var i = 0; i < source.Length; i++)
         {
+            var ch = source[i];
             var prev = i > 0 ? source[i - 1] : default;
 
             buffer.Append(ch);

@@ -23,7 +23,12 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                DateTimeOffset.TryParse(
+                    s,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var result
+                )
                     ? result
                     : (DateTimeOffset?)null
             )
@@ -32,7 +37,12 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                DateTimeOffset.TryParse(
+                    s,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var result
+                )
                     ? result
                     : (DateTimeOffset?)null
             );
@@ -54,7 +64,12 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .NullIfWhiteSpace()
             ?.StripNonDigit()
             .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                long.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
                     ? result
                     : (long?)null
             )
@@ -73,7 +88,12 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .NullIfWhiteSpace()
             ?.StripNonDigit()
             .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                long.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
                     ? result
                     : (long?)null
             );
@@ -95,7 +115,12 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .NullIfWhiteSpace()
             ?.StripNonDigit()
             .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
+                long.TryParse(
+                    s,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var result
+                )
                     ? result
                     : (long?)null
             );
