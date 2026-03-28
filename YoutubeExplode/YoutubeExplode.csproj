@@ -13,6 +13,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <Description>
+      Abstraction layer over YouTube's internal API.
+    </Description>
     <PackageIcon>favicon.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -22,30 +25,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" />
-    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
-    <PackageReference Include="Deorcify" PrivateAssets="all" />
-    <PackageReference Include="Lazy.Fody" PrivateAssets="all" />
-    <PackageReference
-      Include="Microsoft.Bcl.AsyncInterfaces"
-      Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))"
-    />
-    <PackageReference Include="PolyShim" PrivateAssets="all" />
-    <!-- System.Text.Json is downgraded to v9.0.2 for netstandard2.0 targets to maintain compatibility
-         with UWP projects using the .NET Native Toolchain, which cannot handle v10.x.
-         See https://github.com/Tyrrrz/YoutubeExplode/issues/937 -->
-    <PackageReference
-      Include="System.Text.Json"
-      Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.0'))"
-      VersionOverride="9.0.2"
-    />
-    <PackageReference
-      Include="System.Threading.Tasks.Extensions"
-      Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))"
-    />
+    <Compile Remove="Tests\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="1.0.4" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+    <PackageReference Include="PolyShim" Version="1.7.0" PrivateAssets="all" />
+    <PackageReference Include="System.Memory" Version="4.5.5" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="System.Text.Json" Version="7.0.3" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'net461'" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net461'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AntiHruk\AntiHruk.csproj" />
+  </ItemGroup>
+
 </Project>
