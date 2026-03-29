@@ -14,6 +14,8 @@
     </Description>
     <PackageIcon>favicon.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <CheckUpstreamYoutubeExplode Condition="'$(CheckUpstreamYoutubeExplode)' == ''">true</CheckUpstreamYoutubeExplode>
+    <YoutubeExplodeUpstreamUrl Condition="'$(YoutubeExplodeUpstreamUrl)' == ''">https://github.com/Tyrrrz/YoutubeExplode</YoutubeExplodeUpstreamUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +36,37 @@
   <ItemGroup>
     <ProjectReference Include="..\AntiHruk\AntiHruk.csproj" />
   </ItemGroup>
+
+  <Target Name="CheckUpstreamYoutubeExplodeUpdates" BeforeTargets="Build" Condition="'$(CheckUpstreamYoutubeExplode)' == 'true'">
+    <PropertyGroup>
+      <YoutubeExplodeGitCheckDir>$(MSBuildProjectDirectory)</YoutubeExplodeGitCheckDir>
+    </PropertyGroup>
+
+    <Exec Command="git -C &quot;$(YoutubeExplodeGitCheckDir)&quot; rev-parse HEAD" ContinueOnError="true" ConsoleToMsBuild="true">
+      <Output TaskParameter="ExitCode" PropertyName="YoutubeExplodeLocalHeadExitCode" />
+      <Output TaskParameter="ConsoleOutput" ItemName="YoutubeExplodeLocalHeadLine" />
+    </Exec>
+
+    <Exec Command="git ls-remote $(YoutubeExplodeUpstreamUrl) HEAD" ContinueOnError="true" ConsoleToMsBuild="true" Condition="'$(YoutubeExplodeLocalHeadExitCode)' == '0'">
+      <Output TaskParameter="ExitCode" PropertyName="YoutubeExplodeUpstreamHeadExitCode" />
+      <Output TaskParameter="ConsoleOutput" ItemName="YoutubeExplodeUpstreamHeadLine" />
+    </Exec>
+
+    <PropertyGroup>
+      <YoutubeExplodeLocalHead>@(YoutubeExplodeLocalHeadLine)</YoutubeExplodeLocalHead>
+      <YoutubeExplodeUpstreamHeadRaw>@(YoutubeExplodeUpstreamHeadLine)</YoutubeExplodeUpstreamHeadRaw>
+      <YoutubeExplodeUpstreamHead Condition="'$(YoutubeExplodeUpstreamHeadRaw)' != '' and $([System.String]::Copy('$(YoutubeExplodeUpstreamHeadRaw)').Length) &gt;= 40">$([System.String]::Copy('$(YoutubeExplodeUpstreamHeadRaw)').Substring(0, 40))</YoutubeExplodeUpstreamHead>
+    </PropertyGroup>
+
+    <Exec Command="git -C &quot;$(YoutubeExplodeGitCheckDir)&quot; merge-base --is-ancestor $(YoutubeExplodeUpstreamHead) HEAD" ContinueOnError="true" Condition="'$(YoutubeExplodeLocalHeadExitCode)' == '0' and '$(YoutubeExplodeUpstreamHeadExitCode)' == '0' and '$(YoutubeExplodeUpstreamHead)' != ''">
+      <Output TaskParameter="ExitCode" PropertyName="YoutubeExplodeAncestorExitCode" />
+    </Exec>
+
+    <Warning Text="Не удалось проверить актуальность upstream $(YoutubeExplodeUpstreamUrl). Проверьте наличие git и доступ в сеть." Condition="'$(YoutubeExplodeLocalHeadExitCode)' != '0' or ('$(YoutubeExplodeUpstreamHeadExitCode)' != '0' and '$(YoutubeExplodeLocalHeadExitCode)' == '0')" />
+
+    <Warning Text="Не удалось выполнить проверку merge-base для upstream $(YoutubeExplodeUpstreamUrl). Код: $(YoutubeExplodeAncestorExitCode)." Condition="'$(YoutubeExplodeAncestorExitCode)' != '' and '$(YoutubeExplodeAncestorExitCode)' != '0' and '$(YoutubeExplodeAncestorExitCode)' != '1'" />
+
+    <Error Text="Сборка остановлена: версия форка YoutubeExplode неактуальна. Коммит upstream $(YoutubeExplodeUpstreamHead) отсутствует в текущей ветке (локальный HEAD: $(YoutubeExplodeLocalHead)). Подтяните upstream и залейте изменения в ваш форк." Condition="'$(YoutubeExplodeAncestorExitCode)' == '1'" />
+  </Target>
 
 </Project>
