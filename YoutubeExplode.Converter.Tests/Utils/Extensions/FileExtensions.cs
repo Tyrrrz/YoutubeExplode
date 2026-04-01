@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace YoutubeExplode.Converter.Tests.Utils.Extensions;
 
@@ -6,7 +7,7 @@ internal static class FileExtensions
 {
     extension(File)
     {
-        public static bool ContainsBytes(string filePath, byte[] data)
+        public static bool ContainsBytes(string filePath, ReadOnlySpan<byte> data)
         {
             using var stream = File.OpenRead(filePath);
             using var reader = new BinaryReader(stream);
