@@ -27,6 +27,12 @@ public partial struct VideoId
 
     private static string? TryNormalize(string? videoIdOrUrl)
     {
+        static string? TryExtractId(string url, string pattern)
+        {
+            var id = Regex.Match(url, pattern).Groups[1].Value.Pipe(WebUtility.UrlDecode);
+            return !string.IsNullOrWhiteSpace(id) && IsValid(id) ? id : null;
+        }
+
         if (string.IsNullOrWhiteSpace(videoIdOrUrl))
             return null;
 
@@ -36,79 +42,25 @@ public partial struct VideoId
             return videoIdOrUrl;
 
         // Try to extract the ID from the URL
-        // https://www.youtube.com/watch?v=yIVRs6YSbOM
-        {
-            var id = Regex
-                .Match(videoIdOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (partially shortened)
-        // https://youtu.be/watch?v=Fcds0_MrgNU
-        {
-            var id = Regex
-                .Match(videoIdOrUrl, @"youtu\.be/watch.*?v=(.*?)(?:\?|&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (shortened)
-        // https://youtu.be/yIVRs6YSbOM
-        {
-            var id = Regex
-                .Match(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (embedded)
-        // https://www.youtube.com/embed/yIVRs6YSbOM
-        {
-            var id = Regex
-                .Match(videoIdOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (shorts clip)
-        // https://www.youtube.com/shorts/sKL1vjP0tIo
-        {
-            var id = Regex
-                .Match(videoIdOrUrl, @"youtube\..+?/shorts/(.*?)(?:\?|&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (livestream)
-        // https://www.youtube.com/live/jfKfPfyJRdk
-        {
-            var id = Regex
-                .Match(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Invalid input
-        return null;
+        return
+            // Regular video URL
+            // https://www.youtube.com/watch?v=yIVRs6YSbOM
+            TryExtractId(videoIdOrUrl, @"youtube\..+?/watch.*?v=(.*?)(?:&|/|$)")
+            // Short video URL (type 1)
+            // https://youtu.be/watch?v=Fcds0_MrgNU
+            ?? TryExtractId(videoIdOrUrl, @"youtu\.be/watch.*?v=(.*?)(?:\?|&|/|$)")
+            // Short video URL (type 2)
+            // https://youtu.be/yIVRs6YSbOM
+            ?? TryExtractId(videoIdOrUrl, @"youtu\.be/(.*?)(?:\?|&|/|$)")
+            // Embed URL
+            // https://www.youtube.com/embed/yIVRs6YSbOM
+            ?? TryExtractId(videoIdOrUrl, @"youtube\..+?/embed/(.*?)(?:\?|&|/|$)")
+            // Shorts URL
+            // https://www.youtube.com/shorts/sKL1vjP0tIo
+            ?? TryExtractId(videoIdOrUrl, @"youtube\..+?/shorts/(.*?)(?:\?|&|/|$)")
+            // Live URL
+            // https://www.youtube.com/live/jfKfPfyJRdk
+            ?? TryExtractId(videoIdOrUrl, @"youtube\..+?/live/(.*?)(?:\?|&|/|$)");
     }
 
     /// <summary>

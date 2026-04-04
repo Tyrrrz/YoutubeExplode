@@ -20,7 +20,7 @@ public readonly partial struct ChannelSlug(string value)
     public override string ToString() => Value;
 }
 
-public readonly partial struct ChannelSlug
+public partial struct ChannelSlug
 {
     private static bool IsValid(string channelSlug) => channelSlug.All(char.IsLetterOrDigit);
 
@@ -73,4 +73,27 @@ public readonly partial struct ChannelSlug
     /// Converts channel slug to string.
     /// </summary>
     public static implicit operator string(ChannelSlug channelSlug) => channelSlug.ToString();
+}
+
+public partial struct ChannelSlug : IEquatable<ChannelSlug>
+{
+    /// <inheritdoc />
+    public bool Equals(ChannelSlug other) =>
+        string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is ChannelSlug other && Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => Value.GetHashCode(StringComparison.Ordinal);
+
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator ==(ChannelSlug left, ChannelSlug right) => left.Equals(right);
+
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator !=(ChannelSlug left, ChannelSlug right) => !(left == right);
 }

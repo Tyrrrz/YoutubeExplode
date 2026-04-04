@@ -20,7 +20,7 @@ public readonly partial struct ChannelHandle(string value)
     public override string ToString() => Value;
 }
 
-public readonly partial struct ChannelHandle
+public partial struct ChannelHandle
 {
     private static bool IsValid(string channelHandle) =>
         channelHandle.All(c => char.IsLetterOrDigit(c) || c is '_' or '-' or '.');
@@ -75,4 +75,27 @@ public readonly partial struct ChannelHandle
     /// Converts channel handle to string.
     /// </summary>
     public static implicit operator string(ChannelHandle channelHandle) => channelHandle.ToString();
+}
+
+public partial struct ChannelHandle : IEquatable<ChannelHandle>
+{
+    /// <inheritdoc />
+    public bool Equals(ChannelHandle other) =>
+        string.Equals(Value, other.Value, StringComparison.Ordinal);
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is ChannelHandle other && Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => Value.GetHashCode(StringComparison.Ordinal);
+
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator ==(ChannelHandle left, ChannelHandle right) => left.Equals(right);
+
+    /// <summary>
+    /// Equality check.
+    /// </summary>
+    public static bool operator !=(ChannelHandle left, ChannelHandle right) => !(left == right);
 }

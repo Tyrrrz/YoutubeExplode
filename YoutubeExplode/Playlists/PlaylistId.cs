@@ -29,6 +29,12 @@ public partial struct PlaylistId
 
     private static string? TryNormalize(string? playlistIdOrUrl)
     {
+        static string? TryExtractId(string url, string pattern)
+        {
+            var id = Regex.Match(url, pattern).Groups[1].Value.Pipe(WebUtility.UrlDecode);
+            return !string.IsNullOrWhiteSpace(id) && IsValid(id) ? id : null;
+        }
+
         if (string.IsNullOrWhiteSpace(playlistIdOrUrl))
             return null;
 
@@ -38,55 +44,19 @@ public partial struct PlaylistId
             return playlistIdOrUrl;
 
         // Try to extract the ID from the URL
-        // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
-        {
-            var id = Regex
-                .Match(playlistIdOrUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (playlist + video)
-        // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-        {
-            var id = Regex
-                .Match(playlistIdOrUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (playlist + video, shortened)
-        // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-        {
-            var id = Regex
-                .Match(playlistIdOrUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Try to extract the ID from the URL (playlist + video, embedded)
-        // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
-        {
-            var id = Regex
-                .Match(playlistIdOrUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)")
-                .Groups[1]
-                .Value.Pipe(WebUtility.UrlDecode);
-
-            if (!string.IsNullOrWhiteSpace(id) && IsValid(id))
-                return id;
-        }
-
-        // Invalid input
-        return null;
+        return
+            // Regular playlist URL
+            // https://www.youtube.com/playlist?list=PLOU2XLYxmsIJGErt5rrCqaSGTMyyqNt2H
+            TryExtractId(playlistIdOrUrl, @"youtube\..+?/playlist.*?list=(.*?)(?:&|/|$)")
+            // Video URL with playlist ID
+            // https://www.youtube.com/watch?v=b8m9zhNAgKs&list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
+            ?? TryExtractId(playlistIdOrUrl, @"youtube\..+?/watch.*?list=(.*?)(?:&|/|$)")
+            // Short video URL with playlist ID
+            // https://youtu.be/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
+            ?? TryExtractId(playlistIdOrUrl, @"youtu\.be/.*?/.*?list=(.*?)(?:&|/|$)")
+            // Embed URL with playlist ID
+            // https://www.youtube.com/embed/b8m9zhNAgKs/?list=PL9tY0BWXOZFuFEG_GtOBZ8-8wbkH-NVAr
+            ?? TryExtractId(playlistIdOrUrl, @"youtube\..+?/embed/.*?/.*?list=(.*?)(?:&|/|$)");
     }
 
     /// <summary>
