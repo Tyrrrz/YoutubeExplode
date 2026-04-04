@@ -127,8 +127,9 @@ internal class PlaylistController(HttpClient http)
                     continue;
                 }
 
-                // If the response contains videos, proceed with them even if the playlist is marked unavailable
-                if (playlistResponse.Videos.Any())
+                // If the response contains videos, proceed with them even if the playlist is marked unavailable,
+                // but only on the final retry attempt.
+                if (retriesRemaining == 0 && playlistResponse.Videos.Any())
                     return playlistResponse;
 
                 throw new PlaylistUnavailableException(
