@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using YoutubeExplode.Bridge;
@@ -125,6 +126,11 @@ internal class PlaylistController(HttpClient http)
 
                     continue;
                 }
+
+                // If the response contains videos, proceed with them even if the playlist is marked unavailable,
+                // but only on the final retry attempt.
+                if (retriesRemaining == 0 && playlistResponse.Videos.Any())
+                    return playlistResponse;
 
                 throw new PlaylistUnavailableException(
                     $"Playlist '{playlistId}' is not available."
