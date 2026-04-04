@@ -100,14 +100,9 @@ internal class PlaylistController(HttpClient http)
 
             if (!playlistResponse.IsAvailable)
             {
-                // Retry if this is not the first request, meaning that the previous requests were successful,
-                // indicating that it's most likely a transient error.
-                if (index > 0 && !string.IsNullOrWhiteSpace(visitorData) && retriesRemaining > 0)
-                    continue;
-
-                // Some system playlists are unavailable through this endpoint until their page is opened by
-                // at least one user. If this is the first request, and we haven't retried yet, attempt to
-                // warm up the playlist by opening its page, and then retry.
+                // Playlist is unavailable, this is the first request, and we haven't retried yet.
+                // Try to "open" the playlist page, because some system playlists don't actually
+                // fully materialize through this endpoint until someone opens them at least once.
                 if (
                     index <= 0
                     && string.IsNullOrWhiteSpace(visitorData)
@@ -127,9 +122,16 @@ internal class PlaylistController(HttpClient http)
                     continue;
                 }
 
-                // If the response contains videos, proceed with them even if the playlist is marked unavailable,
-                // but only on the final retry attempt.
-                if (retriesRemaining == 0 && playlistResponse.Videos.Any())
+                // Playlist is unavailable, but this is not the first request and previous requests were successful.
+                // Retry because this is most likely a transient error.
+                if (index > 0 && !string.IsNullOrWhiteSpace(visitorData) && retriesRemaining > 0)
+                    continue;
+
+                // Playlist is unavailable but contains videos. This might be caused by the fact that the target
+                // video is unavailable, but the playlist itself is not.
+                // Return the response anyway and let the call site move on.
+                // https://github.com/Tyrrrz/YoutubeExplode/issues/921#issuecomment-3447937054
+                if (retriesRemaining <= 0 && playlistResponse.Videos.Any())
                     return playlistResponse;
 
                 throw new PlaylistUnavailableException(
