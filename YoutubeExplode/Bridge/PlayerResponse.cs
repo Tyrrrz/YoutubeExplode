@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using JsonExtensions.Reading;
 using Lazy;
 using PowerKit.Extensions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 

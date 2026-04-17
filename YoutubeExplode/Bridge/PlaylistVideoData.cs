@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using JsonExtensions.Reading;
 using Lazy;
 using PowerKit.Extensions;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
