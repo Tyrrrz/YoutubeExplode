@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap.Builders;
+using PowerKit.Extensions;
 using YoutubeExplode.Converter.Utils;
 using YoutubeExplode.Converter.Utils.Extensions;
 using YoutubeExplode.Videos;

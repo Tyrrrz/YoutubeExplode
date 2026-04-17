@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Exceptions;
-using YoutubeExplode.Converter.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Converter;
 

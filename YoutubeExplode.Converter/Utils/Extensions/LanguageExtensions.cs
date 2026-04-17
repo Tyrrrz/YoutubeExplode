@@ -1,4 +1,5 @@
 using System;
+using PowerKit.Extensions;
 using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Converter.Utils.Extensions;
