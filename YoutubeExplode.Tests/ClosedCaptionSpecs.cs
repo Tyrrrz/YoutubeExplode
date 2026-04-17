@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 using YoutubeExplode.Tests.TestData;
-using YoutubeExplode.Tests.Utils;
 
 namespace YoutubeExplode.Tests;
 

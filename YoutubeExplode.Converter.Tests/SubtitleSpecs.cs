@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 using YoutubeExplode.Converter.Tests.Utils;
 using YoutubeExplode.Converter.Tests.Utils.Extensions;
@@ -22,7 +23,7 @@ public class SubtitleSpecs : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
@@ -60,7 +61,7 @@ public class SubtitleSpecs : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");

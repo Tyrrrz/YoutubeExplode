@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerKit;
 using YoutubeExplode.Converter.Tests.Utils.Extensions;
 
 namespace YoutubeExplode.Converter.Tests.Utils;
