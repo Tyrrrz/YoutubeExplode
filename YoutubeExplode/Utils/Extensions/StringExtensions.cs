@@ -16,12 +16,5 @@ internal static class StringExtensions
 
             return buffer.ToString();
         }
-
-        public string SwapChars(int firstCharIndex, int secondCharIndex) =>
-            new StringBuilder(str)
-            {
-                [firstCharIndex] = str[secondCharIndex],
-                [secondCharIndex] = str[firstCharIndex],
-            }.ToString();
     }
 }
