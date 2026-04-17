@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -24,7 +25,8 @@ internal partial class SearchResponse(JsonElement content)
         ContentRoot
             ?.EnumerateDescendantProperties("videoRenderer")
             .Select(j => new VideoData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public IReadOnlyList<PlaylistData> Playlists =>
@@ -43,7 +45,8 @@ internal partial class SearchResponse(JsonElement content)
         ContentRoot
             ?.EnumerateDescendantProperties("channelRenderer")
             .Select(j => new ChannelData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public string? ContinuationToken =>
@@ -144,7 +147,8 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("thumbnails")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => new ThumbnailData(j))
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
     }
 }
 
@@ -259,7 +263,8 @@ internal partial class SearchResponse
                 ?.GetPropertyOrNull("thumbnails")
                 ?.EnumerateArrayOrNull()
                 ?.Select(j => new ThumbnailData(j))
-                .ToArray() ?? [];
+                .ToArray()
+            ?? [];
     }
 }
 

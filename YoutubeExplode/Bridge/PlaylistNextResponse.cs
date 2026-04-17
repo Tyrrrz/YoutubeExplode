@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -69,7 +70,8 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
             .WhereNotNull()
             .Select(j => new PlaylistVideoData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public string? VisitorData =>

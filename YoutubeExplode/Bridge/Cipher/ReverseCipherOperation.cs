@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Bridge.Cipher;
 

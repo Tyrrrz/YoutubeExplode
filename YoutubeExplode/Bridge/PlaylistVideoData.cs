@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
@@ -127,5 +128,6 @@ internal class PlaylistVideoData(JsonElement content)
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 }

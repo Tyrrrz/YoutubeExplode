@@ -31,6 +31,7 @@
       Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))"
     />
     <PackageReference Include="PolyShim" PrivateAssets="all" />
+    <PackageReference Include="PowerKit" PrivateAssets="all" />
     <!-- System.Text.Json is downgraded to v9.0.2 for netstandard2.0 targets to maintain compatibility
          with UWP projects using the .NET Native Toolchain, which cannot handle v10.x.
          See https://github.com/Tyrrrz/YoutubeExplode/issues/937 -->

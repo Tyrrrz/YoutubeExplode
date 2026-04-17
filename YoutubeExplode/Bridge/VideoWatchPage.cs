@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 

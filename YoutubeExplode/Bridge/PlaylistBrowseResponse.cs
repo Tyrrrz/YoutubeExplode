@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 

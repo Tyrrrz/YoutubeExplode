@@ -1,8 +1,8 @@
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using PowerKit.Extensions;
 using YoutubeExplode.Common;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.Streams;
 

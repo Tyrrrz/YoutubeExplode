@@ -1,8 +1,8 @@
 using System;
 using AngleSharp.Html.Dom;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 

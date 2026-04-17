@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -71,7 +72,8 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     public IReadOnlyList<string> Keywords =>
         Details
@@ -79,7 +81,8 @@ internal partial class PlayerResponse(JsonElement content)
             ?.EnumerateArrayOrNull()
             ?.Select(j => j.GetStringOrNull())
             .WhereNotNull()
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public string? Description => Details?.GetPropertyOrNull("shortDescription")?.GetStringOrNull();
@@ -172,7 +175,8 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("captionTracks")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ClosedCaptionTrackData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 }
 
 internal partial class PlayerResponse
@@ -201,7 +205,8 @@ internal partial class PlayerResponse
             content
                 .GetPropertyOrNull("vssId")
                 ?.GetStringOrNull()
-                ?.StartsWith("a.", StringComparison.OrdinalIgnoreCase) ?? false;
+                ?.StartsWith("a.", StringComparison.OrdinalIgnoreCase)
+            ?? false;
     }
 }
 
