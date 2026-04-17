@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Common;

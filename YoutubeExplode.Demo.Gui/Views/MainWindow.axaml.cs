@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using YoutubeExplode.Demo.Gui.ViewModels;

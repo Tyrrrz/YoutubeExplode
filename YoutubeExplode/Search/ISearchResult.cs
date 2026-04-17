@@ -1,4 +1,4 @@
-﻿using YoutubeExplode.Common;
+using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Search;
 

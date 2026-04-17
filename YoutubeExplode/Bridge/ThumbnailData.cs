@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Lazy;
 using YoutubeExplode.Utils.Extensions;
 

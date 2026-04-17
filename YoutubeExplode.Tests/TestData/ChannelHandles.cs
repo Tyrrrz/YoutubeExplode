@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Tests.TestData;
+namespace YoutubeExplode.Tests.TestData;
 
 internal static class ChannelHandles
 {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Converter.Utils.Extensions;

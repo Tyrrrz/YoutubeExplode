@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Search;
+namespace YoutubeExplode.Search;
 
 /// <summary>
 /// Filter applied to a YouTube search query.

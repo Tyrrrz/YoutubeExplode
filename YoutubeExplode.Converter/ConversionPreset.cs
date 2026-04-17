@@ -1,4 +1,4 @@
-﻿namespace YoutubeExplode.Converter;
+namespace YoutubeExplode.Converter;
 
 /// <summary>
 /// Encoder preset.

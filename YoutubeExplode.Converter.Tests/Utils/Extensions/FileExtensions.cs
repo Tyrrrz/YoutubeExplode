@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace YoutubeExplode.Converter.Tests.Utils.Extensions;
