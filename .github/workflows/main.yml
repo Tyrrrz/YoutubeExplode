@@ -26,6 +26,9 @@ on:
 jobs:
   main:
     uses: Tyrrrz/.github/.github/workflows/nuget.yml@prime
+    permissions:
+      actions: write
+      contents: write
     with:
       # CI tests currently don't work due to YouTube's anti-bot measures
       # https://github.com/Tyrrrz/YoutubeExplode/issues/794

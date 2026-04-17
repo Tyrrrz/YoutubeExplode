@@ -1,5 +1,4 @@
 <Project>
-
   <PropertyGroup>
     <Version>0.0.0-dev</Version>
     <Company>Tyrrrz</Company>
@@ -31,5 +30,4 @@
     <PackageReleaseNotes>https://github.com/Tyrrrz/YoutubeExplode/releases</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
-
 </Project>

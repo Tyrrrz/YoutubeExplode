@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Misc/">
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="License.txt" />
+    <File Path="NuGet.config" />
+    <File Path="Readme.md" />
+  </Folder>
+
+  <Project Path="YoutubeExplode/YoutubeExplode.csproj" />
+  <Project Path="YoutubeExplode.Converter.Tests/YoutubeExplode.Converter.Tests.csproj" />
+  <Project Path="YoutubeExplode.Converter/YoutubeExplode.Converter.csproj" />
+  <Project Path="YoutubeExplode.Demo.Cli/YoutubeExplode.Demo.Cli.csproj" />
+  <Project Path="YoutubeExplode.Demo.Gui/YoutubeExplode.Demo.Gui.csproj" />
+  <Project Path="YoutubeExplode.Tests/YoutubeExplode.Tests.csproj" />
+</Solution>
