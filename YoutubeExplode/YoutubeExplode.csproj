@@ -25,7 +25,7 @@
     <PackageReference Include="AngleSharp" />
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="Deorcify" PrivateAssets="all" />
-    <PackageReference Include="JsonExtensions" PrivateAssets="all" />
+    <PackageReference Include="JsonExtensions" />
     <PackageReference Include="Lazy.Fody" PrivateAssets="all" />
     <PackageReference
       Include="Microsoft.Bcl.AsyncInterfaces"
