@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PowerKit.Extensions;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 using YoutubeExplode.Demo.Gui.Utils;
@@ -182,9 +183,7 @@ public partial class MainViewModel : ObservableObject
             Progress = 0;
 
             // Generate a default file name
-            var defaultFileName = Path.SanitizeFileName(
-                $"{Video.Title}.{streamInfo.Container.Name}"
-            );
+            var defaultFileName = Path.EscapeFileName($"{Video.Title}.{streamInfo.Container.Name}");
 
             // Prompt for file path
             var filePath = await PromptSaveFilePathAsync(
@@ -225,7 +224,7 @@ public partial class MainViewModel : ObservableObject
             Progress = 0;
 
             // Generate a default file name
-            var defaultFileName = Path.SanitizeFileName(
+            var defaultFileName = Path.EscapeFileName(
                 $"{Video.Title}.{trackInfo.Language.Name}.srt"
             );
 
