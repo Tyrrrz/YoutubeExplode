@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Converter.Tests.Utils;
@@ -19,7 +20,7 @@ public class EnvironmentSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         var logFilePath = Path.Combine(dir.Path, "ffreport.log");

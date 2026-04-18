@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using JsonExtensions.Reading;
 using Lazy;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -82,11 +83,7 @@ internal class PlaylistVideoData(JsonElement content)
         content
             .GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                double.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (double?)null
-            )
+            ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?.Pipe(TimeSpan.FromSeconds)
         ?? content
             .GetPropertyOrNull("lengthText")
@@ -127,5 +124,6 @@ internal class PlaylistVideoData(JsonElement content)
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 }

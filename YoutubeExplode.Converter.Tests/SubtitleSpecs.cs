@@ -3,9 +3,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PowerKit;
+using PowerKit.Extensions;
 using Xunit;
 using YoutubeExplode.Converter.Tests.Utils;
-using YoutubeExplode.Converter.Tests.Utils.Extensions;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter.Tests;
@@ -22,7 +23,7 @@ public class SubtitleSpecs : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
@@ -48,7 +49,7 @@ public class SubtitleSpecs : IAsyncLifetime
 
         foreach (var trackInfo in trackInfos)
         {
-            File.ContainsBytes(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name))
+            File.Contains(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name))
                 .Should()
                 .BeTrue();
         }
@@ -60,7 +61,7 @@ public class SubtitleSpecs : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         var streamManifest = await youtube.Videos.Streams.GetManifestAsync("NtQkz0aRDe8");
@@ -86,7 +87,7 @@ public class SubtitleSpecs : IAsyncLifetime
 
         foreach (var trackInfo in trackInfos)
         {
-            File.ContainsBytes(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name))
+            File.Contains(filePath, Encoding.ASCII.GetBytes(trackInfo.Language.Name))
                 .Should()
                 .BeTrue();
         }

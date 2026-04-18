@@ -5,7 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap.Builders;
-using YoutubeExplode.Converter.Utils;
+using PowerKit;
+using PowerKit.Extensions;
 using YoutubeExplode.Converter.Utils.Extensions;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.ClosedCaptions;
@@ -155,10 +156,8 @@ internal partial class Converter(VideoClient videoClient, FFmpeg ffmpeg, Convers
             // Language codes can be stored in any format, but most players expect
             // three-letter codes, so we'll try to convert to that first.
             var languageCode =
-                subtitleInput.Info.Language.TryGetThreeLetterCode() ?? subtitleInput
-                    .Info
-                    .Language
-                    .Code;
+                subtitleInput.Info.Language.TryGetThreeLetterCode()
+                ?? subtitleInput.Info.Language.Code;
 
             arguments
                 .Add($"-metadata:s:s:{i}")

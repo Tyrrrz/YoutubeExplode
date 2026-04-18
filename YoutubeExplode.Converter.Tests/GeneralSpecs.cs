@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Gress;
+using PowerKit;
+using PowerKit.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Converter.Tests.Utils;
-using YoutubeExplode.Converter.Tests.Utils.Extensions;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Converter.Tests;
@@ -25,7 +26,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         // Act
@@ -41,7 +42,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         // Act
@@ -57,7 +58,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp3");
 
         // Act
@@ -73,7 +74,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.ogg");
 
         // Act
@@ -89,7 +90,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         // Act
@@ -122,7 +123,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         {
             if (streamInfo.AudioLanguage is not null)
             {
-                File.ContainsBytes(
+                File.Contains(
                         filePath,
                         Encoding.ASCII.GetBytes(streamInfo.AudioLanguage.Value.Name)
                     )
@@ -133,7 +134,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 
         foreach (var streamInfo in videoStreamInfos)
         {
-            File.ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
+            File.Contains(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
                 .Should()
                 .BeTrue();
         }
@@ -145,7 +146,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.webm");
 
         // Act
@@ -178,7 +179,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         {
             if (streamInfo.AudioLanguage is not null)
             {
-                File.ContainsBytes(
+                File.Contains(
                         filePath,
                         Encoding.ASCII.GetBytes(streamInfo.AudioLanguage.Value.Name)
                     )
@@ -189,7 +190,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
 
         foreach (var streamInfo in videoStreamInfos)
         {
-            File.ContainsBytes(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
+            File.Contains(filePath, Encoding.ASCII.GetBytes(streamInfo.VideoQuality.Label))
                 .Should()
                 .BeTrue();
         }
@@ -201,7 +202,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp3");
 
         // Act
@@ -224,7 +225,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp4");
 
         // Act
@@ -252,7 +253,7 @@ public class GeneralSpecs(ITestOutputHelper testOutput) : IAsyncLifetime
         // Arrange
         using var youtube = new YoutubeClient();
 
-        using var dir = TempDir.Create();
+        using var dir = TempDirectory.Create();
         var filePath = Path.Combine(dir.Path, "video.mp3");
 
         var progress = new ProgressCollector<double>();

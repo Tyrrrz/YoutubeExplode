@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Bridge.Cipher;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 

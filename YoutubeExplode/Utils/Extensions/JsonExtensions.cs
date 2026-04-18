@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using JsonExtensions.Reading;
 
 namespace YoutubeExplode.Utils.Extensions;
 
@@ -8,58 +9,6 @@ internal static class JsonExtensions
 {
     extension(JsonElement element)
     {
-        public JsonElement? GetPropertyOrNull(string propertyName)
-        {
-            if (element.ValueKind != JsonValueKind.Object)
-            {
-                return null;
-            }
-
-            if (
-                element.TryGetProperty(propertyName, out var result)
-                && result.ValueKind != JsonValueKind.Null
-                && result.ValueKind != JsonValueKind.Undefined
-            )
-            {
-                return result;
-            }
-
-            return null;
-        }
-
-        public bool? GetBooleanOrNull() =>
-            element.ValueKind switch
-            {
-                JsonValueKind.True => true,
-                JsonValueKind.False => false,
-                _ => null,
-            };
-
-        public string? GetStringOrNull() =>
-            element.ValueKind == JsonValueKind.String ? element.GetString() : null;
-
-        public int? GetInt32OrNull() =>
-            element.ValueKind == JsonValueKind.Number && element.TryGetInt32(out var result)
-                ? result
-                : null;
-
-        public long? GetInt64OrNull() =>
-            element.ValueKind == JsonValueKind.Number && element.TryGetInt64(out var result)
-                ? result
-                : null;
-
-        public JsonElement.ArrayEnumerator? EnumerateArrayOrNull() =>
-            element.ValueKind == JsonValueKind.Array ? element.EnumerateArray() : null;
-
-        public JsonElement.ArrayEnumerator EnumerateArrayOrEmpty() =>
-            element.EnumerateArrayOrNull() ?? default;
-
-        public JsonElement.ObjectEnumerator? EnumerateObjectOrNull() =>
-            element.ValueKind == JsonValueKind.Object ? element.EnumerateObject() : null;
-
-        public JsonElement.ObjectEnumerator EnumerateObjectOrEmpty() =>
-            element.EnumerateObjectOrNull() ?? default;
-
         public IEnumerable<JsonElement> EnumerateDescendantProperties(string propertyName)
         {
             // Check if this property exists on the current object

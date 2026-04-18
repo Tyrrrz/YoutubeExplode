@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Common;
 

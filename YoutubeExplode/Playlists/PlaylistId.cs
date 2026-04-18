@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Playlists;
 

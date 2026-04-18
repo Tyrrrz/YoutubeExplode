@@ -1,9 +1,9 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerKit.Extensions;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.ClosedCaptions;
 

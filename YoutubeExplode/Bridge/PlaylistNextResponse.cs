@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using JsonExtensions.Reading;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -44,9 +45,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.FirstOrNull()
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            )
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture))
         ?? ContentRoot
             ?.GetPropertyOrNull("videoCountText")
             ?.GetPropertyOrNull("runs")
@@ -54,9 +53,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.ElementAtOrNull(2)
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            );
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails => Videos.FirstOrDefault()?.Thumbnails ?? [];
@@ -69,7 +66,8 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.Select(j => j.GetPropertyOrNull("playlistPanelVideoRenderer"))
             .WhereNotNull()
             .Select(j => new PlaylistVideoData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public string? VisitorData =>

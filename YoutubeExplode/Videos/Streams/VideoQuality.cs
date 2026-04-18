@@ -1,8 +1,8 @@
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using PowerKit.Extensions;
 using YoutubeExplode.Common;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.Streams;
 
@@ -88,9 +88,7 @@ public partial struct VideoQuality
         var framerate = match
             .Groups[2]
             .Value.NullIfWhiteSpace()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            );
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
         return new VideoQuality(label, maxHeight, framerate ?? framerateFallback);
     }

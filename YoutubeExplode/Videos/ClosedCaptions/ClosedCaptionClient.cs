@@ -8,8 +8,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerKit.Extensions;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Videos.ClosedCaptions;
 

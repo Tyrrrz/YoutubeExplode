@@ -5,7 +5,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using JsonExtensions.Reading;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -23,18 +25,14 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (DateTimeOffset?)null
+                DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None)
             )
         ?? content
             .QuerySelector("meta[itemprop=\"datePublished\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (DateTimeOffset?)null
+                DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None)
             );
 
     [Lazy]
@@ -53,11 +51,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
-            .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            )
+            .Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture))
         ?? content
             .Source.Text.Pipe(s =>
                 Regex
@@ -72,11 +66,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
-            .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            );
+            .Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public long? DislikeCount =>
@@ -94,11 +84,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
-            .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            );
+            .Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     private JsonElement? PlayerConfig =>
@@ -106,8 +92,8 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .GetElementsByTagName("script")
             .Select(e => e.Text())
             .Select(s => Regex.Match(s, @"ytplayer\.config\s*=\s*(\{.*\})").Groups[1].Value)
-            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))
-            ?.NullIfWhiteSpace()
+            .WhereNotNullOrWhiteSpace()
+            .FirstOrDefault()
             ?.Pipe(Json.Extract)
             .Pipe(Json.TryParse);
 
@@ -119,8 +105,8 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .Select(s =>
                 Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value
             )
-            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))
-            ?.NullIfWhiteSpace()
+            .WhereNotNullOrWhiteSpace()
+            .FirstOrDefault()
             ?.Pipe(Json.Extract)
             .Pipe(Json.TryParse)
             ?.Pipe(j => new PlayerResponse(j))

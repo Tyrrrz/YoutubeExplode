@@ -5,7 +5,7 @@
 
   <ItemGroup>
     <PackageVersion Include="AngleSharp" Version="1.4.0" />
-    <PackageVersion Include="CSharpier.MsBuild" Version="1.2.1" />
+    <PackageVersion Include="CSharpier.MsBuild" Version="1.2.6" />
     <PackageVersion Include="Deorcify" Version="1.1.0" />
     <PackageVersion Include="Lazy.Fody" Version="1.11.0" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.5" />
@@ -24,7 +24,9 @@
     <PackageVersion Include="FluentAssertions" Version="8.9.0" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.3" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-    <PackageVersion Include="PolyShim" Version="2.7.0" />
+    <PackageVersion Include="JsonExtensions" Version="1.2.0" />
+    <PackageVersion Include="PolyShim" Version="2.11.0-a.1" />
+    <PackageVersion Include="PowerKit" Version="0.0.0-a.9" />
     <PackageVersion Include="Tmds.DBus.Protocol" Version="0.21.3" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />

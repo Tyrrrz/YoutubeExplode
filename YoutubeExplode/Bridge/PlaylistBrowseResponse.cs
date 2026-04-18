@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using JsonExtensions.Reading;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -113,9 +114,7 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.FirstOrNull()
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            )
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture))
         ?? SidebarPrimary
             ?.GetPropertyOrNull("stats")
             ?.EnumerateArrayOrNull()
@@ -124,9 +123,7 @@ internal partial class PlaylistBrowseResponse(JsonElement content) : IPlaylistDa
             ?.GetStringOrNull()
             ?.Split(' ')
             ?.FirstOrDefault()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            );
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails =>

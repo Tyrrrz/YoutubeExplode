@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using PowerKit;
 using Xunit;
 using Xunit.Abstractions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Tests.TestData;
-using YoutubeExplode.Tests.Utils;
 using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Tests;

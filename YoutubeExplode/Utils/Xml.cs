@@ -1,5 +1,5 @@
 using System.Xml.Linq;
-using YoutubeExplode.Utils.Extensions;
+using PowerKit.Extensions;
 
 namespace YoutubeExplode.Utils;
 

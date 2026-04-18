@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using JsonExtensions.Reading;
 using Lazy;
+using PowerKit.Extensions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -57,11 +58,7 @@ internal partial class PlayerResponse(JsonElement content)
         Details
             ?.GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                double.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (double?)null
-            )
+            ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?.Pipe(TimeSpan.FromSeconds);
 
     [Lazy]
@@ -71,7 +68,8 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("thumbnails")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ThumbnailData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     public IReadOnlyList<string> Keywords =>
         Details
@@ -79,7 +77,8 @@ internal partial class PlayerResponse(JsonElement content)
             ?.EnumerateArrayOrNull()
             ?.Select(j => j.GetStringOrNull())
             .WhereNotNull()
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 
     [Lazy]
     public string? Description => Details?.GetPropertyOrNull("shortDescription")?.GetStringOrNull();
@@ -89,11 +88,7 @@ internal partial class PlayerResponse(JsonElement content)
         Details
             ?.GetPropertyOrNull("viewCount")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            );
+            ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public string? PreviewVideoId =>
@@ -172,7 +167,8 @@ internal partial class PlayerResponse(JsonElement content)
             ?.GetPropertyOrNull("captionTracks")
             ?.EnumerateArrayOrNull()
             ?.Select(j => new ClosedCaptionTrackData(j))
-            .ToArray() ?? [];
+            .ToArray()
+        ?? [];
 }
 
 internal partial class PlayerResponse
@@ -201,7 +197,8 @@ internal partial class PlayerResponse
             content
                 .GetPropertyOrNull("vssId")
                 ?.GetStringOrNull()
-                ?.StartsWith("a.", StringComparison.OrdinalIgnoreCase) ?? false;
+                ?.StartsWith("a.", StringComparison.OrdinalIgnoreCase)
+            ?? false;
     }
 }
 
@@ -236,18 +233,10 @@ internal partial class PlayerResponse
             content
                 .GetPropertyOrNull("contentLength")
                 ?.GetStringOrNull()
-                ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                        ? result
-                        : (long?)null
-                )
+                ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?? Url?.Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))
                 ?.NullIfWhiteSpace()
-                ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                        ? result
-                        : (long?)null
-                );
+                ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
         [Lazy]
         public long? Bitrate => content.GetPropertyOrNull("bitrate")?.GetInt64OrNull();
