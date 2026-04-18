@@ -92,7 +92,8 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .GetElementsByTagName("script")
             .Select(e => e.Text())
             .Select(s => Regex.Match(s, @"ytplayer\.config\s*=\s*(\{.*\})").Groups[1].Value)
-            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))
+            .WhereNotNullOrWhiteSpace()
+            .FirstOrDefault()
             ?.Pipe(Json.Extract)
             .Pipe(Json.TryParse);
 
@@ -104,7 +105,8 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .Select(s =>
                 Regex.Match(s, @"var\s+ytInitialPlayerResponse\s*=\s*(\{.*\})").Groups[1].Value
             )
-            .FirstOrDefault(s => !string.IsNullOrWhiteSpace(s))
+            .WhereNotNullOrWhiteSpace()
+            .FirstOrDefault()
             ?.Pipe(Json.Extract)
             .Pipe(Json.TryParse)
             ?.Pipe(j => new PlayerResponse(j))
