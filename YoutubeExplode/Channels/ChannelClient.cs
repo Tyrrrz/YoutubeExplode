@@ -41,11 +41,7 @@ public class ChannelClient(HttpClient http)
                 .LastOrDefault()
                 ?.Groups[1]
                 .Value.NullIfWhiteSpace()
-                ?.Pipe(s =>
-                    int.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                        ? result
-                        : (int?)null
-                )
+                ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?? 100;
 
         var thumbnails = new[] { new Thumbnail(logoUrl, new Resolution(logoSize, logoSize)) };

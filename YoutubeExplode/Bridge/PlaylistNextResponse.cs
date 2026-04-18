@@ -45,9 +45,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.FirstOrNull()
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            )
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture))
         ?? ContentRoot
             ?.GetPropertyOrNull("videoCountText")
             ?.GetPropertyOrNull("runs")
@@ -55,9 +53,7 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
             ?.ElementAtOrNull(2)
             ?.GetPropertyOrNull("text")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                int.TryParse(s, CultureInfo.InvariantCulture, out var result) ? result : (int?)null
-            );
+            ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public IReadOnlyList<ThumbnailData> Thumbnails => Videos.FirstOrDefault()?.Thumbnails ?? [];

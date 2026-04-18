@@ -25,18 +25,14 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (DateTimeOffset?)null
+                DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None)
             )
         ?? content
             .QuerySelector("meta[itemprop=\"datePublished\"]")
             ?.GetAttribute("content")
             ?.NullIfWhiteSpace()
             ?.Pipe(s =>
-                DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (DateTimeOffset?)null
+                DateTimeOffset.ParseOrNull(s, CultureInfo.InvariantCulture, DateTimeStyles.None)
             );
 
     [Lazy]
@@ -55,11 +51,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
-            .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            )
+            .Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture))
         ?? content
             .Source.Text.Pipe(s =>
                 Regex
@@ -74,11 +66,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
-            .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            );
+            .Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public long? DislikeCount =>
@@ -96,11 +84,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             )
             .NullIfWhiteSpace()
             ?.StripNonDigit()
-            .Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            );
+            .Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     private JsonElement? PlayerConfig =>

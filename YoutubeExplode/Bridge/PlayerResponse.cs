@@ -58,11 +58,7 @@ internal partial class PlayerResponse(JsonElement content)
         Details
             ?.GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                double.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (double?)null
-            )
+            ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?.Pipe(TimeSpan.FromSeconds);
 
     [Lazy]
@@ -92,11 +88,7 @@ internal partial class PlayerResponse(JsonElement content)
         Details
             ?.GetPropertyOrNull("viewCount")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (long?)null
-            );
+            ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
     [Lazy]
     public string? PreviewVideoId =>
@@ -241,18 +233,10 @@ internal partial class PlayerResponse
             content
                 .GetPropertyOrNull("contentLength")
                 ?.GetStringOrNull()
-                ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                        ? result
-                        : (long?)null
-                )
+                ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?? Url?.Pipe(s => UrlEx.TryGetQueryParameterValue(s, "clen"))
                 ?.NullIfWhiteSpace()
-                ?.Pipe(s =>
-                    long.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                        ? result
-                        : (long?)null
-                );
+                ?.Pipe(s => long.ParseOrNull(s, CultureInfo.InvariantCulture));
 
         [Lazy]
         public long? Bitrate => content.GetPropertyOrNull("bitrate")?.GetInt64OrNull();

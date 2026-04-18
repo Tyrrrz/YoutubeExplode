@@ -83,11 +83,7 @@ internal class PlaylistVideoData(JsonElement content)
         content
             .GetPropertyOrNull("lengthSeconds")
             ?.GetStringOrNull()
-            ?.Pipe(s =>
-                double.TryParse(s, CultureInfo.InvariantCulture, out var result)
-                    ? result
-                    : (double?)null
-            )
+            ?.Pipe(s => double.ParseOrNull(s, CultureInfo.InvariantCulture))
             ?.Pipe(TimeSpan.FromSeconds)
         ?? content
             .GetPropertyOrNull("lengthText")
