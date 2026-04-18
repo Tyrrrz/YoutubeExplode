@@ -7,9 +7,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerKit.Extensions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode;
 
@@ -64,7 +64,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var token = $"{timestamp} {sessionId} {uri.Domain}";
         var tokenHash = Convert.ToHexString(
-            Hash.Compute(SHA1.Create(), Encoding.UTF8.GetBytes(token))
+            HashAlgorithm.ComputeHash(SHA1.Create(), Encoding.UTF8.GetBytes(token))
         );
 
         return $"SAPISIDHASH {timestamp}_{tokenHash}";

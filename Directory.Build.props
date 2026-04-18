@@ -6,6 +6,8 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Suppress CS1587 caused by a bug in PowerKit's ClientDelegatingHandler content file -->
+    <NoWarn>$(NoWarn);1587</NoWarn>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <IsPackable>false</IsPackable>

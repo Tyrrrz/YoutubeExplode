@@ -13,7 +13,6 @@ using YoutubeExplode.Bridge.Cipher;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
-using YoutubeExplode.Utils.Extensions;
 using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Videos.Streams;

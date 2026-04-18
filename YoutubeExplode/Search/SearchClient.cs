@@ -5,10 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using PowerKit.Extensions;
 using YoutubeExplode.Channels;
 using YoutubeExplode.Common;
 using YoutubeExplode.Exceptions;
-using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Search;
 
