@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerKit;
 using PowerKit.Extensions;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;

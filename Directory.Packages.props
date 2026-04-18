@@ -26,7 +26,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageVersion Include="JsonExtensions" Version="1.2.0" />
     <PackageVersion Include="PolyShim" Version="2.11.0-a.1" />
-    <PackageVersion Include="PowerKit" Version="0.0.0-a.7" />
+    <PackageVersion Include="PowerKit" Version="0.0.0-a.8" />
     <PackageVersion Include="Tmds.DBus.Protocol" Version="0.21.3" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
