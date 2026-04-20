@@ -59,7 +59,7 @@ public static class StreamInfoExtensions
     {
         /// <summary>
         /// Gets the stream with the highest bitrate.
-        /// Returns null if the sequence is empty.
+        /// Returns <see langword="null" /> if the sequence is empty.
         /// </summary>
         public IStreamInfo? TryGetWithHighestBitrate() => streamInfos.MaxBy(s => s.Bitrate);
 

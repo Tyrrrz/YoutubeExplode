@@ -16,7 +16,7 @@ public class ClosedCaptionManifest(IReadOnlyList<ClosedCaptionTrackInfo> tracks)
 
     /// <summary>
     /// Gets the closed caption track in the specified language (identified by ISO-639-1 code or display name).
-    /// Returns null if not found.
+    /// Returns <see langword="null" /> if not found.
     /// </summary>
     public ClosedCaptionTrackInfo? TryGetByLanguage(string language) =>
         Tracks.FirstOrDefault(t =>

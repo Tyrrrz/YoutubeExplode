@@ -33,7 +33,7 @@ public static class VideoStreamInfoExtensions
 {
     /// <summary>
     /// Gets the video stream with the highest video quality (including framerate).
-    /// Returns null if the sequence is empty.
+    /// Returns <see langword="null" /> if the sequence is empty.
     /// </summary>
     public static IVideoStreamInfo? TryGetWithHighestVideoQuality(
         this IEnumerable<IVideoStreamInfo> streamInfos

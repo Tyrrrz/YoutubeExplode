@@ -16,7 +16,7 @@ public class ClosedCaptionTrack(IReadOnlyList<ClosedCaption> captions)
 
     /// <summary>
     /// Gets the caption displayed at the specified point in time.
-    /// Returns null if not found.
+    /// Returns <see langword="null" /> if not found.
     /// </summary>
     public ClosedCaption? TryGetByTime(TimeSpan time) =>
         Captions.FirstOrDefault(c => time >= c.Offset && time <= c.Offset + c.Duration);

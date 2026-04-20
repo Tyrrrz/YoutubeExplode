@@ -40,7 +40,7 @@ public class ClosedCaption(
 
     /// <summary>
     /// Gets the caption part displayed at the specified point in time, relative to the caption's own offset.
-    /// Returns null if not found.
+    /// Returns <see langword="null" /> if not found.
     /// </summary>
     public ClosedCaptionPart? TryGetPartByTime(TimeSpan time) =>
         Parts.FirstOrDefault(p => p.Offset >= time);

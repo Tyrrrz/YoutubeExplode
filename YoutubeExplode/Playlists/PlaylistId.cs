@@ -61,7 +61,7 @@ public partial struct PlaylistId
 
     /// <summary>
     /// Attempts to parse the specified string as a YouTube playlist ID or URL.
-    /// Returns null in case of failure.
+    /// Returns <see langword="null" /> in case of failure.
     /// </summary>
     public static PlaylistId? TryParse(string? playlistIdOrUrl) =>
         TryNormalize(playlistIdOrUrl)?.Pipe(id => new PlaylistId(id));

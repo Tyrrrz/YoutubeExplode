@@ -53,7 +53,7 @@ public partial struct ChannelId
 
     /// <summary>
     /// Attempts to parse the specified string as a YouTube channel ID or URL.
-    /// Returns null in case of failure.
+    /// Returns <see langword="null" /> in case of failure.
     /// </summary>
     public static ChannelId? TryParse(string? channelIdOrUrl) =>
         TryNormalize(channelIdOrUrl)?.Pipe(id => new ChannelId(id));

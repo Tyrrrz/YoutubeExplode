@@ -50,7 +50,7 @@ public partial struct ChannelSlug
 
     /// <summary>
     /// Attempts to parse the specified string as a YouTube channel slug or legacy custom URL.
-    /// Returns null in case of failure.
+    /// Returns <see langword="null" /> in case of failure.
     /// </summary>
     public static ChannelSlug? TryParse(string? channelSlugOrUrl) =>
         TryNormalize(channelSlugOrUrl)?.Pipe(slug => new ChannelSlug(slug));
