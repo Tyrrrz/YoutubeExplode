@@ -326,9 +326,9 @@ internal partial class PlayerResponse
                             return true;
                     }
                 }
-                catch
+                catch (FormatException)
                 {
-                    // Ignore invalid base64 or protobuf decoding errors
+                    // Ignore invalid base64 encoding
                 }
 
                 return false;

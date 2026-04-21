@@ -19,6 +19,9 @@ public readonly partial struct VideoQuality(
     /// <summary>
     /// Initializes an instance of <see cref="VideoQuality" />.
     /// </summary>
+    /// <summary>
+    /// Initializes an instance of <see cref="VideoQuality" />.
+    /// </summary>
     public VideoQuality(string label, int maxHeight, int framerate)
         : this(label, maxHeight, framerate, false) { }
 
