@@ -24,6 +24,11 @@ public interface IVideoStreamInfo : IStreamInfo
     /// Video resolution.
     /// </summary>
     Resolution VideoResolution { get; }
+
+    /// <summary>
+    /// Whether this stream was produced by YouTube's Super Resolution (AI upscaling) feature.
+    /// </summary>
+    bool IsUpscaled { get; }
 }
 
 /// <summary>

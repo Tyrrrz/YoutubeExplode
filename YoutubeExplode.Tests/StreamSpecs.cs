@@ -123,8 +123,8 @@ public class StreamSpecs(ITestOutputHelper testOutput)
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
-        manifest.GetVideoStreams().Should().Contain(s => s.VideoQuality.IsUpscaled);
-        manifest.GetVideoStreams().Should().Contain(s => !s.VideoQuality.IsUpscaled);
+        manifest.GetVideoStreams().Should().Contain(s => s.IsUpscaled);
+        manifest.GetVideoStreams().Should().Contain(s => !s.IsUpscaled);
     }
 
     [Theory]

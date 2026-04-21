@@ -9,27 +9,13 @@ namespace YoutubeExplode.Videos.Streams;
 /// <summary>
 /// Video stream quality.
 /// </summary>
-public readonly partial struct VideoQuality(
-    string label,
-    int maxHeight,
-    int framerate,
-    bool isUpscaled
-)
+public readonly partial struct VideoQuality(string label, int maxHeight, int framerate)
 {
     /// <summary>
     /// Initializes an instance of <see cref="VideoQuality" />.
     /// </summary>
-    /// <summary>
-    /// Initializes an instance of <see cref="VideoQuality" />.
-    /// </summary>
-    public VideoQuality(string label, int maxHeight, int framerate)
-        : this(label, maxHeight, framerate, false) { }
-
-    /// <summary>
-    /// Initializes an instance of <see cref="VideoQuality" />.
-    /// </summary>
     public VideoQuality(int maxHeight, int framerate)
-        : this(FormatLabel(maxHeight, framerate), maxHeight, framerate, false) { }
+        : this(FormatLabel(maxHeight, framerate), maxHeight, framerate) { }
 
     /// <summary>
     /// Quality label, as seen on YouTube (e.g. 1080p, 720p60, etc).
@@ -51,11 +37,6 @@ public readonly partial struct VideoQuality(
     /// Whether this is a high definition video (i.e. 1080p or above).
     /// </summary>
     public bool IsHighDefinition => MaxHeight >= 1080;
-
-    /// <summary>
-    /// Whether this is an AI-upscaled video (i.e. artificially upscaled from a lower resolution).
-    /// </summary>
-    public bool IsUpscaled { get; } = isUpscaled;
 
     internal Resolution GetDefaultVideoResolution() =>
         MaxHeight switch
@@ -91,11 +72,7 @@ public partial struct VideoQuality
         return $"{maxHeight}p{framerateRounded}";
     }
 
-    internal static VideoQuality FromLabel(
-        string label,
-        int framerateFallback,
-        bool isUpscaled = false
-    )
+    internal static VideoQuality FromLabel(string label, int framerateFallback)
     {
         // Video quality labels can have the following formats:
         // - 1080p (regular stream, regular fps)
@@ -113,10 +90,10 @@ public partial struct VideoQuality
             .Value.NullIfWhiteSpace()
             ?.Pipe(s => int.ParseOrNull(s, CultureInfo.InvariantCulture));
 
-        return new VideoQuality(label, maxHeight, framerate ?? framerateFallback, isUpscaled);
+        return new VideoQuality(label, maxHeight, framerate ?? framerateFallback);
     }
 
-    internal static VideoQuality FromItag(int itag, int framerate, bool isUpscaled = false)
+    internal static VideoQuality FromItag(int itag, int framerate)
     {
         var maxHeight = itag switch
         {
@@ -219,12 +196,7 @@ public partial struct VideoQuality
             _ => throw new ArgumentException($"Unrecognized itag '{itag}'.", nameof(itag)),
         };
 
-        return new VideoQuality(
-            FormatLabel(maxHeight, framerate),
-            maxHeight,
-            framerate,
-            isUpscaled
-        );
+        return new VideoQuality(FormatLabel(maxHeight, framerate), maxHeight, framerate);
     }
 }
 
