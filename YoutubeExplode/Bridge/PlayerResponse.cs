@@ -323,7 +323,7 @@ internal partial class PlayerResponse
                     // Streams upscaled with YouTube's Super Resolution feature carry the entry {"sr": "1"}.
                     var bytes = Convert.FromBase64String(xtags);
                     var fields = Protobuf.Deserialize(bytes);
-                    return fields.TryGetValue("sr", out var sr) && sr is "1";
+                    return fields.TryGetValue("sr", out var sr) && sr == "1";
                 }
                 catch (FormatException)
                 {
