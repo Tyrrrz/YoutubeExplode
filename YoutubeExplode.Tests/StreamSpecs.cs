@@ -113,15 +113,13 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     }
 
     [Fact]
-    public async Task I_can_get_the_list_of_available_streams_of_a_video_with_AI_upscaled_streams()
+    public async Task I_can_get_the_list_of_available_streams_of_a_video_with_upscaled_streams()
     {
         // Arrange
         using var youtube = new YoutubeClient();
 
         // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(
-            VideoIds.WithAIUpscaledStreams
-        );
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.WithUpscaledStreams);
 
         // Assert
         manifest.Streams.Should().NotBeEmpty();
