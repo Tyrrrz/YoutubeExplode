@@ -300,6 +300,15 @@ internal partial class PlayerResponse
             content.GetPropertyOrNull("qualityLabel")?.GetStringOrNull();
 
         [Lazy]
+        public int? VideoWidth => content.GetPropertyOrNull("width")?.GetInt32OrNull();
+
+        [Lazy]
+        public int? VideoHeight => content.GetPropertyOrNull("height")?.GetInt32OrNull();
+
+        [Lazy]
+        public int? VideoFramerate => content.GetPropertyOrNull("fps")?.GetInt32OrNull();
+
+        [Lazy]
         public bool IsVideoUpscaled
         {
             get
@@ -334,15 +343,6 @@ internal partial class PlayerResponse
                 return false;
             }
         }
-
-        [Lazy]
-        public int? VideoWidth => content.GetPropertyOrNull("width")?.GetInt32OrNull();
-
-        [Lazy]
-        public int? VideoHeight => content.GetPropertyOrNull("height")?.GetInt32OrNull();
-
-        [Lazy]
-        public int? VideoFramerate => content.GetPropertyOrNull("fps")?.GetInt32OrNull();
     }
 }
 

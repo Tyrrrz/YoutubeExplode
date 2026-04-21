@@ -82,8 +82,6 @@ internal partial class DashManifest
 
         public string? VideoQualityLabel => null;
 
-        public bool IsVideoUpscaled => false;
-
         [Lazy]
         public int? VideoWidth => (int?)content.Attribute("width");
 
@@ -92,6 +90,8 @@ internal partial class DashManifest
 
         [Lazy]
         public int? VideoFramerate => (int?)content.Attribute("frameRate");
+
+        public bool IsVideoUpscaled => false;
     }
 }
 

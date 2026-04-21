@@ -28,11 +28,11 @@ internal interface IStreamData
 
     string? VideoQualityLabel { get; }
 
-    bool IsVideoUpscaled { get; }
-
     int? VideoWidth { get; }
 
     int? VideoHeight { get; }
 
     int? VideoFramerate { get; }
+
+    bool IsVideoUpscaled { get; }
 }
