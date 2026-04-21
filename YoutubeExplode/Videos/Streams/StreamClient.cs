@@ -137,8 +137,12 @@ public class StreamClient(HttpClient http)
                 var framerate = streamData.VideoFramerate ?? 24;
 
                 var videoQuality = !string.IsNullOrWhiteSpace(streamData.VideoQualityLabel)
-                    ? VideoQuality.FromLabel(streamData.VideoQualityLabel, framerate)
-                    : VideoQuality.FromItag(itag, framerate);
+                    ? VideoQuality.FromLabel(
+                        streamData.VideoQualityLabel,
+                        framerate,
+                        streamData.IsVideoUpscaled
+                    )
+                    : VideoQuality.FromItag(itag, framerate, streamData.IsVideoUpscaled);
 
                 var videoResolution =
                     streamData.VideoWidth is not null && streamData.VideoHeight is not null
