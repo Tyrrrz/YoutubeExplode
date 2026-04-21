@@ -38,6 +38,11 @@ public readonly partial struct VideoQuality(string label, int maxHeight, int fra
     /// </summary>
     public bool IsHighDefinition => MaxHeight >= 1080;
 
+    /// <summary>
+    /// Whether this is an AI-upscaled video (i.e. artificially upscaled from a lower resolution).
+    /// </summary>
+    public bool IsUpscaled => Label.Contains("AI", StringComparison.OrdinalIgnoreCase);
+
     internal Resolution GetDefaultVideoResolution() =>
         MaxHeight switch
         {
