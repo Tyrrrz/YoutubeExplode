@@ -22,5 +22,5 @@ internal static class VideoIds
     public const string WithClosedCaptions = "YltHGKX80Y8";
     public const string WithBrokenClosedCaptions = "1VKIIw05JnE";
     public const string WithMultipleAudioLanguages = "ngqcjXfggHQ";
-    public const string WithAiUpscaledStreams = "IFACrIx5SZ0";
+    public const string WithAIUpscaledStreams = "IFACrIx5SZ0";
 }

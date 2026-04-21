@@ -58,31 +58,6 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     }
 
     [Fact]
-    public async Task I_can_get_the_list_of_available_streams_of_a_video_with_ai_upscaled_streams()
-    {
-        // Arrange
-        using var youtube = new YoutubeClient();
-
-        // Act
-        var manifest = await youtube.Videos.Streams.GetManifestAsync(
-            VideoIds.WithAiUpscaledStreams
-        );
-
-        // Assert
-        manifest.Streams.Should().NotBeEmpty();
-
-        manifest
-            .GetVideoStreams()
-            .Should()
-            .Contain(s => s.VideoQuality.IsUpscaled);
-
-        manifest
-            .GetVideoStreams()
-            .Should()
-            .Contain(s => !s.VideoQuality.IsUpscaled);
-    }
-
-    [Fact]
     public async Task I_can_get_the_list_of_available_streams_of_a_video_with_multiple_audio_languages()
     {
         // Arrange
@@ -135,6 +110,23 @@ public class StreamSpecs(ITestOutputHelper testOutput)
                 && t.AudioLanguage.Value.Name == "Portuguese (BR)"
                 && t.IsAudioLanguageDefault == false
             );
+    }
+
+    [Fact]
+    public async Task I_can_get_the_list_of_available_streams_of_a_video_with_AI_upscaled_streams()
+    {
+        // Arrange
+        using var youtube = new YoutubeClient();
+
+        // Act
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(
+            VideoIds.WithAIUpscaledStreams
+        );
+
+        // Assert
+        manifest.Streams.Should().NotBeEmpty();
+        manifest.GetVideoStreams().Should().Contain(s => s.VideoQuality.IsUpscaled);
+        manifest.GetVideoStreams().Should().Contain(s => !s.VideoQuality.IsUpscaled);
     }
 
     [Theory]
