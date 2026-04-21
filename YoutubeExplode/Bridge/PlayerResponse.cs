@@ -322,86 +322,14 @@ internal partial class PlayerResponse
                     // xtags is a base64-encoded protobuf map<string, string>.
                     // Streams upscaled with YouTube's Super Resolution feature carry the entry {"sr": "1"}.
                     var bytes = Convert.FromBase64String(xtags);
-                    return GetProtoMapValue(bytes, "sr") == "1";
+                    var fields = Protobuf.Deserialize(bytes);
+                    return fields.TryGetValue("sr", out var sr) && sr is "1";
                 }
                 catch (FormatException)
                 {
                     return false;
                 }
             }
-        }
-
-        // Reads a protobuf-encoded map<string, string> and returns the value for the given key.
-        // Each top-level field is a LEN-encoded map entry message with field 1 = key, field 2 = value.
-        private static string? GetProtoMapValue(byte[] data, string key)
-        {
-            var i = 0;
-            while (i < data.Length)
-            {
-                // Read outer field tag (field_number << 3 | wire_type)
-                if (!TryReadVarint(data, ref i, out var outerTag))
-                    break;
-
-                // Only process LEN-encoded fields (wire type 2)
-                if ((outerTag & 0x7) != 2)
-                    break;
-
-                if (!TryReadVarint(data, ref i, out var entryLen))
-                    break;
-
-                var entryEnd = i + (int)entryLen;
-                if (entryEnd > data.Length)
-                    break;
-
-                // Parse the map entry message: field 1 = key, field 2 = value
-                string? entryKey = null,
-                    entryValue = null;
-                var j = i;
-                while (j < entryEnd)
-                {
-                    if (!TryReadVarint(data, ref j, out var fieldTag))
-                        break;
-                    var fieldNum = (int)(fieldTag >> 3);
-                    if ((fieldTag & 0x7) != 2) // Only string fields
-                        break;
-                    if (!TryReadVarint(data, ref j, out var strLen))
-                        break;
-                    if (j + (int)strLen > data.Length)
-                        break;
-
-                    var str = Encoding.UTF8.GetString(data, j, (int)strLen);
-                    j += (int)strLen;
-
-                    if (fieldNum == 1)
-                        entryKey = str;
-                    else if (fieldNum == 2)
-                        entryValue = str;
-                }
-
-                if (entryKey == key)
-                    return entryValue;
-
-                i = entryEnd;
-            }
-
-            return null;
-        }
-
-        private static bool TryReadVarint(byte[] data, ref int i, out ulong value)
-        {
-            value = 0;
-            var shift = 0;
-            while (i < data.Length)
-            {
-                var b = data[i++];
-                value |= (ulong)(b & 0x7F) << shift;
-                if ((b & 0x80) == 0)
-                    return true;
-                shift += 7;
-                if (shift >= 64)
-                    break;
-            }
-            return false;
         }
     }
 }
