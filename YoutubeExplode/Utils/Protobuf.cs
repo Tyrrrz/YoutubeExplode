@@ -38,7 +38,7 @@ internal static class Protobuf
             return null;
 
         var result = Encoding.UTF8.GetString(data, i, (int)length);
-        i += length;
+        i += (int)length;
 
         return result;
     }
