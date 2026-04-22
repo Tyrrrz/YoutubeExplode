@@ -306,9 +306,6 @@ internal partial class PlayerResponse
         public int? VideoHeight => content.GetPropertyOrNull("height")?.GetInt32OrNull();
 
         [Lazy]
-        public int? VideoFramerate => content.GetPropertyOrNull("fps")?.GetInt32OrNull();
-
-        [Lazy]
         public bool IsVideoUpscaled
         {
             get
@@ -323,6 +320,9 @@ internal partial class PlayerResponse
                 return fields?.GetValueOrDefault("sr") == "1";
             }
         }
+
+        [Lazy]
+        public int? VideoFramerate => content.GetPropertyOrNull("fps")?.GetInt32OrNull();
     }
 }
 

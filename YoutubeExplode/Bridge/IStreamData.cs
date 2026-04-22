@@ -32,7 +32,7 @@ internal interface IStreamData
 
     int? VideoHeight { get; }
 
-    int? VideoFramerate { get; }
-
     bool IsVideoUpscaled { get; }
+
+    int? VideoFramerate { get; }
 }
