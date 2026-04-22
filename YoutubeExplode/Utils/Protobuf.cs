@@ -8,9 +8,9 @@ internal static class Protobuf
 {
     private static bool IsLenField(ulong tag) => (tag & 0x7) == 2;
 
-    private static bool TryReadVarint(byte[] data, ref int i, out ulong value)
+    private static ulong? TryReadVarint(byte[] data, ref int i)
     {
-        value = 0;
+        ulong value = 0;
 
         var shift = 0;
         while (i < data.Length)
@@ -19,54 +19,55 @@ internal static class Protobuf
             value |= (ulong)(b & 0x7F) << shift;
 
             if ((b & 0x80) == 0)
-                return true;
+                return value;
 
             shift += 7;
             if (shift >= 64)
                 break;
         }
 
-        return false;
+        return null;
     }
 
-    private static bool TryReadString(byte[] data, ref int i, out string? value)
+    private static string? TryReadString(byte[] data, ref int i)
     {
-        value = null;
-
-        if (!TryReadVarint(data, ref i, out var strLen))
-            return false;
+        var strLen = TryReadVarint(data, ref i);
+        if (strLen is null)
+            return null;
 
         if (i + (int)strLen > data.Length)
-            return false;
+            return null;
 
-        value = Encoding.UTF8.GetString(data, i, (int)strLen);
-        i += (int)strLen;
+        var result = Encoding.UTF8.GetString(data, i, (int)strLen.Value);
+        i += (int)strLen.Value;
 
-        return true;
+        return result;
     }
 
     // Deserializes a protobuf-encoded map<string, string> payload into a dictionary.
     // Each top-level LEN field (wire type 2) is treated as a map entry submessage where
     // field 1 is the string key and field 2 is the string value.
     // Returns null if the data cannot be parsed.
-    public static IReadOnlyDictionary<string, string?>? TryDeserialize(byte[] data)
+    public static IReadOnlyDictionary<string, string?>? TryDeserializeMap(byte[] data)
     {
         var result = new Dictionary<string, string?>(StringComparer.Ordinal);
 
         var i = 0;
         while (i < data.Length)
         {
-            if (!TryReadVarint(data, ref i, out var outerTag))
+            var outerTag = TryReadVarint(data, ref i);
+            if (outerTag is null)
                 return null;
 
             // Only process LEN-encoded fields (wire type 2) as map entries
-            if (!IsLenField(outerTag))
+            if (!IsLenField(outerTag.Value))
                 return null;
 
-            if (!TryReadVarint(data, ref i, out var entryLen))
+            var entryLen = TryReadVarint(data, ref i);
+            if (entryLen is null)
                 return null;
 
-            var entryEnd = i + (int)entryLen;
+            var entryEnd = i + (int)entryLen.Value;
             if (entryEnd > data.Length)
                 return null;
 
@@ -76,16 +77,18 @@ internal static class Protobuf
             var j = i;
             while (j < entryEnd)
             {
-                if (!TryReadVarint(data, ref j, out var fieldTag))
+                var fieldTag = TryReadVarint(data, ref j);
+                if (fieldTag is null)
                     break;
 
                 // Only handle LEN-encoded (string) fields
-                if (!IsLenField(fieldTag))
+                if (!IsLenField(fieldTag.Value))
                     break;
 
-                var fieldNum = (int)(fieldTag >> 3);
+                var fieldNum = (int)(fieldTag.Value >> 3);
 
-                if (!TryReadString(data, ref j, out var str))
+                var str = TryReadString(data, ref j);
+                if (str is null)
                     break;
 
                 if (fieldNum == 1)
@@ -105,12 +108,12 @@ internal static class Protobuf
 
     // Decodes a base64-encoded protobuf map<string, string> payload into a dictionary.
     // Returns null if the string is not valid base64 or cannot be parsed.
-    public static IReadOnlyDictionary<string, string?>? TryDeserialize(string base64)
+    public static IReadOnlyDictionary<string, string?>? TryDeserializeMap(string base64)
     {
         try
         {
             var bytes = Convert.FromBase64String(base64);
-            return TryDeserialize(bytes);
+            return TryDeserializeMap(bytes);
         }
         catch (FormatException)
         {
