@@ -317,18 +317,10 @@ internal partial class PlayerResponse
                 if (string.IsNullOrEmpty(xtags))
                     return false;
 
-                try
-                {
-                    // xtags is a base64-encoded protobuf map<string, string>.
-                    // Streams upscaled with YouTube's Super Resolution feature carry the entry {"sr": "1"}.
-                    var bytes = Convert.FromBase64String(xtags);
-                    var fields = Protobuf.Deserialize(bytes);
-                    return fields.TryGetValue("sr", out var sr) && sr == "1";
-                }
-                catch (FormatException)
-                {
-                    return false;
-                }
+                // xtags is a base64-encoded protobuf map<string, string>.
+                // Streams upscaled with YouTube's Super Resolution feature carry the entry {"sr": "1"}.
+                var fields = Protobuf.TryDeserialize(xtags);
+                return fields?.GetValueOrDefault("sr") == "1";
             }
         }
     }

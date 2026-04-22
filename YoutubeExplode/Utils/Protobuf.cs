@@ -6,10 +6,28 @@ namespace YoutubeExplode.Utils;
 
 internal static class Protobuf
 {
+    private static bool TryReadVarint(byte[] data, ref int i, out ulong value)
+    {
+        value = 0;
+        var shift = 0;
+        while (i < data.Length)
+        {
+            var b = data[i++];
+            value |= (ulong)(b & 0x7F) << shift;
+            if ((b & 0x80) == 0)
+                return true;
+            shift += 7;
+            if (shift >= 64)
+                break;
+        }
+        return false;
+    }
+
     // Deserializes a protobuf-encoded map<string, string> payload into a dictionary.
     // Each top-level LEN field (wire type 2) is treated as a map entry submessage where
     // field 1 is the string key and field 2 is the string value.
-    public static IReadOnlyDictionary<string, string?> Deserialize(byte[] data)
+    // Returns null if the data cannot be parsed.
+    public static IReadOnlyDictionary<string, string?>? TryDeserialize(byte[] data)
     {
         var result = new Dictionary<string, string?>(StringComparer.Ordinal);
 
@@ -17,18 +35,18 @@ internal static class Protobuf
         while (i < data.Length)
         {
             if (!TryReadVarint(data, ref i, out var outerTag))
-                break;
+                return null;
 
             // Only process LEN-encoded fields (wire type 2) as map entries
             if ((outerTag & 0x7) != 2)
-                break;
+                return null;
 
             if (!TryReadVarint(data, ref i, out var entryLen))
-                break;
+                return null;
 
             var entryEnd = i + (int)entryLen;
             if (entryEnd > data.Length)
-                break;
+                return null;
 
             // Parse the map entry submessage: field 1 = key (string), field 2 = value (string)
             string? key = null,
@@ -68,20 +86,18 @@ internal static class Protobuf
         return result;
     }
 
-    private static bool TryReadVarint(byte[] data, ref int i, out ulong value)
+    // Decodes a base64-encoded protobuf map<string, string> payload into a dictionary.
+    // Returns null if the string is not valid base64 or cannot be parsed.
+    public static IReadOnlyDictionary<string, string?>? TryDeserialize(string base64)
     {
-        value = 0;
-        var shift = 0;
-        while (i < data.Length)
+        try
         {
-            var b = data[i++];
-            value |= (ulong)(b & 0x7F) << shift;
-            if ((b & 0x80) == 0)
-                return true;
-            shift += 7;
-            if (shift >= 64)
-                break;
+            var bytes = Convert.FromBase64String(base64);
+            return TryDeserialize(bytes);
         }
-        return false;
+        catch (FormatException)
+        {
+            return null;
+        }
     }
 }
