@@ -21,6 +21,36 @@ public class MuxedStreamInfo(
     bool isVideoUpscaled
 ) : IAudioStreamInfo, IVideoStreamInfo
 {
+    /// <summary>
+    /// Initializes an instance of <see cref="MuxedStreamInfo" />.
+    /// </summary>
+    // Backwards-compatible overload without isVideoUpscaled
+    public MuxedStreamInfo(
+        string url,
+        Container container,
+        FileSize size,
+        Bitrate bitrate,
+        string audioCodec,
+        Language? audioLanguage,
+        bool? isAudioLanguageDefault,
+        string videoCodec,
+        VideoQuality videoQuality,
+        Resolution videoResolution
+    )
+        : this(
+            url,
+            container,
+            size,
+            bitrate,
+            audioCodec,
+            audioLanguage,
+            isAudioLanguageDefault,
+            videoCodec,
+            videoQuality,
+            videoResolution,
+            false
+        ) { }
+
     /// <inheritdoc />
     public string Url { get; } = url;
 
