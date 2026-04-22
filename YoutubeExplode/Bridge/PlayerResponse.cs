@@ -306,6 +306,17 @@ internal partial class PlayerResponse
         public int? VideoHeight => content.GetPropertyOrNull("height")?.GetInt32OrNull();
 
         [Lazy]
+        public bool IsVideoUpscaled =>
+            // xtags is a base64-encoded protobuf map<string, string>.
+            // Streams upscaled with YouTube's Super Resolution feature carry the entry {"sr": "1"}.
+            content
+                .GetPropertyOrNull("xtags")
+                ?.GetStringOrNull()
+                ?.NullIfWhiteSpace()
+                ?.Pipe(Protobuf.TryDeserializeMap)
+                ?.GetValueOrDefault("sr") == "1";
+
+        [Lazy]
         public int? VideoFramerate => content.GetPropertyOrNull("fps")?.GetInt32OrNull();
     }
 }

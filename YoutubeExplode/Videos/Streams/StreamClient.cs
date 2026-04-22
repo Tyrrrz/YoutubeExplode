@@ -158,7 +158,8 @@ public class StreamClient(HttpClient http)
                         streamData.IsAudioLanguageDefault,
                         streamData.VideoCodec,
                         videoQuality,
-                        videoResolution
+                        videoResolution,
+                        streamData.IsVideoUpscaled
                     );
 
                     yield return streamInfo;
@@ -173,7 +174,8 @@ public class StreamClient(HttpClient http)
                         bitrate,
                         streamData.VideoCodec,
                         videoQuality,
-                        videoResolution
+                        videoResolution,
+                        streamData.IsVideoUpscaled
                     );
 
                     yield return streamInfo;

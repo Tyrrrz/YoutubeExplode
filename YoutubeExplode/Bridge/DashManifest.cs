@@ -88,6 +88,8 @@ internal partial class DashManifest
         [Lazy]
         public int? VideoHeight => (int?)content.Attribute("height");
 
+        public bool IsVideoUpscaled => false;
+
         [Lazy]
         public int? VideoFramerate => (int?)content.Attribute("frameRate");
     }

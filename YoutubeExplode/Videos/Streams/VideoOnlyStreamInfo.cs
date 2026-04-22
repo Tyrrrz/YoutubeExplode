@@ -13,9 +13,25 @@ public class VideoOnlyStreamInfo(
     Bitrate bitrate,
     string videoCodec,
     VideoQuality videoQuality,
-    Resolution videoResolution
+    Resolution videoResolution,
+    bool isVideoUpscaled
 ) : IVideoStreamInfo
 {
+    /// <summary>
+    /// Initializes an instance of <see cref="VideoOnlyStreamInfo" />.
+    /// </summary>
+    // Backwards-compatible overload without isVideoUpscaled
+    public VideoOnlyStreamInfo(
+        string url,
+        Container container,
+        FileSize size,
+        Bitrate bitrate,
+        string videoCodec,
+        VideoQuality videoQuality,
+        Resolution videoResolution
+    )
+        : this(url, container, size, bitrate, videoCodec, videoQuality, videoResolution, false) { }
+
     /// <inheritdoc />
     public string Url { get; } = url;
 
@@ -36,6 +52,9 @@ public class VideoOnlyStreamInfo(
 
     /// <inheritdoc />
     public Resolution VideoResolution { get; } = videoResolution;
+
+    /// <inheritdoc />
+    public bool IsVideoUpscaled { get; } = isVideoUpscaled;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
