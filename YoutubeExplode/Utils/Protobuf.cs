@@ -34,12 +34,15 @@ internal static class Protobuf
         if (length is null)
             return null;
 
-        if (i + (int)length > data.Length)
+        if (length.Value > int.MaxValue)
             return null;
 
-        var result = Encoding.UTF8.GetString(data, i, (int)length.Value);
-        i += (int)length.Value;
+        var stringLength = (int)length.Value;
+        if (stringLength > data.Length - i)
+            return null;
 
+        var result = Encoding.UTF8.GetString(data, i, stringLength);
+        i += stringLength;
         return result;
     }
 
