@@ -196,7 +196,7 @@ public partial struct VideoQuality
             _ => throw new ArgumentException($"Unrecognized itag '{itag}'.", nameof(itag)),
         };
 
-        return new VideoQuality(FormatLabel(maxHeight, framerate), maxHeight, framerate);
+        return new VideoQuality(maxHeight, framerate);
     }
 }
 
