@@ -11,7 +11,6 @@ internal static class Protobuf
     private static ulong? TryReadVarint(byte[] data, ref int i)
     {
         var value = 0UL;
-
         var shift = 0;
         while (i < data.Length)
         {
@@ -31,15 +30,15 @@ internal static class Protobuf
 
     private static string? TryReadString(byte[] data, ref int i)
     {
-        var strLen = TryReadVarint(data, ref i);
-        if (strLen is null)
+        var length = TryReadVarint(data, ref i);
+        if (length is null)
             return null;
 
-        if (i + (int)strLen > data.Length)
+        if (i + (int)length > data.Length)
             return null;
 
-        var result = Encoding.UTF8.GetString(data, i, (int)strLen.Value);
-        i += (int)strLen.Value;
+        var result = Encoding.UTF8.GetString(data, i, (int)length.Value);
+        i += (int)length.Value;
 
         return result;
     }
@@ -72,8 +71,8 @@ internal static class Protobuf
                 return null;
 
             // Parse the map entry submessage: field 1 = key (string), field 2 = value (string)
-            var key = (string?)null;
-            var value = (string?)null;
+            var key = default(string);
+            var value = default(string);
             var j = i;
             while (j < entryEnd)
             {
