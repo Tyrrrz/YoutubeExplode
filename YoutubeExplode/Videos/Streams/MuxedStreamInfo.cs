@@ -18,7 +18,7 @@ public class MuxedStreamInfo(
     string videoCodec,
     VideoQuality videoQuality,
     Resolution videoResolution,
-    bool isUpscaled
+    bool isVideoUpscaled
 ) : IAudioStreamInfo, IVideoStreamInfo
 {
     /// <inheritdoc />
@@ -52,7 +52,7 @@ public class MuxedStreamInfo(
     public Resolution VideoResolution { get; } = videoResolution;
 
     /// <inheritdoc />
-    public bool IsUpscaled { get; } = isUpscaled;
+    public bool IsVideoUpscaled { get; } = isVideoUpscaled;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

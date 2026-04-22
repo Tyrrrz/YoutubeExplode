@@ -14,7 +14,7 @@ public class VideoOnlyStreamInfo(
     string videoCodec,
     VideoQuality videoQuality,
     Resolution videoResolution,
-    bool isUpscaled
+    bool isVideoUpscaled
 ) : IVideoStreamInfo
 {
     /// <inheritdoc />
@@ -39,7 +39,7 @@ public class VideoOnlyStreamInfo(
     public Resolution VideoResolution { get; } = videoResolution;
 
     /// <inheritdoc />
-    public bool IsUpscaled { get; } = isUpscaled;
+    public bool IsVideoUpscaled { get; } = isVideoUpscaled;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]

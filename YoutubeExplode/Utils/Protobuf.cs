@@ -23,6 +23,20 @@ internal static class Protobuf
         return false;
     }
 
+    private static bool IsLenField(ulong tag) => (tag & 0x7) == 2;
+
+    private static bool TryReadString(byte[] data, ref int i, out string? value)
+    {
+        value = null;
+        if (!TryReadVarint(data, ref i, out var strLen))
+            return false;
+        if (i + (int)strLen > data.Length)
+            return false;
+        value = Encoding.UTF8.GetString(data, i, (int)strLen);
+        i += (int)strLen;
+        return true;
+    }
+
     // Deserializes a protobuf-encoded map<string, string> payload into a dictionary.
     // Each top-level LEN field (wire type 2) is treated as a map entry submessage where
     // field 1 is the string key and field 2 is the string value.
@@ -38,7 +52,7 @@ internal static class Protobuf
                 return null;
 
             // Only process LEN-encoded fields (wire type 2) as map entries
-            if ((outerTag & 0x7) != 2)
+            if (!IsLenField(outerTag))
                 return null;
 
             if (!TryReadVarint(data, ref i, out var entryLen))
@@ -58,18 +72,13 @@ internal static class Protobuf
                     break;
 
                 // Only handle LEN-encoded (string) fields
-                if ((fieldTag & 0x7) != 2)
+                if (!IsLenField(fieldTag))
                     break;
 
                 var fieldNum = (int)(fieldTag >> 3);
 
-                if (!TryReadVarint(data, ref j, out var strLen))
+                if (!TryReadString(data, ref j, out var str))
                     break;
-                if (j + (int)strLen > data.Length)
-                    break;
-
-                var str = Encoding.UTF8.GetString(data, j, (int)strLen);
-                j += (int)strLen;
 
                 if (fieldNum == 1)
                     key = str;
