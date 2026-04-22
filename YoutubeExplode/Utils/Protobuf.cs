@@ -6,34 +6,42 @@ namespace YoutubeExplode.Utils;
 
 internal static class Protobuf
 {
+    private static bool IsLenField(ulong tag) => (tag & 0x7) == 2;
+
     private static bool TryReadVarint(byte[] data, ref int i, out ulong value)
     {
         value = 0;
+
         var shift = 0;
         while (i < data.Length)
         {
             var b = data[i++];
             value |= (ulong)(b & 0x7F) << shift;
+
             if ((b & 0x80) == 0)
                 return true;
+
             shift += 7;
             if (shift >= 64)
                 break;
         }
+
         return false;
     }
-
-    private static bool IsLenField(ulong tag) => (tag & 0x7) == 2;
 
     private static bool TryReadString(byte[] data, ref int i, out string? value)
     {
         value = null;
+
         if (!TryReadVarint(data, ref i, out var strLen))
             return false;
+
         if (i + (int)strLen > data.Length)
             return false;
+
         value = Encoding.UTF8.GetString(data, i, (int)strLen);
         i += (int)strLen;
+
         return true;
     }
 
