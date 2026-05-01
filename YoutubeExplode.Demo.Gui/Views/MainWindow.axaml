@@ -29,9 +29,9 @@
                 <TextBox
                     x:Name="QueryTextBox"
                     FontSize="16"
+                    PlaceholderText="YouTube video URL or ID"
                     Text="{Binding Query}"
-                    Theme="{DynamicResource SoloTextBox}"
-                    Watermark="YouTube video URL or ID">
+                    Theme="{DynamicResource SoloTextBox}">
                     <TextBox.InnerRightContent>
                         <Button
                             Padding="4"
