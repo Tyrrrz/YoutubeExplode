@@ -8,13 +8,17 @@ internal static class AvaloniaExtensions
 {
     extension(IApplicationLifetime lifetime)
     {
-        public Window? TryGetMainWindow() =>
-            lifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime
-                ? desktopLifetime.MainWindow
-                : null;
+        public Control? TryGetMainView() =>
+            lifetime switch
+            {
+                IClassicDesktopStyleApplicationLifetime desktopLifetime =>
+                    desktopLifetime.MainWindow,
 
-        public TopLevel? TryGetTopLevel() =>
-            lifetime.TryGetMainWindow()
-            ?? (lifetime as ISingleViewApplicationLifetime)?.MainView?.Pipe(TopLevel.GetTopLevel);
+                ISingleViewApplicationLifetime singleViewLifetime => singleViewLifetime.MainView,
+
+                _ => null,
+            };
+
+        public TopLevel? TryGetTopLevel() => lifetime.TryGetMainView()?.Pipe(TopLevel.GetTopLevel);
     }
 }
