@@ -5,13 +5,14 @@ using System.Text.RegularExpressions;
 using Lazy;
 using PowerKit.Extensions;
 using YoutubeExplode.Bridge.Cipher;
+using YoutubeExplode.Exceptions;
 
 namespace YoutubeExplode.Bridge;
 
 internal partial class PlayerSource(string content)
 {
     [Lazy]
-    public CipherManifest? CipherManifest
+    public CipherManifest CipherManifest
     {
         get
         {
@@ -22,7 +23,9 @@ internal partial class PlayerSource(string content)
                 .Value.NullIfWhiteSpace();
 
             if (string.IsNullOrWhiteSpace(signatureTimestamp))
-                return null;
+                throw new YoutubeExplodeException(
+                    "Failed to extract cipher signature timestamp from player source."
+                );
 
             // Find where the player calls the cipher functions
             var cipherCallsite = Regex
@@ -37,7 +40,9 @@ internal partial class PlayerSource(string content)
                 .Value.NullIfWhiteSpace();
 
             if (string.IsNullOrWhiteSpace(cipherCallsite))
-                return null;
+                throw new YoutubeExplodeException(
+                    "Failed to find cipher callsite in player source."
+                );
 
             // Find the object that defines the cipher functions
             var cipherContainerName = Regex
@@ -46,7 +51,9 @@ internal partial class PlayerSource(string content)
                 .Value;
 
             if (string.IsNullOrWhiteSpace(cipherContainerName))
-                return null;
+                throw new YoutubeExplodeException(
+                    "Failed to extract cipher container name from player source."
+                );
 
             // Find the definition of the cipher functions
             var cipherDefinition = Regex
@@ -61,7 +68,9 @@ internal partial class PlayerSource(string content)
                 .Value.NullIfWhiteSpace();
 
             if (string.IsNullOrWhiteSpace(cipherDefinition))
-                return null;
+                throw new YoutubeExplodeException(
+                    "Failed to find cipher function definitions in player source."
+                );
 
             // Identify the swap cipher function
             var swapFuncName = Regex

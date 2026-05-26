@@ -37,9 +37,7 @@ public class StreamClient(HttpClient http)
 
         var playerSource = await _controller.GetPlayerSourceAsync(cancellationToken);
 
-        return _cipherManifest =
-            playerSource.CipherManifest
-            ?? throw new YoutubeExplodeException("Failed to extract the cipher manifest.");
+        return _cipherManifest = playerSource.CipherManifest;
     }
 
     private async ValueTask<long?> TryGetContentLengthAsync(
@@ -277,20 +275,32 @@ public class StreamClient(HttpClient http)
             return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
         }
         // Retry with deciphering
-        catch (VideoUnplayableException ex)
+        catch (VideoUnplayableException originalEx)
             // Only retry on videos that are unplayable for reasons other than being unavailable (deleted, private, etc)
-            when (ex is not VideoUnavailableException)
+            when (originalEx is not VideoUnavailableException)
         {
-            var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
+            try
+            {
+                var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
 
-            // Try to get player response from a client with cipher
-            var playerResponse = await _controller.GetPlayerResponseAsync(
-                videoId,
-                cipherManifest.SignatureTimestamp,
-                cancellationToken
-            );
+                // Try to get player response from a client with cipher
+                var playerResponse = await _controller.GetPlayerResponseAsync(
+                    videoId,
+                    cipherManifest.SignatureTimestamp,
+                    cancellationToken
+                );
 
-            return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
+                return await GetStreamInfosAsync(videoId, playerResponse, cancellationToken);
+            }
+            catch (Exception fallbackEx)
+                when (fallbackEx is not (VideoUnavailableException or OperationCanceledException))
+            {
+                throw new YoutubeExplodeException(
+                    $"Failed to resolve streams for video '{videoId}'. "
+                        + $"Initial error: {originalEx.Message} "
+                        + $"Cipher fallback error: {fallbackEx.Message}"
+                );
+            }
         }
     }
 
