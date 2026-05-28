@@ -5,7 +5,9 @@ namespace YoutubeExplode.Utils;
 
 internal static class Html
 {
-    private static readonly HtmlParser HtmlParser = new();
-
-    public static IHtmlDocument Parse(string source) => HtmlParser.ParseDocument(source);
+    // A new HtmlParser instance must be created for each call to avoid thread safety issues
+    // when multiple YoutubeClient instances are used concurrently. HtmlParser is not thread-safe
+    // and sharing a single static instance causes corruption errors (InvalidOperationException)
+    // in AngleSharp's internal collections.
+    public static IHtmlDocument Parse(string source) => new HtmlParser().ParseDocument(source);
 }
