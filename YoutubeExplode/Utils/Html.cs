@@ -9,5 +9,6 @@ internal static class Html
     // when multiple YoutubeClient instances are used concurrently. HtmlParser is not thread-safe
     // and sharing a single static instance causes corruption errors (InvalidOperationException)
     // in AngleSharp's internal collections.
+    // https://github.com/Tyrrrz/YoutubeExplode/issues/955
     public static IHtmlDocument Parse(string source) => new HtmlParser().ParseDocument(source);
 }
