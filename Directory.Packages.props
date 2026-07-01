@@ -4,12 +4,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="AngleSharp" Version="1.4.0" />
+    <PackageVersion Include="AngleSharp" Version="1.5.1" />
     <PackageVersion Include="AsyncImageLoader.Avalonia" Version="3.8.0" />
-    <PackageVersion Include="Avalonia" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.0.4" />
-    <PackageVersion Include="Binternal" Version="1.0.1" />
-    <PackageVersion Include="CliWrap" Version="3.10.1" />
+    <PackageVersion Include="Avalonia" Version="12.0.5" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.0.5" />
+    <PackageVersion Include="Binternal" Version="1.0.2" />
+    <PackageVersion Include="CliWrap" Version="3.10.2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="CSharpier.MsBuild" Version="1.2.6" />
@@ -21,12 +21,12 @@
     <PackageVersion Include="Lazy.Fody" Version="1.11.0" />
     <PackageVersion Include="Material.Avalonia" Version="3.16.1" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="3.0.2" />
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.8" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="PolyShim" Version="2.11.0" />
-    <PackageVersion Include="PowerKit" Version="2.0.1" />
+    <PackageVersion Include="PowerKit" Version="2.0.2" />
     <PackageVersion Include="Snek" Version="1.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="10.0.8" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.9" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
