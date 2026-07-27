@@ -238,9 +238,7 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
     /// </summary>
     public static bool operator ==(VideoQuality left, VideoQuality right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(VideoQuality, VideoQuality)" />
     public static bool operator !=(VideoQuality left, VideoQuality right) => !(left == right);
 
     /// <summary>
@@ -249,9 +247,7 @@ public partial struct VideoQuality : IComparable<VideoQuality>, IEquatable<Video
     public static bool operator >(VideoQuality left, VideoQuality right) =>
         left.CompareTo(right) > 0;
 
-    /// <summary>
-    /// Comparison.
-    /// </summary>
+    /// <inheritdoc cref="operator >(VideoQuality, VideoQuality)" />
     public static bool operator <(VideoQuality left, VideoQuality right) =>
         left.CompareTo(right) < 0;
 }

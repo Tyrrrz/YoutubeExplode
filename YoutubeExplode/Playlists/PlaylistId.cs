@@ -101,8 +101,6 @@ public partial struct PlaylistId : IEquatable<PlaylistId>
     /// </summary>
     public static bool operator ==(PlaylistId left, PlaylistId right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(PlaylistId, PlaylistId)" />
     public static bool operator !=(PlaylistId left, PlaylistId right) => !(left == right);
 }

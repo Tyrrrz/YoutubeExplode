@@ -106,8 +106,6 @@ public partial struct VideoId : IEquatable<VideoId>
     /// </summary>
     public static bool operator ==(VideoId left, VideoId right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(VideoId, VideoId)" />
     public static bool operator !=(VideoId left, VideoId right) => !(left == right);
 }

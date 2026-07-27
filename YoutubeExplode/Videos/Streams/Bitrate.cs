@@ -79,9 +79,7 @@ public partial struct Bitrate : IComparable<Bitrate>, IEquatable<Bitrate>
     /// </summary>
     public static bool operator ==(Bitrate left, Bitrate right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(Bitrate, Bitrate)" />
     public static bool operator !=(Bitrate left, Bitrate right) => !(left == right);
 
     /// <summary>
@@ -89,8 +87,6 @@ public partial struct Bitrate : IComparable<Bitrate>, IEquatable<Bitrate>
     /// </summary>
     public static bool operator >(Bitrate left, Bitrate right) => left.CompareTo(right) > 0;
 
-    /// <summary>
-    /// Comparison.
-    /// </summary>
+    /// <inheritdoc cref="operator >(Bitrate, Bitrate)" />
     public static bool operator <(Bitrate left, Bitrate right) => left.CompareTo(right) < 0;
 }

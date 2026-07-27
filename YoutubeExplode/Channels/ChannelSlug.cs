@@ -92,8 +92,6 @@ public partial struct ChannelSlug : IEquatable<ChannelSlug>
     /// </summary>
     public static bool operator ==(ChannelSlug left, ChannelSlug right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(ChannelSlug, ChannelSlug)" />
     public static bool operator !=(ChannelSlug left, ChannelSlug right) => !(left == right);
 }

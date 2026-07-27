@@ -77,8 +77,6 @@ public partial struct Container : IEquatable<Container>
     /// </summary>
     public static bool operator ==(Container left, Container right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(Container, Container)" />
     public static bool operator !=(Container left, Container right) => !(left == right);
 }

@@ -80,9 +80,7 @@ public partial struct FileSize : IComparable<FileSize>, IEquatable<FileSize>
     /// </summary>
     public static bool operator ==(FileSize left, FileSize right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(FileSize, FileSize)" />
     public static bool operator !=(FileSize left, FileSize right) => !(left == right);
 
     /// <summary>
@@ -90,8 +88,6 @@ public partial struct FileSize : IComparable<FileSize>, IEquatable<FileSize>
     /// </summary>
     public static bool operator >(FileSize left, FileSize right) => left.CompareTo(right) > 0;
 
-    /// <summary>
-    /// Comparison.
-    /// </summary>
+    /// <inheritdoc cref="operator >(FileSize, FileSize)" />
     public static bool operator <(FileSize left, FileSize right) => left.CompareTo(right) < 0;
 }

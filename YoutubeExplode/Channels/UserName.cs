@@ -93,8 +93,6 @@ public partial struct UserName : IEquatable<UserName>
     /// </summary>
     public static bool operator ==(UserName left, UserName right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(UserName, UserName)" />
     public static bool operator !=(UserName left, UserName right) => !(left == right);
 }

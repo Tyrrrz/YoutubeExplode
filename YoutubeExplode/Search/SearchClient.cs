@@ -237,9 +237,7 @@ public class SearchClient(HttpClient http)
         } while (!string.IsNullOrWhiteSpace(continuationToken));
     }
 
-    /// <summary>
-    /// Enumerates batches of search results returned by the specified query.
-    /// </summary>
+    /// <inheritdoc cref="GetResultBatchesAsync(string, SearchFilter, CancellationToken)" />
     public IAsyncEnumerable<Batch<ISearchResult>> GetResultBatchesAsync(
         string searchQuery,
         CancellationToken cancellationToken = default

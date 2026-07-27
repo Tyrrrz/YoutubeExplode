@@ -41,9 +41,7 @@ public class ConversionRequestBuilder(string outputFilePath)
         return this;
     }
 
-    /// <summary>
-    /// Sets the output container.
-    /// </summary>
+    /// <inheritdoc cref="SetContainer(Container)" />
     public ConversionRequestBuilder SetContainer(string container) =>
         SetContainer(new Container(container));
 
@@ -54,9 +52,7 @@ public class ConversionRequestBuilder(string outputFilePath)
     public ConversionRequestBuilder SetFormat(ConversionFormat format) =>
         SetContainer(new Container(format.Name));
 
-    /// <summary>
-    /// Sets the conversion format.
-    /// </summary>
+    /// <inheritdoc cref="SetFormat(ConversionFormat)" />
     [Obsolete("Use SetContainer instead."), ExcludeFromCodeCoverage]
     public ConversionRequestBuilder SetFormat(string format) => SetContainer(format);
 

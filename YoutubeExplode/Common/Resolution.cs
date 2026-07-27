@@ -44,8 +44,6 @@ public partial struct Resolution : IEquatable<Resolution>
     /// </summary>
     public static bool operator ==(Resolution left, Resolution right) => left.Equals(right);
 
-    /// <summary>
-    /// Equality check.
-    /// </summary>
+    /// <inheritdoc cref="operator ==(Resolution, Resolution)" />
     public static bool operator !=(Resolution left, Resolution right) => !(left == right);
 }
