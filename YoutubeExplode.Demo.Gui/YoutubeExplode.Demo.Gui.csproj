@@ -13,11 +13,10 @@
     <PackageReference Include="AsyncImageLoader.Avalonia" />
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="PowerKit" />
-    <PackageReference Include="Material.Avalonia" />
-    <PackageReference Include="Material.Icons.Avalonia" />
   </ItemGroup>
 
   <ItemGroup>

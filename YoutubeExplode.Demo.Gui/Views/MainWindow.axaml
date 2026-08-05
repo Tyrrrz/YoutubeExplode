@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:converters="clr-namespace:YoutubeExplode.Demo.Gui.Converters"
-    xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:viewModels="clr-namespace:YoutubeExplode.Demo.Gui.ViewModels"
     Title="YoutubeExplode Demo"
     Width="720"
@@ -21,31 +19,34 @@
     <DockPanel>
         <!--  Header  -->
         <StackPanel
-            Background="{DynamicResource MaterialDarkBackgroundBrush}"
+            Background="{StaticResource HeaderBackgroundBrush}"
             DockPanel.Dock="Top"
             Orientation="Vertical">
             <!--  Query  -->
-            <materialControls:Card Margin="12">
-                <TextBox
-                    x:Name="QueryTextBox"
-                    FontSize="16"
-                    PlaceholderText="YouTube video URL or ID"
-                    Text="{Binding Query}"
-                    Theme="{DynamicResource SoloTextBox}">
-                    <TextBox.InnerRightContent>
-                        <Button
-                            Padding="4"
-                            Command="{Binding PullMetadataCommand}"
-                            IsDefault="True"
-                            Theme="{DynamicResource MaterialFlatButton}">
-                            <materialIcons:MaterialIcon
-                                Width="24"
-                                Height="24"
-                                Kind="ArrowRight" />
-                        </Button>
-                    </TextBox.InnerRightContent>
-                </TextBox>
-            </materialControls:Card>
+            <Border Margin="12" Classes="card">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox
+                        x:Name="QueryTextBox"
+                        Grid.Column="0"
+                        Padding="12,10"
+                        BorderThickness="0"
+                        FontSize="16"
+                        PlaceholderText="YouTube video URL or ID"
+                        Text="{Binding Query}" />
+                    <Button
+                        Grid.Column="1"
+                        Margin="0,0,4,0"
+                        Padding="10"
+                        VerticalAlignment="Center"
+                        Classes="flat"
+                        Command="{Binding PullMetadataCommand}"
+                        Content="&#8594;"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource AccentBrush}"
+                        IsDefault="True" />
+                </Grid>
+            </Border>
 
             <!--  Progress  -->
             <ProgressBar
@@ -73,12 +74,12 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         Background="Black"
-                        Foreground="{DynamicResource MaterialDarkForegroundBrush}"
+                        Foreground="White"
                         Text="{Binding Video.Duration, TargetNullValue=Live}" />
                 </Panel>
 
                 <!--  Basic metadata  -->
-                <materialControls:Card Margin="8">
+                <Border Margin="8" Classes="card">
                     <StackPanel Orientation="Vertical">
                         <!--  Title  -->
                         <TextBlock
@@ -90,7 +91,7 @@
 
                         <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
                             <!--  Author image  -->
-                            <Image
+                            <Ellipse
                                 Grid.Row="0"
                                 Grid.RowSpan="3"
                                 Grid.Column="0"
@@ -98,8 +99,11 @@
                                 Height="50"
                                 Margin="6,6,0,6"
                                 VerticalAlignment="Top"
-                                asyncImageLoader:ImageLoader.Source="{Binding ChannelThumbnail.Url}"
-                                DockPanel.Dock="Left" />
+                                DockPanel.Dock="Left">
+                                <Ellipse.Fill>
+                                    <ImageBrush asyncImageLoader:ImageBrushLoader.Source="{Binding ChannelThumbnail.Url}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
 
                             <!--  Author name  -->
                             <TextBlock
@@ -117,7 +121,7 @@
                                 Margin="6,6,6,4"
                                 HorizontalAlignment="Right"
                                 FontSize="16"
-                                FontWeight="SemiLight">
+                                FontWeight="Light">
                                 <Run Text="{Binding Video.Engagement.ViewCount, StringFormat={}{0:N0}, Mode=OneWay}" />
                                 <Run Text="views" />
                             </TextBlock>
@@ -126,10 +130,10 @@
                             <Border
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                Height="2"
+                                Height="1"
                                 Margin="6,0,0,1"
                                 HorizontalAlignment="Stretch"
-                                Background="{DynamicResource MaterialDividerBrush}" />
+                                Background="{StaticResource DividerBrush}" />
 
                             <!--  Rating bar  -->
                             <ProgressBar
@@ -148,7 +152,7 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="6,4,6,6"
-                                FontWeight="SemiLight"
+                                FontWeight="Light"
                                 Text="{Binding Video.UploadDate, StringFormat={}{0:MMM d\, yyyy}}" />
 
                             <!--  Likes and dislikes  -->
@@ -158,41 +162,33 @@
                                 Margin="6"
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal">
-                                <materialIcons:MaterialIcon VerticalAlignment="Center" Kind="ThumbUp" />
+                                <TextBlock VerticalAlignment="Center" Text="&#128077;" />
                                 <TextBlock
                                     Margin="3,0,0,0"
                                     VerticalAlignment="Center"
-                                    FontWeight="SemiLight"
+                                    FontWeight="Light"
                                     Text="{Binding Video.Engagement.LikeCount, StringFormat={}{0:N0}}" />
-                                <materialIcons:MaterialIcon
+                                <TextBlock
                                     Margin="8,0,0,0"
                                     VerticalAlignment="Center"
-                                    Kind="ThumbDown" />
+                                    Text="&#128078;" />
                                 <TextBlock
                                     Margin="3,0,0,0"
                                     VerticalAlignment="Center"
-                                    FontWeight="SemiLight"
+                                    FontWeight="Light"
                                     Text="{Binding Video.Engagement.DislikeCount, StringFormat={}{0:N0}}" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>
-                </materialControls:Card>
+                </Border>
 
                 <!--  Description  -->
                 <Expander Margin="8,0,8,8">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                VerticalAlignment="Center"
-                                Kind="CommentTextOutline" />
-                            <TextBlock
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Description" />
-                        </StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Text="Description" />
                     </Expander.Header>
                     <TextBlock
                         Margin="16"
@@ -203,18 +199,10 @@
                 <!--  Keywords  -->
                 <Expander Margin="8,0,8,8">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                VerticalAlignment="Center"
-                                Kind="Magnify" />
-                            <TextBlock
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Keywords" />
-                        </StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Text="Keywords" />
                     </Expander.Header>
                     <TextBlock
                         Margin="16"
@@ -225,18 +213,10 @@
                 <!--  Media streams  -->
                 <Expander Margin="8,0,8,8">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                VerticalAlignment="Center"
-                                Kind="PlayCircleOutline" />
-                            <TextBlock
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Media streams" />
-                        </StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Text="Media streams" />
                     </Expander.Header>
                     <StackPanel Orientation="Vertical">
                         <!--  Muxed  -->
@@ -252,14 +232,13 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
+                                            Classes="flat"
                                             Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
-                                            Theme="{DynamicResource MaterialFlatButton}">
-                                            <materialIcons:MaterialIcon
-                                                Width="24"
-                                                Height="24"
-                                                Kind="Download" />
-                                        </Button>
+                                            Content="&#8595;"
+                                            FontSize="16"
+                                            FontWeight="Bold"
+                                            Foreground="{StaticResource AccentBrush}" />
 
                                         <!--  Stream info  -->
                                         <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
@@ -293,14 +272,13 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
+                                            Classes="flat"
                                             Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
-                                            Theme="{DynamicResource MaterialFlatButton}">
-                                            <materialIcons:MaterialIcon
-                                                Width="24"
-                                                Height="24"
-                                                Kind="Download" />
-                                        </Button>
+                                            Content="&#8595;"
+                                            FontSize="16"
+                                            FontWeight="Bold"
+                                            Foreground="{StaticResource AccentBrush}" />
 
                                         <!--  Stream info  -->
                                         <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
@@ -334,14 +312,13 @@
                                         <Button
                                             Padding="4"
                                             VerticalAlignment="Center"
+                                            Classes="flat"
                                             Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadStreamCommand}"
                                             CommandParameter="{Binding}"
-                                            Theme="{DynamicResource MaterialFlatButton}">
-                                            <materialIcons:MaterialIcon
-                                                Width="24"
-                                                Height="24"
-                                                Kind="Download" />
-                                        </Button>
+                                            Content="&#8595;"
+                                            FontSize="16"
+                                            FontWeight="Bold"
+                                            Foreground="{StaticResource AccentBrush}" />
 
                                         <!--  Stream info  -->
                                         <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">
@@ -364,18 +341,10 @@
                 <!--  Closed captions  -->
                 <Expander Margin="8,0,8,8">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <materialIcons:MaterialIcon
-                                Width="18"
-                                Height="18"
-                                VerticalAlignment="Center"
-                                Kind="ClosedCaption" />
-                            <TextBlock
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                FontSize="15"
-                                Text="Closed captions" />
-                        </StackPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="15"
+                            Text="Closed captions" />
                     </Expander.Header>
                     <ItemsControl Margin="16" ItemsSource="{Binding ClosedCaptionTrackInfos}">
                         <ItemsControl.ItemTemplate>
@@ -385,14 +354,13 @@
                                     <Button
                                         Padding="4"
                                         VerticalAlignment="Center"
+                                        Classes="flat"
                                         Command="{Binding $parent[Window].((viewModels:MainViewModel)DataContext).DownloadClosedCaptionTrackCommand}"
                                         CommandParameter="{Binding}"
-                                        Theme="{DynamicResource MaterialFlatButton}">
-                                        <materialIcons:MaterialIcon
-                                            Width="24"
-                                            Height="24"
-                                            Kind="Download" />
-                                    </Button>
+                                        Content="&#8595;"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{StaticResource AccentBrush}" />
 
                                     <!--  Closed caption track info  -->
                                     <TextBlock Margin="6,0,0,0" VerticalAlignment="Center">

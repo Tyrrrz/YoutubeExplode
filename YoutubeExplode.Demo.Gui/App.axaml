@@ -2,23 +2,38 @@
     x:Class="YoutubeExplode.Demo.Gui.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:materialAssists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
-    xmlns:materialControls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
-    xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    xmlns:materialStyles="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
     RequestedThemeVariant="Light">
+    <Application.Resources>
+        <Color x:Key="AccentColor">#F9A825</Color>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#343838" />
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="CardBorderBrush" Color="#E0E0E0" />
+        <SolidColorBrush x:Key="DividerBrush" Color="#E0E0E0" />
+    </Application.Resources>
+
     <Application.Styles>
-        <materialStyles:MaterialTheme />
-        <materialIcons:MaterialIconStyles />
+        <FluentTheme />
+
+        <Style Selector="Window">
+            <Setter Property="Background" Value="#FAFAFA" />
+        </Style>
 
         <!--  Card  -->
-        <Style Selector="materialControls|Card">
-            <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="BoxShadow" Value="0 1 4 0 #22000000" />
         </Style>
 
         <!--  Expander  -->
         <Style Selector="Expander">
-            <Setter Property="materialAssists:ShadowAssist.ShadowDepth" Value="Depth1" />
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
 
             <Style Selector="^ /template/ LayoutTransformControl#PART_ToggleTransform">
                 <Setter Property="Cursor" Value="Hand" />
@@ -29,12 +44,22 @@
         <Style Selector="ProgressBar">
             <Setter Property="Minimum" Value="0" />
             <Setter Property="Maximum" Value="1" />
-            <Setter Property="Foreground" Value="{DynamicResource MaterialSecondaryMidBrush}" />
-            <Setter Property="materialAssists:TransitionAssist.DisableTransitions" Value="True" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
 
             <Style Selector="^:horizontal">
                 <Setter Property="MinHeight" Value="0" />
             </Style>
+        </Style>
+
+        <!--  Flat icon button  -->
+        <Style Selector="Button.flat">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="Button.flat:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#14000000" />
         </Style>
     </Application.Styles>
 </Application>

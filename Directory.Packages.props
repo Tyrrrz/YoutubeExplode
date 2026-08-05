@@ -8,6 +8,7 @@
     <PackageVersion Include="AsyncImageLoader.Avalonia" Version="3.8.0" />
     <PackageVersion Include="Avalonia" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.1" />
     <PackageVersion Include="Binternal" Version="1.0.2" />
     <PackageVersion Include="CliWrap" Version="3.10.4" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -19,8 +20,6 @@
     <PackageVersion Include="Gress" Version="2.2.0" />
     <PackageVersion Include="JsonExtensions" Version="1.2.3" />
     <PackageVersion Include="Lazy.Fody" Version="1.11.0" />
-    <PackageVersion Include="Material.Avalonia" Version="3.16.1" />
-    <PackageVersion Include="Material.Icons.Avalonia" Version="3.0.2" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.10" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageVersion Include="PolyShim" Version="2.12.2" />
