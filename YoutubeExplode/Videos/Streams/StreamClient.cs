@@ -92,13 +92,16 @@ public class StreamClient(HttpClient http)
     {
         foreach (var streamData in streamDatas)
         {
+            // SABR / server-side streams have no progressive URL we can download.
+            // ANDROID in particular mixes one muxed itag-18 URL with SABR-only adaptive
+            // formats, so skip those instead of failing the whole manifest.
+            var url = streamData.Url;
+            if (string.IsNullOrWhiteSpace(url))
+                continue;
+
             var itag =
                 streamData.Itag
                 ?? throw new YoutubeExplodeException("Failed to extract the stream itag.");
-
-            var url =
-                streamData.Url
-                ?? throw new YoutubeExplodeException("Failed to extract the stream URL.");
 
             // Handle cipher-protected streams
             if (!string.IsNullOrWhiteSpace(streamData.Signature))

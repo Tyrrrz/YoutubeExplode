@@ -85,6 +85,25 @@ internal class VideoController(HttpClient http)
         }
     }
 
+    private async ValueTask<PlayerResponse> SendPlayerRequestAsync(
+        string content,
+        string userAgent,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/player"
+        );
+
+        request.Content = new StringContent(content);
+        request.Headers.Add("User-Agent", userAgent);
+
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return PlayerResponse.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
+    }
+
     public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
         VideoId videoId,
         CancellationToken cancellationToken = default
@@ -92,32 +111,26 @@ internal class VideoController(HttpClient http)
     {
         var visitorData = await ResolveVisitorDataAsync(cancellationToken);
 
-        // The most optimal client to impersonate is any mobile client, because they
-        // don't require signature deciphering (for both normal and n-parameter signatures).
-        // YouTube now requires Proof of Origin (PO) tokens for most Innertube clients (iOS, Android, etc.),
-        // causing stream downloads to fail with 403 Forbidden errors. The ANDROID_VR client (Oculus Quest)
-        // still works without PO tokens and provides full format access.
-        // https://github.com/Tyrrrz/YoutubeExplode/issues/933
-        using var request = new HttpRequestMessage(
-            HttpMethod.Post,
-            "https://www.youtube.com/youtubei/v1/player"
-        );
-
-        request.Content = new StringContent(
+        // YouTube now requires Proof of Origin (PO) tokens for most Innertube clients
+        // (WEB, iOS, ANDROID, ANDROID_VR, etc.), causing stream downloads to fail with
+        // 403 Forbidden or LOGIN_REQUIRED bot-check errors.
+        // VISIONOS currently returns progressive streams without PO tokens or deciphering,
+        // matching yt-dlp's default JS-less client.
+        var playerResponse = await SendPlayerRequestAsync(
             // lang=json
             $$"""
             {
               "videoId": {{Json.Encode(videoId)}},
               "contentCheckOk": true,
+              "racyCheckOk": true,
               "context": {
                 "client": {
-                  "clientName": "ANDROID_VR",
-                  "clientVersion": "1.60.19",
-                  "deviceMake": "Oculus",
-                  "deviceModel": "Quest 3",
-                  "osName": "Android",
-                  "osVersion": "12L",
-                  "platform": "MOBILE",
+                  "clientName": "VISIONOS",
+                  "clientVersion": "1.02",
+                  "deviceMake": "Apple",
+                  "deviceModel": "RealityDevice17,1",
+                  "osName": "visionOS",
+                  "osVersion": "26.5.23O471",
                   "visitorData": {{Json.Encode(visitorData)}},
                   "hl": "en",
                   "gl": "US",
@@ -125,27 +138,49 @@ internal class VideoController(HttpClient http)
                 }
               }
             }
-            """
+            """,
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15",
+            cancellationToken
         );
 
-        // User agent appears to be sometimes required when impersonating Android
-        // https://github.com/iv-org/invidious/issues/3230#issuecomment-1226887639
-        request.Headers.Add(
-            "User-Agent",
-            "com.google.android.apps.youtube.vr.oculus/1.60.19 (Linux; U; Android 12L; Quest 3 Build/SQ3A.220605.009.A1) gzip"
+        if (playerResponse.IsPlayable)
+            return playerResponse;
+
+        // "Made for kids" videos are not available on VISIONOS (or ANDROID_VR).
+        // ANDROID still returns a muxed itag-18 stream without deciphering.
+        var androidResponse = await SendPlayerRequestAsync(
+            // lang=json
+            $$"""
+            {
+              "videoId": {{Json.Encode(videoId)}},
+              "contentCheckOk": true,
+              "racyCheckOk": true,
+              "context": {
+                "client": {
+                  "clientName": "ANDROID",
+                  "clientVersion": "21.26.364",
+                  "androidSdkVersion": 30,
+                  "osName": "Android",
+                  "osVersion": "11",
+                  "visitorData": {{Json.Encode(visitorData)}},
+                  "hl": "en",
+                  "gl": "US",
+                  "utcOffsetMinutes": 0
+                }
+              }
+            }
+            """,
+            "com.google.android.youtube/21.26.364 (Linux; U; Android 11) gzip",
+            cancellationToken
         );
 
-        using var response = await Http.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
+        if (androidResponse.IsPlayable)
+            return androidResponse;
 
-        var playerResponse = PlayerResponse.Parse(
-            await response.Content.ReadAsStringAsync(cancellationToken)
-        );
-
-        if (!playerResponse.IsAvailable)
+        if (!playerResponse.IsAvailable && !androidResponse.IsAvailable)
             throw new VideoUnavailableException($"Video '{videoId}' is not available.");
 
-        return playerResponse;
+        return playerResponse.IsAvailable ? playerResponse : androidResponse;
     }
 
     public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
@@ -159,12 +194,7 @@ internal class VideoController(HttpClient http)
         // The only client that can handle age-restricted videos without authentication is the
         // TVHTML5_SIMPLY_EMBEDDED_PLAYER client.
         // This client does require signature deciphering, so we only use it as a fallback.
-        using var request = new HttpRequestMessage(
-            HttpMethod.Post,
-            "https://www.youtube.com/youtubei/v1/player"
-        );
-
-        request.Content = new StringContent(
+        var playerResponse = await SendPlayerRequestAsync(
             // lang=json
             $$"""
             {
@@ -188,14 +218,9 @@ internal class VideoController(HttpClient http)
                 }
               }
             }
-            """
-        );
-
-        using var response = await Http.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-
-        var playerResponse = PlayerResponse.Parse(
-            await response.Content.ReadAsStringAsync(cancellationToken)
+            """,
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36",
+            cancellationToken
         );
 
         if (!playerResponse.IsAvailable)

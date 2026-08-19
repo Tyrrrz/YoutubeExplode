@@ -93,6 +93,8 @@ public class VideoSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.EmbedRestrictedByAuthor)]
     [InlineData(VideoIds.ContentCheckViolent)]
     [InlineData(VideoIds.WithBrokenTitle)]
+    [InlineData(VideoIds.AndroidVrBotCheck)]
+    [InlineData(VideoIds.MadeForKids)]
     public async Task I_can_get_the_metadata_of_any_available_video(string videoId)
     {
         // Arrange

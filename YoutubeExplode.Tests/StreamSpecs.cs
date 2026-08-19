@@ -138,6 +138,8 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
     [InlineData(VideoIds.WithHighDynamicRangeStreams)]
+    [InlineData(VideoIds.AndroidVrBotCheck)]
+    [InlineData(VideoIds.MadeForKids)]
     public async Task I_can_get_the_list_of_available_streams_of_any_playable_video(string videoId)
     {
         // Arrange
@@ -233,6 +235,8 @@ public class StreamSpecs(ITestOutputHelper testOutput)
     [InlineData(VideoIds.ContentCheckSuicide)]
     [InlineData(VideoIds.LiveStreamRecording)]
     [InlineData(VideoIds.WithOmnidirectionalStreams)]
+    [InlineData(VideoIds.AndroidVrBotCheck)]
+    [InlineData(VideoIds.MadeForKids)]
     public async Task I_can_download_a_specific_stream_of_a_video(string videoId)
     {
         // Arrange
@@ -249,6 +253,21 @@ public class StreamSpecs(ITestOutputHelper testOutput)
         var fileInfo = new FileInfo(file.Path);
         fileInfo.Exists.Should().BeTrue();
         fileInfo.Length.Should().Be(streamInfo.Size.Bytes);
+    }
+
+    [Fact]
+    public async Task I_can_get_the_list_of_available_streams_of_a_video_blocked_by_android_vr()
+    {
+        // Arrange
+        using var youtube = new YoutubeClient();
+
+        // Act
+        var manifest = await youtube.Videos.Streams.GetManifestAsync(VideoIds.AndroidVrBotCheck);
+
+        // Assert
+        manifest.Streams.Should().NotBeEmpty();
+        manifest.GetAudioStreams().Should().NotBeEmpty();
+        manifest.GetVideoStreams().Should().NotBeEmpty();
     }
 
     [Fact]

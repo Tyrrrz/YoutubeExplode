@@ -23,4 +23,6 @@ internal static class VideoIds
     public const string WithBrokenClosedCaptions = "1VKIIw05JnE";
     public const string WithMultipleAudioLanguages = "ngqcjXfggHQ";
     public const string WithUpscaledStreams = "IFACrIx5SZ0";
+    public const string AndroidVrBotCheck = "u9Dg-g7t2l4";
+    public const string MadeForKids = "nQuzyJ-C1Fc";
 }
