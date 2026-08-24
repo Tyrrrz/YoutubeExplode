@@ -85,25 +85,6 @@ internal class VideoController(HttpClient http)
         }
     }
 
-    private async ValueTask<PlayerResponse> SendPlayerRequestAsync(
-        string content,
-        string userAgent,
-        CancellationToken cancellationToken = default
-    )
-    {
-        using var request = new HttpRequestMessage(
-            HttpMethod.Post,
-            "https://www.youtube.com/youtubei/v1/player"
-        );
-
-        request.Content = new StringContent(content);
-        request.Headers.Add("User-Agent", userAgent);
-
-        using var response = await Http.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        return PlayerResponse.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
-    }
-
     public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
         VideoId videoId,
         CancellationToken cancellationToken = default
@@ -116,7 +97,60 @@ internal class VideoController(HttpClient http)
         // 403 Forbidden or LOGIN_REQUIRED bot-check errors.
         // VISIONOS currently returns progressive streams without PO tokens or deciphering,
         // matching yt-dlp's default JS-less client.
-        var playerResponse = await SendPlayerRequestAsync(
+        var visionResponse = await GetPlayerResponseForVisionOsAsync(
+            videoId,
+            visitorData,
+            cancellationToken
+        );
+        if (visionResponse.IsPlayable)
+            return visionResponse;
+
+        // "Made for kids" videos are not available on VISIONOS (or ANDROID_VR).
+        // ANDROID still returns a muxed itag-18 stream without deciphering.
+        var androidResponse = await GetPlayerResponseForAndroidAsync(
+            videoId,
+            visitorData,
+            cancellationToken
+        );
+        if (androidResponse.IsPlayable)
+            return androidResponse;
+
+        if (!visionResponse.IsAvailable && !androidResponse.IsAvailable)
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+
+        return visionResponse.IsAvailable ? visionResponse : androidResponse;
+    }
+
+    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
+        VideoId videoId,
+        string? signatureTimestamp,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
+
+        // The only client that can handle age-restricted videos without authentication is the
+        // TVHTML5_SIMPLY_EMBEDDED_PLAYER client.
+        // This client does require signature deciphering, so we only use it as a fallback.
+        var playerResponse = await GetPlayerResponseForTvAsync(
+            videoId,
+            visitorData,
+            signatureTimestamp,
+            cancellationToken
+        );
+
+        if (!playerResponse.IsAvailable)
+            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+
+        return playerResponse;
+    }
+
+    private ValueTask<PlayerResponse> GetPlayerResponseForVisionOsAsync(
+        VideoId videoId,
+        string visitorData,
+        CancellationToken cancellationToken = default
+    ) =>
+        SendPlayerRequestAsync(
             // lang=json
             $$"""
             {
@@ -143,12 +177,12 @@ internal class VideoController(HttpClient http)
             cancellationToken
         );
 
-        if (playerResponse.IsPlayable)
-            return playerResponse;
-
-        // "Made for kids" videos are not available on VISIONOS (or ANDROID_VR).
-        // ANDROID still returns a muxed itag-18 stream without deciphering.
-        var androidResponse = await SendPlayerRequestAsync(
+    private ValueTask<PlayerResponse> GetPlayerResponseForAndroidAsync(
+        VideoId videoId,
+        string visitorData,
+        CancellationToken cancellationToken = default
+    ) =>
+        SendPlayerRequestAsync(
             // lang=json
             $$"""
             {
@@ -174,27 +208,13 @@ internal class VideoController(HttpClient http)
             cancellationToken
         );
 
-        if (androidResponse.IsPlayable)
-            return androidResponse;
-
-        if (!playerResponse.IsAvailable && !androidResponse.IsAvailable)
-            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
-
-        return playerResponse.IsAvailable ? playerResponse : androidResponse;
-    }
-
-    public async ValueTask<PlayerResponse> GetPlayerResponseAsync(
+    private ValueTask<PlayerResponse> GetPlayerResponseForTvAsync(
         VideoId videoId,
+        string visitorData,
         string? signatureTimestamp,
         CancellationToken cancellationToken = default
-    )
-    {
-        var visitorData = await ResolveVisitorDataAsync(cancellationToken);
-
-        // The only client that can handle age-restricted videos without authentication is the
-        // TVHTML5_SIMPLY_EMBEDDED_PLAYER client.
-        // This client does require signature deciphering, so we only use it as a fallback.
-        var playerResponse = await SendPlayerRequestAsync(
+    ) =>
+        SendPlayerRequestAsync(
             // lang=json
             $$"""
             {
@@ -223,9 +243,22 @@ internal class VideoController(HttpClient http)
             cancellationToken
         );
 
-        if (!playerResponse.IsAvailable)
-            throw new VideoUnavailableException($"Video '{videoId}' is not available.");
+    private async ValueTask<PlayerResponse> SendPlayerRequestAsync(
+        string content,
+        string userAgent,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "https://www.youtube.com/youtubei/v1/player"
+        );
 
-        return playerResponse;
+        request.Content = new StringContent(content);
+        request.Headers.Add("User-Agent", userAgent);
+
+        using var response = await Http.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return PlayerResponse.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
     }
 }
