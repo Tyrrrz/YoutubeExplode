@@ -17,7 +17,12 @@
     <PackageVersion Include="FluentAssertions" Version="8.10.0" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.5" />
     <PackageVersion Include="Gress" Version="2.2.0" />
-    <PackageVersion Include="JsonExtensions" Version="1.2.3" />
+    <!--
+      Keep the netstandard2.0 System.Text.Json dependency on the last major version compatible with
+      UWP's .NET Native toolchain. JsonExtensions is internalized and its legacy API remains compatible.
+      See https://github.com/Tyrrrz/YoutubeExplode/issues/967.
+    -->
+    <PackageVersion Include="JsonExtensions" Version="1.2.0" />
     <PackageVersion Include="Lazy.Fody" Version="1.11.0" />
     <PackageVersion Include="Material.Avalonia" Version="3.16.1" />
     <PackageVersion Include="Material.Icons.Avalonia" Version="3.0.2" />
@@ -26,7 +31,7 @@
     <PackageVersion Include="PolyShim" Version="2.13.0" />
     <PackageVersion Include="PowerKit" Version="2.3.1" />
     <PackageVersion Include="Snek" Version="1.0.0" />
-    <PackageVersion Include="System.Text.Json" Version="10.0.11" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.2" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
