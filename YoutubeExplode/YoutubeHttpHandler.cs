@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -16,7 +15,22 @@ namespace YoutubeExplode;
 
 internal class YoutubeHttpHandler : ClientDelegatingHandler
 {
-    private readonly CookieContainer _cookieContainer = new();
+    // Browser exports routinely exceed CookieContainer's default limit of 20 per domain.
+    private readonly CookieContainer _cookieContainer = new(1000, 1000, 4096);
+
+    public bool IsAuthenticated
+    {
+        get
+        {
+            var cookies = _cookieContainer.GetCookies(new Uri("https://www.youtube.com"));
+            return cookies["LOGIN_INFO"] is not null
+                && (
+                    cookies["SAPISID"] is not null
+                    || cookies["__Secure-1PAPISID"] is not null
+                    || cookies["__Secure-3PAPISID"] is not null
+                );
+        }
+    }
 
     public YoutubeHttpHandler(
         HttpClient http,
@@ -45,30 +59,38 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
             _cookieContainer.Add(cookie);
     }
 
-    private string? TryGenerateAuthHeaderValue(Uri uri)
+    private string? TryGenerateAuthHeaderValue(Uri uri, string? userSessionId)
     {
-        var cookies = _cookieContainer.GetCookies(uri).Cast<Cookie>().ToArray();
-
-        var sessionId =
-            cookies
-                .FirstOrDefault(c =>
-                    string.Equals(c.Name, "__Secure-3PAPISID", StringComparison.Ordinal)
-                )
-                ?.Value
-            ?? cookies
-                .FirstOrDefault(c => string.Equals(c.Name, "SAPISID", StringComparison.Ordinal))
-                ?.Value;
-
-        if (string.IsNullOrWhiteSpace(sessionId))
-            return null;
-
+        var cookies = _cookieContainer.GetCookies(uri);
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var token = $"{timestamp} {sessionId} {uri.Domain}";
-        var tokenHash = Convert.ToHexString(
-            HashAlgorithm.ComputeHash(SHA1.Create(), Encoding.UTF8.GetBytes(token))
-        );
+        var authorizations = new List<string>();
+        foreach (
+            var (scheme, sessionId) in new[]
+            {
+                ("SAPISIDHASH", cookies["SAPISID"]?.Value ?? cookies["__Secure-3PAPISID"]?.Value),
+                ("SAPISID1PHASH", cookies["__Secure-1PAPISID"]?.Value),
+                ("SAPISID3PHASH", cookies["__Secure-3PAPISID"]?.Value),
+            }
+        )
+        {
+            if (string.IsNullOrWhiteSpace(sessionId))
+                continue;
 
-        return $"SAPISIDHASH {timestamp}_{tokenHash}";
+            var token = $"{timestamp} {sessionId} {uri.Domain}";
+            if (!string.IsNullOrWhiteSpace(userSessionId))
+                token = $"{userSessionId} {token}";
+
+            using var sha1 = SHA1.Create();
+            var tokenHash = Convert
+                .ToHexString(sha1.ComputeHash(Encoding.UTF8.GetBytes(token)))
+                .ToLowerInvariant();
+            authorizations.Add(
+                $"{scheme} {timestamp}_{tokenHash}"
+                    + (string.IsNullOrWhiteSpace(userSessionId) ? "" : "_u")
+            );
+        }
+
+        return authorizations.Count > 0 ? string.Join(" ", authorizations) : null;
     }
 
     private HttpRequestMessage HandleRequest(HttpRequestMessage request)
@@ -80,6 +102,7 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // Set internal API key
         if (
             request.RequestUri.AbsolutePath.StartsWith("/youtubei/", StringComparison.Ordinal)
+            && request is not YoutubeHttpRequest { IncludeApiKey: false }
             && !UrlEx.ContainsQueryParameter(request.RequestUri.Query, "key")
         )
         {
@@ -127,10 +150,16 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // Set authorization
         if (
             !request.Headers.Contains("Authorization")
-            && TryGenerateAuthHeaderValue(request.RequestUri) is { } authHeaderValue
+            && TryGenerateAuthHeaderValue(
+                request.RequestUri,
+                (request as YoutubeHttpRequest)?.UserSessionId
+            )
+                is { } authHeaderValue
         )
         {
             request.Headers.Add("Authorization", authHeaderValue);
+            if (!request.Headers.Contains("X-Origin"))
+                request.Headers.Add("X-Origin", request.RequestUri.Domain);
         }
 
         return request;
@@ -179,7 +208,13 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         CancellationToken cancellationToken
     )
     {
-        for (var retriesRemaining = 5; ; retriesRemaining--)
+        for (
+            var retriesRemaining = request is YoutubeHttpRequest { RetryOnServerErrors: false }
+                ? 0
+                : 5;
+            ;
+            retriesRemaining--
+        )
         {
             var response = HandleResponse(
                 await base.SendAsync(

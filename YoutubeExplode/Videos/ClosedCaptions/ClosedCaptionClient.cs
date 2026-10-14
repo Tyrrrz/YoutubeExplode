@@ -25,7 +25,10 @@ public class ClosedCaptionClient(HttpClient http)
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        var playerResponse = await _controller.GetPlayerResponseAsync(videoId, cancellationToken);
+        var playerResponse = await _controller.GetCaptionPlayerResponseAsync(
+            videoId,
+            cancellationToken
+        );
 
         foreach (var trackData in playerResponse.ClosedCaptionTracks)
         {

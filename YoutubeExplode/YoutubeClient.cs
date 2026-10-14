@@ -22,7 +22,7 @@ public class YoutubeClient : IDisposable
     /// </summary>
     public YoutubeClient(HttpClient http, IReadOnlyList<Cookie> initialCookies)
     {
-        _youtubeHttp = new HttpClient(new YoutubeHttpHandler(http, initialCookies), true);
+        _youtubeHttp = new YoutubeHttpClient(http, initialCookies);
 
         Videos = new VideoClient(_youtubeHttp);
         Playlists = new PlaylistClient(_youtubeHttp);
