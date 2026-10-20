@@ -25,7 +25,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Include="PolyShim" Version="2.13.0" />
     <PackageVersion Include="PowerKit" Version="2.4.0" />
-    <PackageVersion Include="Snek" Version="1.0.0" />
+    <PackageVersion Include="Snek" Version="2.0.1" />
     <PackageVersion Include="System.Text.Json" Version="10.0.12" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageVersion Include="xunit" Version="2.9.3" />

@@ -30,4 +30,9 @@
     <PackageReleaseNotes>https://github.com/Tyrrrz/YoutubeExplode/releases</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <!-- Shared strong name public key for all packable projects -->
+  <PropertyGroup>
+    <AssemblyOriginatorKeySeed>YoutubeExplode</AssemblyOriginatorKeySeed>
+  </PropertyGroup>
 </Project>
