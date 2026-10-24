@@ -14,7 +14,7 @@ using YoutubeExplode.Utils;
 
 namespace YoutubeExplode;
 
-internal class YoutubeHttpHandler : ClientDelegatingHandler
+internal partial class YoutubeHttpHandler : ClientDelegatingHandler
 {
     private readonly CookieContainer _cookieContainer = new();
 
@@ -30,11 +30,12 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
         // https://github.com/Tyrrrz/YoutubeExplode/issues/730
         // https://github.com/Tyrrrz/YoutubeExplode/issues/732
         // https://github.com/Tyrrrz/YoutubeExplode/issues/907
-        // The cookie is supposed to be invalidated after 13 months, at which point the value
-        // becomes invalid and needs to be manually replaced in code with a new one.
+        // The cookie embeds the time at which consent was given and is invalidated after
+        // 13 months, so it's generated with the current date instead of being hardcoded.
         // https://policies.google.com/technologies/cookies/embedded
+        // https://github.com/Tyrrrz/YoutubeDownloader/issues/909
         _cookieContainer.Add(
-            new Cookie("SOCS", "CAISEwgDEgk4MTM4MzYzNTIaAmVuIAEaBgiApPzGBg")
+            new Cookie("SOCS", GenerateConsentCookieValue(DateTimeOffset.UtcNow))
             {
                 Domain = "youtube.com",
             }
@@ -198,5 +199,31 @@ internal class YoutubeHttpHandler : ClientDelegatingHandler
 
             return response;
         }
+    }
+}
+
+internal partial class YoutubeHttpHandler
+{
+    // Protobuf-encoded consent record: { 1: 2, 2: { 1: 3, 2: "813836352", 3: "en", 4: 1 }, 3: { 1: <timestamp> } }
+    private static string GenerateConsentCookieValue(DateTimeOffset consentDate)
+    {
+        // Round down to the start of the day (UTC), like the cookies issued by YouTube
+        var timestamp = (ulong)
+            new DateTimeOffset(consentDate.UtcDateTime.Date, TimeSpan.Zero).ToUnixTimeSeconds();
+
+        var timestampMessage = new List<byte> { 0x08 };
+        Protobuf.WriteVarint(timestampMessage, timestamp);
+
+        var buffer = new List<byte> { 0x08, 0x02, 0x12, 0x13, 0x08, 0x03, 0x12, 0x09 };
+        buffer.AddRange(Encoding.ASCII.GetBytes("813836352"));
+        buffer.AddRange([0x1A, 0x02, (byte)'e', (byte)'n', 0x20, 0x01]);
+        buffer.AddRange([0x1A, (byte)timestampMessage.Count]);
+        buffer.AddRange(timestampMessage);
+
+        return Convert
+            .ToBase64String(buffer.ToArray())
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
     }
 }
