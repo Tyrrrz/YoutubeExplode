@@ -202,28 +202,17 @@ internal partial class YoutubeHttpHandler : ClientDelegatingHandler
     }
 }
 
-
 internal partial class YoutubeHttpHandler
 {
     // Protobuf-encoded consent record: { 1: 2, 2: { 1: 3, 2: "813836352", 3: "en", 4: 1 }, 3: { 1: <timestamp> } }
     private static string GenerateConsentCookieValue(DateTimeOffset consentDate)
     {
-        static void WriteVarint(List<byte> buffer, ulong value)
-        {
-            while (value >= 0x80)
-            {
-                buffer.Add((byte)(value | 0x80));
-                value >>= 7;
-            }
-
-            buffer.Add((byte)value);
-        }
-
-        // Round down to the start of the day, like the cookies issued by YouTube
-        var timestamp = (ulong)(consentDate.ToUnixTimeSeconds() / 86400 * 86400);
+        // Round down to the start of the day (UTC), like the cookies issued by YouTube
+        var timestamp = (ulong)
+            new DateTimeOffset(consentDate.UtcDateTime.Date, TimeSpan.Zero).ToUnixTimeSeconds();
 
         var timestampMessage = new List<byte> { 0x08 };
-        WriteVarint(timestampMessage, timestamp);
+        Protobuf.WriteVarint(timestampMessage, timestamp);
 
         var buffer = new List<byte> { 0x08, 0x02, 0x12, 0x13, 0x08, 0x03, 0x12, 0x09 };
         buffer.AddRange(Encoding.ASCII.GetBytes("813836352"));
