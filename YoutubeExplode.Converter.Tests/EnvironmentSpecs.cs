@@ -1,6 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using PowerKit;
 using Xunit;
 using Xunit.Abstractions;

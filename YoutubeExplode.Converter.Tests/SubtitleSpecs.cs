@@ -2,7 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using PowerKit;
 using PowerKit.Extensions;
 using Xunit;
