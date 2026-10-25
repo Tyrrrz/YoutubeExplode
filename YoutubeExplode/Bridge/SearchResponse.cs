@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
-using JsonExtensions.Reading;
 using Lazy;
 using PowerKit.Extensions;
-using YoutubeExplode.Utils;
+using PowerKit.Json.Extensions;
 using YoutubeExplode.Utils.Extensions;
 
 namespace YoutubeExplode.Bridge;
@@ -271,5 +270,5 @@ internal partial class SearchResponse
 
 internal partial class SearchResponse
 {
-    public static SearchResponse Parse(string raw) => new(Json.Parse(raw));
+    public static SearchResponse Parse(string raw) => new(JsonElement.Parse(raw));
 }

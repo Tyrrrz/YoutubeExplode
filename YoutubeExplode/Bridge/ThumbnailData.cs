@@ -1,6 +1,6 @@
 using System.Text.Json;
-using JsonExtensions.Reading;
 using Lazy;
+using PowerKit.Json.Extensions;
 
 namespace YoutubeExplode.Bridge;
 

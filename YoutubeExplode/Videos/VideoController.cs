@@ -1,9 +1,10 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonExtensions.Reading;
+using PowerKit.Json.Extensions;
 using YoutubeExplode.Bridge;
 using YoutubeExplode.Exceptions;
 using YoutubeExplode.Utils;
@@ -43,9 +44,9 @@ internal class VideoController(HttpClient http)
         if (jsonString.StartsWith(")]}'"))
             jsonString = jsonString[4..];
 
-        var json = Json.Parse(jsonString);
+        var json = JsonElement.Parse(jsonString);
 
-        // This is just an ordered (but unstructured) blob of data
+        // This is just an unstructured (but ordered) blob of data
         var value = json[0][2][0][0][13].GetStringOrNull();
         if (string.IsNullOrWhiteSpace(value))
         {

@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 
 namespace YoutubeExplode.Utils;
 
@@ -39,10 +38,6 @@ internal static class Json
 
         return buffer.ToString();
     }
-
-    public static JsonElement Parse(string source) => JsonExtensions.Json.Parse(source);
-
-    public static JsonElement? TryParse(string source) => JsonExtensions.Json.TryParse(source);
 
     public static string Escape(string value)
     {

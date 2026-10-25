@@ -5,9 +5,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using JsonExtensions.Reading;
 using Lazy;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 using YoutubeExplode.Utils;
 using YoutubeExplode.Utils.Extensions;
 
@@ -95,7 +95,7 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .WhereNotNullOrWhiteSpace()
             .FirstOrDefault()
             ?.Pipe(Json.Extract)
-            .Pipe(Json.TryParse);
+            .Pipe(j => JsonElement.TryParse(j));
 
     [Lazy]
     public PlayerResponse? PlayerResponse =>
@@ -108,13 +108,13 @@ internal partial class VideoWatchPage(IHtmlDocument content)
             .WhereNotNullOrWhiteSpace()
             .FirstOrDefault()
             ?.Pipe(Json.Extract)
-            .Pipe(Json.TryParse)
+            .Pipe(j => JsonElement.TryParse(j))
             ?.Pipe(j => new PlayerResponse(j))
         ?? PlayerConfig
             ?.GetPropertyOrNull("args")
             ?.GetPropertyOrNull("player_response")
             ?.GetStringOrNull()
-            ?.Pipe(Json.TryParse)
+            ?.Pipe(j => JsonElement.TryParse(j))
             ?.Pipe(j => new PlayerResponse(j));
 }
 

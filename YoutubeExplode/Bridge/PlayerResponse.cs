@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using JsonExtensions.Reading;
 using Lazy;
 using PowerKit.Extensions;
+using PowerKit.Json.Extensions;
 using YoutubeExplode.Utils;
 
 namespace YoutubeExplode.Bridge;
@@ -323,5 +323,5 @@ internal partial class PlayerResponse
 
 internal partial class PlayerResponse
 {
-    public static PlayerResponse Parse(string raw) => new(Json.Parse(raw));
+    public static PlayerResponse Parse(string raw) => new(JsonElement.Parse(raw));
 }

@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
-using JsonExtensions.Reading;
 using Lazy;
 using PowerKit.Extensions;
-using YoutubeExplode.Utils;
+using PowerKit.Json.Extensions;
 
 namespace YoutubeExplode.Bridge;
 
@@ -79,5 +78,5 @@ internal partial class PlaylistNextResponse(JsonElement content) : IPlaylistData
 
 internal partial class PlaylistNextResponse
 {
-    public static PlaylistNextResponse Parse(string raw) => new(Json.Parse(raw));
+    public static PlaylistNextResponse Parse(string raw) => new(JsonElement.Parse(raw));
 }
