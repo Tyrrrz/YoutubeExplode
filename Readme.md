@@ -28,7 +28,7 @@ Behind a layer of abstraction, this library works by scraping raw page data and 
 
 **Related articles**:
 
-- 📝 [Reverse-Engineering YouTube: Revisited](https://tyrrrz.me/blog/reverse-engineering-youtube-revisited)
+- 📝 [Reverse-Engineering YouTube: Revisited](https://tyrrrz.me/blog/reverse-engineering-youtube-revisited) — explains the inner workings of YouTube
 
 ## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/prime/docs/why-so-political.md)</sup>
 
