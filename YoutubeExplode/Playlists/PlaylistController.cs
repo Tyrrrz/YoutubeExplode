@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -23,21 +24,23 @@ internal class PlaylistController(HttpClient http)
         );
 
         request.Content = new StringContent(
-            // lang=json
-            $$"""
-            {
-              "browseId": {{Json.Encode("VL" + playlistId)}},
-              "context": {
-                "client": {
-                  "clientName": "WEB",
-                  "clientVersion": "2.20210408.08.00",
-                  "hl": "en",
-                  "gl": "US",
-                  "utcOffsetMinutes": 0
+            Json.Encode(
+                new Dictionary<string, object?>
+                {
+                    ["browseId"] = "VL" + playlistId,
+                    ["context"] = new Dictionary<string, object?>
+                    {
+                        ["client"] = new Dictionary<string, object?>
+                        {
+                            ["clientName"] = "WEB",
+                            ["clientVersion"] = "2.20210408.08.00",
+                            ["hl"] = "en",
+                            ["gl"] = "US",
+                            ["utcOffsetMinutes"] = 0,
+                        },
+                    },
                 }
-              }
-            }
-            """
+            )
         );
 
         using var response = await http.SendAsync(request, cancellationToken);
@@ -71,24 +74,26 @@ internal class PlaylistController(HttpClient http)
             );
 
             request.Content = new StringContent(
-                // lang=json
-                $$"""
-                {
-                  "playlistId": {{Json.Encode(playlistId)}},
-                  "videoId": {{Json.Encode(videoId)}},
-                  "playlistIndex": {{Json.Encode(index)}},
-                  "context": {
-                    "client": {
-                      "clientName": "WEB",
-                      "clientVersion": "2.20210408.08.00",
-                      "hl": "en",
-                      "gl": "US",
-                      "utcOffsetMinutes": 0,
-                      "visitorData": {{Json.Encode(visitorData)}}
+                Json.Encode(
+                    new Dictionary<string, object?>
+                    {
+                        ["playlistId"] = playlistId.ToString(),
+                        ["videoId"] = videoId.ToString(),
+                        ["playlistIndex"] = index,
+                        ["context"] = new Dictionary<string, object?>
+                        {
+                            ["client"] = new Dictionary<string, object?>
+                            {
+                                ["clientName"] = "WEB",
+                                ["clientVersion"] = "2.20210408.08.00",
+                                ["hl"] = "en",
+                                ["gl"] = "US",
+                                ["utcOffsetMinutes"] = 0,
+                                ["visitorData"] = visitorData,
+                            },
+                        },
                     }
-                  }
-                }
-                """
+                )
             );
 
             using var response = await http.SendAsync(request, cancellationToken);

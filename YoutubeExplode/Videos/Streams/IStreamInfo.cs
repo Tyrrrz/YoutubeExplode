@@ -43,7 +43,6 @@ public interface IStreamInfo
 /// </summary>
 public static class StreamInfoExtensions
 {
-    /// <inheritdoc cref="StreamInfoExtensions" />
     extension(IStreamInfo streamInfo)
     {
         internal bool IsThrottled() =>
@@ -54,7 +53,6 @@ public static class StreamInfoExtensions
             );
     }
 
-    /// <inheritdoc cref="StreamInfoExtensions" />
     extension(IEnumerable<IStreamInfo> streamInfos)
     {
         /// <summary>

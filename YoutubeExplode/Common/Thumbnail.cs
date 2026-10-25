@@ -41,7 +41,6 @@ public partial class Thumbnail
 /// </summary>
 public static class ThumbnailExtensions
 {
-    /// <inheritdoc cref="ThumbnailExtensions" />
     extension(IEnumerable<Thumbnail> thumbnails)
     {
         /// <summary>

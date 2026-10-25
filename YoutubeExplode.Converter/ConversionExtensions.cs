@@ -17,7 +17,6 @@ namespace YoutubeExplode.Converter;
 /// </summary>
 public static class ConversionExtensions
 {
-    /// <inheritdoc cref="ConversionExtensions" />
     extension(Container container)
     {
         /// <summary>
@@ -27,7 +26,6 @@ public static class ConversionExtensions
         public bool IsAudioOnly() => container.IsAudioOnly;
     }
 
-    /// <inheritdoc cref="ConversionExtensions" />
     extension(VideoClient videoClient)
     {
         private async IAsyncEnumerable<IStreamInfo> GetOptimalStreamInfosAsync(
