@@ -28,6 +28,17 @@ internal static class Protobuf
         return null;
     }
 
+    public static void WriteVarint(List<byte> buffer, ulong value)
+    {
+        while (value >= 0x80)
+        {
+            buffer.Add((byte)(value | 0x80));
+            value >>= 7;
+        }
+
+        buffer.Add((byte)value);
+    }
+
     private static string? TryReadString(byte[] data, ref int i)
     {
         var length = TryReadVarint(data, ref i);
