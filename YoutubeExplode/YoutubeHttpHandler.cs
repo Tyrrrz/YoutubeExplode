@@ -31,9 +31,8 @@ internal partial class YoutubeHttpHandler : ClientDelegatingHandler
         // https://github.com/Tyrrrz/YoutubeExplode/issues/732
         // https://github.com/Tyrrrz/YoutubeExplode/issues/907
         // The cookie embeds the time at which consent was given and is invalidated after
-        // 13 months, so it's generated with the current date instead of being hardcoded.
+        // 13 months, so it needs to be generated with the current date instead of being hardcoded.
         // https://policies.google.com/technologies/cookies/embedded
-        // https://github.com/Tyrrrz/YoutubeDownloader/issues/909
         _cookieContainer.Add(
             new Cookie("SOCS", GenerateConsentCookieValue(DateTimeOffset.UtcNow))
             {
@@ -205,14 +204,16 @@ internal partial class YoutubeHttpHandler : ClientDelegatingHandler
 internal partial class YoutubeHttpHandler
 {
     // Protobuf-encoded consent record: { 1: 2, 2: { 1: 3, 2: "813836352", 3: "en", 4: 1 }, 3: { 1: <timestamp> } }
-    private static string GenerateConsentCookieValue(DateTimeOffset consentDate)
+    private static string GenerateConsentCookieValue(DateTimeOffset timestamp)
     {
-        // Round down to the start of the day (UTC), like the cookies issued by YouTube
-        var timestamp = (ulong)
-            new DateTimeOffset(consentDate.UtcDateTime.Date, TimeSpan.Zero).ToUnixTimeSeconds();
-
         var timestampMessage = new List<byte> { 0x08 };
-        Protobuf.WriteVarint(timestampMessage, timestamp);
+
+        Protobuf.WriteVarint(
+            timestampMessage,
+            // Round down to the start of the day (UTC), like the cookies issued by YouTube
+            (ulong)
+                new DateTimeOffset(timestamp.UtcDateTime.Date, TimeSpan.Zero).ToUnixTimeSeconds()
+        );
 
         var buffer = new List<byte> { 0x08, 0x02, 0x12, 0x13, 0x08, 0x03, 0x12, 0x09 };
         buffer.AddRange(Encoding.ASCII.GetBytes("813836352"));
