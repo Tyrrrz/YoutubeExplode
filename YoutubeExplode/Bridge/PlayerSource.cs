@@ -11,15 +11,19 @@ namespace YoutubeExplode.Bridge;
 internal partial class PlayerSource(string content)
 {
     [Lazy]
+    public string? SignatureTimestamp =>
+        Regex
+            .Match(content, @"(?:signatureTimestamp|sts)\s*:\s*(\d+)")
+            .Groups[1]
+            .Value.NullIfWhiteSpace();
+
+    [Lazy]
     public CipherManifest? CipherManifest
     {
         get
         {
             // Extract the signature timestamp
-            var signatureTimestamp = Regex
-                .Match(content, @"(?:signatureTimestamp|sts):(\d{5})")
-                .Groups[1]
-                .Value.NullIfWhiteSpace();
+            var signatureTimestamp = SignatureTimestamp;
 
             if (string.IsNullOrWhiteSpace(signatureTimestamp))
                 return null;
