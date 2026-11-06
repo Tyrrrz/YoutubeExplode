@@ -4,18 +4,15 @@
 [![Downloads](https://img.shields.io/nuget/dt/YoutubeExplode.Converter.svg)](https://nuget.org/packages/YoutubeExplode.Converter)
 
 **YoutubeExplode.Converter** is an extension package for **YoutubeExplode** that provides the capability to download YouTube videos by muxing their dedicated audio and video streams together.
-This package relies on [FFmpeg](https://ffmpeg.org) under the hood.
 
 ## Install
 
 - 📦 [NuGet](https://nuget.org/packages/YoutubeExplode.Converter): `dotnet add package YoutubeExplode.Converter`
 
 > [!IMPORTANT]
-> This package requires the [FFmpeg CLI](https://ffmpeg.org) to work, which can be downloaded [here](https://github.com/Tyrrrz/FFmpegBin/releases).
-> Ensure that it's located in your application's probe directory or on the system's `PATH`, or provide a custom location yourself using one of the available method overloads.
-
-> [!TIP]
-> You can use [**Binternal**](https://github.com/Tyrrrz/Binternal) to internalize this library if you prefer to avoid taking an external dependency.
+> This package relies on [FFmpeg](https://ffmpeg.org) at run time.
+> You can either download it programmatically (e.g., from [FFmpegBin](https://github.com/Tyrrrz/FFmpegBin)), bundle it with your application, or instruct the end-user to [install it](https://ffmpeg.org/download.html).
+> Either way, ensure that `ffmpeg` is located in your application's probe directory or on the system's `PATH`, or provide a custom location yourself.
 
 ## Usage
 
