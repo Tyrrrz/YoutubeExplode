@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using PowerKit.Extensions;
@@ -27,6 +26,9 @@ public class StreamClient(HttpClient http)
     // Because we determine the player version ourselves, it's safe to cache the cipher manifest
     // for the entire lifetime of the client.
     private CipherManifest? _cipherManifest;
+
+    // Upper bound for the number of streams that are validated at the same time
+    private const int MaxConcurrentValidations = 8;
 
     private async ValueTask<CipherManifest> ResolveCipherManifestAsync(
         CancellationToken cancellationToken
@@ -85,11 +87,13 @@ public class StreamClient(HttpClient http)
         return contentLength;
     }
 
-    private async IAsyncEnumerable<IStreamInfo> GetStreamInfosAsync(
+    private async ValueTask<IReadOnlyList<IStreamInfo>> GetStreamInfosAsync(
         IEnumerable<IStreamData> streamDatas,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default
     )
     {
+        // Resolve the URLs first, since this may require deciphering
+        var candidates = new List<(IStreamData StreamData, string Url, int Itag)>();
         foreach (var streamData in streamDatas)
         {
             // SABR / server-side streams have no progressive URL we can download.
@@ -115,7 +119,37 @@ public class StreamClient(HttpClient http)
                 );
             }
 
-            var contentLength = await TryGetContentLengthAsync(streamData, url, cancellationToken);
+            candidates.Add((streamData, url, itag));
+        }
+
+        // Validate the streams concurrently, because each one requires a separate round trip
+        // to the server. The results are kept in the original order.
+        using var semaphore = new SemaphoreSlim(MaxConcurrentValidations);
+        var contentLengths = await Task.WhenAll(
+            candidates.Select(async candidate =>
+            {
+                await semaphore.WaitAsync(cancellationToken);
+                try
+                {
+                    return await TryGetContentLengthAsync(
+                        candidate.StreamData,
+                        candidate.Url,
+                        cancellationToken
+                    );
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            })
+        );
+
+        var streamInfos = new List<IStreamInfo>();
+        for (var i = 0; i < candidates.Count; i++)
+        {
+            var (streamData, url, itag) = candidates[i];
+
+            var contentLength = contentLengths[i];
             if (contentLength is null)
                 continue;
 
@@ -165,7 +199,7 @@ public class StreamClient(HttpClient http)
                         streamData.IsVideoUpscaled
                     );
 
-                    yield return streamInfo;
+                    streamInfos.Add(streamInfo);
                 }
                 // Video-only
                 else
@@ -181,7 +215,7 @@ public class StreamClient(HttpClient http)
                         streamData.IsVideoUpscaled
                     );
 
-                    yield return streamInfo;
+                    streamInfos.Add(streamInfo);
                 }
             }
             // Audio-only
@@ -197,13 +231,15 @@ public class StreamClient(HttpClient http)
                     streamData.IsAudioLanguageDefault
                 );
 
-                yield return streamInfo;
+                streamInfos.Add(streamInfo);
             }
             else
             {
                 throw new YoutubeExplodeException("Failed to extract the stream codec.");
             }
         }
+
+        return streamInfos;
     }
 
     private async ValueTask<IReadOnlyList<IStreamInfo>> GetStreamInfosAsync(
