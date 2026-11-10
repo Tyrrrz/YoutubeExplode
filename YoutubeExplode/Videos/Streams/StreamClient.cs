@@ -27,9 +27,6 @@ public class StreamClient(HttpClient http)
     // for the entire lifetime of the client.
     private CipherManifest? _cipherManifest;
 
-    // Upper bound for the number of streams that are validated at the same time
-    private const int MaxConcurrentValidations = 8;
-
     private async ValueTask<CipherManifest> ResolveCipherManifestAsync(
         CancellationToken cancellationToken
     )
@@ -92,154 +89,151 @@ public class StreamClient(HttpClient http)
         CancellationToken cancellationToken = default
     )
     {
-        // Resolve the URLs first, since this may require deciphering
-        var candidates = new List<(IStreamData StreamData, string Url, int Itag)>();
-        foreach (var streamData in streamDatas)
-        {
-            // SABR / server-side streams have no progressive URL we can download.
-            // ANDROID in particular mixes one muxed itag-18 URL with SABR-only adaptive
-            // formats, so skip those instead of failing the whole manifest.
-            var url = streamData.Url;
-            if (string.IsNullOrWhiteSpace(url))
-                continue;
+        var streamDataList = streamDatas.ToArray();
 
-            var itag =
-                streamData.Itag
-                ?? throw new YoutubeExplodeException("Failed to extract the stream itag.");
+        // Resolve the cipher manifest once upfront, so that parallel workers don't race to fetch it
+        var cipherManifest = streamDataList.Any(s =>
+            !string.IsNullOrWhiteSpace(s.Url) && !string.IsNullOrWhiteSpace(s.Signature)
+        )
+            ? await ResolveCipherManifestAsync(cancellationToken)
+            : null;
 
-            // Handle cipher-protected streams
-            if (!string.IsNullOrWhiteSpace(streamData.Signature))
+        // Each stream requires a separate round trip to the server, so process them in parallel.
+        // Results are stored by index to preserve the original order.
+        var results = new IStreamInfo?[streamDataList.Length];
+
+        await Parallel.ForEachAsync(
+            Enumerable.Range(0, streamDataList.Length),
+            new ParallelOptions
             {
-                var cipherManifest = await ResolveCipherManifestAsync(cancellationToken);
-
-                url = UrlEx.SetQueryParameter(
-                    url,
-                    streamData.SignatureParameter ?? "sig",
-                    cipherManifest.Decipher(streamData.Signature)
-                );
-            }
-
-            candidates.Add((streamData, url, itag));
-        }
-
-        // Validate the streams concurrently, because each one requires a separate round trip
-        // to the server. The results are kept in the original order.
-        using var semaphore = new SemaphoreSlim(MaxConcurrentValidations);
-        var contentLengths = await Task.WhenAll(
-            candidates.Select(async candidate =>
+                MaxDegreeOfParallelism = 8,
+                CancellationToken = cancellationToken,
+            },
+            async (index, innerCancellationToken) =>
             {
-                await semaphore.WaitAsync(cancellationToken);
-                try
+                var streamData = streamDataList[index];
+
+                // SABR / server-side streams have no progressive URL we can download.
+                // ANDROID in particular mixes one muxed itag-18 URL with SABR-only adaptive
+                // formats, so skip those instead of failing the whole manifest.
+                var url = streamData.Url;
+                if (string.IsNullOrWhiteSpace(url))
+                    return;
+
+                var itag =
+                    streamData.Itag
+                    ?? throw new YoutubeExplodeException("Failed to extract the stream itag.");
+
+                // Handle cipher-protected streams
+                if (!string.IsNullOrWhiteSpace(streamData.Signature))
                 {
-                    return await TryGetContentLengthAsync(
-                        candidate.StreamData,
-                        candidate.Url,
-                        cancellationToken
+                    url = UrlEx.SetQueryParameter(
+                        url,
+                        streamData.SignatureParameter ?? "sig",
+                        cipherManifest!.Decipher(streamData.Signature)
                     );
                 }
-                finally
+
+                var contentLength = await TryGetContentLengthAsync(
+                    streamData,
+                    url,
+                    innerCancellationToken
+                );
+
+                if (contentLength is null)
+                    return;
+
+                var container =
+                    streamData.Container?.Pipe(s => new Container(s))
+                    ?? throw new YoutubeExplodeException("Failed to extract the stream container.");
+
+                var bitrate =
+                    streamData.Bitrate?.Pipe(s => new Bitrate(s))
+                    ?? throw new YoutubeExplodeException("Failed to extract the stream bitrate.");
+
+                var audioLanguage = !string.IsNullOrWhiteSpace(streamData.AudioLanguageCode)
+                    ? new Language(
+                        streamData.AudioLanguageCode,
+                        streamData.AudioLanguageName ?? streamData.AudioLanguageCode
+                    )
+                    : (Language?)null;
+
+                // Muxed or video-only stream
+                if (!string.IsNullOrWhiteSpace(streamData.VideoCodec))
                 {
-                    semaphore.Release();
+                    var framerate = streamData.VideoFramerate ?? 24;
+
+                    var videoQuality = !string.IsNullOrWhiteSpace(streamData.VideoQualityLabel)
+                        ? VideoQuality.FromLabel(streamData.VideoQualityLabel, framerate)
+                        : VideoQuality.FromItag(itag, framerate);
+
+                    var videoResolution =
+                        streamData.VideoWidth is not null && streamData.VideoHeight is not null
+                            ? new Resolution(
+                                streamData.VideoWidth.Value,
+                                streamData.VideoHeight.Value
+                            )
+                            : videoQuality.GetDefaultVideoResolution();
+
+                    // Muxed
+                    if (!string.IsNullOrWhiteSpace(streamData.AudioCodec))
+                    {
+                        var streamInfo = new MuxedStreamInfo(
+                            url,
+                            container,
+                            new FileSize(contentLength.Value),
+                            bitrate,
+                            streamData.AudioCodec,
+                            audioLanguage,
+                            streamData.IsAudioLanguageDefault,
+                            streamData.VideoCodec,
+                            videoQuality,
+                            videoResolution,
+                            streamData.IsVideoUpscaled
+                        );
+
+                        results[index] = streamInfo;
+                    }
+                    // Video-only
+                    else
+                    {
+                        var streamInfo = new VideoOnlyStreamInfo(
+                            url,
+                            container,
+                            new FileSize(contentLength.Value),
+                            bitrate,
+                            streamData.VideoCodec,
+                            videoQuality,
+                            videoResolution,
+                            streamData.IsVideoUpscaled
+                        );
+
+                        results[index] = streamInfo;
+                    }
                 }
-            })
-        );
-
-        var streamInfos = new List<IStreamInfo>();
-        for (var i = 0; i < candidates.Count; i++)
-        {
-            var (streamData, url, itag) = candidates[i];
-
-            var contentLength = contentLengths[i];
-            if (contentLength is null)
-                continue;
-
-            var container =
-                streamData.Container?.Pipe(s => new Container(s))
-                ?? throw new YoutubeExplodeException("Failed to extract the stream container.");
-
-            var bitrate =
-                streamData.Bitrate?.Pipe(s => new Bitrate(s))
-                ?? throw new YoutubeExplodeException("Failed to extract the stream bitrate.");
-
-            var audioLanguage = !string.IsNullOrWhiteSpace(streamData.AudioLanguageCode)
-                ? new Language(
-                    streamData.AudioLanguageCode,
-                    streamData.AudioLanguageName ?? streamData.AudioLanguageCode
-                )
-                : (Language?)null;
-
-            // Muxed or video-only stream
-            if (!string.IsNullOrWhiteSpace(streamData.VideoCodec))
-            {
-                var framerate = streamData.VideoFramerate ?? 24;
-
-                var videoQuality = !string.IsNullOrWhiteSpace(streamData.VideoQualityLabel)
-                    ? VideoQuality.FromLabel(streamData.VideoQualityLabel, framerate)
-                    : VideoQuality.FromItag(itag, framerate);
-
-                var videoResolution =
-                    streamData.VideoWidth is not null && streamData.VideoHeight is not null
-                        ? new Resolution(streamData.VideoWidth.Value, streamData.VideoHeight.Value)
-                        : videoQuality.GetDefaultVideoResolution();
-
-                // Muxed
-                if (!string.IsNullOrWhiteSpace(streamData.AudioCodec))
+                // Audio-only
+                else if (!string.IsNullOrWhiteSpace(streamData.AudioCodec))
                 {
-                    var streamInfo = new MuxedStreamInfo(
+                    var streamInfo = new AudioOnlyStreamInfo(
                         url,
                         container,
                         new FileSize(contentLength.Value),
                         bitrate,
                         streamData.AudioCodec,
                         audioLanguage,
-                        streamData.IsAudioLanguageDefault,
-                        streamData.VideoCodec,
-                        videoQuality,
-                        videoResolution,
-                        streamData.IsVideoUpscaled
+                        streamData.IsAudioLanguageDefault
                     );
 
-                    streamInfos.Add(streamInfo);
+                    results[index] = streamInfo;
                 }
-                // Video-only
                 else
                 {
-                    var streamInfo = new VideoOnlyStreamInfo(
-                        url,
-                        container,
-                        new FileSize(contentLength.Value),
-                        bitrate,
-                        streamData.VideoCodec,
-                        videoQuality,
-                        videoResolution,
-                        streamData.IsVideoUpscaled
-                    );
-
-                    streamInfos.Add(streamInfo);
+                    throw new YoutubeExplodeException("Failed to extract the stream codec.");
                 }
             }
-            // Audio-only
-            else if (!string.IsNullOrWhiteSpace(streamData.AudioCodec))
-            {
-                var streamInfo = new AudioOnlyStreamInfo(
-                    url,
-                    container,
-                    new FileSize(contentLength.Value),
-                    bitrate,
-                    streamData.AudioCodec,
-                    audioLanguage,
-                    streamData.IsAudioLanguageDefault
-                );
+        );
 
-                streamInfos.Add(streamInfo);
-            }
-            else
-            {
-                throw new YoutubeExplodeException("Failed to extract the stream codec.");
-            }
-        }
-
-        return streamInfos;
+        return results.Where(s => s is not null).ToArray()!;
     }
 
     private async ValueTask<IReadOnlyList<IStreamInfo>> GetStreamInfosAsync(
