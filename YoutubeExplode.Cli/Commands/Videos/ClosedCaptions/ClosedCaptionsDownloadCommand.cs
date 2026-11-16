@@ -1,7 +1,9 @@
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
+using PowerKit.Extensions;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Cli.Utils.Extensions;
 
@@ -21,8 +23,8 @@ public partial class ClosedCaptionsDownloadCommand : ClosedCaptionTrackCommandBa
         CancellationToken cancellationToken
     )
     {
-        var trackInfo = await ResolveTrackInfoAsync(cancellationToken);
-        EnsureDirectoryExists(OutputFilePath);
+        var trackInfo = await ResolveTrackInfoAsync(console, cancellationToken);
+        Directory.CreateForFile(OutputFilePath);
 
         await console.RunWithProgressAsync(
             "Downloading closed captions",

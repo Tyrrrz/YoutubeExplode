@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
+using PowerKit.Extensions;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Cli.Utils.Extensions;
 using YoutubeExplode.Converter;
@@ -62,7 +63,7 @@ public partial class VideosDownloadCommand : CommandBase
         var videoId = VideoId.Parse(VideoIdOrUrl);
         var container = ResolveContainer();
         var outputFilePath = OutputFilePath ?? $"{videoId}.{container}";
-        EnsureDirectoryExists(outputFilePath);
+        Directory.CreateForFile(outputFilePath);
 
         try
         {

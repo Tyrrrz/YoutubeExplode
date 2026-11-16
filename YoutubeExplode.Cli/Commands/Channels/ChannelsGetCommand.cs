@@ -9,14 +9,6 @@ using YoutubeExplode.Cli.Commands.Base;
 
 namespace YoutubeExplode.Cli.Commands.Channels;
 
-public enum ChannelKind
-{
-    Id,
-    UserName,
-    Slug,
-    Handle,
-}
-
 [Command("channels get", Description = "Gets the metadata of a channel.")]
 public partial class ChannelsGetCommand : CommandBase
 {
@@ -48,7 +40,7 @@ public partial class ChannelsGetCommand : CommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
             (Kind ?? DetectKind()) switch
             {

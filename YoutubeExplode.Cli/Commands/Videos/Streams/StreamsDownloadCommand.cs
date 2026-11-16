@@ -1,7 +1,9 @@
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
+using PowerKit.Extensions;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Cli.Utils.Extensions;
 
@@ -18,8 +20,8 @@ public partial class StreamsDownloadCommand : StreamCommandBase
         CancellationToken cancellationToken
     )
     {
-        var streamInfo = await ResolveStreamInfoAsync(cancellationToken);
-        EnsureDirectoryExists(OutputFilePath);
+        var streamInfo = await ReadStreamInfoAsync(console, cancellationToken);
+        Directory.CreateForFile(OutputFilePath);
 
         await console.RunWithProgressAsync(
             "Downloading stream",

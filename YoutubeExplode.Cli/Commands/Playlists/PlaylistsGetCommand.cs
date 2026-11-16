@@ -17,7 +17,7 @@ public partial class PlaylistsGetCommand : CommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
             await Youtube.Playlists.GetAsync(PlaylistId.Parse(PlaylistIdOrUrl), cancellationToken)
         );

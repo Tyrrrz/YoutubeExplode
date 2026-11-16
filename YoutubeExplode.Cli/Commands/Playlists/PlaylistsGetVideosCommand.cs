@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using YoutubeExplode.Cli.Commands.Base;
+using YoutubeExplode.Common;
 using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Cli.Commands.Playlists;
@@ -17,13 +18,10 @@ public partial class PlaylistsGetVideosCommand : CommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
-            await ToListAsync(
-                Youtube.Playlists.GetVideosAsync(
-                    PlaylistId.Parse(PlaylistIdOrUrl),
-                    cancellationToken
-                ),
+            await Youtube.Playlists.GetVideosAsync(
+                PlaylistId.Parse(PlaylistIdOrUrl),
                 cancellationToken
             )
         );

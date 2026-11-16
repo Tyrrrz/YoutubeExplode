@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Binding;
+using CliFx.Infrastructure;
 using YoutubeExplode.Videos.ClosedCaptions;
 
 namespace YoutubeExplode.Cli.Commands.Base;
@@ -16,9 +17,10 @@ public abstract partial class ClosedCaptionTrackCommandBase : CommandBase
     public string? TrackUrl { get; set; }
 
     protected async ValueTask<ClosedCaptionTrackInfo> ResolveTrackInfoAsync(
+        IConsole console,
         CancellationToken cancellationToken
     ) =>
         !string.IsNullOrWhiteSpace(TrackUrl)
             ? new ClosedCaptionTrackInfo(TrackUrl, default, false)
-            : await ReadJsonFromStdinAsync<ClosedCaptionTrackInfo>(cancellationToken);
+            : await ReadJsonAsync<ClosedCaptionTrackInfo>(console, cancellationToken);
 }

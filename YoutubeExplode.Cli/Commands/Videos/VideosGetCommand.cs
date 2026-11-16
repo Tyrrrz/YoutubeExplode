@@ -17,7 +17,7 @@ public partial class VideosGetCommand : CommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
             await Youtube.Videos.GetAsync(VideoId.Parse(VideoIdOrUrl), cancellationToken)
         );

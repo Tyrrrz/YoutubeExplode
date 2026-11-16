@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Binding;
@@ -18,13 +17,12 @@ public partial class StreamsGetCommand : StreamCommandBase
         CancellationToken cancellationToken
     )
     {
-        var streamInfo = await ResolveStreamInfoAsync(cancellationToken);
+        var streamInfo = await ReadStreamInfoAsync(console, cancellationToken);
 
         // Bypass the text writer, since this is raw binary data
-        await using var output = Console.OpenStandardOutput();
         await Youtube.Videos.Streams.CopyToAsync(
             streamInfo,
-            output,
+            console.Output.BaseStream,
             cancellationToken: cancellationToken
         );
     }

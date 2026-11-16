@@ -24,8 +24,8 @@ youtubeexplode videos get <id-or-url>
 youtubeexplode videos download <id-or-url> [--output <path>] [--container <name>] [--preset <preset>] [--ffmpeg-path <path>]
 
 youtubeexplode videos streams get-manifest <id-or-url>
-youtubeexplode videos streams get [url]
-youtubeexplode videos streams download [url] --output <path>
+youtubeexplode videos streams get
+youtubeexplode videos streams download --output <path>
 
 youtubeexplode videos closed-captions get-manifest <id-or-url>
 youtubeexplode videos closed-captions get [url]
@@ -52,8 +52,7 @@ youtubeexplode videos download "https://youtube.com/watch?v=u_yIGGhubZs" --outpu
 
 ### Working with streams
 
-The stream commands accept either a stream URL, or a stream info JSON object (as returned by `videos streams get-manifest`) on the standard input.
-Note that a URL alone is only enough if it contains the content length (`clen`) parameter, which is the case for URLs provided by YouTube.
+The stream commands read a stream info JSON object (as returned by `videos streams get-manifest`) from the standard input.
 
 ```bash
 # Download the highest-bitrate audio-only stream and pipe its binary data to a file

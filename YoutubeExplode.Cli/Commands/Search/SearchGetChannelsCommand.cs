@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 using YoutubeExplode.Cli.Commands.Base;
+using YoutubeExplode.Common;
 
 namespace YoutubeExplode.Cli.Commands.Search;
 
@@ -13,11 +14,8 @@ public partial class SearchGetChannelsCommand : SearchCommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
-            await ToListAsync(
-                Youtube.Search.GetChannelsAsync(Query, cancellationToken),
-                cancellationToken
-            )
+            await Youtube.Search.GetChannelsAsync(Query, cancellationToken)
         );
 }

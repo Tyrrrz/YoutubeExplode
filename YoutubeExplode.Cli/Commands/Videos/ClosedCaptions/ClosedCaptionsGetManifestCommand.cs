@@ -20,7 +20,7 @@ public partial class ClosedCaptionsGetManifestCommand : CommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
             (
                 await Youtube.Videos.ClosedCaptions.GetManifestAsync(

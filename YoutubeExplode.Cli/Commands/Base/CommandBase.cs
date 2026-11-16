@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -35,6 +33,7 @@ public abstract partial class CommandBase : ICommand
             when (ex
                     is ArgumentException
                         or FormatException
+                        or KeyNotFoundException
                         or JsonException
                         or HttpRequestException
             )
@@ -53,42 +52,32 @@ public abstract partial class CommandBase : ICommand
     );
 
     // Data goes to stdout as JSON; compact when piped, indented when shown to the user
-    protected static void WriteJson<T>(IConsole console, T value) =>
-        console.Output.WriteLine(
-            JsonSerializer.Serialize(value, Json.CreateOptions(!console.IsOutputRedirected))
+    protected static async ValueTask WriteJsonAsync<T>(IConsole console, T value) =>
+        await console.Output.WriteLineAsync(
+            JsonSerializer.Serialize(
+                value,
+                typeof(T),
+                Json.CreateContext(!console.IsOutputRedirected)
+            )
         );
 
-    protected static async ValueTask<T> ReadJsonFromStdinAsync<T>(
+    protected static async ValueTask<T> ReadJsonAsync<T>(
+        IConsole console,
         CancellationToken cancellationToken
     )
     {
-        if (!Console.IsInputRedirected)
+        if (!console.IsInputRedirected)
             throw new CommandException("Expected JSON input on the standard input stream.");
 
-        await using var input = Console.OpenStandardInput();
-
-        return await JsonSerializer.DeserializeAsync<T>(
-                input,
-                Json.CreateOptions(false),
+        return
+            await JsonSerializer.DeserializeAsync(
+                console.Input.BaseStream,
+                typeof(T),
+                Json.CreateContext(false),
                 cancellationToken
-            ) ?? throw new CommandException("Standard input does not contain a valid JSON value.");
-    }
-
-    protected static async ValueTask<List<T>> ToListAsync<T>(
-        IAsyncEnumerable<T> source,
-        CancellationToken cancellationToken
-    )
-    {
-        var list = new List<T>();
-        await foreach (var item in source.WithCancellation(cancellationToken))
-            list.Add(item);
-        return list;
-    }
-
-    protected static void EnsureDirectoryExists(string filePath)
-    {
-        var dirPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
-        if (!string.IsNullOrWhiteSpace(dirPath))
-            Directory.CreateDirectory(dirPath);
+            )
+                is T value
+            ? value
+            : throw new CommandException("Standard input does not contain a valid JSON value.");
     }
 }

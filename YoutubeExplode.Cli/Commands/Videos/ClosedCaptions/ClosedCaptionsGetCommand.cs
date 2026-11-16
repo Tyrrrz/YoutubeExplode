@@ -16,10 +16,10 @@ public partial class ClosedCaptionsGetCommand : ClosedCaptionTrackCommandBase
         IConsole console,
         CancellationToken cancellationToken
     ) =>
-        WriteJson(
+        await WriteJsonAsync(
             console,
             await Youtube.Videos.ClosedCaptions.GetAsync(
-                await ResolveTrackInfoAsync(cancellationToken),
+                await ResolveTrackInfoAsync(console, cancellationToken),
                 cancellationToken
             )
         );
