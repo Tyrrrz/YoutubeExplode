@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using PowerKit.Extensions;
 
 namespace YoutubeExplode.Common;
 
@@ -19,13 +18,4 @@ internal static class Batch
 {
     public static Batch<T> Create<T>(IReadOnlyList<T> items)
         where T : IBatchItem => new(items);
-}
-
-internal static class BatchExtensions
-{
-    extension<T>(IAsyncEnumerable<Batch<T>> source)
-        where T : IBatchItem
-    {
-        public IAsyncEnumerable<T> FlattenAsync() => source.SelectManyAsync(b => b.Items);
-    }
 }
