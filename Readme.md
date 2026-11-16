@@ -26,6 +26,7 @@ Behind a layer of abstraction, this library works by scraping raw page data and 
 **See also**:
 
 - 📦 [YoutubeExplode.Converter](YoutubeExplode.Converter) — provides an interface to download and convert videos using FFmpeg
+- 📦 [YoutubeExplode.Cli](YoutubeExplode.Cli) — provides a command-line interface for the library
 - 📝 [Reverse-Engineering YouTube](https://tyrrrz.me/blog/reverse-engineering-youtube-revisited) — article explaining the inner workings of YouTube
 
 ## Install

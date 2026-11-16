@@ -1,0 +1,23 @@
+using System.Threading;
+using System.Threading.Tasks;
+using CliFx.Binding;
+using CliFx.Infrastructure;
+using YoutubeExplode.Cli.Commands.Base;
+
+namespace YoutubeExplode.Cli.Commands.Search;
+
+[Command("search get-results", Description = "Searches for any results matching a query.")]
+public partial class SearchGetResultsCommand : SearchCommandBase
+{
+    protected override async ValueTask ExecuteAsync(
+        IConsole console,
+        CancellationToken cancellationToken
+    ) =>
+        WriteJson(
+            console,
+            await ToListAsync(
+                Youtube.Search.GetResultsAsync(Query, cancellationToken),
+                cancellationToken
+            )
+        );
+}
