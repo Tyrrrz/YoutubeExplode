@@ -9,8 +9,5 @@ namespace YoutubeExplode.Cli.Commands.Search;
 public partial class SearchCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>
-        throw new CommandException(
-            "Please specify a subcommand. Use --help to see the list of available subcommands.",
-            showHelp: true
-        );
+        throw new CommandException("Please specify a subcommand.", showHelp: true);
 }

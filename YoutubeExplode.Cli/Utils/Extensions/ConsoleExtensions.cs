@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CliFx.Infrastructure;
+using Gress;
 using Spectre.Console;
 
 namespace YoutubeExplode.Cli.Utils.Extensions;
@@ -35,7 +36,7 @@ internal static class ConsoleExtensions
 
         public async ValueTask RunWithProgressAsync(
             string description,
-            Func<IProgress<double>, ValueTask> performOperationAsync
+            Func<IProgress<Percentage>, ValueTask> performOperationAsync
         )
         {
             await console
@@ -49,7 +50,9 @@ internal static class ConsoleExtensions
 
                     try
                     {
-                        await performOperationAsync(new Progress<double>(p => task.Value = p));
+                        await performOperationAsync(
+                            new DelegateProgress<Percentage>(p => task.Value = p.Fraction)
+                        );
                     }
                     finally
                     {

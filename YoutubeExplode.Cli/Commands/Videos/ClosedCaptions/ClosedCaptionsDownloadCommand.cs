@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
+using Gress;
 using PowerKit.Extensions;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Cli.Utils.Extensions;
@@ -33,7 +34,7 @@ public partial class ClosedCaptionsDownloadCommand : ClosedCaptionTrackCommandBa
                 await youtube.Videos.ClosedCaptions.DownloadAsync(
                     trackInfo,
                     OutputFilePath,
-                    progress,
+                    progress.ToDoubleBased(),
                     cancellationToken
                 )
         );

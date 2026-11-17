@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -47,14 +46,6 @@ internal partial class FFmpeg(
                 .WithStandardErrorPipe(stdErrPipe)
                 .ExecuteAsync(cancellationToken);
         }
-        catch (Win32Exception ex)
-        {
-            throw new FileNotFoundException(
-                $"FFmpeg executable could not be started from '{_filePath}'.",
-                _filePath,
-                ex
-            );
-        }
         catch (CommandExecutionException ex)
         {
             throw new InvalidOperationException(
@@ -73,22 +64,10 @@ internal partial class FFmpeg(
 internal partial class FFmpeg
 {
     // The path may point either to the executable itself or to the directory that contains it
-    public static string ResolveFilePath(string path)
-    {
-        if (!Directory.Exists(path))
-            return path;
-
-        return Directory
-                .EnumerateFiles(path)
-                .FirstOrDefault(f =>
-                    string.Equals(
-                        Path.GetFileNameWithoutExtension(f),
-                        "ffmpeg",
-                        StringComparison.OrdinalIgnoreCase
-                    )
-                )
-            ?? Path.Combine(path, "ffmpeg");
-    }
+    public static string ResolveFilePath(string path) =>
+        Directory.Exists(path)
+            ? Path.Combine(path, OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg")
+            : path;
 
     public static string GetFilePath() =>
         // Try to find FFmpeg in the probe directory

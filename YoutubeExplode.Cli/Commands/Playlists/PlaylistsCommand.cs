@@ -9,8 +9,5 @@ namespace YoutubeExplode.Cli.Commands.Playlists;
 public partial class PlaylistsCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>
-        throw new CommandException(
-            "Please specify a subcommand. Use --help to see the list of available subcommands.",
-            showHelp: true
-        );
+        throw new CommandException("Please specify a subcommand.", showHelp: true);
 }

@@ -31,6 +31,7 @@ public abstract partial class CommandBase : ICommand
                     is ArgumentException
                         or FormatException
                         or KeyNotFoundException
+                        or InvalidOperationException
                         or JsonException
                         or HttpRequestException
             )
@@ -45,17 +46,12 @@ public abstract partial class CommandBase : ICommand
         CancellationToken cancellationToken
     );
 
-    // Data goes to stdout as JSON; compact when piped, indented when shown to the user
     protected static async ValueTask WriteJsonAsync<T>(IConsole console, T value) =>
         await console.Output.WriteLineAsync(
-            JsonSerializer.Serialize(
-                value,
-                typeof(T),
-                Json.CreateContext(!console.IsOutputRedirected)
-            )
+            JsonSerializer.Serialize(value, typeof(T), JsonSerializerContext.Default)
         );
 
-    protected static async ValueTask<T> ReadJsonAsync<T>(
+    protected static async ValueTask<JsonElement> ReadJsonAsync(
         IConsole console,
         CancellationToken cancellationToken
     )
@@ -63,15 +59,11 @@ public abstract partial class CommandBase : ICommand
         if (!console.IsInputRedirected)
             throw new CommandException("Expected JSON input on the standard input stream.");
 
-        return
-            await JsonSerializer.DeserializeAsync(
-                console.Input.BaseStream,
-                typeof(T),
-                Json.CreateContext(false),
-                cancellationToken
-            )
-                is T value
-            ? value
-            : throw new CommandException("Standard input does not contain a valid JSON value.");
+        using var document = await JsonDocument.ParseAsync(
+            console.Input.BaseStream,
+            cancellationToken: cancellationToken
+        );
+
+        return document.RootElement.Clone();
     }
 }

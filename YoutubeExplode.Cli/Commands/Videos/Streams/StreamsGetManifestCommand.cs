@@ -23,11 +23,9 @@ public partial class StreamsGetManifestCommand : CommandBase
     ) =>
         await WriteJsonAsync(
             console,
-            (
-                await youtube.Videos.Streams.GetManifestAsync(
-                    VideoId.Parse(VideoIdOrUrl),
-                    cancellationToken
-                )
-            ).Streams
+            await youtube.Videos.Streams.GetManifestAsync(
+                VideoId.Parse(VideoIdOrUrl),
+                cancellationToken
+            )
         );
 }

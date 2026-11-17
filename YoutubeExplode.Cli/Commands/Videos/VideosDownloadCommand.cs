@@ -1,9 +1,11 @@
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
+using Gress;
 using PowerKit.Extensions;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Cli.Utils.Extensions;
@@ -46,14 +48,10 @@ public partial class VideosDownloadCommand : CommandBase
     )]
     public string? FFmpegPath { get; set; }
 
-    private string ResolveContainer()
-    {
-        if (!string.IsNullOrWhiteSpace(Container))
-            return Container.TrimStart('.');
-
-        var extension = Path.GetExtension(OutputFilePath ?? "").TrimStart('.');
-        return !string.IsNullOrWhiteSpace(extension) ? extension : "mp4";
-    }
+    private string ResolveContainer() =>
+        Container?.NullIfWhiteSpace()?.TrimStart('.')
+        ?? Path.GetExtension(OutputFilePath ?? "").NullIfWhiteSpace()?.TrimStart('.')
+        ?? "mp4";
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
@@ -81,19 +79,27 @@ public partial class VideosDownloadCommand : CommandBase
                             if (!string.IsNullOrWhiteSpace(FFmpegPath))
                                 o.SetFFmpegPath(FFmpegPath);
                         },
-                        progress,
+                        progress.ToDoubleBased(),
                         cancellationToken
                     )
             );
         }
-        catch (FileNotFoundException ex)
+        catch (Win32Exception ex)
         {
             throw new CommandException(
                 $"""
-                {ex.Message}
+                FFmpeg could not be started: {ex.Message}
 
-                FFmpeg is required for this command. Install it from https://ffmpeg.org/download.html
-                and make sure it is available on the PATH, or specify its location using
+                FFmpeg is required for this command. To install it, use one of the following:
+                  - Windows: winget install Gyan.FFmpeg (or: choco install ffmpeg, scoop install ffmpeg)
+                  - macOS: brew install ffmpeg
+                  - Debian/Ubuntu: sudo apt install ffmpeg
+                  - Fedora: sudo dnf install ffmpeg-free
+                  - Arch Linux: sudo pacman -S ffmpeg
+                  - Any platform: download a build from https://github.com/Tyrrrz/FFmpegBin
+                    or from https://ffmpeg.org/download.html
+
+                Make sure FFmpeg is available on the PATH, or specify its location using
                 the --ffmpeg-path option or the FFMPEG_PATH environment variable.
                 """,
                 innerException: ex

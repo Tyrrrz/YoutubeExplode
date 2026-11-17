@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CliFx.Binding;
 using CliFx.Infrastructure;
+using Gress;
 using PowerKit.Extensions;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Cli.Utils.Extensions;
@@ -30,7 +31,7 @@ public partial class StreamsDownloadCommand : StreamCommandBase
                 await youtube.Videos.Streams.DownloadAsync(
                     streamInfo,
                     OutputFilePath,
-                    progress,
+                    progress.ToDoubleBased(),
                     cancellationToken
                 )
         );

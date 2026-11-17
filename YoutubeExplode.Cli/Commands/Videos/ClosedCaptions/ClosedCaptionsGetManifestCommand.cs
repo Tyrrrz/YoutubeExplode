@@ -23,11 +23,9 @@ public partial class ClosedCaptionsGetManifestCommand : CommandBase
     ) =>
         await WriteJsonAsync(
             console,
-            (
-                await youtube.Videos.ClosedCaptions.GetManifestAsync(
-                    VideoId.Parse(VideoIdOrUrl),
-                    cancellationToken
-                )
-            ).Tracks
+            await youtube.Videos.ClosedCaptions.GetManifestAsync(
+                VideoId.Parse(VideoIdOrUrl),
+                cancellationToken
+            )
         );
 }
