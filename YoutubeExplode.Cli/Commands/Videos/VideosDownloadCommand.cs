@@ -15,7 +15,7 @@ using YoutubeExplode.Videos;
 namespace YoutubeExplode.Cli.Commands.Videos;
 
 [Command(
-    "videos download",
+    "video download",
     Description = "Downloads a video by muxing its best streams using FFmpeg."
 )]
 public partial class VideosDownloadCommand : CommandBase

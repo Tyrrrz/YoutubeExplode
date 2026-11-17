@@ -8,7 +8,7 @@ using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Cli.Commands.Playlists;
 
-[Command("playlists get-videos", Description = "Gets the videos included in a playlist.")]
+[Command("playlist videos", Description = "Gets the videos included in a playlist.")]
 public partial class PlaylistsGetVideosCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Playlist ID or URL.")]

@@ -8,7 +8,7 @@ using YoutubeExplode.Videos;
 namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
 
 [Command(
-    "videos closed-captions get-manifest",
+    "video cc manifest",
     Description = "Gets the manifest of closed caption tracks available for a video."
 )]
 public partial class ClosedCaptionsGetManifestCommand : CommandBase

@@ -7,7 +7,7 @@ using YoutubeExplode.Cli.Commands.Base;
 namespace YoutubeExplode.Cli.Commands.Videos.Streams;
 
 [Command(
-    "videos streams get",
+    "video stream get",
     Description = "Writes the binary data of a stream to the standard output."
 )]
 public partial class StreamsGetCommand : StreamCommandBase

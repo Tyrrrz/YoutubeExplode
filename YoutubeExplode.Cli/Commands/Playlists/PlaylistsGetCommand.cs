@@ -7,7 +7,7 @@ using YoutubeExplode.Playlists;
 
 namespace YoutubeExplode.Cli.Commands.Playlists;
 
-[Command("playlists get", Description = "Gets the metadata of a playlist.")]
+[Command("playlist get", Description = "Gets the metadata of a playlist.")]
 public partial class PlaylistsGetCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Playlist ID or URL.")]

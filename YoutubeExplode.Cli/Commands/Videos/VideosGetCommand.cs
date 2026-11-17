@@ -7,7 +7,7 @@ using YoutubeExplode.Videos;
 
 namespace YoutubeExplode.Cli.Commands.Videos;
 
-[Command("videos get", Description = "Gets the metadata of a video.")]
+[Command("video get", Description = "Gets the metadata of a video.")]
 public partial class VideosGetCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]

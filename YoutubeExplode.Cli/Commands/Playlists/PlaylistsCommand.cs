@@ -5,7 +5,7 @@ using CliFx.Infrastructure;
 
 namespace YoutubeExplode.Cli.Commands.Playlists;
 
-[Command("playlists", Description = "Commands for working with playlists.")]
+[Command("playlist", Description = "Commands for working with playlists.")]
 public partial class PlaylistsCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>

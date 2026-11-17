@@ -5,7 +5,7 @@ using CliFx.Infrastructure;
 
 namespace YoutubeExplode.Cli.Commands.Channels;
 
-[Command("channels", Description = "Commands for working with channels.")]
+[Command("channel", Description = "Commands for working with channels.")]
 public partial class ChannelsCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>

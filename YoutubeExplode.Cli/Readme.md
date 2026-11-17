@@ -15,26 +15,23 @@ Commands that return an object write it as JSON to the standard output, and comm
 Progress and other diagnostic messages are written to the standard error, so they never interfere with piped data.
 
 ```
-yte videos get <id-or-url>
-yte videos download <id-or-url> [--output <path>] [--container <name>] [--preset <preset>] [--ffmpeg-path <path>]
+yte video get <id-or-url>
+yte video download <id-or-url> [--output <path>] [--container <name>] [--preset <preset>] [--ffmpeg-path <path>]
 
-yte videos streams get-manifest <id-or-url>
-yte videos streams get
-yte videos streams download --output <path>
+yte video stream manifest <id-or-url>
+yte video stream get
+yte video stream download --output <path>
 
-yte videos closed-captions get-manifest <id-or-url>
-yte videos closed-captions get
-yte videos closed-captions download --output <path>
+yte video cc manifest <id-or-url>
+yte video cc get
+yte video cc download --output <path>
 
-yte playlists get <id-or-url>
-yte playlists get-videos <id-or-url>
+yte playlist get <id-or-url>
+yte playlist videos <id-or-url>
 
-yte channels get <id-or-url> [--kind <Id|UserName|Slug|Handle>]
+yte channel get <id-or-url> [--kind <Id|UserName|Slug|Handle>]
 
-yte search get-results <query>
-yte search get-videos <query>
-yte search get-playlists <query>
-yte search get-channels <query>
+yte search <query> [--filter <None|Videos|Playlists|Channels>]
 ```
 
 Use `--help` on any command to see its full list of options.
@@ -42,18 +39,18 @@ Use `--help` on any command to see its full list of options.
 ### Downloading a video
 
 ```bash
-yte videos download "https://youtube.com/watch?v=u_yIGGhubZs" --output "video.mp4"
+yte video download "https://youtube.com/watch?v=u_yIGGhubZs" --output "video.mp4"
 ```
 
 ### Working with streams
 
-The stream commands read a stream info JSON object (as returned by `videos streams get-manifest`) from the standard input.
+The stream commands read a stream info JSON object (as returned by `video stream manifest`) from the standard input.
 
 ```bash
 # Download the highest-bitrate audio-only stream and pipe its binary data to a file
-yte videos streams get-manifest u_yIGGhubZs \
+yte video stream manifest u_yIGGhubZs \
     | jq -c '[.streams[] | select(has("audioCodec") and (has("videoCodec") | not))] | max_by(.bitrate.bitsPerSecond)' \
-    | yte videos streams get > audio.bin
+    | yte video stream get > audio.bin
 ```
 
 ### Processing multiple items
@@ -62,7 +59,7 @@ Commands that return lists produce a single JSON array, so they can be combined 
 For example, to download all videos in a playlist:
 
 ```bash
-yte playlists get-videos "PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6" | jq -r '.[].id' | while read -r id; do
-    yte videos download "$id" --output "downloads/$id.mp4"
+yte playlist videos "PLa1F2ddGya_-UvuAqHAksYnB0qL9yWDO6" | jq -r '.[].id' | while read -r id; do
+    yte video download "$id" --output "downloads/$id.mp4"
 done
 ```

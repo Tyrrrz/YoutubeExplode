@@ -8,7 +8,7 @@ using YoutubeExplode.Videos;
 namespace YoutubeExplode.Cli.Commands.Videos.Streams;
 
 [Command(
-    "videos streams get-manifest",
+    "video stream manifest",
     Description = "Gets the manifest of streams available for a video."
 )]
 public partial class StreamsGetManifestCommand : CommandBase

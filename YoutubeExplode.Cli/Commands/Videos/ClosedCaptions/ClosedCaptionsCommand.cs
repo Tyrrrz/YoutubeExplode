@@ -5,10 +5,7 @@ using CliFx.Infrastructure;
 
 namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
 
-[Command(
-    "videos closed-captions",
-    Description = "Commands for working with video closed captions."
-)]
+[Command("video cc", Description = "Commands for working with video closed captions.")]
 public partial class ClosedCaptionsCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>
