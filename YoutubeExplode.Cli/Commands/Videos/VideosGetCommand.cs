@@ -15,10 +15,11 @@ public partial class VideosGetCommand : CommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
-            await Youtube.Videos.GetAsync(VideoId.Parse(VideoIdOrUrl), cancellationToken)
+            await youtube.Videos.GetAsync(VideoId.Parse(VideoIdOrUrl), cancellationToken)
         );
 }

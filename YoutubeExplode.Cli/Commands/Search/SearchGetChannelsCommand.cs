@@ -12,10 +12,11 @@ public partial class SearchGetChannelsCommand : SearchCommandBase
 {
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
-            await Youtube.Search.GetChannelsAsync(Query, cancellationToken)
+            await youtube.Search.GetChannelsAsync(Query, cancellationToken)
         );
 }

@@ -13,17 +13,14 @@ namespace YoutubeExplode.Cli.Commands.Base;
 
 public abstract partial class CommandBase : ICommand
 {
-    private YoutubeClient? _youtube;
-
-    protected YoutubeClient Youtube => _youtube ??= new YoutubeClient();
-
     public async ValueTask ExecuteAsync(IConsole console)
     {
         var cancellationToken = console.RegisterCancellationHandler();
 
         try
         {
-            await ExecuteAsync(console, cancellationToken);
+            using var youtube = new YoutubeClient();
+            await ExecuteAsync(console, youtube, cancellationToken);
         }
         catch (YoutubeExplodeException ex)
         {
@@ -40,14 +37,11 @@ public abstract partial class CommandBase : ICommand
         {
             throw new CommandException(ex.Message, innerException: ex);
         }
-        finally
-        {
-            _youtube?.Dispose();
-        }
     }
 
     protected abstract ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     );
 

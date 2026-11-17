@@ -18,12 +18,13 @@ public partial class ClosedCaptionsGetManifestCommand : CommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
             (
-                await Youtube.Videos.ClosedCaptions.GetManifestAsync(
+                await youtube.Videos.ClosedCaptions.GetManifestAsync(
                     VideoId.Parse(VideoIdOrUrl),
                     cancellationToken
                 )

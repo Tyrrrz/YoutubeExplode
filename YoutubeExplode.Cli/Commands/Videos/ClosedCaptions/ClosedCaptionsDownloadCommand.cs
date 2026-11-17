@@ -20,16 +20,17 @@ public partial class ClosedCaptionsDownloadCommand : ClosedCaptionTrackCommandBa
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     )
     {
-        var trackInfo = await ResolveTrackInfoAsync(console, cancellationToken);
+        var trackInfo = await ReadClosedCaptionTrackInfoAsync(console, cancellationToken);
         Directory.CreateForFile(OutputFilePath);
 
         await console.RunWithProgressAsync(
             "Downloading closed captions",
             async progress =>
-                await Youtube.Videos.ClosedCaptions.DownloadAsync(
+                await youtube.Videos.ClosedCaptions.DownloadAsync(
                     trackInfo,
                     OutputFilePath,
                     progress,

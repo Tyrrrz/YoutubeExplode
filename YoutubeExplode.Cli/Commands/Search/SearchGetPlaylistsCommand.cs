@@ -12,10 +12,11 @@ public partial class SearchGetPlaylistsCommand : SearchCommandBase
 {
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
-            await Youtube.Search.GetPlaylistsAsync(Query, cancellationToken)
+            await youtube.Search.GetPlaylistsAsync(Query, cancellationToken)
         );
 }

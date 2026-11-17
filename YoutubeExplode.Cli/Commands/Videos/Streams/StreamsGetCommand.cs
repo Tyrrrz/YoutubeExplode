@@ -14,13 +14,14 @@ public partial class StreamsGetCommand : StreamCommandBase
 {
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     )
     {
         var streamInfo = await ReadStreamInfoAsync(console, cancellationToken);
 
         // Bypass the text writer, since this is raw binary data
-        await Youtube.Videos.Streams.CopyToAsync(
+        await youtube.Videos.Streams.CopyToAsync(
             streamInfo,
             console.Output.BaseStream,
             cancellationToken: cancellationToken

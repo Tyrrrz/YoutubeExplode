@@ -15,10 +15,11 @@ public partial class PlaylistsGetCommand : CommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
-            await Youtube.Playlists.GetAsync(PlaylistId.Parse(PlaylistIdOrUrl), cancellationToken)
+            await youtube.Playlists.GetAsync(PlaylistId.Parse(PlaylistIdOrUrl), cancellationToken)
         );
 }

@@ -28,8 +28,8 @@ youtubeexplode videos streams get
 youtubeexplode videos streams download --output <path>
 
 youtubeexplode videos closed-captions get-manifest <id-or-url>
-youtubeexplode videos closed-captions get [url]
-youtubeexplode videos closed-captions download [url] --output <path>
+youtubeexplode videos closed-captions get
+youtubeexplode videos closed-captions download --output <path>
 
 youtubeexplode playlists get <id-or-url>
 youtubeexplode playlists get-videos <id-or-url>

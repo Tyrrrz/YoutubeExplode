@@ -38,25 +38,26 @@ public partial class ChannelsGetCommand : CommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
             (Kind ?? DetectKind()) switch
             {
-                ChannelKind.Id => await Youtube.Channels.GetAsync(
+                ChannelKind.Id => await youtube.Channels.GetAsync(
                     ChannelId.Parse(ChannelIdOrUrl),
                     cancellationToken
                 ),
-                ChannelKind.UserName => await Youtube.Channels.GetByUserAsync(
+                ChannelKind.UserName => await youtube.Channels.GetByUserAsync(
                     UserName.Parse(ChannelIdOrUrl),
                     cancellationToken
                 ),
-                ChannelKind.Slug => await Youtube.Channels.GetBySlugAsync(
+                ChannelKind.Slug => await youtube.Channels.GetBySlugAsync(
                     ChannelSlug.Parse(ChannelIdOrUrl),
                     cancellationToken
                 ),
-                ChannelKind.Handle => await Youtube.Channels.GetByHandleAsync(
+                ChannelKind.Handle => await youtube.Channels.GetByHandleAsync(
                     ChannelHandle.Parse(ChannelIdOrUrl),
                     cancellationToken
                 ),

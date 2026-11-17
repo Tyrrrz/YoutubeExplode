@@ -18,12 +18,13 @@ public partial class StreamsGetManifestCommand : CommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
             (
-                await Youtube.Videos.Streams.GetManifestAsync(
+                await youtube.Videos.Streams.GetManifestAsync(
                     VideoId.Parse(VideoIdOrUrl),
                     cancellationToken
                 )

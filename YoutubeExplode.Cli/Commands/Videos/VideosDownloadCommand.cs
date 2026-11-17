@@ -57,6 +57,7 @@ public partial class VideosDownloadCommand : CommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     )
     {
@@ -70,7 +71,7 @@ public partial class VideosDownloadCommand : CommandBase
             await console.RunWithProgressAsync(
                 $"Downloading {videoId}",
                 async progress =>
-                    await Youtube.Videos.DownloadAsync(
+                    await youtube.Videos.DownloadAsync(
                         videoId,
                         outputFilePath,
                         o =>

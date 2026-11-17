@@ -17,6 +17,7 @@ public partial class StreamsDownloadCommand : StreamCommandBase
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     )
     {
@@ -26,7 +27,7 @@ public partial class StreamsDownloadCommand : StreamCommandBase
         await console.RunWithProgressAsync(
             "Downloading stream",
             async progress =>
-                await Youtube.Videos.Streams.DownloadAsync(
+                await youtube.Videos.Streams.DownloadAsync(
                     streamInfo,
                     OutputFilePath,
                     progress,

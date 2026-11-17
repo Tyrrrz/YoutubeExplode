@@ -14,12 +14,13 @@ public partial class ClosedCaptionsGetCommand : ClosedCaptionTrackCommandBase
 {
     protected override async ValueTask ExecuteAsync(
         IConsole console,
+        YoutubeClient youtube,
         CancellationToken cancellationToken
     ) =>
         await WriteJsonAsync(
             console,
-            await Youtube.Videos.ClosedCaptions.GetAsync(
-                await ResolveTrackInfoAsync(console, cancellationToken),
+            await youtube.Videos.ClosedCaptions.GetAsync(
+                await ReadClosedCaptionTrackInfoAsync(console, cancellationToken),
                 cancellationToken
             )
         );

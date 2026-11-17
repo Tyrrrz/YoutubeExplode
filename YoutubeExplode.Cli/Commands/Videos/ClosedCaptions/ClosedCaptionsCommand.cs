@@ -1,0 +1,19 @@
+using System.Threading.Tasks;
+using CliFx;
+using CliFx.Binding;
+using CliFx.Infrastructure;
+
+namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
+
+[Command(
+    "videos closed-captions",
+    Description = "Commands for working with video closed captions."
+)]
+public partial class ClosedCaptionsCommand : ICommand
+{
+    public ValueTask ExecuteAsync(IConsole console) =>
+        throw new CommandException(
+            "Please specify a subcommand. Use --help to see the list of available subcommands.",
+            showHelp: true
+        );
+}
