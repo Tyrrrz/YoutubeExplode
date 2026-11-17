@@ -7,7 +7,6 @@ public static class Program
 {
     public static async Task<int> Main(string[] args) =>
         await new CommandLineApplicationBuilder()
-            .SetExecutableName("yte")
             .SetDescription("Command-line interface for YoutubeExplode")
             .AddCommandsFromThisAssembly()
             .Build()
