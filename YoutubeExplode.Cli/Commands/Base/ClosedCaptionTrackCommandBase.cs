@@ -17,7 +17,9 @@ public abstract class ClosedCaptionTrackCommandBase : CommandBase
     {
         var json = await ReadJsonAsync(console, cancellationToken);
 
-        return json.Deserialize(JsonSerializerContext.Default.ClosedCaptionTrackInfo)
-            ?? throw new JsonException("Closed caption track info is missing.");
+        return (
+            json.Deserialize(JsonSerializerContext.Default.ClosedCaptionTrackInfoDto)
+            ?? throw new JsonException("Closed caption track info is missing.")
+        ).ToClosedCaptionTrackInfo();
     }
 }
