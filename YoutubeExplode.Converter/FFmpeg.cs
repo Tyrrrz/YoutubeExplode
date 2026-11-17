@@ -17,10 +17,12 @@ namespace YoutubeExplode.Converter;
 // However, named pipes aren't well-supported on non-Windows OS and
 // stdout streaming only works with some specific formats.
 internal partial class FFmpeg(
-    string filePath,
+    string path,
     IReadOnlyDictionary<string, string?> environmentVariables
 )
 {
+    private readonly string _filePath = ResolveFilePath(path);
+
     public async ValueTask ExecuteAsync(
         string arguments,
         IProgress<double>? progress,
@@ -38,7 +40,7 @@ internal partial class FFmpeg(
 
         try
         {
-            await Cli.Wrap(filePath)
+            await Cli.Wrap(_filePath)
                 .WithArguments(arguments)
                 .WithEnvironmentVariables(environmentVariables)
                 .WithStandardErrorPipe(stdErrPipe)
@@ -61,6 +63,12 @@ internal partial class FFmpeg(
 
 internal partial class FFmpeg
 {
+    // The path may point either to the executable itself or to the directory that contains it
+    public static string ResolveFilePath(string path) =>
+        Directory.Exists(path)
+            ? Path.Combine(path, OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg")
+            : path;
+
     public static string GetFilePath() =>
         // Try to find FFmpeg in the probe directory
         Directory

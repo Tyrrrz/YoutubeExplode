@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <RollForward>Major</RollForward>
+    <ApplicationIcon>../favicon.ico</ApplicationIcon>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>yte</ToolCommandName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Command-line interface for YoutubeExplode that exposes the library's functionality through terminal commands</Description>
+    <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode/tree/prime/YoutubeExplode.Cli</PackageProjectUrl>
+    <PackageIcon>favicon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../favicon.png" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CliFx" />
+    <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="Gress" />
+    <PackageReference Include="PolyShim" PrivateAssets="all" />
+    <PackageReference Include="PowerKit" />
+    <PackageReference Include="PowerKit.Json" />
+    <PackageReference Include="Spectre.Console" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="../YoutubeExplode/YoutubeExplode.csproj"
+      GlobalPropertiesToRemove="PublishTrimmed"
+    />
+    <ProjectReference
+      Include="../YoutubeExplode.Converter/YoutubeExplode.Converter.csproj"
+      GlobalPropertiesToRemove="PublishTrimmed"
+    />
+  </ItemGroup>
+</Project>

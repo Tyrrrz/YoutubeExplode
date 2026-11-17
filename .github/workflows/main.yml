@@ -39,3 +39,109 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+  pack-cli:
+    strategy:
+      matrix:
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
+
+    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'osx-') && 'macos-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 10
+
+    permissions:
+      actions: write
+      contents: read
+
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+
+      - name: Publish CLI
+        run: >
+          dotnet restore YoutubeExplode.Cli --runtime ${{ matrix.rid }} &&
+          dotnet publish YoutubeExplode.Cli
+          -p:Version=${{ inputs.package-version || (github.ref_type == 'tag' && github.ref_name) || format('0.0.0-ci-{0}', github.sha) }}
+          -p:CSharpier_Bypass=true
+          -p:PublishTrimmed=true
+          -p:PublishSingleFile=true
+          --framework net10.0
+          --output YoutubeExplode.Cli/bin/publish/
+          --configuration Release
+          --runtime ${{ matrix.rid }}
+          --self-contained
+
+      - name: Upload CLI binaries
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: YoutubeExplode.Cli.${{ matrix.rid }}
+          path: YoutubeExplode.Cli/bin/publish/
+          if-no-files-found: error
+
+  deploy-cli:
+    # The release is created by the main job when running on a tag
+    if: ${{ github.ref_type == 'tag' }}
+
+    needs:
+      - main
+      - pack-cli
+
+    strategy:
+      matrix:
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Download CLI binaries
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: YoutubeExplode.Cli.${{ matrix.rid }}
+          path: YoutubeExplode.Cli/
+
+      - name: Set permissions
+        if: ${{ !startsWith(matrix.rid, 'win-') }}
+        run: chmod +x YoutubeExplode.Cli/YoutubeExplode.Cli
+
+      - name: Create package
+        # Change into the artifacts directory to avoid including the directory itself in the zip archive
+        working-directory: YoutubeExplode.Cli/
+        run: zip -r ../YoutubeExplode.Cli.${{ matrix.rid }}.zip .
+
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release upload ${{ github.ref_name }}
+          YoutubeExplode.Cli.${{ matrix.rid }}.zip
+          --repo ${{ github.event.repository.full_name }}

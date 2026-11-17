@@ -1,0 +1,25 @@
+using System.Threading;
+using System.Threading.Tasks;
+using CliFx.Binding;
+using CliFx.Infrastructure;
+using YoutubeExplode.Cli.Commands.Base;
+using YoutubeExplode.Playlists;
+
+namespace YoutubeExplode.Cli.Commands.Playlists;
+
+[Command("playlist get", Description = "Gets the metadata of a playlist.")]
+public partial class PlaylistGetCommand : CommandBase
+{
+    [CommandParameter(0, Description = "Playlist ID or URL.")]
+    public required PlaylistId PlaylistId { get; set; }
+
+    protected override async ValueTask ExecuteAsync(
+        IConsole console,
+        YoutubeClient youtube,
+        CancellationToken cancellationToken
+    ) =>
+        await WriteJsonAsync(
+            console,
+            await youtube.Playlists.GetAsync(PlaylistId, cancellationToken)
+        );
+}
