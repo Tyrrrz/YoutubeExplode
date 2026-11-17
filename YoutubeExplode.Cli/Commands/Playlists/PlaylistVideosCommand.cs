@@ -11,7 +11,7 @@ namespace YoutubeExplode.Cli.Commands.Playlists;
 [Command("playlist videos", Description = "Gets the videos included in a playlist.")]
 public partial class PlaylistVideosCommand : CommandBase
 {
-    [CommandParameter(0, Name = "id-or-url", Description = "Playlist ID or URL.")]
+    [CommandParameter(0, Description = "Playlist ID or URL.")]
     public required PlaylistId PlaylistId { get; set; }
 
     protected override async ValueTask ExecuteAsync(

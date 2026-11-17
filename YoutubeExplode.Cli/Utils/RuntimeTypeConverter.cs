@@ -1,8 +1,6 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using YoutubeExplode.Search;
-using YoutubeExplode.Videos.Streams;
 
 namespace YoutubeExplode.Cli.Utils;
 
@@ -19,7 +17,3 @@ internal abstract class RuntimeTypeConverter<T> : JsonConverter<T>
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options) =>
         JsonSerializer.Serialize(writer, value, options.GetTypeInfo(value.GetType()));
 }
-
-internal class StreamInfoConverter : RuntimeTypeConverter<IStreamInfo>;
-
-internal class SearchResultConverter : RuntimeTypeConverter<ISearchResult>;

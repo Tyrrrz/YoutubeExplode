@@ -12,11 +12,7 @@ namespace YoutubeExplode.Cli.Commands.Channels;
 [Command("channel get", Description = "Gets the metadata of a channel.")]
 public partial class ChannelGetCommand : CommandBase
 {
-    [CommandParameter(
-        0,
-        Name = "id-or-url",
-        Description = "Channel ID, user name, slug, handle, or URL."
-    )]
+    [CommandParameter(0, Description = "Channel ID, user name, slug, handle, or URL.")]
     public required string ChannelIdOrUrl { get; set; }
 
     [CommandOption(

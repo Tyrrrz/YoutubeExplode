@@ -15,21 +15,21 @@ Commands that return an object write it as JSON to the standard output, and comm
 Progress and other diagnostic messages are written to the standard error, so they never interfere with piped data.
 
 ```
-yte video get <id-or-url>
-yte video download <id-or-url> [--output <path>] [--container <name>] [--preset <preset>] [--ffmpeg-path <path>]
+yte video get <video-id>
+yte video download <video-id> [--output <path>] [--container <name>] [--preset <preset>] [--ffmpeg-path <path>]
 
-yte video stream manifest <id-or-url>
+yte video stream manifest <video-id>
 yte video stream get
 yte video stream download --output <path>
 
-yte video cc manifest <id-or-url>
+yte video cc manifest <video-id>
 yte video cc get
 yte video cc download --output <path>
 
-yte playlist get <id-or-url>
-yte playlist videos <id-or-url>
+yte playlist get <playlist-id>
+yte playlist videos <playlist-id>
 
-yte channel get <id-or-url> [--kind <Id|UserName|Slug|Handle>]
+yte channel get <channel-id-or-url> [--kind <Id|UserName|Slug|Handle>]
 
 yte search <query> [--filter <None|Videos|Playlists|Channels>]
 ```

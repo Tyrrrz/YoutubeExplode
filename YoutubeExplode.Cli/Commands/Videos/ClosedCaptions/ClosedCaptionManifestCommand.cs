@@ -13,7 +13,7 @@ namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
 )]
 public partial class ClosedCaptionManifestCommand : CommandBase
 {
-    [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]
+    [CommandParameter(0, Description = "Video ID or URL.")]
     public required VideoId VideoId { get; set; }
 
     protected override async ValueTask ExecuteAsync(

@@ -20,7 +20,7 @@ namespace YoutubeExplode.Cli.Commands.Videos;
 )]
 public partial class VideoDownloadCommand : CommandBase
 {
-    [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]
+    [CommandParameter(0, Description = "Video ID or URL.")]
     public required VideoId VideoId { get; set; }
 
     [CommandOption(

@@ -10,7 +10,7 @@ namespace YoutubeExplode.Cli.Commands.Videos;
 [Command("video get", Description = "Gets the metadata of a video.")]
 public partial class VideoGetCommand : CommandBase
 {
-    [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]
+    [CommandParameter(0, Description = "Video ID or URL.")]
     public required VideoId VideoId { get; set; }
 
     protected override async ValueTask ExecuteAsync(

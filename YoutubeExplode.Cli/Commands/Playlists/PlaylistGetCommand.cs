@@ -10,7 +10,7 @@ namespace YoutubeExplode.Cli.Commands.Playlists;
 [Command("playlist get", Description = "Gets the metadata of a playlist.")]
 public partial class PlaylistGetCommand : CommandBase
 {
-    [CommandParameter(0, Name = "id-or-url", Description = "Playlist ID or URL.")]
+    [CommandParameter(0, Description = "Playlist ID or URL.")]
     public required PlaylistId PlaylistId { get; set; }
 
     protected override async ValueTask ExecuteAsync(
