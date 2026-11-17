@@ -62,8 +62,8 @@ public abstract class StreamCommandBase : CommandBase
             GetRequired(GetRequired(json, "bitrate"), "bitsPerSecond").GetInt64()
         );
 
-        var audioCodec = json.GetPropertyOrNull("audioCodec")?.GetStringOrNull();
-        var videoCodec = json.GetPropertyOrNull("videoCodec")?.GetStringOrNull();
+        var audioCodec = json.GetPropertyOrNull("audioCodec")?.GetNonWhiteSpaceStringOrNull();
+        var videoCodec = json.GetPropertyOrNull("videoCodec")?.GetNonWhiteSpaceStringOrNull();
 
         var audioLanguage = TryGetLanguage(json, "audioLanguage");
         var isAudioLanguageDefault = json.GetPropertyOrNull("isAudioLanguageDefault")

@@ -10,7 +10,7 @@ namespace YoutubeExplode.Cli.Commands.Videos.Streams;
     "video stream get",
     Description = "Writes the binary data of a stream to the standard output."
 )]
-public partial class StreamsGetCommand : StreamCommandBase
+public partial class StreamGetCommand : StreamCommandBase
 {
     protected override async ValueTask ExecuteAsync(
         IConsole console,

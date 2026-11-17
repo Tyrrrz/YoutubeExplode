@@ -18,10 +18,10 @@ namespace YoutubeExplode.Cli.Commands.Videos;
     "video download",
     Description = "Downloads a video by muxing its best streams using FFmpeg."
 )]
-public partial class VideosDownloadCommand : CommandBase
+public partial class VideoDownloadCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]
-    public required string VideoIdOrUrl { get; set; }
+    public required VideoId VideoId { get; set; }
 
     [CommandOption(
         "output",
@@ -59,18 +59,17 @@ public partial class VideosDownloadCommand : CommandBase
         CancellationToken cancellationToken
     )
     {
-        var videoId = VideoId.Parse(VideoIdOrUrl);
         var container = ResolveContainer();
-        var outputFilePath = OutputFilePath ?? $"{videoId}.{container}";
+        var outputFilePath = OutputFilePath ?? $"{VideoId}.{container}";
         Directory.CreateForFile(outputFilePath);
 
         try
         {
             await console.RunWithProgressAsync(
-                $"Downloading {videoId}",
+                $"Downloading {VideoId}",
                 async progress =>
                     await youtube.Videos.DownloadAsync(
-                        videoId,
+                        VideoId,
                         outputFilePath,
                         o =>
                         {
@@ -96,8 +95,11 @@ public partial class VideosDownloadCommand : CommandBase
                   - Debian/Ubuntu: sudo apt install ffmpeg
                   - Fedora: sudo dnf install ffmpeg-free
                   - Arch Linux: sudo pacman -S ffmpeg
-                  - Any platform: download a build from https://github.com/Tyrrrz/FFmpegBin
-                    or from https://ffmpeg.org/download.html
+                  - NixOS: nix-shell -p ffmpeg
+
+                Alternatively, you can download FFmpeg manually from here:
+                  - https://ffmpeg.org/download.html
+                  - https://github.com/Tyrrrz/FFmpegBin
 
                 Make sure FFmpeg is available on the PATH, or specify its location using
                 the --ffmpeg-path option or the FFMPEG_PATH environment variable.

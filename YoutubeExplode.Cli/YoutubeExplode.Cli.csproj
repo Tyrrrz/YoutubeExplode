@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <RollForward>Major</RollForward>
     <ApplicationIcon>../favicon.ico</ApplicationIcon>
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
@@ -22,6 +23,7 @@
     <PackageReference Include="CliFx" />
     <PackageReference Include="CSharpier.MsBuild" PrivateAssets="all" />
     <PackageReference Include="Gress" />
+    <PackageReference Include="PolyShim" PrivateAssets="all" />
     <PackageReference Include="PowerKit" />
     <PackageReference Include="PowerKit.Json" />
     <PackageReference Include="Spectre.Console" />

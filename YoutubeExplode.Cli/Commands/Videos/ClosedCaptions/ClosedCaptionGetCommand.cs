@@ -7,7 +7,7 @@ using YoutubeExplode.Cli.Commands.Base;
 namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
 
 [Command("video cc get", Description = "Gets the contents of a closed caption track.")]
-public partial class ClosedCaptionsGetCommand : ClosedCaptionTrackCommandBase
+public partial class ClosedCaptionGetCommand : ClosedCaptionTrackCommandBase
 {
     protected override async ValueTask ExecuteAsync(
         IConsole console,

@@ -5,16 +5,16 @@ using CliFx.Infrastructure;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Videos;
 
-namespace YoutubeExplode.Cli.Commands.Videos.Streams;
+namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
 
 [Command(
-    "video stream manifest",
-    Description = "Gets the manifest of streams available for a video."
+    "video cc manifest",
+    Description = "Gets the manifest of closed caption tracks available for a video."
 )]
-public partial class StreamsGetManifestCommand : CommandBase
+public partial class ClosedCaptionManifestCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]
-    public required string VideoIdOrUrl { get; set; }
+    public required VideoId VideoId { get; set; }
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
@@ -23,9 +23,6 @@ public partial class StreamsGetManifestCommand : CommandBase
     ) =>
         await WriteJsonAsync(
             console,
-            await youtube.Videos.Streams.GetManifestAsync(
-                VideoId.Parse(VideoIdOrUrl),
-                cancellationToken
-            )
+            await youtube.Videos.ClosedCaptions.GetManifestAsync(VideoId, cancellationToken)
         );
 }

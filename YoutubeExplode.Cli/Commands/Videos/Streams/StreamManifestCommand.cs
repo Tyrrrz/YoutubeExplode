@@ -5,13 +5,16 @@ using CliFx.Infrastructure;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Videos;
 
-namespace YoutubeExplode.Cli.Commands.Videos;
+namespace YoutubeExplode.Cli.Commands.Videos.Streams;
 
-[Command("video get", Description = "Gets the metadata of a video.")]
-public partial class VideosGetCommand : CommandBase
+[Command(
+    "video stream manifest",
+    Description = "Gets the manifest of streams available for a video."
+)]
+public partial class StreamManifestCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Video ID or URL.")]
-    public required string VideoIdOrUrl { get; set; }
+    public required VideoId VideoId { get; set; }
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
@@ -20,6 +23,6 @@ public partial class VideosGetCommand : CommandBase
     ) =>
         await WriteJsonAsync(
             console,
-            await youtube.Videos.GetAsync(VideoId.Parse(VideoIdOrUrl), cancellationToken)
+            await youtube.Videos.Streams.GetManifestAsync(VideoId, cancellationToken)
         );
 }

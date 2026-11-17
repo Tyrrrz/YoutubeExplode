@@ -11,7 +11,7 @@ using YoutubeExplode.Cli.Utils.Extensions;
 namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
 
 [Command("video cc download", Description = "Downloads a closed caption track to an SRT file.")]
-public partial class ClosedCaptionsDownloadCommand : ClosedCaptionTrackCommandBase
+public partial class ClosedCaptionDownloadCommand : ClosedCaptionTrackCommandBase
 {
     [CommandOption("output", 'o', Description = "Output file path.")]
     public required string OutputFilePath { get; set; }

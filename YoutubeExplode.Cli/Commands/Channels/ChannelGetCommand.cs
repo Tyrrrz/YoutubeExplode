@@ -10,7 +10,7 @@ using YoutubeExplode.Cli.Commands.Base;
 namespace YoutubeExplode.Cli.Commands.Channels;
 
 [Command("channel get", Description = "Gets the metadata of a channel.")]
-public partial class ChannelsGetCommand : CommandBase
+public partial class ChannelGetCommand : CommandBase
 {
     [CommandParameter(
         0,

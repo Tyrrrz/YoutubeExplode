@@ -3,10 +3,10 @@ using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 
-namespace YoutubeExplode.Cli.Commands.Channels;
+namespace YoutubeExplode.Cli.Commands.Videos.Streams;
 
-[Command("channel", Description = "Commands for working with channels.")]
-public partial class ChannelsCommand : ICommand
+[Command("video stream", Description = "Commands for working with video streams.")]
+public partial class StreamCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>
         throw new CommandException("Please specify a subcommand.", showHelp: true);

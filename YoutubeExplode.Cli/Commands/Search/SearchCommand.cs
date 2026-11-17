@@ -4,6 +4,7 @@ using CliFx.Binding;
 using CliFx.Infrastructure;
 using YoutubeExplode.Cli.Commands.Base;
 using YoutubeExplode.Common;
+using YoutubeExplode.Search;
 
 namespace YoutubeExplode.Cli.Commands.Search;
 
@@ -13,11 +14,7 @@ public partial class SearchCommand : CommandBase
     [CommandParameter(0, Name = "query", Description = "Search query.")]
     public required string Query { get; set; }
 
-    [CommandOption(
-        "filter",
-        'f',
-        Description = "Restrict results to a specific kind (None, Videos, Playlists, Channels)."
-    )]
+    [CommandOption("filter", 'f', Description = "Restrict results to a specific kind.")]
     public SearchFilter Filter { get; set; } = SearchFilter.None;
 
     protected override async ValueTask ExecuteAsync(
@@ -28,19 +25,19 @@ public partial class SearchCommand : CommandBase
     {
         switch (Filter)
         {
-            case SearchFilter.Videos:
+            case SearchFilter.Video:
                 await WriteJsonAsync(
                     console,
                     await youtube.Search.GetVideosAsync(Query, cancellationToken)
                 );
                 break;
-            case SearchFilter.Playlists:
+            case SearchFilter.Playlist:
                 await WriteJsonAsync(
                     console,
                     await youtube.Search.GetPlaylistsAsync(Query, cancellationToken)
                 );
                 break;
-            case SearchFilter.Channels:
+            case SearchFilter.Channel:
                 await WriteJsonAsync(
                     console,
                     await youtube.Search.GetChannelsAsync(Query, cancellationToken)

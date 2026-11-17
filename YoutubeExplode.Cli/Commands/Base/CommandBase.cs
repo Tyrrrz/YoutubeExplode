@@ -13,6 +13,33 @@ namespace YoutubeExplode.Cli.Commands.Base;
 
 public abstract partial class CommandBase : ICommand
 {
+    protected static async ValueTask WriteJsonAsync<T>(IConsole console, T value) =>
+        await console.Output.WriteLineAsync(
+            JsonSerializer.Serialize(value, typeof(T), JsonSerializerContext.Default)
+        );
+
+    protected static async ValueTask<JsonElement> ReadJsonAsync(
+        IConsole console,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!console.IsInputRedirected)
+            throw new CommandException("Expected JSON input on the standard input stream.");
+
+        using var document = await JsonDocument.ParseAsync(
+            console.Input.BaseStream,
+            cancellationToken: cancellationToken
+        );
+
+        return document.RootElement.Clone();
+    }
+
+    protected abstract ValueTask ExecuteAsync(
+        IConsole console,
+        YoutubeClient youtube,
+        CancellationToken cancellationToken
+    );
+
     public async ValueTask ExecuteAsync(IConsole console)
     {
         var cancellationToken = console.RegisterCancellationHandler();
@@ -38,32 +65,5 @@ public abstract partial class CommandBase : ICommand
         {
             throw new CommandException(ex.Message, innerException: ex);
         }
-    }
-
-    protected abstract ValueTask ExecuteAsync(
-        IConsole console,
-        YoutubeClient youtube,
-        CancellationToken cancellationToken
-    );
-
-    protected static async ValueTask WriteJsonAsync<T>(IConsole console, T value) =>
-        await console.Output.WriteLineAsync(
-            JsonSerializer.Serialize(value, typeof(T), JsonSerializerContext.Default)
-        );
-
-    protected static async ValueTask<JsonElement> ReadJsonAsync(
-        IConsole console,
-        CancellationToken cancellationToken
-    )
-    {
-        if (!console.IsInputRedirected)
-            throw new CommandException("Expected JSON input on the standard input stream.");
-
-        using var document = await JsonDocument.ParseAsync(
-            console.Input.BaseStream,
-            cancellationToken: cancellationToken
-        );
-
-        return document.RootElement.Clone();
     }
 }

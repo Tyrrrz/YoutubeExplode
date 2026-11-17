@@ -8,10 +8,10 @@ using YoutubeExplode.Playlists;
 namespace YoutubeExplode.Cli.Commands.Playlists;
 
 [Command("playlist get", Description = "Gets the metadata of a playlist.")]
-public partial class PlaylistsGetCommand : CommandBase
+public partial class PlaylistGetCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Playlist ID or URL.")]
-    public required string PlaylistIdOrUrl { get; set; }
+    public required PlaylistId PlaylistId { get; set; }
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
@@ -20,6 +20,6 @@ public partial class PlaylistsGetCommand : CommandBase
     ) =>
         await WriteJsonAsync(
             console,
-            await youtube.Playlists.GetAsync(PlaylistId.Parse(PlaylistIdOrUrl), cancellationToken)
+            await youtube.Playlists.GetAsync(PlaylistId, cancellationToken)
         );
 }

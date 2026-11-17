@@ -11,7 +11,7 @@ using YoutubeExplode.Cli.Utils.Extensions;
 namespace YoutubeExplode.Cli.Commands.Videos.Streams;
 
 [Command("video stream download", Description = "Downloads a stream to a file.")]
-public partial class StreamsDownloadCommand : StreamCommandBase
+public partial class StreamDownloadCommand : StreamCommandBase
 {
     [CommandOption("output", 'o', Description = "Output file path.")]
     public required string OutputFilePath { get; set; }

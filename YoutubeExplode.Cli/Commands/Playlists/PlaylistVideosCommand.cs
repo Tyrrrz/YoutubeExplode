@@ -9,10 +9,10 @@ using YoutubeExplode.Playlists;
 namespace YoutubeExplode.Cli.Commands.Playlists;
 
 [Command("playlist videos", Description = "Gets the videos included in a playlist.")]
-public partial class PlaylistsGetVideosCommand : CommandBase
+public partial class PlaylistVideosCommand : CommandBase
 {
     [CommandParameter(0, Name = "id-or-url", Description = "Playlist ID or URL.")]
-    public required string PlaylistIdOrUrl { get; set; }
+    public required PlaylistId PlaylistId { get; set; }
 
     protected override async ValueTask ExecuteAsync(
         IConsole console,
@@ -21,9 +21,6 @@ public partial class PlaylistsGetVideosCommand : CommandBase
     ) =>
         await WriteJsonAsync(
             console,
-            await youtube.Playlists.GetVideosAsync(
-                PlaylistId.Parse(PlaylistIdOrUrl),
-                cancellationToken
-            )
+            await youtube.Playlists.GetVideosAsync(PlaylistId, cancellationToken)
         );
 }

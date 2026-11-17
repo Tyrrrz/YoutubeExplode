@@ -3,10 +3,10 @@ using CliFx;
 using CliFx.Binding;
 using CliFx.Infrastructure;
 
-namespace YoutubeExplode.Cli.Commands.Videos.ClosedCaptions;
+namespace YoutubeExplode.Cli.Commands.Videos;
 
-[Command("video cc", Description = "Commands for working with video closed captions.")]
-public partial class ClosedCaptionsCommand : ICommand
+[Command("video", Description = "Commands for working with videos.")]
+public partial class VideoCommand : ICommand
 {
     public ValueTask ExecuteAsync(IConsole console) =>
         throw new CommandException("Please specify a subcommand.", showHelp: true);

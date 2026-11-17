@@ -26,6 +26,7 @@ namespace YoutubeExplode.Cli.Utils;
 [JsonSerializable(typeof(Video))]
 [JsonSerializable(typeof(Playlist))]
 [JsonSerializable(typeof(Channel))]
+[JsonSerializable(typeof(ClosedCaptionTrackInfo))]
 [JsonSerializable(typeof(ClosedCaptionTrack))]
 [JsonSerializable(typeof(ClosedCaptionManifest))]
 [JsonSerializable(typeof(StreamManifest))]
