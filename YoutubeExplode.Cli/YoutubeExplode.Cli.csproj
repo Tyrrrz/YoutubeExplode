@@ -9,14 +9,6 @@
     <ToolCommandName>yte</ToolCommandName>
   </PropertyGroup>
 
-  <!-- Self-contained builds (standalone executables) are trimmed and bundled into a single file -->
-  <PropertyGroup Condition="'$(SelfContained)' == 'true'">
-    <PublishTrimmed>true</PublishTrimmed>
-    <PublishSingleFile>true</PublishSingleFile>
-    <!-- Benign ILLink quirk in PowerKit lambdas -->
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2117</WarningsNotAsErrors>
-  </PropertyGroup>
-
   <PropertyGroup>
     <Description>Command-line interface for YoutubeExplode that exposes the library's functionality through terminal commands</Description>
     <PackageProjectUrl>https://github.com/Tyrrrz/YoutubeExplode/tree/prime/YoutubeExplode.Cli</PackageProjectUrl>
@@ -38,7 +30,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../YoutubeExplode/YoutubeExplode.csproj" />
-    <ProjectReference Include="../YoutubeExplode.Converter/YoutubeExplode.Converter.csproj" />
+    <ProjectReference
+      Include="../YoutubeExplode/YoutubeExplode.csproj"
+      GlobalPropertiesToRemove="PublishTrimmed"
+    />
+    <ProjectReference
+      Include="../YoutubeExplode.Converter/YoutubeExplode.Converter.csproj"
+      GlobalPropertiesToRemove="PublishTrimmed"
+    />
   </ItemGroup>
 </Project>

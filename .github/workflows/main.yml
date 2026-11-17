@@ -73,12 +73,20 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
 
-      # Self-contained builds are trimmed and bundled into a single file by the project
+      # Restore separately, because the trimming flags would otherwise apply to netstandard2.0 targets
+      - name: Restore CLI
+        run: >
+          dotnet restore YoutubeExplode.Cli
+          --runtime ${{ matrix.rid }}
+
       - name: Publish CLI
         run: >
           dotnet publish YoutubeExplode.Cli
           -p:Version=${{ inputs.package-version || (github.ref_type == 'tag' && github.ref_name) || format('0.0.0-ci-{0}', github.sha) }}
           -p:CSharpier_Bypass=true
+          -p:PublishTrimmed=true
+          -p:PublishSingleFile=true
+          --no-restore
           --framework net10.0
           --output YoutubeExplode.Cli/bin/publish/
           --configuration Release
